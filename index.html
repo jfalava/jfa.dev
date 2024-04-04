@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+    <!-- ~~~~ Meta ~~~~ -->
+    <meta charset="utf-8">
+    <meta name="color-scheme" content="light, dark">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Curriculum Vitae - Jorge Fernando Álava" />
+    <meta property="og:description" content="Curriculum Vitae en línea de Jorge Fernando Álava" />
+    <meta property="og:image" content="static/pfp/pfp1.jpg" />
+    <meta property="og:url" content="https://cv.jfa.dev/" />
+    <!-- ~~~~ Favicon ~~~~ -->
+    <!-- ~~~~ Styles ~~~~ -->
+    <!-- Root -->
+    <link rel="stylesheet" href="styles/root/fonts.css">
+    <link rel="stylesheet" href="styles/root/typography.css">    
+    <link rel="stylesheet" href="styles/root/background.css">
+    <!-- Root -->
+    <link rel="stylesheet" href="styles/animations/fade-in.css">
+    <!-- Details -->
+    <link rel="stylesheet" href="styles/details/cursor.css">
+    <link rel="stylesheet" href="styles/details/images.css">
+    <link rel="stylesheet" href="styles/details/gototop.css">   
+    <!-- Box and Containers -->
+    <link rel="stylesheet" href="styles/box/glassmorphism.css">
+    <link rel="stylesheet" href="styles/box/decoration.css">
+    <link rel="stylesheet" href="styles/box/padding.css">
+    <link rel="stylesheet" href="styles/box/limits.css">   
+    <link rel="stylesheet" href="styles/box/captcha.css">   
+    <!-- Text -->
+    <link rel="stylesheet" href="styles/nav-menu/ext-links.css">   
+    <!-- Positions -->
+    <link rel="stylesheet" href="styles/pos/absolute-pos.css">
+    <link rel="stylesheet" href="styles/pos/align.css">
+    <link rel="stylesheet" href="styles/pos/x-margin.css">
+    <link rel="stylesheet" href="styles/pos/y-margin.css">
+    <!-- Text -->
+    <link rel="stylesheet" href="styles/texts/fontsize.css">
+    <link rel="stylesheet" href="styles/texts/fontcolor.css">
+    <link rel="stylesheet" href="styles/texts/textdecoration.css">
+    <!-- ~~~~ Title ~~~~  -->
+    <title>Curriculum Vitae - Jorge Fernando Álava</title>
+</head>
+<body class="background loading-animation">
+<header>
+    <div class="textalign-center margin-top-3vh"><!-- Header -->
+        <div class="display-inlineblock glassbox-25 padding-4px borderradius-8px"><!-- PFP -->
+            <img src="static/pfp/pfp1.jpg" height="120" width="120" class="borderradius-8px" style="vertical-align: -4px;">
+        </div>
+        <div class="display-inlineblock"><!-- Name -->
+            <div clas>
+                <div class="textalign-left">
+                    <span class="productsans-regular black-text fs-3em">Jorge</span>&nbsp;<span class="productsans-bold black-text fs-3em">Álava</span>
+                </div>
+                <div class="textalign-left">
+                    <span class="productsans-regular black-text fs-3em">Fernando</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="link-box glassbox-10-blur"><!-- External Links -->
+        <div class="display-inlineblock link-icon-container">
+            <a href="https://github.com/jfalava/curriculum-vitae" target="_blank">
+                <img src="static/icons/orange-git.svg" class="link-icon" title="Repositorio de esta web">
+            </a>
+        </div>
+        <div class="display-inlineblock link-icon-container">
+            <a href="https://www.linkedin.com/in/jfalava/" target="_blank">
+                <img src="static/icons/linkedin.png" class="link-icon" title="Mi perfil de LinkedIn">
+            </a>
+        </div>
+        <div class="display-inlineblock link-icon-container">
+            <a href="https://drive.proton.me/urls/RPTKTW1YM4#C5LWLEiaODFb" target="_blank">
+                <img src="static/icons/cloud-download.png" class="link-icon" title="Descarga el currículum en versión pdf">
+            </a>
+        </div>
+
+    </div>
+    <br>
+    <div class="textalign-center black-text"><!-- Initial Cringe -->
+        <span class="sanfrancisco-bold fs-1dot25em">Administrador de Sistemas Informáticos en Red y Nube</span>
+    </div>
+    <div class="captcha-widget textalign-center glassbox-25 margin-top-1vh padding-20px borderradius-8px"> <!-- Captcha Service -->
+        <span class="fs-1em black-text productsans-bold ">Comprobando tu navegador antes de revelar la información de contacto, espera...</span><br><br>
+        <div id="turnstile-widget" class="turnstile-widget"></div>
+    </div>
+</header>
+    <div class="margin-top-2vh captcha-box textalign-center" style="display: none;"><!-- Contact -->
+        <div class="display-inlineblock" style="display: none;" id="phone-number">
+            <img src="static/icons/phone-call.png" title="Phone call by Freepik - Flaticon.com" width="28" height="28" style="vertical-align: -5px;">
+            <span class="sanfrancisco-bold black-text fs-1dot5em">684083845</span>
+        </div>
+        <div class="display-inlineblock" id="trusted-email" style="display: none;">
+            <img src="static/icons/closed-envelope.png" title="Email by Ilham Fitrotul Hayat - Flaticon.com" width="28" height="28" style="vertical-align: -6px;">
+            <a id="email-content-trusted" href="mailto:work@contact.jfa.dev">
+                <span class="sanfrancisco-bold black-text fs-1dot5em">work@contact.jfa.dev</span>   
+            </a>
+            <img id="emailImage-trusted" src="static/icons/copy.png" width="17" height="17" class="cursor-pointer img-inverter" title="Click to Copy" style="vertical-align: 3px;">
+        </div>
+        <div class="display-inlineblock" id="general-email">
+            <img src="static/icons/closed-envelope.png" title="Email by Ilham Fitrotul Hayat - Flaticon.com" width="28" height="28" style="vertical-align: -6px;">
+            <a id="email-content" href="mailto:work@contact.jfa.dev">
+                <span class="sanfrancisco-bold black-text fs-1dot5em">work@contact.jfa.dev</span>   
+            </a>
+            <img id="emailImage" src="static/icons/copy.png" width="17" height="17" class="cursor-pointer img-inverter" title="Click to Copy" style="vertical-align: 3px;">
+        </div>
+        <div class="display-inlineblock">
+            <img src="static/icons/pin.png" title="Pin by ChilliColor - Flaticon.com" width="28" height="28"style="vertical-align: -5px;">
+            <span class="sanfrancisco-bold black-text fs-1dot5em">Zaragoza, Aragón</span>
+        </div>
+        <div class="display-inlineblock">
+            <img src="static/icons/pastel.png" title="Pin by ChilliColor - Flaticon.com" width="30" height="30"style="vertical-align: -5px;">
+            <span class="sanfrancisco-bold black-text fs-1dot5em">Octubre, 1995</span>
+        </div>
+    </div>
+<div class="display-flex justify-content-center"><!-- CV Container -->
+    <div class="margin-top-2vh padding-20px glasbox-50 cv-content-width borderradius-5px"><!-- CV Content -->
+        <div class=""><!-- Top Row-->
+            <div class=""><!-- Top Envelop -->
+                <div class="display-inlineblock verticalalign-top"> <!-- First Container -->
+                    <div class="width-85percent" id="workexp"><!-- Workexp -->
+                        <div class="textalign-left margin-bottom-1vh cursor-default">
+                            <img src="static/icons/market.png"  title="Market by GOWI - Flaticon.com" width="40" height="40" style="vertical-align: -8px;">
+                            <span class="sanfrancisco-bold black-text fs-1dot5em">Experiencia Laboral</span>
+                        </div>
+                        <div class="textalign-left margin-left-3percent">
+                            <span class="sanfrancisco-rounded black-text fs-1em">• Seidor Consulting: </span><span class="sanfrancisco-bold black-text">Servicios Gestionados - AWS</span> <span class="sanfrancisco-rounded black-text">(diciembre 2023 - actualidad)</span>
+                            <br><br>
+                            <span class="sanfrancisco-rounded black-text fs-1em">• Seidor Consulting: </span><span class="sanfrancisco-bold black-text">Operador HelpDesk</span> <span class="sanfrancisco-rounded black-text">(enero 2020 - diciembre 2023)</span>
+                            <br>
+                            <div class="margin-left-3percent margin-top-5px">
+                                <span class="sanfrancisco-regular black-text fs-1em">
+                                    - Soporte 24x7 de sistemas y microinformática de nivel 0 y 1.<br>
+                                    - Ticketing y gestión de conocimientos: Jira, Confluence, Sharepoint, SOLMAN, ServiceNow.<br>
+                                    - Mantenimiento y operaciones de servidores y servicios: Windows Server, Linux Server, IBM iSeries, Fujitsu BS2000.<br>
+                                    - Operaciones en servicios de Virtualización: HyperV, VSphere.<br>
+                                    - Procedimientos de mantenimiento regulares, soporte proactivo y reactivo en aplicaciones corporativas.<br>
+                                    - Monitorización de servidores y servicios: Nagios, Zabbix.<br> 
+                                    - Monitorización y gestión de incidencias en Microsoft Azure.                                  
+                                </span>
+                            </div>
+                            <br>
+                            <span class="sanfrancisco-rounded black-text fs-1em">• Hiberus: Formación en centros de trabajo (FP ASIR) como <span class="sanfrancisco-bold black-text">operador de sistemas en Ovvoe Telecom</span> <span class="sanfrancisco-rounded black-text">(marzo de 2019 - junio de 2019).</span>
+                            <br>
+                            <div class="margin-left-3percent margin-top-5px">
+                                <span class="sanfrancisco-regular black-text fs-1em">
+                                    - Asterisk.<br>
+                                    - Docker. Orquestación de contenedores con Docker Swarm.<br>
+                                    - Migraciones de documentación y procedimientos a Sharepoint.                                    
+                                </span>
+                            </div>
+                            <br>
+                            <span class="sanfrancisco-rounded black-text">• infoASI: <span class="sanfrancisco-bold black-text">Técnico de reparación de sistemas microinformáticos en prácticas</span> <span class="sanfrancisco-rounded black-text">(junio de 2017)</span>
+                            <br>
+                            <div class="margin-left-3percent margin-top-5px">
+                                <span class="sanfrancisco-regular black-text fs-1em">
+                                - Reparación de equipos microinformáticos: ordenadores portátiles, de sobremesa e impresoras.<br>
+                                - Instalación, soporte y mantenimiento de sistemas operativos y aplicaciones corporativas.<br>
+                                - Plataformado y estandarización de equipos corporativos y educativos.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div-underline margin-top-2vh margin-bottom-2vh margin-right-22dot5percent"></div>
+                    <div class="textalign-center" id="certs"><!-- Certs -->
+                        <div class="textalign-left margin-bottom-1vh cursor-default">
+                            <img src="static/icons/certificate.png" title="Certificate by Freepik - Flaticon.com" width="40" height="40" style="vertical-align: -14px;">
+                            <span class="sanfrancisco-bold black-text fs-1dot5em">Certificaciones Oficiales</span>
+                        </div>
+                        <div class="textalign-left margin-left-3percent fs-1em">
+                            <span class="sanfrancisco-rounded black-text">• Amazon Web Services - </span><span class="sanfrancisco-bold black-text">Practitioner Level</span> <span class="sanfrancisco-rounded black-text">(julio 2023)</span>
+                            <br>
+                            <span class="sanfrancisco-rounded black-text">• Remote Work and Virtual Collaboration -</span> <span class="sanfrancisco-bold black-text">RWVCPC</span> <span class="sanfrancisco-rounded black-text">(noviembre 2021)</span>
+                            <br>
+                            <span class="sanfrancisco-rounded black-text">• Oxford Test of English</span> <span class="sanfrancisco-bold black-text">B2</span> <span class="sanfrancisco-rounded black-text">(abril de 2018)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile-underline margin-top-2vh margin-bottom-2vh"></div>
+                <div class="display-inlineblock verticalalign-top right-0"> <!-- Second Container -->
+                    <div class="cursor-default" id="skills"><!-- Skills -->
+                        <div class="div-underline padding-bottom-10px">
+                            <img src="static/icons/knowledge.png" title="Knowledge by Freepik - Flaticon.com" width="40" height="40" style="vertical-align: -12px;">
+                            <span class="sanfrancisco-bold black-text fs-1dot5em">Conocimientos y Herramientas</span>
+                        </div>
+                        <div class="">
+                            <div class="padding-4px margin-top-1vh">
+                                <img src="static/icons/computer.png" title="Computer by Freepik - Flaticon.com" width="30" height="30" style="vertical-align: -8px;">
+                                <span class="sanfrancisco-bold black-text fs-1dot25em">Microinformática</span>
+                                <br>
+                                <span class="sanfrancisco-rounded black-text">Windows, macOS, iOS</span>
+                            </div>
+                            <div class="div-underline margin-right-22dot5percent padding-bottom-5px padding-top-5px"></div>
+                            <div class="padding-4px margin-top-1vh">
+                                <img src="static/icons/data-storage.png" title="Data storage by vectormarket15 - Flaticon.com" width="30" height="30" style="vertical-align: -8px;">
+                                <span class="sanfrancisco-bold black-text fs-1dot25em">Sistemas</span>
+                                <br>
+                                <span class="sanfrancisco-rounded black-text">Windows Server, Linux, IBMi</span>
+                            </div>
+                            <div class="div-underline margin-right-22dot5percent padding-bottom-5px padding-top-5px"></div>
+                            <div class="padding-4px margin-top-1vh">
+                                <img src="static/icons/m365.svg" width="30" height="30" style="vertical-align: -8px;">
+                                <span class="sanfrancisco-bold black-text fs-1dot25em">Microsoft 365</span>
+                                <br>
+                                <span class="sanfrancisco-rounded black-text">Teams, Office, Sharepoint</span>
+                            </div>
+                            <div class="div-underline margin-right-22dot5percent padding-bottom-5px padding-top-5px"></div>
+                            <div class="padding-4px margin-top-1vh">
+                                <img src="static/icons/monitoring.png" title="Monitoring by Eucalyp - Flaticon.com" width="30" height="30" style="vertical-align: -8px;">
+                                <span class="sanfrancisco-bold black-text fs-1dot25em">Monitorización</span>
+                                <br>
+                                <span class="sanfrancisco-rounded black-text">Nagios, Zabbix, Grafana</span>
+                            </div>
+                            <div class="div-underline margin-right-22dot5percent padding-bottom-5px padding-top-5px"></div>
+                            <div class="padding-4px margin-top-1vh">
+                                <img src="static/icons/cloud-server.png" title="Cloud server by Freepik - Flaticon.com" width="30" height="30" style="vertical-align: -8px;">
+                                <span class="sanfrancisco-bold black-text fs-1dot25em">Cloud</span>
+                                <br>
+                                <span class="sanfrancisco-rounded black-text">Azure, AWS, Cloudflare</span>
+                            </div>
+                            <div class="div-underline margin-right-22dot5percent padding-bottom-5px padding-top-5px"></div>
+                            <div class="padding-4px margin-top-1vh">
+                                <img src="static/icons/teamwork.png" title="Teamwork by Flat Icons - Flaticon.com" width="30" height="30" style="vertical-align: -8px;">
+                                <span class="sanfrancisco-bold black-text fs-1dot25em">DevOps, Colaboración y documentación</span>
+                                <br>
+                                <span class="sanfrancisco-rounded black-text">Git, Docker, Markdown, Kanban</span>
+                            </div>
+                            <div class="div-underline margin-right-22dot5percent padding-bottom-5px padding-top-5px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="div-underline margin-top-3vh margin-bottom-3vh margin-bottom-1vh"></div>
+        <div class="margin-top-2vh"><!-- Bottom Row -->
+            <div class="width-85percent" id="academic"><!-- Academic -->
+                <div class="textalign-left margin-bottom-1vh cursor-default">
+                    <img src="static/icons/graduate.png" title="Graduate by Freepik - Flaticon.com"width="40" height="40" style="vertical-align: -13px;">
+                    <span class="sanfrancisco-bold black-text fs-1dot5em">Formación Académica</span>
+                </div>
+                <div class="textalign-left margin-left-3percent fs-1em">
+                    <span class="sanfrancisco-rounded black-text">• Técnico superior en </span><span class="sanfrancisco-bold black-text">Administración de Sistemas Informáticos en Red</span><span class="sanfrancisco-rounded black-text"> (junio de 2019)</span>
+                    <br>
+                    <span class="sanfrancisco-rounded black-text">• Técnico de <span class="sanfrancisco-bold black-text">reparación de sistemas microinformáticos</span> <span class="sanfrancisco-rounded black-text">en la O.D. Santo Domingo de Silos / INAEM (junio de 2017)</span>
+                    <br>
+                    <span class="sanfrancisco-rounded black-text">• Graduado en <span class="sanfrancisco-bold black-text">bachillerato de Ciencias y Tecnología</span> <span class="sanfrancisco-rounded black-text">en el IES Miguel Catalán (septiembre de 2014)</span>
+                </div>
+            </div>
+            <div class="div-underline margin-top-2vh margin-bottom-2vh margin-right-33percent"></div>
+            <div class="margin-top-2vh margin-bottom-3vh"><!-- More Cringe -->
+                <div class="textalign-left margin-bottom-1vh cursor-default">
+                    <img src="static/icons/aptitud-fisica.png" title="Aptitud Fisica by Prosymbols - Flaticon.com"width="40" height="40" style="vertical-align: -11px;">
+                    <span class="sanfrancisco-bold black-text fs-1dot5em">Aptitudes Personales y Profesionales</span>
+                </div>
+                <div class="width-75percent textalign-left textalign-justify text-justify-distribute margin-left-3percent" id="cringe"><!-- Cringe Content -->
+                    <span class="black-text fs-1em">
+                        <span class="sanfrancisco-rounded">
+                            El teletrabajo ha caracterizado gran parte de mi experiencia laboral; requiere una <span class="sanfrancisco-bold">disciplina y autonomía</span> que se ha convertido en una de mis principales habilidades.<br>
+                            No importa el escenario, ya sea un proyecto a corto o largo plazo, puedo mantenerme <span class="sanfrancisco-bold">concentrado y organizado</span> para cumplir con éxito toda tarea asignada.<br>
+                            <br>
+                        </span>
+                        <span class="sanfrancisco-rounded">
+                            En un entorno de trabajo 24x7, he desarrollado la habilidad de <span class="sanfrancisco-bold">estar alerta</span> y responder adecuadamente a <span class="sanfrancisco-bold">situaciones de alta presión</span>. Para mí, la <span class="sanfrancisco-bold">autorresolución</span> es una herramienta esencial para manejar los desafíos que pueden surgir en estas condiciones.<br>
+                            <br>
+                        </span>
+                        <span class="sanfrancisco-rounded">
+                            Como operador HelpDesk, he desarrollado una capacidad sólida para <span class="sanfrancisco-bold">atender</span> a los usuarios y a sus <span class="sanfrancisco-bold">necesidades específicas</span>. Con la paciencia como bandera, puedo asegurar una <span class="sanfrancisco-bold">atención detallada</span> a los problemas que se me presentan, tratando de resolverlos de manera eficiente y eficaz.<br>
+                            
+                            Además, en mi experiencia en soporte, he aprendido que el <span class="sanfrancisco-bold">trabajo en equipo</span> es fundamental para lograr objetivos comunes. Aunque se presenten situaciones adversas, he <span class="sanfrancisco-bold">demostrado liderazgo</span> cuando ha sido necesario y he sabido guiar a mis compañeros hacia la resolución de problemas, y finalmente a la satisfacción del usuario y cliente.<br>
+                        </span>
+                        <br>
+                        <span class="sanfrancisco-rounded">
+                            Ser técnico de IT requiere de un <span class="sanfrancisco-bold">continuo aprendizaje</span> sobre <span class="sanfrancisco-bold">nuevas herramientas y tecnologías</span>. Procuro implementar estos conocimientos en mi trabajo para <span class="sanfrancisco-bold">crear, mejorar y estandarizar viejos y nuevos procedimientos.</span><br>
+                            <br>
+                        </span>
+                        <span class="sanfrancisco-rounded">
+                            Me describo como un apasionado de la tecnología.<br>
+                            Mi curiosidad e interés me han llevado a <span class="sanfrancisco-bold">explorar otras áreas de IT</span> como <span class="sanfrancisco-bold">programación, DevOps y Front End</span>. Esta mentalidad abierta y curiosa es lo que me ha permitido crecer y evolucionar como profesional.<br>
+                            Estoy siempre listo para los nuevos desafíos, buscando formas de aportar valor a cualquier equipo de trabajo.
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="glassbox-25 gototop-container" onclick="goToTop()" id="goTopBtn-footer" style="display: none;"><!-- ~~~~ Floating ^ Button ~~~~ -->
+        <div class="cursor-pointer">
+        <img class="img-inverter gototop-icon" src="static/icons/go-up.png" title="Arrow Up by Ilham Fitrotul Hayat - Flaticon.com" style="vertical-align: -5px;">
+        </div>
+    </div>
+<footer class="margin-top-3vh margin-bottom-3vh textalign-center cursor-default">
+    <div onclick="goToTop()" id="goTopBtn" style="display: none;" class="cursor-pointer">
+        <span class="sanfrancisco-regular black-text" >&copy;</span>&nbsp;<span class="black-text productsans-bold">Jorge Fernando Álava, 2023</span>
+    </div>
+</footer>
+    <!-- ~~~~ Scripts ~~~~ -->
+    <script src="static/scripts/turnstile/turnstile-contactinfo.js"></script>
+    <script src="static/scripts/mobile/mobile-underline.js"></script>
+    <script src="static/scripts/interactions/copy-email-string.js"></script>
+    <script src="static/scripts/interactions/copy-trusted-email.js"></script>
+    <script src="static/scripts/interactions/trusted-link.js"></script>   
+    <script src="static/scripts/interactions/totop.js"></script>       
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" async defer></script>
+    <!-- ~~~~  ~~~~ -->
+</body>
+</html>
