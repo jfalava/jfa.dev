@@ -12,4 +12,4 @@ Personal webpage monorepo.
 
 ## [Curriculum Vitae (cv branch)](https://github.com/jfalava/jfa.dev/tree/cv)
 
-* https://cv.jfalava.eu
+* https://cv.jfa.dev
