@@ -1,0 +1,72 @@
+.fs-dot5em{
+    font-size: 0.5em;
+}
+.fs-dot8em{
+    font-size: 0.8em;
+}
+.fs-1em{
+    font-size: 1em;
+}
+
+.fs-1dot25em{
+    font-size: 1.25em;
+}
+.fs-1dot5em{
+    font-size: 1.5em;
+}
+
+.fs-2em{
+    font-size: 2em;
+}
+.fs-2dot5em{
+    font-size: 2.5em;
+}
+
+@media (min-width: 1706px) {
+    .fs-2dot5em{
+        font-size: 2.5em;
+    }    
+} 
+
+@media (max-width: 414px) {
+    .fs-2dot5em{
+        font-size: 14px;
+    }
+} 
+
+@media (max-width: 1705px) {
+    .fs-2dot5em{
+        font-size: 1.8em;
+    }
+} 
+
+.fs-3em{
+    font-size: 3em;
+}
+
+@media (max-width: 563px) {
+    .fs-3em{
+        font-size: 2em;
+    }
+} 
+
+.fs-3dot5em{
+    font-size: 3.5em;
+}
+
+.fs-3em-special{
+    font-size: 3em;
+}
+
+/**/
+@media (max-width: 1061px) {
+    .fs-3em-special{
+        font-size: 1.8em;
+    }
+} 
+
+@media (max-width: 618px) {
+    .fs-3em-special{
+        font-size: 1.3em;
+    }
+} 

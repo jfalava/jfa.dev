@@ -1,0 +1,115 @@
+@font-face {
+    font-family: 'sanfrancisco-regular';
+    src: url('../../static/fonts/sanfrancisco-regular.otf') format('opentype'),
+    url('https://s3.jfalava.eu/static/fonts/sanfrancisco-regular.otf') format('opentype');
+  }
+  @font-face {
+    font-family: 'sanfrancisco-rounded';
+    src: url('../../static/fonts/sanfrancisco-rounded.ttf') format('truetype'),
+    url('https://s3.jfalava.eu/static/fonts/sanfrancisco-rounded.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'sanfrancisco-bold';
+    src: url('../../static/fonts/sanfrancisco-bold.ttf') format('truetype'),
+    url('https://s3.jfalava.eu/static/fonts/sanfrancisco-bold.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'sanfrancisco-light';
+    src: url('../../static/fonts/sanfrancisco-light.otf') format('opentype'),
+    url('https://s3.jfalava.eu/static/fonts/sanfrancisco-light.otf') format('opentype');
+  }
+  @font-face {
+    font-family: 'productsans-light';
+    src: url('../../static/fonts/productsanslight.ttf') format('truetype'),
+    url('https://s3.jfalava.eu/static/fonts/productsanslight.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'productsans-regular';
+    src: url('../../static/fonts/product-sans-regular.ttf') format('truetype'),
+         url('https://s3.jfalava.eu/static/fonts/product-sans-regular.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'productsans-bold';
+    src: url('../../static/fonts/product-sans-bold.ttf') format('truetype'),
+         url('https://s3.jfalava.eu/static/fonts/product-sans-bold.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'productsans-italic';
+    src: url('../../static/fonts/product-sans-italic.ttf') format('truetype'),
+         url('https://s3.jfalava.eu/static/fonts/product-sans-italic.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'productsans-italic-bold';
+    src: url('../../static/fonts/product-sans-bold-italic.ttf') format('truetype'),
+         url('https://s3.jfalava.eu/static/fonts/product-sans-bold-italic.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'chirp';
+    src: url('../../static/fonts/chirp.woff') format('woff'),
+    url('https://s3.jfalava.eu/static/fonts/chirp.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'latex-italic-bold';
+    src: url('../../static/fonts/latex-italic-bold.ttf') format('truetype'),
+    url('https://s3.jfalava.eu/static/fonts/latex-italic-bold.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'latex-italic-slim';
+    src: url('../../static/fonts/latex-italic-slim.ttf') format('truetype'),
+    url('https://s3.jfalava.eu/static/fonts/latex-italic-slim.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'latex-italic';
+    src: url('../../static/fonts/latex-italic.ttf') format('truetype'),
+    url('https://s3.jfalava.eu/static/fonts/latex-italic.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'latex-regular';
+    src: url('../../static/fonts/latex-regular.ttf') format('truetype'),
+    url('https://s3.jfalava.eu/static/fonts/latex-regular.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'cascadia';
+    src: url('../../static/fonts/cascadia.otf') format('opentype'),
+    url('https://s3.jfalava.eu/static/fonts/cascadia.otf') format('opentype');
+  }
+  @font-face {
+    font-family: 'unisans-heavy';
+    src: url('../../static/fonts/unisans-heavy.ttf') format('truetype'),
+         url('https://s3.jfalava.eu/static/fonts/unisans.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'hiragino-maru-gothic-pro';
+    src: url('../../static/fonts/hiragino-maru-gothic-pro.otf') format('opentype'),
+         url('https://s3.jfalava.eu/static/fonts/hiragino-maru-gothic-pro.otf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'newyork-regular';
+    src: url('../../static/fonts/newyork-regular.otf') format('opentype'),
+         url('https://s3.jfalava.eu/static/fonts/newyork-regular.otf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'gilroy-bold';
+    src: url('../../static/fonts/gilroy-bold.otf') format('opentype'),
+         url('https://s3.jfalava.eu/static/fonts/gilroy-bold.otf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'futura-bold';
+    src: url('../../static/fonts/futura-bold.otf') format('opentype'),
+         url('https://s3.jfalava.eu/static/fonts/futura-bold.otf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'myriad-pro-bold';
+    src: url('../../static/fonts/myriad-pro-bold.ttf') format('truetype'),
+         url('https://s3.jfalava.eu/static/fonts/myriad-pro-bold.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'keybase-serif';
+    src: url('../../static/fonts/keybase.woff') format('woff'),
+         url('https://s3.jfalava.eu/static/fonts/keybase.woff') format('woff');
+  }

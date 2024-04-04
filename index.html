@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<head>
+    <!-- ~~~~ Meta ~~~~ -->
+    <meta charset="utf-8">
+    <meta name="color-scheme" content="light, dark">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Link Hub - Jorge Fernando Álava" />
+    <meta property="og:description" content="Jorge Fernando's Link Hub" />
+    <meta property="og:image" content="static/pfp/pfp1.jpg" />
+    <meta property="og:url" content="https://jfalava.eu/" />
+    <!-- Root -->
+    <link rel="stylesheet" href="styles/root/fonts.css">
+    <link rel="stylesheet" href="styles/root/typography.css">    
+    <link rel="stylesheet" href="styles/root/polkadot.css">       
+    <!-- Root -->
+    <link rel="stylesheet" href="styles/animations/fade-in.css">
+    <!-- Details -->
+    <link rel="stylesheet" href="styles/details/cursor.css">
+    <link rel="stylesheet" href="styles/details/images.css">
+    <link rel="stylesheet" href="styles/details/gototop.css">   
+    <link rel="stylesheet" href="styles/details/scale.css">   
+    <!-- Box and Containers -->
+    <link rel="stylesheet" href="styles/box/glassmorphism.css">
+    <link rel="stylesheet" href="styles/box/decoration.css">
+    <link rel="stylesheet" href="styles/box/padding.css">
+    <link rel="stylesheet" href="styles/box/limits.css">   
+    <link rel="stylesheet" href="styles/box/captcha.css">   
+    <!-- Text -->
+    <link rel="stylesheet" href="styles/nav-menu/ext-links.css">
+    <link rel="stylesheet" href="styles/nav-menu/buttons-menu.css">   
+    <!-- Positions -->
+    <link rel="stylesheet" href="styles/pos/absolute-pos.css">
+    <link rel="stylesheet" href="styles/pos/align.css">
+    <link rel="stylesheet" href="styles/pos/x-margin.css">
+    <link rel="stylesheet" href="styles/pos/y-margin.css">
+    <!-- Text -->
+    <link rel="stylesheet" href="styles/texts/fontsize.css">
+    <link rel="stylesheet" href="styles/texts/fontcolor.css">
+    <link rel="stylesheet" href="styles/texts/textdecoration.css">
+    <title>Link Hub - Jorge Fernando Álava</title>
+</head>
+<body class="">
+    <header>
+    <!-- Big Name -->
+    <div class="margin-top-10vh user-select-none cursor-default textalign-center">
+            <div class="display-inlineblock transform-2x"> <!-- Name -->
+                <div>
+                    <span class="black-text sanfrancisco-regular fs-3em">Jorge</span>&nbsp;<span class="black-text sanfrancisco-bold fs-3em">Álava</span>
+                </div>
+                <div class="textalign-left">
+                    <span class="black-text sanfrancisco-regular fs-3em">Fernando</span>
+                </div>
+            </div>
+    </div>
+    </header>
+    <!-- Buttons -->
+    <div class="margin-top-10vh margin-left-24dot7 margin-bottom-3vh" id="buttons-container">
+        <!-- Row 1-->
+        <div class="textalign-left margin-bottom-2vh margin-top-2vh">
+            <div id="email-button" class="buttons-flex display-inlineblock main-menu-button glassbox-25 cursor-pointer borderradius-8px hover-decoration" onclick="toggleAuthorDetails()">
+                <div class="display-inlineblock">
+                    <img src="static/icons/closed-envelope.png" class="buttons-main-icon">
+                </div>
+                <div class="textalign-center display-inlineblock verticalalign-35px">
+                    <span class="productsans-bold fs-2dot5em black-text">Contact Email</span>
+                </div>
+            </div>
+            <div id="cv-button" class="buttons-flex display-inlineblock main-menu-button glassbox-25 cursor-pointer borderradius-8px">
+                <div class="display-inlineblock">
+                    <img src="static/icons/curriculum.png" class="buttons-main-icon" title="Curriculum by Eucalyp - Flaticon.com">
+                </div>
+                <div class="textalign-left   display-inlineblock verticalalign-35px">
+                    <span class="latex-regular fs-2dot5em black-text">Curriculum Vitae</span>
+                </div>
+            </div>
+        </div>
+        <!-- Row 2 -->
+        <div class="textalign-left margin-bottom-2vh">
+            <div id="github-button" class="buttons-flex display-inlineblock main-menu-button glassbox-25 cursor-pointer borderradius-8px">
+                <div class="display-inlineblock">
+                    <img src="static/icons/github.png" class="img-inverter buttons-main-icon" title="GitHub by Pixel perfect - Flaticon.com">
+                </div>
+                <div class="textalign-center display-inlineblock">
+                    <span class="futura-bold fs-2dot5em verticalalign-35px black-text">GitHub Repos</span>
+                </div>
+            </div>
+            <div id="linkedin-button" class="buttons-flex display-inlineblock main-menu-button glassbox-25 cursor-pointer borderradius-8px">
+                <div class="display-inlineblock">
+                    <img src="static/icons/linkedin.png" class="buttons-main-icon" title="Linkedin by Rakib Hassan Rahim - Flaticon.com">
+                </div>
+                <div class="textalign-center display-inlineblock">
+                    <span class="myriad-pro-bold fs-2dot5em verticalalign-35px black-text">LinkedIn Page</span>
+                </div>
+            </div>
+        </div>
+        <!-- Row 3 -->
+        <div class="textalign-left">
+            <div id="am-button" class="buttons-flex display-inlineblock main-menu-button glassbox-25 cursor-pointer borderradius-8px">
+                <div class="display-inlineblock">
+                    <img src="static/icons/am.png" class="buttons-main-icon" title="Music by Mayor Icons - Flaticon.com">
+                </div>
+                <div class="textalign-center display-inlineblock verticalalign-35px">
+                    <span class="sanfrancisco-regular fs-2dot5em black-text">#20tracks</span>
+                </div>
+            </div>
+            <div id="keybase-button" class="buttons-flex display-inlineblock main-menu-button glassbox-25 cursor-pointer borderradius-8px">
+                <div class="display-inlineblock">
+                    <img src="static/icons/keybase.svg" class="img-inverter buttons-main-icon" title="Linkedin by Rakib Hassan Rahim - Flaticon.com">
+                </div>
+                <div class="textalign-center display-inlineblock verticalalign-35px">
+                    <span class="keybase-serif fs-2dot5em black-text">Keybase</span>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- Email -->
+     <div class="textalign-center fade-in-animation margin-top-10vh" id="email-container" style="display: none;"><!-- Email Container -->
+       <!-- ~~~~ Captcha Widget ~~~~ -->
+       <div class="captcha-widget glassbox-10-blur padding-20px borderradius-8px textalign-center" id="turnstile-container">
+        <span class="fs-3em-special sanfrancisco-bold">Verifying your browser, please hold...</span>
+        <br><br>
+        <div id="turnstile-widget" class="turnstile-widget"></div>
+        <br>
+    </div>       
+        <div class="captcha-box glassbox-10-blur margin-top-10vh padding-20px borderradius-8px textalign-center" id="general-email" style="display: none;">
+            <a id="email-content" href="mailto:contact@mail.jfalava.eu">
+                <span class="latex-regular fs-3em-special">contact@mail.jfalava.eu</span>   
+            </a>
+            <img id="emailImage" src="static/icons/copy.png" width="20" height="20" class="cursor-pointer img-inverter" title="Click to Copy" style="vertical-align: 8px;">
+        </div>
+        <div class="cursor-pointer margin-top-1vh" id="email-back-button">
+            <img src="static/icons/back.png" class="buttons-main-icon back-icon" title="Back by Pixel perfect - Flaticon.com">
+        </div>
+     </div>
+    <footer></footer>
+    </body>
+    <a rel="me" href="https://todon.eu/@jfalava"></a>
+    <!-- Scripts -->
+    <script src="static/scripts/polkadot.js"></script>
+    <script src="static/scripts/turnstile/turnstile-contactinfo.js"></script>
+    <script src="static/scripts/interactions/copy-email-string.js"></script>
+    <script src="static/scripts/interactions/button-links.js"></script>
+    <script src="static/scripts/interactions/email-buttons.js"></script>       
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" async defer></script>
+</html>

@@ -1,0 +1,72 @@
+.margin-left-3percent{
+    margin-left: 3%;
+}
+
+.margin-left-15percent{
+    margin-left: 15%;
+}
+
+.margin-left-22dot5percent{
+    margin-left: 22.5%;
+}
+
+.margin-left-24dot5{
+    margin-left: 24.5%;  
+}
+
+.margin-left-24dot7{
+    margin-left: 24.7%;  
+}   
+
+@media (max-width: 723px) {
+    .margin-left-24dot7{
+        margin-left: 5%; 
+        margin-right:5%; 
+    }  
+  }
+
+@media (max-width: 1280px) {
+    .margin-left-24dot7{
+        margin-left: 20%; 
+        margin-right:20%; 
+    }  
+  }
+
+.margin-left-25percent{
+    margin-left: 25%;  
+}
+
+.margin-left-25dot5{
+    margin-left: 25.5%;  
+}
+
+.margin-left-26dot5{
+    margin-left: 26.5%;  
+}
+
+
+.margin-left-33percent{
+    margin-left: 33%;
+}
+
+
+/**/
+
+.margin-right-3percent{
+    margin-right: 3%;
+}
+
+.margin-right-15percent{
+    margin-right: 15%;
+}
+.margin-right-22dot5percent{
+    margin-right: 22.5%;
+}
+
+.margin-right-33percent{
+    margin-right: 33%;
+}
+
+.margin-right-75percent{
+    margin-right: 75%;
+}

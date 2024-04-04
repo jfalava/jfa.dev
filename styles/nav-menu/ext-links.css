@@ -1,0 +1,35 @@
+.link-box{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 10%;
+    margin-top: 2%;
+    padding: 10px;
+    transition: transform ease 0.5s;
+}
+.link-icon{
+    width: 40px;
+    height: 40px;
+}
+
+.link-icon:hover {
+    transform: scale(1.1);
+    z-index: 1;
+  }
+  
+  .link-icon:not(:hover) {
+    transform: scale(0.9);
+  }
+@media (max-width: 812px) {
+    .link-box{
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-right: 5%;
+        margin-top: 2%;
+    }
+    .link-icon{
+        width: 25px;
+        height: 25px;
+    }
+}

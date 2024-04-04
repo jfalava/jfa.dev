@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+    body{
+      background-image: radial-gradient(rgb(94, 94, 94) 6%, transparent 10%),
+            radial-gradient(rgb(94, 94, 94) 6%, transparent 10%);
+      background-size:40px 40px;
+      background-position: 0 0, 60px 60px;
+      animation-name: backgroundmovement;
+      animation-duration: 3s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      opacity: 1;
+      transition: opacity .5s ease-in-out;
+     }
+  }
+  
+  @media (prefers-color-scheme: light) {
+    body{
+      background-image: radial-gradient(white 6%, transparent 10%),
+            radial-gradient(white 6%, transparent 10%);
+      background-size:40px 40px;
+      background-position: 0 0, 60px 60px;
+      animation-name: backgroundmovement;
+      animation-duration: 3s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      opacity: 1;
+      transition: opacity .5s ease-in-out;
+     }
+  }
+
+  @keyframes backgroundmovement {
+    0% {
+  background-position: 0px 0px, 60px 60px;
+       }
+   100% {
+  background-position: 60px 60px, 120px 120px;
+  }
+}

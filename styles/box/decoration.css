@@ -1,0 +1,43 @@
+@media (prefers-color-scheme: dark) {
+    .div-underline{
+        border-bottom: 1px solid white;
+    }
+    .div-left-border{
+        border-left: 1px solid white;  
+    }
+    @media (max-width: 812px) {
+        .mobile-underline{
+            border-bottom: 1px solid white;
+        }
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .div-underline{
+        border-bottom: 1px solid black;
+    }
+    .div-left-border{
+        border-left: 1px solid black;  
+    }
+    @media (max-width: 812px) {
+        .mobile-underline{
+            border-bottom: 1px solid black;
+        }
+    }
+}
+
+.borderradius-5px{
+    border-radius: 5px;
+}
+
+.borderradius-8px{
+    border-radius: 5px;
+}
+
+.borderradius-13px{
+    border-radius: 5px;
+}
+
+.borderradius-16px{
+    border-radius: 5px;
+}

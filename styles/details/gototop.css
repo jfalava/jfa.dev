@@ -1,0 +1,7 @@
+.gototop-container{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 35vh;
+    border-radius: 5px 0 0 5px;
+}

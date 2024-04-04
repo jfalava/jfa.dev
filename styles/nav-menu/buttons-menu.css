@@ -1,0 +1,29 @@
+.main-menu-button{
+    transition: transform ease 0.3s;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.main-menu-button{
+  width: 32%;
+}
+
+@media (max-width: 1280px) {
+.main-menu-button{
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  width: auto;
+  }
+}
+
+.main-menu-button:hover {
+    transform: scale(0.9);
+    z-index: 1;
+  }
+.main-menu-button:hover span {
+  color: rgb(24, 124, 255);
+  }
+  
+.main-menu-button:not(:hover) {
+  transform: scale(1);
+}

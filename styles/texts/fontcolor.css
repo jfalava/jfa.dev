@@ -1,0 +1,22 @@
+a span {
+    color: rgb(24, 124, 255) !important;
+}
+
+a {
+    text-decoration: none;
+}
+
+a span:hover{
+    color: rgb(24, 124, 255);
+    text-decoration: underline;
+}
+@media (prefers-color-scheme: light) {
+    .black-text{
+        color: black;
+      }   
+  }
+  @media (prefers-color-scheme: dark) {
+    .black-text{
+        color: white;
+      }    
+  }

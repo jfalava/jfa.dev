@@ -1,0 +1,23 @@
+.cursor-help{
+    cursor: help;
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+.cursor-default{
+    cursor: default;
+}
+
+.cursor-forbidden{
+    cursor: not-allowed;
+}
+
+.cursor-help{
+    cursor: help;
+}
+
+.user-select-none{
+    user-select: none;
+}
