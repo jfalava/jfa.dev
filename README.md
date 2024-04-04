@@ -1,11 +1,6 @@
-# jfalava.eu
+# cv.jfa.dev
 
-Personal webpage monorepo.
+Curriculum Vitae branch.
 
-## [Landing Page (linkhub)](/linkhub)
-
-* https://jfalava.eu
-
-## [Curriculum Vitae](/cv)
-
-* https://cv.jfalava.eu
+>[!NOTE]
+>This repository uses branches to facilitate the CI/CD deployment, you may use the branch button for browsing the code.
