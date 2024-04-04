@@ -1,11 +1,15 @@
-# jfalava.eu
+# jfa.dev
 
 Personal webpage monorepo.
 
-## [Landing Page (linkhub)](/linkhub)
+>[!NOTE]
+>This repository uses branches to facilitate the CI/CD deployment, you may use the following links or use the branch button for browsing the code.
 
-* https://jfalava.eu
+## [Landing Page (linkhub branch)](https://github.com/jfalava/jfa.dev/tree/linkhub)
 
-## [Curriculum Vitae](/cv)
+* https://jfa.dev
+* https://linkhub.jfa.dev
+
+## [Curriculum Vitae (cv branch)](https://github.com/jfalava/jfa.dev/tree/cv)
 
 * https://cv.jfalava.eu
