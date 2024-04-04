@@ -1,5 +1,5 @@
   document.getElementById('cv-button').onclick = function() {
-    window.open('https://cv.jfalava.eu', '_blank');
+    window.open('https://cv.jfa.dev', '_blank');
   };
   document.getElementById('github-button').onclick = function() {
     window.open('https://github.com/jfalava', '_blank');
