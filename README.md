@@ -3,7 +3,7 @@
 Personal webpage monorepo.
 
 >[!NOTE]
->This repository uses branches to facilitate the CI/CD deployment, you may use the following links or use the branch button for browsing the code.
+>This repository uses branches to facilitate the CI/CD of the cloud provider where the pages are served; you may use the following links or use the branch button for browsing the code.
 
 ## [Landing Page (linkhub branch)](https://github.com/jfalava/jfa.dev/tree/linkhub)
 
