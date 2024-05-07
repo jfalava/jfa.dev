@@ -10,32 +10,35 @@ interface Props {
   buttonCopyIcon: string;
 }
 
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/*/*/*.{jpeg,jpg,png,gif}')
-if (!images[imagePath]) throw new Error(`"${imagePath}" does not exist in glob."`);
-
-const { buttonIcon, buttonTitle, buttonID, buttonURL } = Astro.props;
+const { buttonIcon, buttonTitle, buttonURL, buttonID, buttonCopyIcon } = Astro.props;
+//
+const iconsActions = import.meta.glob<{ default: ImageMetadata }>('/src/assets/icons/actions/*.{jpeg,jpg,png,gif,svg,avif}')
+if (!iconsActions[buttonCopyIcon]) throw new Error(`"${buttonCopyIcon}" does not exist in glob."`);
+//
+const iconsBranding = import.meta.glob<{ default: ImageMetadata }>('/src/assets/icons/branding/*.{jpeg,jpg,png,gif,svg,avif}')
+if (!iconsBranding[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob."`);
 ---
 
 <button
   id={buttonID}
   class=""
 >
-  <img src={buttonIcon}
+  <Image src={iconsBranding[buttonIcon]()}
     alt={buttonTitle}
     class="  "
   />
   <span>
     {buttonTitle}
   </span>
-    <Image src={images[imagePath]()}
+    <Image src={iconsActions[buttonCopyIcon]()}
       alt=""
       class=""
     />
 </button>
 
 <script>
+/*   document.getElementById({buttonID}).addEventListener("click", buttonURLClickHandler);
   function buttonURLClickHandler () {
-    window.open(`${buttonURL}`, '_blank');
-  }
-  document.getElementById(`${buttonID}`).addEventListener("click", buttonURLClickHandler);
+    window.open({buttonURL}, '_blank');
+  } */
 </script>
