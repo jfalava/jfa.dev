@@ -1,0 +1,41 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  buttonIcon: string;
+  buttonTitle: string;
+  buttonURL:string;
+  buttonID: string;
+  buttonCopyIcon: string;
+}
+
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/*/*/*.{jpeg,jpg,png,gif}')
+if (!images[imagePath]) throw new Error(`"${imagePath}" does not exist in glob."`);
+
+const { buttonIcon, buttonTitle, buttonID, buttonURL } = Astro.props;
+---
+
+<button
+  id={buttonID}
+  class=""
+>
+  <img src={buttonIcon}
+    alt={buttonTitle}
+    class="  "
+  />
+  <span>
+    {buttonTitle}
+  </span>
+    <Image src={images[imagePath]()}
+      alt=""
+      class=""
+    />
+</button>
+
+<script>
+  function buttonURLClickHandler () {
+    window.open(`${buttonURL}`, '_blank');
+  }
+  document.getElementById(`${buttonID}`).addEventListener("click", buttonURLClickHandler);
+</script>
