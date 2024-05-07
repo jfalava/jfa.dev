@@ -1,36 +1,32 @@
 ---
+import newWindowIcon from '/src/assets/icons/actions/new-window.svg'
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
-
+//
 interface Props {
   buttonIcon: string;
   buttonTitle: string;
   buttonURL:string;
   buttonID: string;
-  buttonCopyIcon: string;
 }
-
-const { buttonIcon, buttonTitle, buttonURL, buttonID, buttonCopyIcon } = Astro.props;
+const { buttonIcon, buttonTitle, buttonURL, buttonID } = Astro.props;
 //
-const iconsActions = import.meta.glob<{ default: ImageMetadata }>('/src/assets/icons/actions/*.{jpeg,jpg,png,gif,svg,avif}')
-if (!iconsActions[buttonCopyIcon]) throw new Error(`"${buttonCopyIcon}" does not exist in glob."`);
-//
-const iconsBranding = import.meta.glob<{ default: ImageMetadata }>('/src/assets/icons/branding/*.{jpeg,jpg,png,gif,svg,avif}')
-if (!iconsBranding[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob."`);
+const brand_icon = import.meta.glob<{ default: ImageMetadata }>('/src/assets/icons/branding/*.{png,svg}')
+if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob."`);
 ---
 
 <button
   id={buttonID}
   class=""
 >
-  <Image src={iconsBranding[buttonIcon]()}
+  <Image src={brand_icon[buttonIcon]()}
     alt={buttonTitle}
     class="  "
   />
   <span>
     {buttonTitle}
   </span>
-    <Image src={iconsActions[buttonCopyIcon]()}
+    <Image src={newWindowIcon}
       alt=""
       class=""
     />
