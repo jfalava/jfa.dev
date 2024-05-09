@@ -6,37 +6,35 @@ import { Image } from 'astro:assets';
 interface Props {
   buttonIcon: string;
   buttonTitle: string;
-  buttonURL:string;
+  buttonURL: string;
   buttonID: string;
 }
 const { buttonIcon, buttonTitle, buttonURL, buttonID } = Astro.props;
 //
 const brand_icon = import.meta.glob<{ default: ImageMetadata }>('/src/assets/icons/branding/*.{png,svg}')
-if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob."`);
+if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob.`);
 ---
 
-<button
-  id={buttonID}
-  class=""
->
-  <Image src={brand_icon[buttonIcon]()}
+<button id={buttonID} 
+  class="">
+  <Image 
+    src={brand_icon[buttonIcon]()}
     alt={buttonTitle}
-    class="  "
+    class="" 
   />
   <span>
     {buttonTitle}
   </span>
-    <Image src={newWindowIcon}
-      alt=""
-      class=""
-    />
+  <Image
+    src={newWindowIcon}
+    alt=""
+    class=""
+  />
 </button>
 
 <script>
-/*
-document.getElementById({buttonID}).addEventListener("click", buttonURLClickHandler);
-  function buttonURLClickHandler () {
-    window.open({buttonURL}, '_blank');
-  }
-*/
-</script> 
+// Use template literals to ensure buttonID and buttonURL are correctly interpreted as strings
+document.getElementById('${buttonID}').addEventListener('click', function() {
+  window.open('${buttonURL}', '_blank');
+});
+</script>

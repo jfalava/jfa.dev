@@ -1,14 +1,14 @@
 import { createSignal } from "solid-js";
 //
 
-type ButtonProps = {
+type ButtonHrefProps = {
   url: string;
   label?: string;
 };
 
 //
 
-export const ButtonHref = (props: ButtonProps) => {
+export const ButtonHref = (props: ButtonHrefProps) => {
   const [isClicked, setIsClicked] = createSignal(false);
 
   const handleClick = () => {
