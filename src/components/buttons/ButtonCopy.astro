@@ -1,20 +1,21 @@
 ---
-import newWindowIcon from '/src/assets/icons/actions/new-window.svg'
+import copyIconSVG from '/src/assets/icons/actions/svg.svg'
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 //
 interface Props {
   buttonIcon: string;
   buttonTitle: string;
-  buttonURL:string;
+  buttonCopyString:string;
   buttonID: string;
 }
-const { buttonIcon, buttonTitle, buttonURL, buttonID } = Astro.props;
+
+const { buttonIcon, buttonTitle, buttonCopyString, buttonID } = Astro.props;
 //
 const brand_icon = import.meta.glob<{ default: ImageMetadata }>('/src/assets/icons/branding/*.{png,svg}')
 if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob."`);
+//
 ---
-
 <button
   id={buttonID}
   class=""
@@ -26,15 +27,8 @@ if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in 
   <span>
     {buttonTitle}
   </span>
-    <Image src={newWindowIcon}
+    <Image src={copyIconSVG}
       alt=""
       class=""
     />
 </button>
-
-<script>
-/*   document.getElementById({buttonID}).addEventListener("click", buttonURLClickHandler);
-  function buttonURLClickHandler () {
-    window.open({buttonURL}, '_blank');
-  } */
-</script>
