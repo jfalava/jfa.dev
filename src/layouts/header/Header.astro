@@ -1,0 +1,43 @@
+---
+import HeaderIcon from "@/components/header-items/HeaderIcon.astro"
+import HeaderTitle from "@/components/header-items/HeaderTitle.astro"
+import HeaderSubTitle from "@/components/header-items/HeaderSubTitle.astro"
+//
+import ButtonHref from "@/components/buttons/ButtonHref.astro"
+---
+<header
+  class="flex"
+>
+  <div id="header-titles"
+    class="flex flex-col"
+  >
+    <div id="header-title"
+      class="inline-block"
+    >
+      <HeaderTitle
+        headerTitle="Jorge Fernando Álava"
+      />
+    </div>
+    <div id="header-subtitle"
+    >
+      <HeaderSubTitle/>
+    </div>
+    <div id="header-buttons"
+      class="mt-10"
+    >
+      <ButtonHref
+        buttonIcon="/src/assets/icons/branding/cloudflare.svg"
+        buttonTitle="Cloudflare"
+        buttonID="cloudflare-button"
+      />
+    </div>
+  </div>
+  <div id="header-icon"
+    class="inline-block"
+  >
+  <HeaderIcon
+    headerIcon="/public/pfp_work.avif"
+    headerIconAlt="PFP"
+  />
+</div>
+</header>

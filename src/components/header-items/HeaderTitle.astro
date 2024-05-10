@@ -1,0 +1,12 @@
+---
+interface Props {
+  headerTitle: string;
+}
+
+const { headerTitle } = Astro.props
+---
+<h1
+  class="dark:text-white text-4xl"
+>
+  {headerTitle}
+</h1>

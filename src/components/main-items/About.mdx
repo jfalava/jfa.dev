@@ -1,0 +1,38 @@
+import { isLocaleInList, supportedLanguages } from 'src/components/get-locale.ts';
+export default function HeaderTitle() {
+  const [translatedTitle, setTranslatedTitle] = createSignal("mdx");
+
+  if (isLocaleInList(supportedLanguages)) {
+    const userLocale = supportedLanguages[0].toLowerCase();
+    switch (userLocale) {
+      case "es-es":
+      case "es-419":
+      case "es":
+        setTranslatedTitle("spanish text");
+        break;
+      case "en-us":
+      case "en-gb":
+      case "en":
+        setTranslatedTitle("english text");
+        break;
+      default:
+        setTranslatedTitle("default text");
+    }
+  }
+}
+
+# Acerca  
+
+El teletrabajo ha caracterizado gran parte de mi experiencia laboral; requiere una disciplina y autonomía que se ha convertido en una de mis principales habilidades.  
+No importa el escenario, ya sea un proyecto a corto o largo plazo, puedo mantenerme concentrado y organizado para cumplir con éxito toda tarea asignada.  
+
+En un entorno de trabajo 24x7, he desarrollado la habilidad de estar alerta y responder adecuadamente a situaciones de alta presión. Para mí, la autorresolución es una herramienta esencial para manejar los desafíos que pueden surgir en estas condiciones.  
+
+Como operador HelpDesk, he desarrollado una capacidad sólida para atender a los usuarios y a sus necesidades específicas. Con la paciencia como bandera, puedo asegurar una atención detallada a los problemas que se me presentan, tratando de resolverlos de manera eficiente y eficaz.  
+Además, en mi experiencia en soporte, he aprendido que el trabajo en equipo es fundamental para lograr objetivos comunes. Aunque se presenten situaciones adversas, he demostrado liderazgo cuando ha sido necesario y he sabido guiar a mis compañeros hacia la resolución de problemas, y finalmente a la satisfacción del usuario y cliente.
+
+Ser técnico de IT requiere de un continuo aprendizaje sobre nuevas herramientas y tecnologías. Procuro implementar estos conocimientos en mi trabajo para crear, mejorar y estandarizar viejos y nuevos procedimientos.  
+
+Me describo como un apasionado de la tecnología.  
+Mi curiosidad e interés me han llevado a explorar otras áreas de IT como programación, DevOps y Front End. Esta mentalidad abierta y curiosa es lo que me ha permitido crecer y evolucionar como profesional.  
+Estoy siempre listo para los nuevos desafíos, buscando formas de aportar valor a cualquier equipo de trabajo.

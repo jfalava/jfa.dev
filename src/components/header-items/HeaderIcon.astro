@@ -1,0 +1,22 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+//
+interface Props {
+  headerIcon: string;
+  headerIconAlt:string;
+}
+
+const { headerIcon, headerIconAlt } = Astro.props;
+
+const header_icon = import.meta.glob<{ default: ImageMetadata }>('public/*.avif')
+if (!header_icon[headerIcon]) throw new Error(`"${headerIcon}" does not exist in glob.`);
+---
+
+<div>
+  <Image
+    src={header_icon[headerIcon]()}
+    alt={headerIconAlt}
+    class=""
+  />
+</div>
