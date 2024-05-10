@@ -1,0 +1,48 @@
+---
+// Landing Zone
+
+import '/src/styles/tailwindcss/output.css'
+
+interface Props{
+  title: string;
+  locale: string;
+  meta_description: string;
+  meta_url: string;
+}
+
+const { title, locale, meta_description, meta_url } = Astro.props;
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="canonical" href={meta_url}/>
+    <meta name="color-scheme" content="light, dark"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={meta_description}>
+    <meta name="keywords" content="jorge fernando alava, jorge alava velez">
+    <meta name="author" content="Jorge Fernando Álava">
+    <meta name="title" content={title}>
+    <link rel="apple-touch-icon" sizes="180x180" href="./src/assets/icons/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./src/assets/icons/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./src/assets/icons/favicon/favicon-16x16.png">
+    <meta property="og:title" content={title}/>
+    <meta property="og:description" content={meta_description}/>
+    <meta property="og:image" content=" "/>
+    <meta property="og:image:type" content="image/jpg"/>
+    <meta property="og:image:height" content="480"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:alt" content=" "/>
+    <meta property="og:url" content={meta_url}/>
+    <meta property="og:locale" content={locale}/>
+    <meta property="og:site_name" content={title}/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="https://criccadamus.eu/public/backgrounds/richlinks-banner.jpg"/>
+    <meta name="twitter:creator" content="@jorgefalava"/>
+    <meta name="generator" content={Astro.generator}/>
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

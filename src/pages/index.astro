@@ -1,14 +1,16 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
-import ButtonCopy from '../components/buttons/ButtonCopy.astro'
-import ButtonHref from '../components/buttons/ButtonHref.astro';
+import Meta from "@/components/Meta.astro"
+import Header from "@/layouts/header/Header.astro"
+import Main from "@/layouts/main/Main.astro"
+import Footer from "@/layouts/footer/Footer.astro"
 ---
-
-<ButtonHref
-  buttonIcon:""
-  buttonTitle""
-  buttonURL:""
-  buttonID""
-/>
-
+<Meta
+  title="Jorge Fernando Álava"
+  locale="es"
+  meta_description=""
+  meta_url="https://jfa.dev"
+>
+  <Header/>
+  <Main/>
+  <Footer/>
+</Meta>
