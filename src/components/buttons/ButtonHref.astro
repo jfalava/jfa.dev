@@ -13,23 +13,6 @@ const { buttonIcon, buttonTitle, buttonID } = Astro.props;
 //
 const brand_icon = import.meta.glob<{ default: ImageMetadata }>('src/assets/icons/branding/*.{avif,png,svg}')
 if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob.`);
-//
-function calculateHeight(width: number): number {
-
-  return (width * 685) / 1024;
-}
-
-onMount(() => {
-    const iframeElement = document.getElementById('twitch-iframe');
-    const wrapperElement = document.getElementById('twitch-container');
-
-    if (iframeElement && wrapperElement) {
-      const width = wrapperElement.offsetWidth;
-      const height = calculateHeight(width);
-      iframeElement.style.width = `${width}px`;
-      iframeElement.style.height = `${height}px`;
-    }
-  });
 ---
 
 <button id={buttonID} 

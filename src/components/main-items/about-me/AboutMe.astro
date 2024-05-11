@@ -1,0 +1,30 @@
+---
+let LocaleSpecificComponent = 'src/components/main-items/about-me/en/AboutNoLocale.mdx';
+---
+
+<script type="module">
+  async function loadLocaleSpecificComponent() {
+    console.log('Fetching user\'s locale...');
+    const response = await fetch('src/components/utils/locale/getLocaleFromHeaders'); // Ensure this points to your actual API endpoint
+    const locale = await response.text();
+    console.log(`Locale received: ${locale}`);
+
+    try {
+      console.log(`Attempting to dynamically import component for locale: ${locale}`);
+      const { default: DynamicComponent } = await import(`src/components/main-items/about-me/${locale}/About.mdx`);
+      console.log('Component imported successfully');
+
+      // Assuming you have a way to render this component, like appending it to the DOM or using a framework-specific method
+    } catch (error) {
+      console.error('Error importing component:', error);
+    }
+  }
+
+  loadLocaleSpecificComponent();
+</script>
+
+<div id="dynamic-component-container">
+</div>
+
+
+
