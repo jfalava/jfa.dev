@@ -7,8 +7,7 @@ Personal webpage monorepo.
 
 ## [Landing Page (linkhub branch)](https://github.com/jfalava/jfa.dev/tree/linkhub)
 
-* https://jfa.dev
-* https://linkhub.jfa.dev
+* https://links.jfa.dev
 
 ## [Curriculum Vitae (cv branch)](https://github.com/jfalava/jfa.dev/tree/cv)
 
