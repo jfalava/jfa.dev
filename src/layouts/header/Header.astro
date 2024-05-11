@@ -6,7 +6,7 @@ import HeaderSubTitle from "@/components/header-items/HeaderSubTitle.astro"
 import ButtonHref from "@/components/buttons/ButtonHref.astro"
 ---
 <header
-  class="flex"
+  class="flex max-w-[50vw] mx-auto mt-[10vh]"
 >
   <div id="header-titles"
     class="flex flex-col"
@@ -23,12 +23,32 @@ import ButtonHref from "@/components/buttons/ButtonHref.astro"
       <HeaderSubTitle/>
     </div>
     <div id="header-buttons"
-      class="mt-10"
+      class="mt-10 flex gap-3"
     >
       <ButtonHref
-        buttonIcon="/src/assets/icons/branding/cloudflare.svg"
-        buttonTitle="Cloudflare"
-        buttonID="cloudflare-button"
+        buttonIcon="/src/assets/icons/branding/email.svg"
+        buttonTitle=""
+        buttonID="linkedin-button"
+      />
+      <ButtonHref
+        buttonIcon="/src/assets/icons/branding/linkedin.svg"
+        buttonTitle=""
+        buttonID="linkedin-button"
+      />
+      <ButtonHref
+        buttonIcon="/src/assets/icons/branding/github.svg"
+        buttonTitle=""
+        buttonID="linkedin-button"
+      />
+      <ButtonHref
+        buttonIcon="/src/assets/icons/branding/apple_music.svg"
+        buttonTitle=""
+        buttonID="linkedin-button"
+      />
+      <ButtonHref
+        buttonIcon="/src/assets/icons/branding/key-file.svg"
+        buttonTitle=""
+        buttonID="linkedin-button"
       />
     </div>
   </div>

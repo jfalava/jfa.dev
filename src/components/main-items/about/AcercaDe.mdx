@@ -1,27 +1,4 @@
-import { isLocaleInList, supportedLanguages } from 'src/components/get-locale.ts';
-export default function HeaderTitle() {
-  const [translatedTitle, setTranslatedTitle] = createSignal("mdx");
-
-  if (isLocaleInList(supportedLanguages)) {
-    const userLocale = supportedLanguages[0].toLowerCase();
-    switch (userLocale) {
-      case "es-es":
-      case "es-419":
-      case "es":
-        setTranslatedTitle("spanish text");
-        break;
-      case "en-us":
-      case "en-gb":
-      case "en":
-        setTranslatedTitle("english text");
-        break;
-      default:
-        setTranslatedTitle("default text");
-    }
-  }
-}
-
-# Acerca  
+# Acerca de  
 
 El teletrabajo ha caracterizado gran parte de mi experiencia laboral; requiere una disciplina y autonomía que se ha convertido en una de mis principales habilidades.  
 No importa el escenario, ya sea un proyecto a corto o largo plazo, puedo mantenerme concentrado y organizado para cumplir con éxito toda tarea asignada.  

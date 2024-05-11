@@ -11,7 +11,7 @@ interface Props {
 }
 const { buttonIcon, buttonTitle, buttonID } = Astro.props;
 //
-const brand_icon = import.meta.glob<{ default: ImageMetadata }>('src/assets/icons/branding/*.{png,svg}')
+const brand_icon = import.meta.glob<{ default: ImageMetadata }>('src/assets/icons/branding/*.{avif,png,svg}')
 if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob.`);
 //
 function calculateHeight(width: number): number {
@@ -33,28 +33,27 @@ onMount(() => {
 ---
 
 <button id={buttonID} 
-  class="">
+  class="p-3 border border-transparent border-solid active:border active:border-solid active:border-white hover:border hover:border-solid hover:border-white">
 
   <div class="flex">
     <Image
       src={brand_icon[buttonIcon]()}
       alt={buttonTitle}
-      class="w-10 inline-block h-auto mr-3"
+      class="w-10 inline-block h-auto mr-3 dark:invert"
     />
     <div
       class="inline-block"
     >
-      <span
-        class="text-2xl dark:text-white mr-3"
-      >
-        {buttonTitle}
-      </span>
     </div>
-    <Image
-      src={newWindowIcon}
-      alt=""
-      class="w-6 inline-block h-auto dark:invert"
-    />
+    <div
+      class="align-[30px]"
+    >
+      <Image
+        src={newWindowIcon}
+        alt=""
+        class="w-4 inline-block h-auto dark:invert"
+      />
+    </div>
   </div>
 </button>
 
