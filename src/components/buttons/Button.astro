@@ -1,18 +1,20 @@
 ---
-import newWindowIcon from 'src/assets/icons/actions/new-window.svg'
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
-import { onMount } from 'solid-js';
 //
 interface Props {
   buttonIcon: string;
   buttonTitle: string;
   buttonID: string;
+  newWindowIcon: string;
 }
-const { buttonIcon, buttonTitle, buttonID } = Astro.props;
+const { buttonIcon, buttonTitle, buttonID, newWindowIcon } = Astro.props;
 //
 const brand_icon = import.meta.glob<{ default: ImageMetadata }>('src/assets/icons/branding/*.{avif,png,svg}')
 if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in glob.`);
+
+const action_icon = import.meta.glob<{ default: ImageMetadata }>('src/assets/icons/actions/*.{avif,png,svg}')
+if (!action_icon[newWindowIcon]) throw new Error(`"${newWindowIcon}" does not exist in glob.`);
 ---
 
 <button id={buttonID} 
@@ -35,7 +37,7 @@ if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in 
       class="align-[30px]"
     >
       <Image
-        src={newWindowIcon}
+        src={action_icon[newWindowIcon]()}
         alt=""
         class="w-4 inline-block h-auto dark:invert"
       />

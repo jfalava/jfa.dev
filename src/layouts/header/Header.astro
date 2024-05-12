@@ -3,7 +3,7 @@ import HeaderIcon from "@/components/header-items/HeaderIcon.astro"
 import HeaderTitle from "@/components/header-items/HeaderTitle.astro"
 import HeaderSubTitle from "@/components/header-items/HeaderSubTitle.astro"
 //
-import ButtonHref from "@/components/buttons/ButtonHref.astro"
+import Button from "@/components/buttons/Button.astro"
 ---
 <header
   class="flex max-w-[50vw] mx-auto mt-[10vh]"
@@ -26,30 +26,35 @@ import ButtonHref from "@/components/buttons/ButtonHref.astro"
     <div id="header-buttons"
       class="mt-10 flex gap-3"
     >
-      <ButtonHref
-        buttonIcon="/src/assets/icons/branding/email.svg"
+      <Button
+        buttonIcon="@/assets/icons/branding/email.svg"
         buttonTitle=""
         buttonID="linkedin-button"
+        newWindowIcon="@/assets/icons/actions/new-window.svg"
       />
-      <ButtonHref
-        buttonIcon="/src/assets/icons/branding/linkedin.svg"
+      <Button
+        buttonIcon="@/assets/icons/branding/linkedin.svg"
         buttonTitle=""
         buttonID="linkedin-button"
+        newWindowIcon="@/assets/icons/actions/new-window.svg"
       />
-      <ButtonHref
-        buttonIcon="/src/assets/icons/branding/github.svg"
+      <Button
+        buttonIcon="@/assets/icons/branding/github.svg"
         buttonTitle=""
         buttonID="linkedin-button"
+        newWindowIcon="@/assets/icons/actions/new-window.svg"
       />
-      <ButtonHref
-        buttonIcon="/src/assets/icons/branding/apple_music.svg"
+      <Button
+        buttonIcon="@/assets/icons/branding/apple_music.svg"
         buttonTitle=""
         buttonID="linkedin-button"
+        newWindowIcon="@/assets/icons/actions/new-window.svg"
       />
-      <ButtonHref
-        buttonIcon="/src/assets/icons/branding/key-file.svg"
+      <Button
+        buttonIcon="@/assets/icons/branding/key-file.svg"
         buttonTitle=""
         buttonID="linkedin-button"
+        newWindowIcon="@/assets/icons/actions/new-window.svg"
       />
     </div>
   </div>
