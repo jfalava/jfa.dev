@@ -16,7 +16,10 @@ if (!brand_icon[buttonIcon]) throw new Error(`"${buttonIcon}" does not exist in 
 ---
 
 <button id={buttonID} 
-  class="p-3 border border-transparent border-solid active:border active:border-solid active:border-white hover:border hover:border-solid hover:border-white">
+  class="p-3 border border-transparent border-solid hover:border-black
+  active:border active:border-solid dark:active:border-white
+  hover:border hover:border-solid dark:hover:border-white
+  ">
 
   <div class="flex">
     <Image
