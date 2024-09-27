@@ -1,0 +1,16 @@
+{
+  "name": "jfa-dev-monorepo",
+  "version": "0.1",
+  "private": true,
+  "workspaces": [
+    "landing-page"
+  ],
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-astro": "^0.14.1"
+  },
+  "scripts": {
+    "dev:astro": "npm run dev --workspace=landing-page",
+    "build:astro": "npm run build --workspace=landing-page"
+  }
+}

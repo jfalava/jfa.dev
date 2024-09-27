@@ -1,0 +1,97 @@
+/* Regular weight (normal) */
+.dm-regular-normal {
+  font-family: "dm", monospace;
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Regular weight (italic) */
+.dm-regular-italic {
+  font-family: "dm", monospace;
+  font-weight: normal;
+  font-style: italic;
+}
+
+/* Bold weight (normal) */
+.dm-bold-normal {
+  font-family: "dm", monospace;
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Bold weight (italic) */
+.dm-bold-italic {
+  font-family: "dm", monospace;
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* Light weight (normal) */
+.dm-light-normal {
+  font-family: "dm", monospace;
+  font-weight: 300; /* Light weight */
+  font-style: normal;
+}
+
+/* Light weight (italic) */
+.dm-light-italic {
+  font-family: "dm", monospace;
+  font-weight: 300; /* Light weight */
+  font-style: italic;
+}
+
+/* Medium weight (normal) */
+.dm-medium-normal {
+  font-family: "dm", monospace;
+  font-weight: 500; /* Medium weight */
+  font-style: normal;
+}
+
+/* Medium weight (italic) */
+.dm-medium-italic {
+  font-family: "dm", monospace;
+  font-weight: 500; /* Medium weight */
+  font-style: italic;
+}
+
+/* Semi-bold weight (normal) */
+.dm-semi-bold-normal {
+  font-family: "dm", monospace;
+  font-weight: 600; /* Semi-bold weight */
+  font-style: normal;
+}
+
+/* Semi-bold weight (italic) */
+.dm-semi-bold-italic {
+  font-family: "dm", monospace;
+  font-weight: 600; /* Semi-bold weight */
+  font-style: italic;
+}
+
+/* Extra-bold weight (normal) */
+.dm-extra-bold-normal {
+  font-family: "dm", monospace;
+  font-weight: 800; /* Extra-bold weight */
+  font-style: normal;
+}
+
+/* Extra-bold weight (italic) */
+.dm-extra-bold-italic {
+  font-family: "dm", monospace;
+  font-weight: 800; /* Extra-bold weight */
+  font-style: italic;
+}
+
+/* Black weight (normal) */
+.dm-black-normal {
+  font-family: "dm", monospace;
+  font-weight: 900; /* Black weight */
+  font-style: normal;
+}
+
+/* Black weight (italic) */
+.dm-black-italic {
+  font-family: "dm", monospace;
+  font-weight: 900; /* Black weight */
+  font-style: italic;
+}

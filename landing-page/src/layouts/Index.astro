@@ -1,0 +1,39 @@
+---
+import MasterLayout from "@/layouts/Master.astro";
+interface Props {
+  locale: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  metaImageURL: string;
+  metaImageFormat: string;
+  metaImageWidth: string;
+  metaImageHeight: string;
+  metaImageAlt: string;
+}
+const {
+  locale,
+  metaTitle,
+  metaDescription,
+  metaKeywords,
+  metaImageURL,
+  metaImageFormat,
+  metaImageWidth,
+  metaImageHeight,
+  metaImageAlt,
+} = Astro.props as Props;
+---
+
+<MasterLayout
+  locale={locale}
+  metaTitle={metaTitle}
+  metaDescription={metaDescription}
+  metaKeywords={metaKeywords}
+  metaImageURL={metaImageURL}
+  metaImageFormat={metaImageFormat}
+  metaImageWidth={metaImageWidth}
+  metaImageHeight={metaImageHeight}
+  metaImageAlt={metaImageAlt}
+>
+  <slot />
+</MasterLayout>
