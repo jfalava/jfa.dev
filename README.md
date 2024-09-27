@@ -1,3 +1,3 @@
-# jfa.dev
+# jfa.dev monorepo
 
-Personal webpage collection.
+Personal webpage and services monorepo

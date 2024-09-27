@@ -3,7 +3,8 @@
   "version": "0.1",
   "private": true,
   "workspaces": [
-    "landing-page"
+    "landing-page",
+    "api/redirect"
   ],
   "devDependencies": {
     "prettier": "^3.3.3",
@@ -11,6 +12,10 @@
   },
   "scripts": {
     "dev:astro": "npm run dev --workspace=landing-page",
-    "build:astro": "npm run build --workspace=landing-page"
+    "build:astro": "npm run build --workspace=landing-page",
+    "deploy:redirect": "npm run deploy --workspace=api/redirect"
+  },
+  "dependencies": {
+    "wrangler": "^3.78.12"
   }
 }
