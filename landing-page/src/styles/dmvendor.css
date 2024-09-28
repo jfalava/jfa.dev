@@ -9,6 +9,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+0000-007F;
   src:
     local("☺"),
@@ -19,6 +20,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+0080-1AFF;
   src:
     local("☺"),
@@ -29,6 +31,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+1B00-218F;
   src:
     local("☺"),
@@ -39,6 +42,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+2190-21FF;
   src:
     local("☺"),
@@ -49,6 +53,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+F8FF-10FFFF;
   src:
     local("☺"),
@@ -59,6 +64,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: italic;
+  font-swap: swap;
   unicode-range: U+0000-007F;
   src:
     local("☺"),
@@ -69,6 +75,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: italic;
+  font-swap: swap;
   unicode-range: U+0080-1AFF;
   src:
     local("☺"),
@@ -79,6 +86,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: italic;
+  font-swap: swap;
   unicode-range: U+1B00-218F;
   src:
     local("☺"),
@@ -89,6 +97,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: italic;
+  font-swap: swap;
   unicode-range: U+2190-21FF;
   src:
     local("☺"),
@@ -99,6 +108,7 @@
   font-family: "dm";
   font-weight: normal;
   font-style: italic;
+  font-swap: swap;
   unicode-range: U+F8FF-10FFFF;
   src:
     local("☺"),
@@ -109,6 +119,7 @@
   font-family: "dm";
   font-weight: bold;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+0000-007F;
   src:
     local("☺"),
@@ -119,6 +130,7 @@
   font-family: "dm";
   font-weight: bold;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+0080-1AFF;
   src:
     local("☺"),
@@ -129,6 +141,7 @@
   font-family: "dm";
   font-weight: bold;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+1B00-218F;
   src:
     local("☺"),
@@ -139,6 +152,7 @@
   font-family: "dm";
   font-weight: bold;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+2190-21FF;
   src:
     local("☺"),
@@ -149,6 +163,7 @@
   font-family: "dm";
   font-weight: bold;
   font-style: normal;
+  font-swap: swap;
   unicode-range: U+F8FF-10FFFF;
   src:
     local("☺"),
