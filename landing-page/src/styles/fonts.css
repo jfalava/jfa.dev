@@ -1,19 +1,19 @@
 /**/
 /* Dank Mono*/
 /**/
-.bold-italic {
+.dm-regular {
   font-family: "dm", monospace;
-  font-weight: bold;
-  font-style: italic;
+  font-weight: normal;
+  font-style: normal;
 }
-.regular-italic {
+.italic {
   font-family: "dm", monospace;
   font-weight: normal;
   font-style: italic;
 }
-.light-italic {
+.bold-italic {
   font-family: "dm", monospace;
-  font-weight: 100;
+  font-weight: bold;
   font-style: italic;
 }
 /**/
@@ -25,20 +25,25 @@
   font-display: swap;
 }
 /**/
-.bold {
-  font-family: "geist", monospace;
-  font-weight: bold;
-  font-style: normal;
-}
 .regular {
   font-family: "geist", monospace;
   font-weight: normal;
+  font-style: normal;
+}
+.bold {
+  font-family: "geist", monospace;
+  font-weight: bold;
   font-style: normal;
 }
 .light {
   font-family: "geist", monospace;
   font-weight: 100;
   font-style: normal;
+}
+.light-italic {
+  font-family: "geist", monospace;
+  font-weight: 100;
+  font-style: italic;
 }
 /**/
 /* JetBrains Mono */

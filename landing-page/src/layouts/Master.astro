@@ -1,8 +1,9 @@
 ---
-// Reusables
+// Styles
 import "@/styles/global.css";
 import "@/styles/dmvendor.css";
 import "@/styles/fonts.css";
+import "@/styles/bg.css";
 // Components
 /// Footer
 import Footer from "@/components/footer/Footer.astro";
@@ -73,9 +74,10 @@ const {
     <main
       class="flex-grow ultrawide-only:w-[50%] ultrawide-only:ml-[25%]
         w-[75%] ml-[12.5%]
-        mobile-only:w-[90%] mobile-only:ml-[5%]"
+        mobile-only:w-[90%] mobile-only:ml-[5%] z-0"
     >
       <slot />
     </main>
+    <Footer />
   </body>
 </html>

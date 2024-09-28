@@ -1,12 +1,60 @@
 ---
-
+import IA from "@/components/reusables/anchors/SimpleInternalAnchor.astro";
+import A from "@/components/reusables/anchors/SimpleExternalAnchor";
+// Timestamps
+import GetCurrentYear from "@/components/reusables/date/GetCurrentYear";
+// GitHub repo commits
+import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
 ---
 
-<footer
-  class="h-max select-none
-    w-[75%] ml-[12.5%]
+<footer class="bg-[#0e43a8]
+    h-max select-none z-1">
+  <div
+    class="flex justify-between items-center w-[75%] ml-[12.5%]
     mobile-only:w-[90%] mobile-only:ml-[5%]
-    ultrawide-only:w-[50%] ultrawide-only:ml-[25%]
-    mb-[2%]"
->
+    ultrawide-only:w-[50%] ultrawide-only:ml-[25%] mobile-only:mb-[5%] mb-[2%] mobile-only:mt-[5%] mt-[2%] bg-noise"
+  >
+    <div
+      class="not-mobile:flex not-mobile:justify-start gap-x-6 mobile-only:grid mobile-only:grid-cols-2 mobile-only:gap-y-3"
+    >
+      <div class="grid grid-cols-1 gap-2">
+        <p class="bold text-lg">Socials</p>
+        <p class="italic mobile-only:text-sm">Tuister</p>
+        <p class="italic mobile-only:text-sm">Elefante</p>
+      </div>
+      <div class="grid grid-cols-1 gap-2">
+        <p class="bold text-lg">Web releases</p>
+        <div class="flex items-center italic mobile-only:text-sm">
+          <p class="">Main:&nbsp;</p>
+          <LastCommit b="main" client:load />
+        </div>
+        <div class="flex items-center italic mobile-only:text-sm">
+          <p class="">Dev:&nbsp;</p>
+          <LastCommit b="dev" client:load />
+        </div>
+      </div>
+      <div class="grid grid-cols-1 gap-2">
+        <p class="bold text-lg">Contact</p>
+        <p class="italic mobile-only:text-sm">Contact me</p>
+        <p class="italic mobile-only:text-sm">PGP</p>
+      </div>
+      <div class="grid grid-cols-1 gap-2">
+        <p class="bold text-lg">Other links</p>
+        <p class="italic mobile-only:text-sm">Site Map</p>
+        <p class="italic mobile-only:text-sm">Acknowledgements</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <p class="inline-block bold text-lg">&copy;&nbsp;</p>
+      <p class="inline-block bold text-lg mobile-only:hidden">
+        Jorge Fernando Álava,
+      </p>
+      <p
+        class="inline-block bold text-lg mobile-only:text-base not-mobile:hidden"
+      >
+        JFA,
+      </p>
+      <GetCurrentYear />
+    </div>
+  </div>
 </footer>
