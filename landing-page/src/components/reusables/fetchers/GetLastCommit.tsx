@@ -101,12 +101,12 @@ const LastCommit: React.FC<LastCommitProps> = ({ b, token }) => {
       {commitLink ? (
         <A
           h={commitLink.match(/\((.*?)\)/)?.[1] || "#"}
-          className="jb-italic-regular mobile-only:text-sm"
+          className="flex items-center"
         >
           {commitLink.match(/\[(.*?)\]/)?.[1] || "Commit"}
         </A>
       ) : (
-        <p>No commit found</p>
+        <p className="italic mobile-only:text-sm">No commit found</p>
       )}
     </div>
   );
