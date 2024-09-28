@@ -96,13 +96,13 @@ const LastCommit: React.FC<LastCommitProps> = ({ b, token }) => {
   }
 
   return (
-    <div>
+    <div className="items-center contents">
       {commitLink ? (
         <a
           href={commitLink.match(/\((.*?)\)/)?.[1] || "#"}
           target="_blank"
           rel="noopener noreferrer"
-          className="bold"
+          className="bold mobile-only:text-sm"
         >
           {commitLink.match(/\[(.*?)\]/)?.[1] || "Commit"}
         </a>
