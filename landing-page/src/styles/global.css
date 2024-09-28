@@ -750,6 +750,10 @@ video {
   color: rgb(24 26 27 / var(--tw-text-opacity));
 }
 
+.underline {
+  text-decoration-line: underline;
+}
+
 @media (min-width: 1920px) {
   .ultrawide-only\:ml-\[25\%\] {
     margin-left: 25%;

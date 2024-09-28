@@ -89,24 +89,17 @@ const LastCommit: React.FC<LastCommitProps> = ({ b, token }) => {
   }
 
   if (error) {
-    return (
-      <div className="flex items-center">
-        <p className="mobile-only:text-sm bold">Error: {error}</p>
-      </div>
-    );
+    return <p>Error: {error}</p>;
   }
 
   return (
     <div className="items-center contents">
       {commitLink ? (
-        <A
-          h={commitLink.match(/\((.*?)\)/)?.[1] || "#"}
-          className="flex items-center"
-        >
+        <A className="underline" h={commitLink.match(/\((.*?)\)/)?.[1] || "#"}>
           {commitLink.match(/\[(.*?)\]/)?.[1] || "Commit"}
         </A>
       ) : (
-        <p className="italic mobile-only:text-sm">No commit found</p>
+        <p>No commit found</p>
       )}
     </div>
   );
