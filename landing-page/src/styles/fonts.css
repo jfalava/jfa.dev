@@ -80,3 +80,100 @@
   font-weight: lighter;
   font-style: italic;
 }
+/**/
+/* JetBrains Mono */
+/**/
+@font-face {
+  font-family: "jetbrains";
+  src: url("/fonts/jetbrains-mono.ttf") format("truetype");
+  font-display: swap;
+}
+/**/
+.jetbrains-800-normal {
+  font-family: "jetbrains", monospace;
+  font-weight: 900;
+  font-style: normal;
+}
+.jetbrains-800-italic {
+  font-family: "jetbrains", monospace;
+  font-weight: 900;
+  font-style: italic;
+}
+.jetbrains-600-normal {
+  font-family: "jetbrains", monospace;
+  font-weight: 600;
+  font-style: normal;
+}
+.jetbrains-600-italic {
+  font-family: "jetbrains", monospace;
+  font-weight: 600;
+  font-style: italic;
+}
+.jetbrains-light-normal {
+  font-family: "jetbrains", monospace;
+  font-weight: 300;
+  font-style: normal;
+}
+.jetbrains-light-italic {
+  font-family: "jetbrains", monospace;
+  font-weight: 300;
+  font-style: italic;
+}
+.jetbrains-ultralight-normal {
+  font-family: "jetbrains", monospace;
+  font-weight: lighter;
+  font-style: normal;
+}
+.jetbrains-ultralight-italic {
+  font-family: "jetbrains", monospace;
+  font-weight: lighter;
+  font-style: italic;
+}
+/* Iosevka Slab */
+/**/
+@font-face {
+  font-family: "iosevka";
+  src: url("/fonts/iosevka-slab.ttc");
+  font-display: swap;
+}
+/**/
+.iosevka-800-normal {
+  font-family: "iosevka", monospace;
+  font-weight: 900;
+  font-style: normal;
+}
+.iosevka-800-italic {
+  font-family: "iosevka", monospace;
+  font-weight: 900;
+  font-style: italic;
+}
+.iosevka-600-normal {
+  font-family: "iosevka", monospace;
+  font-weight: 600;
+  font-style: normal;
+}
+.iosevka-600-italic {
+  font-family: "iosevka", monospace;
+  font-weight: 600;
+  font-style: italic;
+}
+.iosevka-light-normal {
+  font-family: "iosevka", monospace;
+  font-weight: 300;
+  font-style: normal;
+}
+.iosevka-light-italic {
+  font-family: "iosevka", monospace;
+  font-weight: 300;
+  font-style: italic;
+}
+.iosevka-ultralight-normal {
+  font-family: "iosevka", monospace;
+  font-weight: lighter;
+  font-style: normal;
+}
+.iosevka-ultralight-italic {
+  font-family: "iosevka", monospace;
+  font-weight: lighter;
+  font-style: italic;
+}
