@@ -70,6 +70,12 @@ const {
   <body
     class="flex flex-col w-full min-h-[100dvh] bg-[#efefef] text-[#181a1b] dark:bg-[#181a1b] dark:text-[#efefef]"
   >
-    <slot />
+    <main
+      class="flex-grow ultrawide-only:w-[50%] ultrawide-only:ml-[25%]
+        w-[75%] ml-[12.5%]
+        mobile-only:w-[90%] mobile-only:ml-[5%]"
+    >
+      <slot />
+    </main>
   </body>
 </html>
