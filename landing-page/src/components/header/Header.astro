@@ -1,0 +1,14 @@
+---
+import { Image } from "astro:assets";
+import PFP from "/public/images/seidor_pfp.avif";
+---
+
+<header class="flex justify-evenly items-center mt-2">
+  <div class="grid grid-cols-1 justify-start items-center">
+    <h1 class="bold">Jorge Fernando Álava</h1>
+    <p class="italic">aqui iria lo que hago</p>
+  </div>
+  <div class="rounded-lg glassbox p-2">
+    <Image src={PFP} alt="PFP" width="150" class="rounded-md" />
+  </div>
+</header>
