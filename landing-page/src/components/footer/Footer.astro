@@ -7,7 +7,7 @@ import GetCurrentYear from "@/components/reusables/date/GetCurrentYear";
 import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
 ---
 
-<footer class="bg-[#0e43a8]
+<footer class="bg-[#4c69f9]
     h-max select-none z-1">
   <div
     class="flex justify-between items-center w-[75%] ml-[12.5%]
@@ -24,12 +24,12 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
       </div>
       <div class="grid grid-cols-1 gap-2">
         <p class="bold text-lg">Web releases</p>
-        <div class="flex items-center italic mobile-only:text-sm">
-          <p class="">Main:&nbsp;</p>
+        <div class="flex items-center">
+          <p class="italic mobile-only:text-sm">Main:&nbsp;</p>
           <LastCommit b="main" client:load />
         </div>
-        <div class="flex items-center italic mobile-only:text-sm">
-          <p class="">Dev:&nbsp;</p>
+        <div class="flex items-center">
+          <p class="italic mobile-only:text-sm">Dev:&nbsp;</p>
           <LastCommit b="dev" client:load />
         </div>
       </div>
