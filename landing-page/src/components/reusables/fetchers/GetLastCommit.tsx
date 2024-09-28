@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import A from "@/components/reusables/anchors/SimpleExternalAnchor";
 interface LastCommitProps {
   b: string;
   token?: string;
@@ -98,14 +99,12 @@ const LastCommit: React.FC<LastCommitProps> = ({ b, token }) => {
   return (
     <div className="items-center contents">
       {commitLink ? (
-        <a
-          href={commitLink.match(/\((.*?)\)/)?.[1] || "#"}
-          target="_blank"
-          rel="noopener noreferrer"
+        <A
+          h={commitLink.match(/\((.*?)\)/)?.[1] || "#"}
           className="jb-italic-regular mobile-only:text-sm"
         >
-          {commitLink.match(/\[(.*?)\]/)?.[1] || "Commit"}↗
-        </a>
+          {commitLink.match(/\[(.*?)\]/)?.[1] || "Commit"}
+        </A>
       ) : (
         <p>No commit found</p>
       )}
