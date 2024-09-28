@@ -11,7 +11,7 @@
     "prettier-plugin-astro": "^0.14.1"
   },
   "scripts": {
-    "dev:astro": "npm run dev --workspace=landing-page",
+    "dev:astro": "npm run dev --host --workspace=landing-page",
     "build:astro": "npm run build --workspace=landing-page",
     "deploy:redirect": "npm run deploy --workspace=api/redirect"
   },

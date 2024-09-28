@@ -15,13 +15,13 @@ export default defineConfig({
     sitemap(),
     react(),
     robots({
-      host: "example.dev",
-      sitemap: ["https://example.dev/sitemap-index.xml"],
+      host: "jfa.dev",
+      sitemap: ["https://jfa.dev/sitemap-index.xml"],
       policy: [
         {
           userAgent: "*",
           allow: "/",
-          disallow: ["/contact", "/*/contact"],
+          disallow: "none",
           crawlDelay: 10,
         },
       ],
@@ -31,7 +31,7 @@ export default defineConfig({
     defaultLocale: "es",
     locales: ["es", "en"],
   },
-  site: "https://example.dev",
+  site: "https://jfa.dev",
   output: "static",
   prefetch: {
     defaultStrategy: "tap",

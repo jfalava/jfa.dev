@@ -1,5 +1,7 @@
 ---
 import MasterLayout from "@/layouts/Master.astro";
+
+//
 interface Props {
   locale: string;
   metaTitle: string;
@@ -35,5 +37,24 @@ const {
   metaImageHeight={metaImageHeight}
   metaImageAlt={metaImageAlt}
 >
-  <slot />
+  <article>
+    <h2 class="bold">about</h2>
+    <p class="regular">aquí irá un componente de `md`</p>
+  </article>
+  <article>
+    <h2 class="bold">current projects</h2>
+    <p class="regular">aquí irán bentos con los proyectos</p>
+  </article>
+  <article>
+    <h2 class="bold">skills</h2>
+    <p class="regular">aquí irá un componente de `md`</p>
+  </article>
+  <article>
+    <h2 class="bold">work exp</h2>
+    <p class="regular">aquí irá un componente de `md`</p>
+  </article>
+  <article>
+    <h2 class="bold">education</h2>
+    <p class="regular">aquí irá un componente de `mdx`</p>
+  </article>
 </MasterLayout>

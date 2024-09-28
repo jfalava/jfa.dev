@@ -1,0 +1,22 @@
+---
+// Simple Internal Anchor
+interface Props {
+  h: string;
+  id?: string;
+  t: string;
+  c?: string;
+}
+
+const { h, id, t, c } = Astro.props as Props;
+---
+
+<a
+  id={id}
+  href={h}
+  class={c}
+  title={t}
+  aria-label={t}
+  data-astro-prefetch="hover"
+>
+  <slot name="simple-anchor-content" />
+</a>
