@@ -1,34 +1,19 @@
 /**/
 /* Dank Mono*/
 /**/
-.dm-800-normal {
+.bold-italic {
   font-family: "dm", monospace;
-  font-weight: 900;
-  font-style: normal;
-}
-.dm-800-italic {
-  font-family: "dm", monospace;
-  font-weight: 900;
+  font-weight: bold;
   font-style: italic;
 }
-.dm-600-normal {
+.regular-italic {
   font-family: "dm", monospace;
-  font-weight: 600;
-  font-style: normal;
-}
-.dm-600-italic {
-  font-family: "dm", monospace;
-  font-weight: 600;
+  font-weight: normal;
   font-style: italic;
 }
-.dm-light-normal {
+.light-italic {
   font-family: "dm", monospace;
-  font-weight: 300;
-  font-style: normal;
-}
-.dm-light-italic {
-  font-family: "dm", monospace;
-  font-weight: 300;
+  font-weight: 100;
   font-style: italic;
 }
 /**/
@@ -40,45 +25,20 @@
   font-display: swap;
 }
 /**/
-.geist-800-normal {
+.bold {
   font-family: "geist", monospace;
-  font-weight: 900;
+  font-weight: bold;
   font-style: normal;
 }
-.geist-800-italic {
+.regular {
   font-family: "geist", monospace;
-  font-weight: 900;
-  font-style: italic;
-}
-.geist-600-normal {
-  font-family: "geist", monospace;
-  font-weight: 600;
+  font-weight: normal;
   font-style: normal;
 }
-.geist-600-italic {
+.light {
   font-family: "geist", monospace;
-  font-weight: 600;
-  font-style: italic;
-}
-.geist-light-normal {
-  font-family: "geist", monospace;
-  font-weight: 300;
+  font-weight: 100;
   font-style: normal;
-}
-.geist-light-italic {
-  font-family: "geist", monospace;
-  font-weight: 300;
-  font-style: italic;
-}
-.geist-ultralight-normal {
-  font-family: "geist", monospace;
-  font-weight: lighter;
-  font-style: normal;
-}
-.geist-ultralight-italic {
-  font-family: "geist", monospace;
-  font-weight: lighter;
-  font-style: italic;
 }
 /**/
 /* JetBrains Mono */
@@ -89,43 +49,33 @@
   font-display: swap;
 }
 /**/
-.jetbrains-800-normal {
+.jb-bold {
   font-family: "jetbrains", monospace;
-  font-weight: 900;
+  font-weight: bold;
   font-style: normal;
 }
-.jetbrains-800-italic {
+.jb-regular {
   font-family: "jetbrains", monospace;
-  font-weight: 900;
+  font-weight: normal;
+  font-style: normal;
+}
+.jb-light {
+  font-family: "jetbrains", monospace;
+  font-weight: 100;
+  font-style: normal;
+}
+.jb-italic-bold {
+  font-family: "jetbrains", monospace;
+  font-weight: bold;
   font-style: italic;
 }
-.jetbrains-600-normal {
+.jb-italic-regular {
   font-family: "jetbrains", monospace;
-  font-weight: 600;
-  font-style: normal;
-}
-.jetbrains-600-italic {
-  font-family: "jetbrains", monospace;
-  font-weight: 600;
+  font-weight: normal;
   font-style: italic;
 }
-.jetbrains-light-normal {
+.jb-italic-light {
   font-family: "jetbrains", monospace;
-  font-weight: 300;
-  font-style: normal;
-}
-.jetbrains-light-italic {
-  font-family: "jetbrains", monospace;
-  font-weight: 300;
-  font-style: italic;
-}
-.jetbrains-ultralight-normal {
-  font-family: "jetbrains", monospace;
-  font-weight: lighter;
-  font-style: normal;
-}
-.jetbrains-ultralight-italic {
-  font-family: "jetbrains", monospace;
-  font-weight: lighter;
+  font-weight: 100;
   font-style: italic;
 }
