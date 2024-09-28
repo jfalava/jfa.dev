@@ -13,10 +13,19 @@ svg {
 summary {
   transition: color 0.2s ease-in-out;
 }
-
 a:hover {
-  color: #9e38fd;
   transition: color 0.2s ease-in-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  a:hover {
+    color: #000000;
+  }
+}
+@media (prefers-color-scheme: light) {
+  a:hover {
+    color: #ffffff;
+  }
 }
 
 button {

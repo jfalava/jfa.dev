@@ -726,6 +726,11 @@ video {
   background-color: rgb(76 105 249 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#3756f2\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 86 242 / var(--tw-bg-opacity));
+}
+
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
