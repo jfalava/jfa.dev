@@ -1,8 +1,6 @@
 ---
 import MasterLayout from "@/layouts/Master.astro";
-import { Image } from "astro:assets";
-//
-import PFP from "/public/images/seidor_pfp.avif";
+
 //
 interface Props {
   locale: string;
@@ -39,13 +37,24 @@ const {
   metaImageHeight={metaImageHeight}
   metaImageAlt={metaImageAlt}
 >
-  <header class="flex justify-evenly items-center">
-    <div class="grid grid-cols-1 justify-start items-center">
-      <h1 class="bold">Jorge Fernando Álava</h1>
-      <p class="italic">aqui iria lo que hago</p>
-    </div>
-    <div class="rounded-lg glassbox p-2">
-      <Image src={PFP} alt="PFP" width="150" class="rounded-md" />
-    </div>
-  </header>
+  <article>
+    <h2 class="bold">about</h2>
+    <p class="regular">aquí irá un componente de `md`</p>
+  </article>
+  <article>
+    <h2 class="bold">current projects</h2>
+    <p class="regular">aquí irán bentos con los proyectos</p>
+  </article>
+  <article>
+    <h2 class="bold">skills</h2>
+    <p class="regular">aquí irá un componente de `md`</p>
+  </article>
+  <article>
+    <h2 class="bold">work exp</h2>
+    <p class="regular">aquí irá un componente de `md`</p>
+  </article>
+  <article>
+    <h2 class="bold">education</h2>
+    <p class="regular">aquí irá un componente de `mdx`</p>
+  </article>
 </MasterLayout>
