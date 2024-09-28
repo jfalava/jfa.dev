@@ -1,97 +1,82 @@
-/* Regular weight (normal) */
-.dm-regular-normal {
+/**/
+/* Dank Mono*/
+/**/
+.dm-800-normal {
   font-family: "dm", monospace;
-  font-weight: normal;
+  font-weight: 900;
   font-style: normal;
 }
-
-/* Regular weight (italic) */
-.dm-regular-italic {
+.dm-800-italic {
   font-family: "dm", monospace;
-  font-weight: normal;
+  font-weight: 900;
   font-style: italic;
 }
-
-/* Bold weight (normal) */
-.dm-bold-normal {
+.dm-600-normal {
   font-family: "dm", monospace;
-  font-weight: bold;
+  font-weight: 600;
   font-style: normal;
 }
-
-/* Bold weight (italic) */
-.dm-bold-italic {
+.dm-600-italic {
   font-family: "dm", monospace;
-  font-weight: bold;
+  font-weight: 600;
   font-style: italic;
 }
-
-/* Light weight (normal) */
 .dm-light-normal {
   font-family: "dm", monospace;
-  font-weight: 300; /* Light weight */
+  font-weight: 300;
   font-style: normal;
 }
-
-/* Light weight (italic) */
 .dm-light-italic {
   font-family: "dm", monospace;
-  font-weight: 300; /* Light weight */
+  font-weight: 300;
   font-style: italic;
 }
-
-/* Medium weight (normal) */
-.dm-medium-normal {
-  font-family: "dm", monospace;
-  font-weight: 500; /* Medium weight */
+/**/
+/* Geist Mono */
+/**/
+@font-face {
+  font-family: "geist";
+  src: url("/fonts/geist-mono.woff2") format("woff2");
+  font-display: swap;
+}
+/**/
+.geist-800-normal {
+  font-family: "geist", monospace;
+  font-weight: 900;
   font-style: normal;
 }
-
-/* Medium weight (italic) */
-.dm-medium-italic {
-  font-family: "dm", monospace;
-  font-weight: 500; /* Medium weight */
+.geist-800-italic {
+  font-family: "geist", monospace;
+  font-weight: 900;
   font-style: italic;
 }
-
-/* Semi-bold weight (normal) */
-.dm-semi-bold-normal {
-  font-family: "dm", monospace;
-  font-weight: 600; /* Semi-bold weight */
+.geist-600-normal {
+  font-family: "geist", monospace;
+  font-weight: 600;
   font-style: normal;
 }
-
-/* Semi-bold weight (italic) */
-.dm-semi-bold-italic {
-  font-family: "dm", monospace;
-  font-weight: 600; /* Semi-bold weight */
+.geist-600-italic {
+  font-family: "geist", monospace;
+  font-weight: 600;
   font-style: italic;
 }
-
-/* Extra-bold weight (normal) */
-.dm-extra-bold-normal {
-  font-family: "dm", monospace;
-  font-weight: 800; /* Extra-bold weight */
+.geist-light-normal {
+  font-family: "geist", monospace;
+  font-weight: 300;
   font-style: normal;
 }
-
-/* Extra-bold weight (italic) */
-.dm-extra-bold-italic {
-  font-family: "dm", monospace;
-  font-weight: 800; /* Extra-bold weight */
+.geist-light-italic {
+  font-family: "geist", monospace;
+  font-weight: 300;
   font-style: italic;
 }
-
-/* Black weight (normal) */
-.dm-black-normal {
-  font-family: "dm", monospace;
-  font-weight: 900; /* Black weight */
+.geist-ultralight-normal {
+  font-family: "geist", monospace;
+  font-weight: lighter;
   font-style: normal;
 }
-
-/* Black weight (italic) */
-.dm-black-italic {
-  font-family: "dm", monospace;
-  font-weight: 900; /* Black weight */
+.geist-ultralight-italic {
+  font-family: "geist", monospace;
+  font-weight: lighter;
   font-style: italic;
 }
