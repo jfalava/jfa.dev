@@ -4,15 +4,10 @@ interface SimpleInlineAnchor {
   h: string;
   id?: string;
   children: React.ReactNode;
-  className?: string;
+  c?: string;
 }
 
-export default function A({
-  h,
-  id,
-  children,
-  className = "",
-}: SimpleInlineAnchor) {
+export default function A({ h, id, children, c = "" }: SimpleInlineAnchor) {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     if (e.ctrlKey || e.metaKey) {
       window.open(h, "_blank", "noopener,noreferer,me");
@@ -33,7 +28,7 @@ export default function A({
     <a
       id={id}
       href={h}
-      className={className}
+      className={c}
       onClick={handleClick}
       onKeyDown={onKeyDown}
       role="link"
