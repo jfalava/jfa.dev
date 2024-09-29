@@ -20,7 +20,7 @@ const Mantained: React.FC<Props> = ({ lang }) => {
 
   return (
     <p
-      className="p-[2px] text-white text-nowrap text-sm rounded px-1.5 ml-1.5 select-none whitespace-nowrap cursor-help border-2 border-[#7df369] bg-[#4ba12e]"
+      className="jetbrains p-[2px] text-white text-nowrap text-sm rounded px-1.5 ml-1.5 select-none whitespace-nowrap cursor-help border-2 border-[#7df369] bg-[#4ba12e]"
       title={getTitle()}
     >
       {getTitle()}

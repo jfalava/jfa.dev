@@ -1,0 +1,90 @@
+---
+import Master from "@/layouts/Master.astro";
+interface Props {
+  locale: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  metaImageURL: string;
+  metaImageFormat: string;
+  metaImageWidth: string;
+  metaImageHeight: string;
+  metaImageAlt: string;
+}
+
+const {
+  locale,
+  metaTitle,
+  metaDescription,
+  metaKeywords,
+  metaImageURL,
+  metaImageFormat,
+  metaImageWidth,
+  metaImageHeight,
+  metaImageAlt,
+} = Astro.props as Props;
+// Skills
+let LocalizedSkills;
+if (locale === "es") {
+  LocalizedSkills = await import("@/components/index/skills/Skills.es.md");
+} else if (locale === "en") {
+  LocalizedSkills = await import("@/components/index/skills/Skills.es.md");
+} else {
+  LocalizedSkills = await import("@/components/index/skills/Skills.es.md");
+}
+const Skills = LocalizedSkills.default;
+// Work Experience
+let LocalizedWorkExp;
+if (locale === "es") {
+  LocalizedWorkExp = await import(
+    "@/components/index/work-exp/WorkExperience.es.md"
+  );
+} else if (locale === "en") {
+  LocalizedWorkExp = await import(
+    "@/components/index/work-exp/WorkExperience.es.md"
+  );
+} else {
+  LocalizedWorkExp = await import(
+    "@/components/index/work-exp/WorkExperience.es.md"
+  );
+}
+const WorkExperience = LocalizedWorkExp.default;
+// Education
+let LocalizedEducation;
+if (locale === "es") {
+  LocalizedEducation = await import(
+    "@/components/index/education/Education.es.md"
+  );
+} else if (locale === "en") {
+  LocalizedEducation = await import(
+    "@/components/index/education/Education.es.md"
+  );
+} else {
+  LocalizedEducation = await import(
+    "@/components/index/education/Education.es.md"
+  );
+}
+const Education = LocalizedEducation.default;
+---
+
+<Master
+  locale={locale}
+  metaTitle={metaTitle}
+  metaDescription={metaDescription}
+  metaKeywords={metaKeywords}
+  metaImageURL={metaImageURL}
+  metaImageFormat={metaImageFormat}
+  metaImageWidth={metaImageWidth}
+  metaImageHeight={metaImageHeight}
+  metaImageAlt={metaImageAlt}
+>
+  <article id="skills-article">
+    <Skills />
+  </article>
+  <article id="work-exp-article">
+    <WorkExperience />
+  </article>
+  <article id="education-article">
+    <Education />
+  </article>
+</Master>
