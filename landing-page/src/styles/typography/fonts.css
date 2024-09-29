@@ -4,6 +4,9 @@ code {
 /**/
 /* Dank Mono*/
 /**/
+.dank-mono {
+  font-family: "dm", monospace;
+}
 .dm-regular {
   font-family: "dm", monospace;
   font-weight: normal;
@@ -28,6 +31,9 @@ code {
   font-display: swap;
 }
 /**/
+.geist {
+  font-family: "geist", monospace;
+}
 .regular {
   font-family: "geist", monospace;
   font-weight: normal;
@@ -57,6 +63,10 @@ code {
   font-display: swap;
 }
 /**/
+.jetbrains {
+  font-family: "jetbrains", monospace;
+}
+
 .jb-bold {
   font-family: "jetbrains", monospace;
   font-weight: bold;

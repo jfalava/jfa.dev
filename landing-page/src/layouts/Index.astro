@@ -1,6 +1,8 @@
 ---
 import MasterLayout from "@/layouts/Master.astro";
-
+//
+import BentoElement from "@/components/index/current-projects/BentoElement.astro";
+import { TagType } from "@/types/TagType.ts";
 //
 interface Props {
   locale: string;
@@ -24,6 +26,68 @@ const {
   metaImageHeight,
   metaImageAlt,
 } = Astro.props as Props;
+// About
+let LocalizedAbout;
+if (locale === "es") {
+  LocalizedAbout = await import("@/components/index/about/About.es.md");
+} else if (locale === "en") {
+  LocalizedAbout = await import("@/components/index/about/About.es.md");
+} else {
+  LocalizedAbout = await import("@/components/index/about/About.es.md");
+}
+const About = LocalizedAbout.default;
+// Skills
+let LocalizedSkills;
+if (locale === "es") {
+  LocalizedSkills = await import("@/components/index/skills/Skills.es.md");
+} else if (locale === "en") {
+  LocalizedSkills = await import("@/components/index/skills/Skills.es.md");
+} else {
+  LocalizedSkills = await import("@/components/index/skills/Skills.es.md");
+}
+const Skills = LocalizedSkills.default;
+// Work Experience
+let LocalizedWorkExp;
+if (locale === "es") {
+  LocalizedWorkExp = await import(
+    "@/components/index/work-exp/WorkExperience.es.md"
+  );
+} else if (locale === "en") {
+  LocalizedWorkExp = await import(
+    "@/components/index/work-exp/WorkExperience.es.md"
+  );
+} else {
+  LocalizedWorkExp = await import(
+    "@/components/index/work-exp/WorkExperience.es.md"
+  );
+}
+const WorkExperience = LocalizedWorkExp.default;
+// Education
+let LocalizedEducation;
+if (locale === "es") {
+  LocalizedEducation = await import(
+    "@/components/index/education/Education.es.md"
+  );
+} else if (locale === "en") {
+  LocalizedEducation = await import(
+    "@/components/index/education/Education.es.md"
+  );
+} else {
+  LocalizedEducation = await import(
+    "@/components/index/education/Education.es.md"
+  );
+}
+const Education = LocalizedEducation.default;
+// Current Projects
+/// Layout
+let BentoLayout;
+try {
+  BentoLayout = (
+    await import("@/components/index/current-projects/BentoLayout.astro")
+  ).default;
+} catch (e) {
+  console.error("Error loading localized component:", e);
+}
 ---
 
 <MasterLayout
@@ -38,23 +102,56 @@ const {
   metaImageAlt={metaImageAlt}
 >
   <article>
-    <h2 class="bold">about</h2>
-    <p class="regular">aquí irá un componente de `md`</p>
+    <About />
   </article>
   <article>
-    <h2 class="bold">current projects</h2>
-    <p class="regular">aquí irán bentos con los proyectos</p>
+    <h2>Projects</h2>
+    {
+      BentoLayout ? (
+        <BentoLayout>
+          <BentoElement
+            locale={locale}
+            projectTitle="jfa.dev"
+            projectStatus={TagType.Mantained}
+            githubLink="https://github.com/jfalava/jfa.dev/"
+          >
+            <dev class="grid grid-cols-1 ">
+              <span>Aquí iría un markdown? Un string de texto?</span>
+            </dev>
+          </BentoElement>
+          <BentoElement
+            locale={locale}
+            projectTitle="Machine Outfitting"
+            projectStatus={TagType.Mantained}
+            githubLink="https://github.com/jfalava/machine-outfitting"
+          >
+            <dev class="grid grid-cols-1 ">
+              <span>Aquí iría un markdown? Un string de texto?</span>
+            </dev>
+          </BentoElement>
+          <BentoElement
+            locale={locale}
+            projectTitle="dotfiles"
+            projectStatus={TagType.Mantained}
+            githubLink="https://github.com/jfalava/dotfiles-and-such"
+          >
+            <dev class="grid grid-cols-1 ">
+              <span>Aquí iría un markdown? Un string de texto?</span>
+            </dev>
+          </BentoElement>
+        </BentoLayout>
+      ) : (
+        <div>Error loading component</div>
+      )
+    }
   </article>
   <article>
-    <h2 class="bold">skills</h2>
-    <p class="regular">aquí irá un componente de `md`</p>
+    <Skills />
   </article>
   <article>
-    <h2 class="bold">work exp</h2>
-    <p class="regular">aquí irá un componente de `md`</p>
+    <WorkExperience />
   </article>
   <article>
-    <h2 class="bold">education</h2>
-    <p class="regular">aquí irá un componente de `mdx`</p>
+    <Education />
   </article>
 </MasterLayout>

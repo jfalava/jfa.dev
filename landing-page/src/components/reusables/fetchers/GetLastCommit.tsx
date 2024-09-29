@@ -95,7 +95,7 @@ const LastCommit: React.FC<LastCommitProps> = ({ b, token }) => {
   return (
     <div className="items-center contents">
       {commitLink ? (
-        <A className="underline" h={commitLink.match(/\((.*?)\)/)?.[1] || "#"}>
+        <A c="underline" h={commitLink.match(/\((.*?)\)/)?.[1] || "#"}>
           {commitLink.match(/\[(.*?)\]/)?.[1] || "Commit"}
         </A>
       ) : (
