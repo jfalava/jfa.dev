@@ -3,6 +3,7 @@ footer {
   background-size: auto;
   background-repeat: repeat;
 }
+
 @media (prefers-color-scheme: dark) {
   body {
     background-image: url("/images/bg/white-noise.svg");
@@ -12,7 +13,7 @@ footer {
 }
 @media (prefers-color-scheme: light) {
   body {
-    background-image: url("/images/bg/white-noise.svg");
+    background-image: url("/images/bg/black-noise.svg");
     background-size: auto;
     background-repeat: repeat;
   }

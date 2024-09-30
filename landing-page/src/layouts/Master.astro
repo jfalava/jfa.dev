@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 // Styles
 /// Globals
 import "@/styles/global.css";
@@ -13,8 +12,11 @@ import "@/styles/typography/markdown.css";
 import "@/styles/bg.css";
 import "@/styles/transitions-animations.css";
 // Components
+/// QoL
+import ScrollToTopButton from "@/components/reusables/qol/ScrollToTopButton.tsx";
+import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro";
 /// Header
-import PFP from "/public/images/seidor_pfp.avif";
+import Header from "@/components/header/Header.astro";
 /// Footer
 import Footer from "@/components/footer/Footer.astro";
 // Constants
@@ -30,6 +32,7 @@ interface Props {
   metaImageWidth: string;
   metaImageHeight: string;
   metaImageAlt: string;
+  currentPage: string;
 }
 const {
   locale,
@@ -41,6 +44,7 @@ const {
   metaImageWidth,
   metaImageHeight,
   metaImageAlt,
+  currentPage,
 } = Astro.props as Props;
 ---
 
@@ -81,15 +85,8 @@ const {
   <body
     class="flex flex-col w-full min-h-[100dvh] bg-[#efefef] text-[#181a1b] dark:bg-[#181a1b] dark:text-[#efefef]"
   >
-    <header class="flex justify-evenly items-center mt-2">
-      <div class="grid grid-cols-1 justify-start items-center">
-        <h1 class="bold">Jorge Fernando Álava</h1>
-        <p class="italic">aqui iria lo que hago</p>
-      </div>
-      <div class="rounded-lg glassbox p-2">
-        <Image src={PFP} alt="PFP" width="150" class="rounded-md" />
-      </div>
-    </header>
+    <Header currentPage={currentPage} />
+    <ScrollToTopButton client:load />
     <main
       class="flex-grow ultrawide-only:w-[50%] ultrawide-only:ml-[25%]
         w-[75%] ml-[12.5%]

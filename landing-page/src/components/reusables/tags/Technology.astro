@@ -1,13 +1,14 @@
 ---
 interface Props {
+  lT: string;
   t: string;
 }
-const { t } = Astro.props as Props;
+const { t, lT } = Astro.props as Props;
 ---
 
 <div
   class="flex items-center jetbrains p-[2px] rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#595959] bg-[#000000]"
-  title={t}
+  title=`${lT}: ${t}`
 >
   <p class="text-white text-nowrap text-sm">{t}</p>
 </div>

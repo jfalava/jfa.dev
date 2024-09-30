@@ -13,7 +13,7 @@ const { h, id, t, c } = Astro.props as Props;
 <a
   id={id}
   href={h}
-  class={c}
+  class=`${c} italic mobile-only:text-sm`
   title={t}
   aria-label={t}
   data-astro-prefetch="hover"

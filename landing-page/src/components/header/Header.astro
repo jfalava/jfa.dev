@@ -1,14 +1,27 @@
 ---
-import { Image } from "astro:assets";
-import PFP from "/public/images/seidor_pfp.avif";
+import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro";
+interface Props {
+  currentPage: string;
+}
+const { currentPage } = Astro.props as Props;
 ---
 
-<header class="flex justify-evenly items-center mt-2">
-  <div class="grid grid-cols-1 justify-start items-center">
-    <h1 class="bold">Jorge Fernando Álava</h1>
-    <p class="italic">aqui iria lo que hago</p>
-  </div>
-  <div class="rounded-lg glassbox p-2">
-    <Image src={PFP} alt="PFP" width="150" class="rounded-md" />
-  </div>
-</header>
+<style>
+  h1 {
+    font-size: clamp(1.8rem, 1vw + 0.5rem, 2.5rem);
+  }
+  p {
+    font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
+    line-height: 2;
+  }
+</style>
+{
+  currentPage !== "index" && (
+    <header class="flex justify-evenly items-center mt-2">
+      <div class="grid grid-cols-1 justify-start items-center">
+        <h1 class="bold">Jorge Fernando Álava</h1>
+      </div>
+      <DivisorLine />
+    </header>
+  )
+}
