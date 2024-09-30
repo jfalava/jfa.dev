@@ -13,6 +13,8 @@
   "scripts": {
     "dev:astro": "npm run dev --host --workspace=landing-page",
     "build:astro": "npm run build --workspace=landing-page",
+    "dev:redirect": "npm run dev --workspace=api/redirect",
+    "rebind:redirect": "npm run cf-typegen --workspace=api/redirect",
     "deploy:redirect": "npm run deploy --workspace=api/redirect"
   },
   "dependencies": {
