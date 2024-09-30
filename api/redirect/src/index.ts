@@ -12,7 +12,28 @@
  */
 
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
+	async fetch(request: Request): Promise<Response> {
+		const url = new URL(request.url);
+		const { hostname, pathname, search } = url;
+
+		let destinationHost: string = 'jfa.dev';
+		let destinationPath: string = '/';
+		const statusCode = 301;
+
+		switch (hostname) {
+			case 'cv.jfa.dev':
+				destinationPath = '/cv';
+				break;
+			case 'landing.jfa.dev':
+				destinationPath = '/';
+				break;
+			case 'links.jfa.dev':
+				destinationPath = '/';
+				break;
+			// The default case is now handled by the initial values
+		}
+
+		const destinationURL = `https://${destinationHost}${destinationPath}${pathname}${search}`;
+		return Response.redirect(destinationURL, statusCode);
 	},
-} satisfies ExportedHandler<Env>;
+} satisfies ExportedHandler;
