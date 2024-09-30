@@ -1,6 +1,10 @@
 ---
 import Master from "@/layouts/Master.astro";
-import LinkButton from "@/components/index/links/LinkButton.astro";
+import BackToHome from "@/components/reusables/navigation/BackToHome.astro";
+import StyledBlockquote, {
+  BlockquoteType,
+} from "@/components/reusables/text-elements/StyledBlockquote.tsx";
+import CompleteCurrentLocalTime from "@/components/reusables/date/GetCurrentDate.tsx";
 interface Props {
   locale: string;
   metaTitle: string;
@@ -20,6 +24,7 @@ interface Props {
   localizedOtherLinks: string;
   localizedSiteMap: string;
   localizedAcknowledgements: string;
+  localizedDownloadTheCV: string;
 }
 
 const {
@@ -41,6 +46,7 @@ const {
   localizedOtherLinks,
   localizedSiteMap,
   localizedAcknowledgements,
+  localizedDownloadTheCV,
 } = Astro.props as Props;
 // Skills
 let LocalizedSkills;
@@ -105,6 +111,14 @@ function localizedHome() {
 }
 ---
 
+<style>
+  article {
+    padding-top: 1%;
+    padding-bottom: 1%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+  }
+</style>
 <Master
   locale={locale}
   metaTitle={metaTitle}
@@ -130,28 +144,41 @@ function localizedHome() {
   </article>
   <article id="skills-card">
     <Skills />
+    <div class="flex justify-end">
+      <StyledBlockquote blockquoteType={BlockquoteType.Warning}>
+        <span class="dank-mono ml-2">Outated!</span>
+      </StyledBlockquote>
+    </div>
   </article>
   <article id="work-exp-card">
     <WorkExperience />
+    <div class="flex flex-grow justify-end" title={localizedDownloadTheCV}>
+      <div
+        class="cursor-pointer glassbox button-glassbox p-1 rounded-lg items-center"
+      >
+        <div class="dark:invert inline-block">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="dark:invert h-10 w-auto"
+            viewBox="0 0 24 24"
+            ><path
+              fill="currentColor"
+              d="m12 15.577l-3.539-3.538l.708-.72L11.5 13.65V5h1v8.65l2.33-2.33l.709.719zM6.616 19q-.691 0-1.153-.462T5 17.384v-2.423h1v2.423q0 .231.192.424t.423.192h10.77q.23 0 .423-.192t.192-.424v-2.423h1v2.423q0 .691-.462 1.153T17.384 19z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    </div>
   </article>
   <article id="education-card">
     <Education />
   </article>
-  <div class="flex flex-grow justify-center mt-[2%] mobile-only:mt-[5%]">
-    <LinkButton buttonHref={localizedHome()} buttonText={localizedBackToHome}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-8 w-auto dark:invert"
-        viewBox="0 0 24 24"
-        ><path
-          fill="none"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="1.5"
-          d="m2.25 12l8.955-8.955a1.124 1.124 0 0 1 1.59 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-        ></path></svg
-      >
-    </LinkButton>
+  <div class="mt-[2%] mobile-only:mt-[5%] flex justify-end">
+    <StyledBlockquote blockquoteType={BlockquoteType.Updated}>
+      <div class="flex items-center">
+        <CompleteCurrentLocalTime c="dank-mono text-base" lang={locale} />
+      </div>
+    </StyledBlockquote>
   </div>
+  <BackToHome localizedText={localizedBackToHome} homeURL={localizedHome()} />
 </Master>

@@ -20,7 +20,7 @@ const Mantained: React.FC<Props> = ({ lang }) => {
 
   return (
     <div
-      className="p-[2px] text-white rounded px-1.5 ml-1.5 select-none whitespace-nowrap cursor-help border-2 border-[#7df369] bg-[#4ba12e]"
+      className="p-1 text-white rounded px-1.5 ml-1.5 select-none whitespace-nowrap cursor-help border-2 border-[#7df369] bg-[#4ba12e]"
       title={getTitle()}
     >
       <svg
