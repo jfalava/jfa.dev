@@ -2,10 +2,9 @@
 import { Image } from "astro:assets";
 import PFP from "/public/images/seidor_pfp.avif";
 interface Props {
-  localizedHeaderDescription: string;
+  localizedHeaderDescription: string | { __html: string };
 }
-
-const { localizedHeaderDescription } = Astro.props as Props;
+const { localizedHeaderDescription } = Astro.props;
 ---
 
 <style>
@@ -20,7 +19,13 @@ const { localizedHeaderDescription } = Astro.props as Props;
 <header class="flex justify-evenly items-center mt-2 mb-[2%]">
   <div class="grid grid-cols-1 justify-start items-center">
     <h1 class="bold">Jorge Fernando Álava</h1>
-    <p class="italic">{localizedHeaderDescription}</p>
+    {
+      typeof localizedHeaderDescription === "string" ? (
+        <p>{localizedHeaderDescription}</p>
+      ) : (
+        <p set:html={localizedHeaderDescription.__html} />
+      )
+    }
   </div>
   <div class="grid grid-cols-1 gap-y-2 items-center">
     <div class="rounded-lg glassbox p-2">

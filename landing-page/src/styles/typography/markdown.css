@@ -1,12 +1,15 @@
 article h2,
-h3,
-p {
+h3 {
   font-family: "geist";
 }
 
 article h2,
 h3 {
   font-weight: bold;
+}
+
+p {
+  font-family: "dm";
 }
 
 ul {

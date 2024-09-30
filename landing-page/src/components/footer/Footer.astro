@@ -29,7 +29,7 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
   class="bg-[#3756f2] h-max select-none z-1 text-[#efefef] not-mobile:mt-[2%] mobile-only:mt-[5%]"
 >
   <div
-    class="flex justify-evenly items-center w-[90%] ml-[10%]
+    class="flex justify-evenly items-center w-[75%] ml-[12.5%]
     mobile-only:w-[90%] mobile-only:ml-[5%]
     ultrawide-only:w-[50%] ultrawide-only:ml-[25%] mobile-only:mb-[5%] mb-[2%] mobile-only:mt-[5%] mt-[2%] bg-noise"
   >
@@ -103,13 +103,11 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
       </div>
       <div
         id="copyright-column"
-        class="flex items-center w-1150:mt-[5%] w-1150:justify-center mw-1150:justify-end not-mobile:mr-[2%]"
+        class="flex items-center w-1150:mt-[5%] w-1150:justify-center mw-1150:justify-end"
       >
         <p class="inline-block bold text-lg">&copy;&nbsp;</p>
         <p class="inline-block bold text-lg">Jorge Fernando Álava,</p>
-        <div class="">
-          <GetCurrentYear client:load />
-        </div>
+        <GetCurrentYear client:load />
       </div>
     </div>
   </div>
