@@ -68,12 +68,6 @@ const {
 } = Astro.props as Props;
 ---
 
-<style>
-  article {
-    margin-top: 2%;
-    margin-bottom: 2%;
-  }
-</style>
 <MasterLayout
   locale={locale}
   metaTitle={metaTitle}
@@ -96,7 +90,10 @@ const {
 >
   <IndexHeader localizedHeaderDescription={localizedHeaderDescription} />
   <DivisorLine />
-  <article id="links-card">
+  <article
+    id="links-card"
+    class="mt-[2%] mb-[2%] mobile-only:mt-[5%] mobile-only:mb-[5%]"
+  >
     <h2>🔗 {localizedLinks}</h2>
     <div
       id="links-buttons-container"
@@ -109,6 +106,7 @@ const {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-7 w-auto dark:invert"
+          name="simple-anchor-content"
           viewBox="0 0 32 32"
           ><path
             fill="currentColor"
@@ -163,10 +161,13 @@ const {
         >
       </LinkButton>
     </div>
-    <DivisorLine />
   </article>
-  <article id="projects-card">
-    <h2>🚧 {localizedSomeProjects}</h2>
+  <DivisorLine />
+  <article
+    id="projects-card"
+    class="mt-[2%] mb-[2%] mobile-only:mt-[5%] mobile-only:mb-[5%]"
+  >
+    <h2 class="mobile-only:mb-[5%]">🚧 {localizedSomeProjects}</h2>
     {
       BentoLayout ? (
         <BentoLayout>
@@ -181,8 +182,10 @@ const {
             <div class="">
               <TechTagContainer>
                 <T lT={localizedTechnology} t="Astro" />
-                <T lT={localizedTechnology} t="React" />
+
                 <T lT={localizedTechnology} t="Cloudflare Pages" />
+                <T lT={localizedTechnology} t="React" />
+                <T lT={localizedTechnology} t="Lambda" />
               </TechTagContainer>
             </div>
           </BentoElement>
@@ -228,6 +231,7 @@ const {
                 <T lT={localizedTechnology} t="React" />
                 <T lT={localizedTechnology} t="Astro" />
                 <T lT={localizedTechnology} t="JSON" />
+                <T lT={localizedTechnology} t="Cloudflare D1" />
               </TechTagContainer>
             </div>
           </BentoElement>
@@ -242,10 +246,10 @@ const {
             <div class="">
               <TechTagContainer>
                 <T lT={localizedTechnology} t="Cloudflare Pages" />
-                <T lT={localizedTechnology} t="SQLite" />
+                <T lT={localizedTechnology} t="Cloudflare D1" />
+                <T lT={localizedTechnology} t="Cloudflare Workers" />
                 <T lT={localizedTechnology} t="Astro" />
                 <T lT={localizedTechnology} t="React" />
-                <T lT={localizedTechnology} t="Lambda" />
               </TechTagContainer>
             </div>
           </BentoElement>
