@@ -19,12 +19,25 @@ const UnderDevelopment: React.FC<Props> = ({ lang }) => {
   };
 
   return (
-    <p
-      className="jetbrains p-[2px] text-white text-nowrap text-sm rounded px-1.5 ml-1.5 select-none whitespace-nowrap cursor-help border-2 border-[#187dd6] bg-[#05345d]"
+    <div
+      className="jetbrains p-1 text-white text-nowrap text-sm rounded px-1.5 ml-1.5 select-none whitespace-nowrap cursor-help border-2 border-[#187dd6] bg-[#05345d]"
       title={getTitle()}
     >
-      {getTitle()}
-    </p>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-auto"
+        viewBox="0 0 24 24"
+      >
+        <path
+          fill="none"
+          stroke="white"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="m7 8l-4 4l4 4m10-8l4 4l-4 4M14 4l-4 16"
+        />
+      </svg>
+    </div>
   );
 };
 

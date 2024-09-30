@@ -21,7 +21,7 @@ export default defineConfig({
         {
           userAgent: "*",
           allow: "/",
-          disallow: "none",
+          disallow: "",
           crawlDelay: 10,
         },
       ],

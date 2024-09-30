@@ -1,0 +1,58 @@
+---
+interface Props {
+  localizedText: string;
+  homeURL: string;
+}
+const { localizedText, homeURL } = Astro.props as Props;
+---
+
+<style>
+  span,
+  svg {
+    transition: color 0.2s ease-in-out;
+  }
+</style>
+
+<div
+  id="home-button-wrapper"
+  class="flex items-center justify-center mt-[3%] mobile-only:mb-[5%]"
+>
+  <div class="mb-[1%]">
+    <a
+      data-astro-prefetch="hover"
+      aria-label={localizedText}
+      id="character-references"
+      href={homeURL}
+      title={localizedText}
+    >
+      <div
+        class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:border-[#1e7cff] hover:text-[#1e7cff]"
+      >
+        <div class="inline-block dark:invert">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w1366:h-6 mobile-only:h-8 w-auto select-none dark:invert"
+            viewBox="0 0 36 36"
+          >
+            <path
+              fill="currentColor"
+              d="m33.71 17.29l-15-15a1 1 0 0 0-1.41 0l-15 15a1 1 0 0 0 1.41 1.41L18 4.41l14.29 14.3a1 1 0 0 0 1.41-1.41Z"
+              class="clr-i-outline clr-i-outline-path-1"></path>
+            <path
+              fill="currentColor"
+              d="M28 32h-5V22H13v10H8V18l-2 2v12a2 2 0 0 0 2 2h7V24h6v10h7a2 2 0 0 0 2-2V19.76l-2-2Z"
+              class="clr-i-outline clr-i-outline-path-2"></path>
+            <path fill="none" d="M0 0h36v36H0z"></path>
+          </svg>
+        </div>
+        <div>
+          <span
+            class="geist select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2"
+          >
+            {localizedText}
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

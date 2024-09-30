@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 
 interface Props {
   lang?: string;
+  c?: string;
 }
 
-const CompleteCurrentLocalTime: React.FC<Props> = ({ lang }) => {
+const CompleteCurrentLocalTime: React.FC<Props> = ({ lang, c }) => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   useEffect(() => {
@@ -31,13 +32,15 @@ const CompleteCurrentLocalTime: React.FC<Props> = ({ lang }) => {
   });
 
   return (
-    <p
-      data-timestamp={unixTimestamp}
-      title={fullDate}
-      className="select-none cursor-help contents"
-    >
-      {fullDate}, {time}
-    </p>
+    <div className="ml-2">
+      <p
+        data-timestamp={unixTimestamp}
+        title={fullDate}
+        className={`${c} select-none cursor-help contents`}
+      >
+        {fullDate}, {time}
+      </p>
+    </div>
   );
 };
 
