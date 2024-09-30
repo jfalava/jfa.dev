@@ -34,6 +34,13 @@ interface Props {
   localizedSomeProjects: string;
   localizedTechnology: string;
   localizedRoute: string;
+  localizedSocials: string;
+  localizedWebReleases: string;
+  localizedContact: string;
+  localizedContactMe: string;
+  localizedOtherLinks: string;
+  localizedSiteMap: string;
+  localizedAcknowledgements: string;
 }
 const {
   locale,
@@ -51,6 +58,13 @@ const {
   localizedTechnology,
   localizedRoute,
   localizedHeaderDescription,
+  localizedSocials,
+  localizedWebReleases,
+  localizedContact,
+  localizedContactMe,
+  localizedOtherLinks,
+  localizedSiteMap,
+  localizedAcknowledgements,
 } = Astro.props as Props;
 ---
 
@@ -72,6 +86,13 @@ const {
   metaImageAlt={metaImageAlt}
   currentPage="index"
   localizedHeader=""
+  localizedSocials={localizedSocials}
+  localizedWebReleases={localizedWebReleases}
+  localizedContact={localizedContact}
+  localizedContactMe={localizedContactMe}
+  localizedOtherLinks={localizedOtherLinks}
+  localizedSiteMap={localizedSiteMap}
+  localizedAcknowledgements={localizedAcknowledgements}
 >
   <IndexHeader localizedHeaderDescription={localizedHeaderDescription} />
   <DivisorLine />
@@ -205,9 +226,8 @@ const {
             <div class="">
               <TechTagContainer>
                 <T lT={localizedTechnology} t="React" />
-                <T lT={localizedTechnology} t="Cloudflare D1" />
-                <T lT={localizedTechnology} t="Cloudflare Pages" />
-                <T lT={localizedTechnology} t="Cloudflare Workers" />
+                <T lT={localizedTechnology} t="Astro" />
+                <T lT={localizedTechnology} t="JSON" />
               </TechTagContainer>
             </div>
           </BentoElement>
@@ -222,10 +242,10 @@ const {
             <div class="">
               <TechTagContainer>
                 <T lT={localizedTechnology} t="Cloudflare Pages" />
+                <T lT={localizedTechnology} t="SQLite" />
                 <T lT={localizedTechnology} t="Astro" />
-                <T lT={localizedTechnology} t="Cloudflare D1" />
                 <T lT={localizedTechnology} t="React" />
-                <T lT={localizedTechnology} t="Cloudflare Workers" />
+                <T lT={localizedTechnology} t="Lambda" />
               </TechTagContainer>
             </div>
           </BentoElement>

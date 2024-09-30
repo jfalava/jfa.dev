@@ -1,4 +1,22 @@
 ---
+interface Props {
+  localizedSocials: string;
+  localizedWebReleases: string;
+  localizedContact: string;
+  localizedContactMe: string;
+  localizedOtherLinks: string;
+  localizedSiteMap: string;
+  localizedAcknowledgements: string;
+}
+const {
+  localizedSocials,
+  localizedWebReleases,
+  localizedContact,
+  localizedContactMe,
+  localizedOtherLinks,
+  localizedSiteMap,
+  localizedAcknowledgements,
+} = Astro.props as Props;
 import IA from "@/components/reusables/anchors/SimpleInternalAnchor.astro";
 import A from "@/components/reusables/anchors/SimpleExternalAnchor";
 // Timestamps
@@ -11,7 +29,7 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
   class="bg-[#3756f2] h-max select-none z-1 text-[#efefef] not-mobile:mt-[2%] mobile-only:mt-[5%]"
 >
   <div
-    class="flex justify-evenly items-center w-[75%] ml-[12.5%]
+    class="flex justify-evenly items-center w-[90%] ml-[10%]
     mobile-only:w-[90%] mobile-only:ml-[5%]
     ultrawide-only:w-[50%] ultrawide-only:ml-[25%] mobile-only:mb-[5%] mb-[2%] mobile-only:mt-[5%] mt-[2%] bg-noise"
   >
@@ -24,7 +42,7 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
           id="socials-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg">Socials</p>
+          <p class="bold text-lg mb-2">{localizedSocials}</p>
           <A h="https://twitter.com/jorgefalava">
             <p class="italic mobile-only:text-sm">Twitter</p>
           </A>
@@ -39,9 +57,9 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
           id="releases-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg">Web releases</p>
+          <p class="bold text-lg mb-2">{localizedWebReleases}</p>
           <div class="flex items-center italic mobile-only:text-sm">
-            <p class="italic mobile-only:text-sm">Main:&nbsp;</p>
+            <p class="italic mobile-only:text-sm">Prod:&nbsp;</p>
             <LastCommit b="main" client:load />
           </div>
           <div class="flex items-center italic mobile-only:text-sm">
@@ -53,10 +71,10 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
           id="contact-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg">Contact</p>
+          <p class="bold text-lg mb-2">{localizedContact}</p>
           <IA t="mailto:hello@jfa.dev" h="mailto:hello@jfa.dev">
             <p slot="simple-anchor-content" class="italic mobile-only:text-sm">
-              Contact me
+              {localizedContactMe}
             </p>
           </IA>
           <A h="https://keybase.io/jfalava/pgp_keys.asc">
@@ -67,19 +85,19 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
           id="other-links-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg">Other links</p>
-          <IA t="Site Map" h="/sitemap-0.xml">
+          <p class="bold text-lg mb-2">{localizedOtherLinks}</p>
+          <IA t={localizedSiteMap} h="/sitemap-0.xml">
             <p slot="simple-anchor-content" class="italic mobile-only:text-sm">
-              Site Map
+              {localizedSiteMap}
             </p>
           </IA>
           <a
-            id="acknowledgements"
+            id={localizedAcknowledgements}
             role="button"
             class="italic mobile-only:text-sm"
             title=""
           >
-            Acknowledgements
+            {localizedAcknowledgements}
           </a>
         </div>
       </div>
@@ -87,9 +105,11 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
         id="copyright-column"
         class="flex items-center w-1150:mt-[5%] mw-1150:justify-end"
       >
-        <p class="inline-block bold text-lg">&copy;&nbsp;</p>
-        <p class="inline-block bold text-lg">Jorge Fernando Álava,</p>
-        <GetCurrentYear client:load />
+        <p class="inline-block bold text-lg mb-2">&copy;&nbsp;</p>
+        <p class="inline-block bold text-lg mb-2">Jorge Fernando Álava,</p>
+        <div>
+          <GetCurrentYear client:load />
+        </div>
       </div>
     </div>
   </div>

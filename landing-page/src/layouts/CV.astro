@@ -13,6 +13,13 @@ interface Props {
   metaImageAlt: string;
   localizedBackToHome: string;
   localizedHeader: string;
+  localizedSocials: string;
+  localizedWebReleases: string;
+  localizedContact: string;
+  localizedContactMe: string;
+  localizedOtherLinks: string;
+  localizedSiteMap: string;
+  localizedAcknowledgements: string;
 }
 
 const {
@@ -27,6 +34,13 @@ const {
   metaImageAlt,
   localizedBackToHome,
   localizedHeader,
+  localizedSocials,
+  localizedWebReleases,
+  localizedContact,
+  localizedContactMe,
+  localizedOtherLinks,
+  localizedSiteMap,
+  localizedAcknowledgements,
 } = Astro.props as Props;
 // Skills
 let LocalizedSkills;
@@ -103,6 +117,13 @@ function localizedHome() {
   metaImageAlt={metaImageAlt}
   currentPage="cv"
   localizedHeader={localizedHeader}
+  localizedSocials={localizedSocials}
+  localizedWebReleases={localizedWebReleases}
+  localizedContact={localizedContact}
+  localizedContactMe={localizedContactMe}
+  localizedOtherLinks={localizedOtherLinks}
+  localizedSiteMap={localizedSiteMap}
+  localizedAcknowledgements={localizedAcknowledgements}
 >
   <article id="aboutme-card">
     <AboutMe />

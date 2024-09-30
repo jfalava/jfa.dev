@@ -33,6 +33,13 @@ interface Props {
   metaImageAlt: string;
   currentPage: string;
   localizedHeader: string;
+  localizedSocials: string;
+  localizedWebReleases: string;
+  localizedContact: string;
+  localizedContactMe: string;
+  localizedOtherLinks: string;
+  localizedSiteMap: string;
+  localizedAcknowledgements: string;
 }
 const {
   locale,
@@ -46,6 +53,13 @@ const {
   metaImageAlt,
   currentPage,
   localizedHeader,
+  localizedSocials,
+  localizedWebReleases,
+  localizedContact,
+  localizedContactMe,
+  localizedOtherLinks,
+  localizedSiteMap,
+  localizedAcknowledgements,
 } = Astro.props as Props;
 ---
 
@@ -95,6 +109,14 @@ const {
     >
       <slot />
     </main>
-    <Footer />
+    <Footer
+      localizedSocials={localizedSocials}
+      localizedWebReleases={localizedWebReleases}
+      localizedContact={localizedContact}
+      localizedContactMe={localizedContactMe}
+      localizedOtherLinks={localizedOtherLinks}
+      localizedSiteMap={localizedSiteMap}
+      localizedAcknowledgements={localizedAcknowledgements}
+    />
   </body>
 </html>
