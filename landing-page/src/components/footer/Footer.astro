@@ -20,31 +20,67 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
         id="links-grid"
         class="not-mobile:flex not-mobile:justify-between gap-x-10 mobile-only:grid mobile-only:grid-cols-2 mobile-only:gap-y-3"
       >
-        <div id="socials-column" class="grid grid-cols-1 gap-2">
+        <div
+          id="socials-column"
+          class="border-l pl-2 border-solid border-white"
+        >
           <p class="bold text-lg">Socials</p>
-          <p class="italic mobile-only:text-sm">Tuister</p>
-          <p class="italic mobile-only:text-sm">Elefante</p>
+          <A h="https://twitter.com/jorgefalava">
+            <p class="italic mobile-only:text-sm">Twitter</p>
+          </A>
+          <A h="https://todon.eu/@jfalava">
+            <p class="italic mobile-only:text-sm">Mastodon</p>
+          </A>
+          <A h="https://linkedin.com/in/jfalava">
+            <p class="italic mobile-only:text-sm">LinkedIn</p>
+          </A>
         </div>
-        <div id="releases-column" class="grid grid-cols-1 gap-2">
+        <div
+          id="releases-column"
+          class="border-l pl-2 border-solid border-white"
+        >
           <p class="bold text-lg">Web releases</p>
           <div class="flex items-center italic mobile-only:text-sm">
-            <p class="">Main:&nbsp;</p>
+            <p class="italic mobile-only:text-sm">Main:&nbsp;</p>
             <LastCommit b="main" client:load />
           </div>
           <div class="flex items-center italic mobile-only:text-sm">
-            <p class="">Dev:&nbsp;</p>
+            <p class="italic mobile-only:text-sm">Dev:&nbsp;</p>
             <LastCommit b="dev" client:load />
           </div>
         </div>
-        <div id="contact-column" class="grid grid-cols-1 gap-2">
+        <div
+          id="contact-column"
+          class="border-l pl-2 border-solid border-white"
+        >
           <p class="bold text-lg">Contact</p>
-          <p class="italic mobile-only:text-sm">Contact me</p>
-          <p class="italic mobile-only:text-sm">PGP</p>
+          <IA t="mailto:hello@jfa.dev" h="mailto:hello@jfa.dev">
+            <p slot="simple-anchor-content" class="italic mobile-only:text-sm">
+              Contact me
+            </p>
+          </IA>
+          <A h="https://keybase.io/jfalava/pgp_keys.asc">
+            <p class="italic mobile-only:text-sm">PGP</p>
+          </A>
         </div>
-        <div id="other-links-column" class="grid grid-cols-1 gap-2">
+        <div
+          id="other-links-column"
+          class="border-l pl-2 border-solid border-white"
+        >
           <p class="bold text-lg">Other links</p>
-          <p class="italic mobile-only:text-sm">Site Map</p>
-          <p class="italic mobile-only:text-sm">Acknowledgements</p>
+          <IA t="Site Map" h="/sitemap-0.xml">
+            <p slot="simple-anchor-content" class="italic mobile-only:text-sm">
+              Site Map
+            </p>
+          </IA>
+          <a
+            id="acknowledgements"
+            role="button"
+            class="italic mobile-only:text-sm"
+            title=""
+          >
+            Acknowledgements
+          </a>
         </div>
       </div>
       <div

@@ -1,0 +1,21 @@
+---
+import A from "@/components/reusables/anchors/SimpleExternalAnchor";
+interface Props {
+  buttonText: string;
+  buttonHref: string;
+}
+
+const { buttonText, buttonHref } = Astro.props as Props;
+---
+
+<A
+  h={buttonHref}
+  c="flex items-center justify-center glassbox button-glassbox rounded-lg p-2"
+>
+  <div class="inline-block dark:invert">
+    <slot />
+  </div>
+  <h3 class="inline-block geist ml-2">
+    {buttonText}
+  </h3>
+</A>
