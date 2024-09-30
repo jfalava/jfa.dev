@@ -1,16 +1,22 @@
 ---
 import MasterLayout from "@/layouts/Master.astro";
-import Header from "@/components/index/Header.astro";
+import IndexHeader from "@/components/index/Header.astro";
 import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro";
-//
+// Projects
+import BentoLayout from "@/components/index/current-projects/BentoLayout.astro";
 import BentoElement from "@/components/index/current-projects/BentoElement.astro";
 import { TagType } from "@/types/TagType.ts";
 import T from "@/components/reusables/tags/Technology.astro";
 import TechTagContainer from "@/components/reusables/tags/TechTagContainer.astro";
 // Links
 import LinkButton from "@/components/index/links/LinkButton.astro";
-//
-const lT = "Tecnología";
+function getLocalizedPath() {
+  if (localizedRoute) {
+    return `/${localizedRoute}/cv`;
+  } else {
+    return `/cv`;
+  }
+}
 //
 interface Props {
   locale: string;
@@ -22,6 +28,12 @@ interface Props {
   metaImageWidth: string;
   metaImageHeight: string;
   metaImageAlt: string;
+  localizedHeaderDescription: string;
+  localizedLinks: string;
+  localizedWorkStuff: string;
+  localizedSomeProjects: string;
+  localizedTechnology: string;
+  localizedRoute: string;
 }
 const {
   locale,
@@ -33,26 +45,13 @@ const {
   metaImageWidth,
   metaImageHeight,
   metaImageAlt,
+  localizedLinks,
+  localizedWorkStuff,
+  localizedSomeProjects,
+  localizedTechnology,
+  localizedRoute,
+  localizedHeaderDescription,
 } = Astro.props as Props;
-// About
-let LocalizedAbout;
-if (locale === "es") {
-  LocalizedAbout = await import("@/components/index/about/About.es.md");
-} else if (locale === "en") {
-  LocalizedAbout = await import("@/components/index/about/About.es.md");
-} else {
-  LocalizedAbout = await import("@/components/index/about/About.es.md");
-}
-const About = LocalizedAbout.default;
-/// Layout
-let BentoLayout;
-try {
-  BentoLayout = (
-    await import("@/components/index/current-projects/BentoLayout.astro")
-  ).default;
-} catch (e) {
-  console.error("Error loading localized component:", e);
-}
 ---
 
 <style>
@@ -72,17 +71,15 @@ try {
   metaImageHeight={metaImageHeight}
   metaImageAlt={metaImageAlt}
   currentPage="index"
+  localizedHeader=""
 >
-  <Header />
-  <article id="about-card">
-    <About />
-    <DivisorLine />
-  </article>
+  <IndexHeader localizedHeaderDescription={localizedHeaderDescription} />
+  <DivisorLine />
   <article id="links-card">
-    <h2>Enlaces</h2>
+    <h2>🔗 {localizedLinks}</h2>
     <div
       id="links-buttons-container"
-      class="flex flex-grow mb-2 justify-evenly"
+      class="flex flex-grow mb-[2%] justify-evenly w-1150:grid w-1150:grid-cols-2 w-1150:gap-2"
     >
       <LinkButton
         buttonHref="https://music.apple.com/es/playlist/20tracks/pl.u-9N9LL2eI2K5oXV"
@@ -122,11 +119,33 @@ try {
           ></path>
         </svg>
       </LinkButton>
+      <LinkButton
+        buttonHref={getLocalizedPath()}
+        buttonText={localizedWorkStuff}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="dark:invert h-7 w-auto"
+          viewBox="0 0 14 14"
+          ><g fill="none" stroke="currentColor" stroke-linecap="round"
+            ><path
+              stroke-linejoin="round"
+              d="M4.098 3.65a1.15 1.15 0 1 0 2.3 0a1.15 1.15 0 0 0-2.3 0"
+            ></path><path
+              stroke-linejoin="round"
+              d="M3.5 5.94a2.2 2.2 0 0 1 .746-.834c.306-.2.652-.304 1.003-.304s.697.104 1.003.304c.307.199.563.486.746.834"
+            ></path><path
+              stroke-linejoin="round"
+              d="M12.5 12.5a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1H9L12.5 4z"
+            ></path><path d="M3.5 8.5h7m-7 2.5h4"></path></g
+          ></svg
+        >
+      </LinkButton>
     </div>
     <DivisorLine />
   </article>
   <article id="projects-card">
-    <h2>(Algunos) Proyectos</h2>
+    <h2>🚧 {localizedSomeProjects}</h2>
     {
       BentoLayout ? (
         <BentoLayout>
@@ -139,11 +158,10 @@ try {
             repoHosting="github"
           >
             <div class="">
-              <span class="regular">Localized short description</span>
               <TechTagContainer>
-                <T lT={lT} t="Astro" />
-                <T lT={lT} t="React" />
-                <T lT={lT} t="Cloudflare Pages" />
+                <T lT={localizedTechnology} t="Astro" />
+                <T lT={localizedTechnology} t="React" />
+                <T lT={localizedTechnology} t="Cloudflare Pages" />
               </TechTagContainer>
             </div>
           </BentoElement>
@@ -156,9 +174,8 @@ try {
             repoHosting="github"
           >
             <div class="">
-              <span class="regular">Localized short description</span>
               <TechTagContainer>
-                <T lT={lT} t="PowerShell" />
+                <T lT={localizedTechnology} t="PowerShell" />
               </TechTagContainer>
             </div>
           </BentoElement>
@@ -171,9 +188,9 @@ try {
             repoHosting="github"
           >
             <div class="">
-              <span class="regular">Localized short description</span>
               <TechTagContainer>
-                <T lT={lT} t="PowerShell" /> <T lT={lT} t="Sh" />
+                <T lT={localizedTechnology} t="PowerShell" />{" "}
+                <T lT={localizedTechnology} t="Sh" />
               </TechTagContainer>
             </div>
           </BentoElement>
@@ -186,12 +203,11 @@ try {
             repoHosting="github"
           >
             <div class="">
-              <span class="regular">Localized short description</span>
               <TechTagContainer>
-                <T lT={lT} t="React" />
-                <T lT={lT} t="Cloudflare D1" />
-                <T lT={lT} t="Cloudflare Pages" />
-                <T lT={lT} t="Cloudflare Workers" />
+                <T lT={localizedTechnology} t="React" />
+                <T lT={localizedTechnology} t="Cloudflare D1" />
+                <T lT={localizedTechnology} t="Cloudflare Pages" />
+                <T lT={localizedTechnology} t="Cloudflare Workers" />
               </TechTagContainer>
             </div>
           </BentoElement>
@@ -204,30 +220,28 @@ try {
             repoHosting="git"
           >
             <div class="">
-              <span class="regular">Localized short description</span>
               <TechTagContainer>
-                <T lT={lT} t="Cloudflare Pages" />
-                <T lT={lT} t="Astro" />
-                <T lT={lT} t="Cloudflare D1" />
-                <T lT={lT} t="React" />
-                <T lT={lT} t="Cloudflare Workers" />
+                <T lT={localizedTechnology} t="Cloudflare Pages" />
+                <T lT={localizedTechnology} t="Astro" />
+                <T lT={localizedTechnology} t="Cloudflare D1" />
+                <T lT={localizedTechnology} t="React" />
+                <T lT={localizedTechnology} t="Cloudflare Workers" />
               </TechTagContainer>
             </div>
           </BentoElement>
           <BentoElement
-            bentoID="redirecter"
+            bentoID="page-rule-generator"
             locale={locale}
-            projectTitle="Redirecter"
+            projectTitle="Page Rules Generator"
             projectStatus={TagType.UnderDevelopment}
             repoLink="https://github.com/jfalava/jfa.dev/blob/main/api/redirect/"
             repoHosting="github"
           >
             <div class="">
-              <span class="regular">Localized short description</span>
               <TechTagContainer>
-                <T lT={lT} t="TypeScript" />
-                <T lT={lT} t="NodeJS" />
-                <T lT={lT} t="Lambda" />
+                <T lT={localizedTechnology} t="TypeScript" />
+                <T lT={localizedTechnology} t="NodeJS" />
+                <T lT={localizedTechnology} t="Lambda" />
               </TechTagContainer>
             </div>
           </BentoElement>

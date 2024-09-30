@@ -1,6 +1,11 @@
 ---
 import { Image } from "astro:assets";
 import PFP from "/public/images/seidor_pfp.avif";
+interface Props {
+  localizedHeaderDescription: string;
+}
+
+const { localizedHeaderDescription } = Astro.props as Props;
 ---
 
 <style>
@@ -12,12 +17,20 @@ import PFP from "/public/images/seidor_pfp.avif";
     line-height: 2;
   }
 </style>
-<header class="flex justify-evenly items-center mt-2">
+<header class="flex justify-evenly items-center mt-2 mb-[2%]">
   <div class="grid grid-cols-1 justify-start items-center">
     <h1 class="bold">Jorge Fernando Álava</h1>
-    <p class="italic">aqui iria lo que hago</p>
+    <p class="italic">{localizedHeaderDescription}</p>
   </div>
-  <div class="rounded-lg glassbox p-2">
-    <Image src={PFP} alt="PFP" width="150" class="rounded-md" />
+  <div class="grid grid-cols-1 gap-y-2 items-center">
+    <div class="rounded-lg glassbox p-2">
+      <Image src={PFP} alt="PFP" width="150" class="rounded-md" />
+    </div>
+    <div class="flex justify-center" title="Discord: jfalava">
+      <img
+        src="https://api.statusbadges.me/badge/status/158683776233373696?simple=true"
+        alt="status"
+      />
+    </div>
   </div>
 </header>

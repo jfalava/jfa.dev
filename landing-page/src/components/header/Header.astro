@@ -1,9 +1,9 @@
 ---
-import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro";
 interface Props {
   currentPage: string;
+  localizedHeader: string;
 }
-const { currentPage } = Astro.props as Props;
+const { currentPage, localizedHeader } = Astro.props as Props;
 ---
 
 <style>
@@ -18,10 +18,9 @@ const { currentPage } = Astro.props as Props;
 {
   currentPage !== "index" && (
     <header class="flex justify-evenly items-center mt-2">
-      <div class="grid grid-cols-1 justify-start items-center">
-        <h1 class="bold">Jorge Fernando Álava</h1>
+      <div class="flex justify-center items-center">
+        <h1 class="bold">{localizedHeader} - Jorge Fernando Álava</h1>
       </div>
-      <DivisorLine />
     </header>
   )
 }

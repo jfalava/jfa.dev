@@ -1,3 +1,3 @@
-## Education
+## 🎓 Educación
 
-Esto es un componente de `md` con mi educación.
+Certificaciones y estudios

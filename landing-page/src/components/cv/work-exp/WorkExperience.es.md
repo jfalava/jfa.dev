@@ -1,3 +1,3 @@
-## Work Experience
+## 📄 CV
 
-Esto es un componente de `md` con mi experiencia de trabajo.
+El currículum per se

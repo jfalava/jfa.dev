@@ -1,3 +1,3 @@
-## Skill
+## 🤹🏻 Habilidades
 
-Esto es un componente de `md` con mis habilidades.
+De trabajo, de herramientas, interpersonales

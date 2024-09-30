@@ -14,7 +14,6 @@ import "@/styles/transitions-animations.css";
 // Components
 /// QoL
 import ScrollToTopButton from "@/components/reusables/qol/ScrollToTopButton.tsx";
-import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro";
 /// Header
 import Header from "@/components/header/Header.astro";
 /// Footer
@@ -33,6 +32,7 @@ interface Props {
   metaImageHeight: string;
   metaImageAlt: string;
   currentPage: string;
+  localizedHeader: string;
 }
 const {
   locale,
@@ -45,6 +45,7 @@ const {
   metaImageHeight,
   metaImageAlt,
   currentPage,
+  localizedHeader,
 } = Astro.props as Props;
 ---
 
@@ -85,7 +86,7 @@ const {
   <body
     class="flex flex-col w-full min-h-[100dvh] bg-[#efefef] text-[#181a1b] dark:bg-[#181a1b] dark:text-[#efefef]"
   >
-    <Header currentPage={currentPage} />
+    <Header currentPage={currentPage} localizedHeader={localizedHeader} />
     <ScrollToTopButton client:load />
     <main
       class="flex-grow ultrawide-only:w-[50%] ultrawide-only:ml-[25%]
