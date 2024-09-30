@@ -8,10 +8,11 @@ interface Props {
 const { buttonText, buttonHref } = Astro.props as Props;
 ---
 
-<A h={buttonHref} c="flex items-center justify-center rounded-lg p-2">
-  <div
-    class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:border-[#1e7cff] hover:text-[#1e7cff]"
-  >
+<A
+  h={buttonHref}
+  c="p-2 select-none border-b-2 border-transparent border-solid hover:border-[#1e7cff] hover:text-[#1e7cff] underline hover:decoration-transparent"
+>
+  <div class="flex items-center">
     <div class="inline-block dark:invert">
       <slot />
     </div>
