@@ -25,10 +25,10 @@ export default {
 				destinationPath = '/cv';
 				break;
 			case 'landing.jfa.dev':
-				destinationPath = '/';
+				destinationPath = '';
 				break;
 			case 'links.jfa.dev':
-				destinationPath = '/';
+				destinationPath = '';
 				break;
 			// The default case is now handled by the initial values
 		}

@@ -4,7 +4,7 @@
   "private": true,
   "workspaces": [
     "landing-page",
-    "api/redirect"
+    "manifold_redirect"
   ],
   "devDependencies": {
     "prettier": "^3.3.3",
@@ -13,9 +13,9 @@
   "scripts": {
     "dev:astro": "npm run dev --host --workspace=landing-page",
     "build:astro": "npm run build --workspace=landing-page",
-    "dev:redirect": "npm run dev --workspace=api/redirect",
-    "rebind:redirect": "npm run cf-typegen --workspace=api/redirect",
-    "deploy:redirect": "npm run deploy --workspace=api/redirect"
+    "dev:redirect": "npm run dev --workspace=manifold_redirect",
+    "rebind:redirect": "npm run cf-typegen --workspace=manifold_redirect",
+    "deploy:redirect": "npm run deploy --workspace=manifold_redirect"
   },
   "dependencies": {
     "wrangler": "^3.78.12"

@@ -1,5 +1,5 @@
 {
-	"name": "jfa-redirect-api",
+	"name": "manifold_redirect",
 	"version": "0.1",
 	"private": true,
 	"scripts": {
