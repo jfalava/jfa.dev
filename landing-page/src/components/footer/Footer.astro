@@ -103,11 +103,13 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
       </div>
       <div
         id="copyright-column"
-        class="flex w-1150:mt-[5%] mw-1150:justify-end"
+        class="flex items-center w-1150:mt-[5%] w-1150:justify-center mw-1150:justify-end not-mobile:mr-[2%]"
       >
-        <p class="inline-block bold text-lg mb-2">&copy;&nbsp;</p>
-        <p class="inline-block bold text-lg mb-2">Jorge Fernando Álava,</p>
-        <GetCurrentYear client:load />
+        <p class="inline-block bold text-lg">&copy;&nbsp;</p>
+        <p class="inline-block bold text-lg">Jorge Fernando Álava,</p>
+        <div class="">
+          <GetCurrentYear client:load />
+        </div>
       </div>
     </div>
   </div>
