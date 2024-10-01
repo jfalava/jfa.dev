@@ -1,7 +1,7 @@
 ---
 import A from "@/components/reusables/anchors/SimpleExternalAnchor.tsx";
 import Abandoned from "@/components/reusables/tags/Abandoned.tsx";
-import InProgress from "@/components/reusables/tags/Maintained";
+import Maintained from "@/components/reusables/tags/Maintained";
 import OnHold from "@/components/reusables/tags/OnHold.tsx";
 import UnderDevelopment from "@/components/reusables/tags/UnderDevelopment";
 import NDA from "@/components/reusables/tags/NDA";
@@ -21,7 +21,7 @@ const { bentoID, locale, projectTitle, projectStatus, repoLink, repoHosting } =
 
 const TagComponents = {
   [TagType.Abandoned]: Abandoned,
-  [TagType.Maintained]: InProgress,
+  [TagType.Maintained]: Maintained,
   [TagType.OnHold]: OnHold,
   [TagType.UnderDevelopment]: UnderDevelopment,
   [TagType.NDA]: NDA,
