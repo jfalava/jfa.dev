@@ -5,7 +5,7 @@
 Deploy locally with
 
 ```sh
-cd landing-page && npm install && npm run dev:astro
+$ cd landing-page && npm install && npm run dev
 ```
 
 ### Dev commands
@@ -19,7 +19,7 @@ npx tailwindcss -o ./src/styles/global.css  --watch
 Test with
 
 ```sh
-cd manifold_redirect && npm install && npm run dev:redirect
+$ cd manifold_redirect && npm install && npm run dev
 ```
 
 Check the complete version of `Manifold` on [jfalava/manifold](https://github.com/jfalava/manifold).
