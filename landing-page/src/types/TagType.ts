@@ -1,6 +1,6 @@
 export enum TagType {
   Abandoned = "Abandoned",
-  Mantained = "Mantained",
+  Maintained = "Maintained",
   OnHold = "OnHold",
   UnderDevelopment = "UnderDevelopment",
   NDA = "NDA",
