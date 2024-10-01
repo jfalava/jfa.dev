@@ -2,6 +2,7 @@
 import IA from "@/components/reusables/anchors/SimpleInternalAnchor.astro";
 import A from "@/components/reusables/anchors/SimpleExternalAnchor";
 interface Props {
+  locale: string;
   localizedSocials: string;
   localizedWebReleases: string;
   localizedContact: string;
@@ -11,6 +12,7 @@ interface Props {
   localizedAcknowledgements: string;
 }
 const {
+  locale,
   localizedSocials,
   localizedWebReleases,
   localizedContact,
@@ -23,6 +25,8 @@ const {
 import GetCurrentYear from "@/components/reusables/date/GetCurrentYear";
 // GitHub repo commits
 import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
+// Acknowledgements
+import Acknowledgements from "@/components/footer/Acknowledgements.astro";
 ---
 
 <footer
@@ -92,10 +96,10 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
             </p>
           </IA>
           <a
-            id={localizedAcknowledgements}
+            id="acknowledgements-button"
             role="button"
             class="italic mobile-only:text-sm"
-            title=""
+            title={localizedAcknowledgements}
           >
             {localizedAcknowledgements}
           </a>
@@ -112,3 +116,4 @@ import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
     </div>
   </div>
 </footer>
+<Acknowledgements locale={locale} />

@@ -1,0 +1,79 @@
+---
+interface Props {
+  locale: string;
+}
+const { locale } = Astro.props as Props;
+let LocalizedAcknowledgements;
+if (locale === "es") {
+  LocalizedAcknowledgements = await import(
+    "@/components/footer/acknowledgements/es.mdx"
+  );
+} else if (locale === "en") {
+  LocalizedAcknowledgements = await import(
+    "@/components/footer/acknowledgements/es.mdx"
+  );
+} else {
+  LocalizedAcknowledgements = await import(
+    "@/components/footer/acknowledgements/es.mdx"
+  );
+}
+const AckMDX = LocalizedAcknowledgements.default;
+---
+
+<dialog
+  id="acknowledgements-dialog"
+  class="overflow-auto p-10 border-2 border-solid rounded-lg select-none glassbox dark:text-[#efefef]"
+>
+  <AckMDX />
+  <div>
+    <div class="flex justify-end ultralight">
+      {
+        locale == "es" && (
+          <p>
+            Haz click fuera o pulsa <kbd>ESC</kbd> para cerrar.
+          </p>
+        )
+      }
+      {
+        locale == "en" && (
+          <p>
+            Press outside or <kbd>ESC</kbd> to dismiss.
+          </p>
+        )
+      }
+      {
+        locale == "pt" && (
+          <p>
+            Pressione fora ou <kbd>ESC</kbd> para ignorar.
+          </p>
+        )
+      }
+    </div>
+  </div>
+</dialog>
+<script>
+  const acknowledgementsDialog = document.getElementById(
+    "acknowledgements-dialog",
+  ) as HTMLDialogElement;
+  const acknowledgementsButton = document.getElementById(
+    "acknowledgements-button",
+  );
+
+  if (acknowledgementsButton && acknowledgementsDialog) {
+    acknowledgementsButton.addEventListener("click", () => {
+      acknowledgementsDialog.showModal();
+    });
+
+    acknowledgementsDialog.addEventListener("click", (event) => {
+      const dialogDimensions = acknowledgementsDialog.getBoundingClientRect();
+      if (
+        event.clientX < dialogDimensions.left ||
+        event.clientX > dialogDimensions.right ||
+        event.clientY < dialogDimensions.top ||
+        event.clientY > dialogDimensions.bottom
+      ) {
+        acknowledgementsDialog.close();
+      }
+    });
+  }
+</script>
