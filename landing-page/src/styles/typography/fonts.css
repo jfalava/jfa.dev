@@ -41,7 +41,7 @@ code {
 }
 .bold {
   font-family: "geist", monospace;
-  font-weight: bold;
+  font-weight: 900;
   font-style: normal;
 }
 .light {
@@ -96,4 +96,16 @@ code {
   font-family: "jetbrains", monospace;
   font-weight: 100;
   font-style: italic;
+}
+/**/
+/* Geist Variable */
+/**/
+@font-face {
+  font-family: "geist-variable";
+  src: url("/fonts/geist-variable.woff2") format("woff2");
+  font-display: swap;
+}
+/**/
+.geist-variable {
+  font-family: "geist-variable", serif;
 }

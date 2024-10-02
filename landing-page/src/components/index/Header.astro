@@ -16,9 +16,9 @@ const { localizedHeaderDescription } = Astro.props;
     line-height: 2;
   }
 </style>
-<header class="flex justify-evenly items-center mt-2 mb-[2%]">
+<header class="flex justify-evenly items-center mt-2 mb-[2%] bg-none">
   <div class="grid grid-cols-1 justify-start items-center">
-    <h1 class="bold">Jorge Fernando Álava</h1>
+    <h1 class="geist-variable font-bold">Jorge Fernando Álava</h1>
     {
       typeof localizedHeaderDescription === "string" ? (
         <p>{localizedHeaderDescription}</p>
