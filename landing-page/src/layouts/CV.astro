@@ -53,53 +53,41 @@ const {
 // Skills
 let LocalizedSkills;
 if (locale === "es") {
-  LocalizedSkills = await import("@/components/cv/skills/Skills.es.md");
+  LocalizedSkills = await import("@/content/cv/skills/Skills.es.md");
 } else if (locale === "en") {
-  LocalizedSkills = await import("@/components/cv/skills/Skills.es.md");
+  LocalizedSkills = await import("@/content/cv/skills/Skills.es.md");
 } else {
-  LocalizedSkills = await import("@/components/cv/skills/Skills.es.md");
+  LocalizedSkills = await import("@/content/cv/skills/Skills.es.md");
 }
 const Skills = LocalizedSkills.default;
 // Work Experience
 let LocalizedWorkExp;
 if (locale === "es") {
-  LocalizedWorkExp = await import(
-    "@/components/cv/work-exp/WorkExperience.es.md"
-  );
+  LocalizedWorkExp = await import("@/content/cv/work-exp/WorkExperience.es.md");
 } else if (locale === "en") {
-  LocalizedWorkExp = await import(
-    "@/components/cv/work-exp/WorkExperience.es.md"
-  );
+  LocalizedWorkExp = await import("@/content/cv/work-exp/WorkExperience.es.md");
 } else {
-  LocalizedWorkExp = await import(
-    "@/components/cv/work-exp/WorkExperience.es.md"
-  );
+  LocalizedWorkExp = await import("@/content/cv/work-exp/WorkExperience.es.md");
 }
 const WorkExperience = LocalizedWorkExp.default;
 // Education
 let LocalizedEducation;
 if (locale === "es") {
-  LocalizedEducation = await import(
-    "@/components/cv/education/Education.es.md"
-  );
+  LocalizedEducation = await import("@/content/cv/education/Education.es.md");
 } else if (locale === "en") {
-  LocalizedEducation = await import(
-    "@/components/cv/education/Education.es.md"
-  );
+  LocalizedEducation = await import("@/content/cv/education/Education.es.md");
 } else {
-  LocalizedEducation = await import(
-    "@/components/cv/education/Education.es.md"
-  );
+  LocalizedEducation = await import("@/content/cv/education/Education.es.md");
 }
 const Education = LocalizedEducation.default;
 // AboutMe
 let LocalizedAboutMe;
 if (locale === "es") {
-  LocalizedAboutMe = await import("@/components/cv/about/About.es.md");
+  LocalizedAboutMe = await import("@/content/cv/about/About.es.md");
 } else if (locale === "en") {
-  LocalizedAboutMe = await import("@/components/cv/about/About.es.md");
+  LocalizedAboutMe = await import("@/content/cv/about/About.es.md");
 } else {
-  LocalizedAboutMe = await import("@/components/cv/about/About.es.md");
+  LocalizedAboutMe = await import("@/content/cv/about/About.es.md");
 }
 const AboutMe = LocalizedAboutMe.default;
 function localizedHome() {
