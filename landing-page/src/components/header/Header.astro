@@ -1,9 +1,21 @@
 ---
 interface Props {
+  locale: string;
   currentPage: string;
   localizedHeader: string;
+  localizedNavIndex: string;
 }
-const { currentPage, localizedHeader } = Astro.props as Props;
+const { locale, currentPage, localizedHeader, localizedNavIndex } =
+  Astro.props as Props;
+function localizedHome() {
+  if (locale === "es") {
+    return `/`;
+  } else if (locale) {
+    return `/${locale}/`;
+  } else {
+    return `/`;
+  }
+}
 ---
 
 <style>
@@ -14,13 +26,100 @@ const { currentPage, localizedHeader } = Astro.props as Props;
     font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
     line-height: 2;
   }
+  .fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+  }
+  .header-hidden {
+    transform: translateY(-100%);
+  }
 </style>
+
 {
   currentPage !== "index" && (
-    <header class="flex justify-evenly items-center mt-2 mb-[2%]">
-      <div class="flex justify-center items-center">
-        <h1 class="bold">{localizedHeader}</h1>
+    <header id="header" class="bg-[#3756f2] select-none text-[#efefef]">
+      <div class="flex justify-evenly items-center">
+        <div class="inline-block items-center">
+          <h1 class="bold">{localizedHeader}</h1>
+        </div>
+        {currentPage !== "index" && (
+          <a
+            href={localizedHome()}
+            class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:text-[#ff781e]"
+          >
+            <div class="inline-block dark:invert">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-7 w1366:h-6 mobile-only:h-8 w-auto select-none dark:invert"
+                viewBox="0 0 36 36"
+              >
+                <path
+                  fill="currentColor"
+                  d="m33.71 17.29l-15-15a1 1 0 0 0-1.41 0l-15 15a1 1 0 0 0 1.41 1.41L18 4.41l14.29 14.3a1 1 0 0 0 1.41-1.41Z"
+                  class="clr-i-outline clr-i-outline-path-1"
+                />
+                <path
+                  fill="currentColor"
+                  d="M28 32h-5V22H13v10H8V18l-2 2v12a2 2 0 0 0 2 2h7V24h6v10h7a2 2 0 0 0 2-2V19.76l-2-2Z"
+                  class="clr-i-outline clr-i-outline-path-2"
+                />
+                <path fill="none" d="M0 0h36v36H0z" />
+              </svg>
+            </div>
+            <div>
+              <span class="geist select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
+                {localizedNavIndex}
+              </span>
+            </div>
+          </a>
+        )}
       </div>
     </header>
   )
 }
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("header")) {
+      const header = document.getElementById("header") as HTMLElement;
+
+      let lastScrollTop = 0;
+      let ticking = false;
+
+      function handleScroll() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const headerHeight = header.offsetHeight;
+
+        if (scrollTop > headerHeight && scrollTop > lastScrollTop) {
+          // Scrolling down
+          header.classList.add("fixed-header", "header-hidden");
+        } else if (scrollTop <= headerHeight || scrollTop < lastScrollTop) {
+          // Scrolling up or at the top
+          header.classList.remove("header-hidden");
+          if (scrollTop <= 0) {
+            header.classList.remove("fixed-header");
+          } else {
+            header.classList.add("fixed-header");
+          }
+        }
+
+        lastScrollTop = scrollTop;
+        ticking = false;
+      }
+
+      window.addEventListener("scroll", () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    }
+  });
+</script>

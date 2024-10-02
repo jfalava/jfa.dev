@@ -5,28 +5,22 @@ interface Props {
 const { locale } = Astro.props as Props;
 let LocalizedAcknowledgements;
 if (locale === "es") {
-  LocalizedAcknowledgements = await import(
-    "@/components/footer/acknowledgements/es.mdx"
-  );
+  LocalizedAcknowledgements = await import("@/content/acknowledgements/es.mdx");
 } else if (locale === "en") {
-  LocalizedAcknowledgements = await import(
-    "@/components/footer/acknowledgements/es.mdx"
-  );
+  LocalizedAcknowledgements = await import("@/content/acknowledgements/es.mdx");
 } else {
-  LocalizedAcknowledgements = await import(
-    "@/components/footer/acknowledgements/es.mdx"
-  );
+  LocalizedAcknowledgements = await import("@/content/acknowledgements/es.mdx");
 }
 const AckMDX = LocalizedAcknowledgements.default;
 ---
 
 <dialog
   id="acknowledgements-dialog"
-  class="overflow-auto p-10 border-2 border-solid rounded-lg select-none glassbox dark:text-[#efefef]"
+  class="overflow-auto p-10 border-2 border-solid rounded-lg select-none dark:text-[#efefef]"
 >
   <AckMDX />
-  <div>
-    <div class="flex justify-end ultralight">
+  <div class="geist">
+    <div class="flex justify-end">
       {
         locale == "es" && (
           <p>

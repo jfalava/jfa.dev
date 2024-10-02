@@ -14,7 +14,7 @@ summary {
   transition: color 0.2s ease-in-out;
 }
 a:hover {
-  color: #1e7cff;
+  color: #ff781e;
   transition: color 0.2s ease-in-out;
 }
 
@@ -75,7 +75,7 @@ details summary {
   user-select: none;
 }
 details[open] > summary {
-  color: #1e7cff;
+  color: #ff781e;
   text-decoration: none;
 }
 details > summary:hover {
