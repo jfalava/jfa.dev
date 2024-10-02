@@ -29,8 +29,8 @@ const { currentPage, localizedHeader } = Astro.props as Props;
 
 {
   currentPage !== "index" && (
-    <header id="main-header" class="bg-[#3756f2] select-none text-[#efefef]">
-      <div class="flex justify-center items-center">
+    <header id="header" class="bg-[#3756f2] select-none text-[#efefef]">
+      <div class="flex justify-evenly items-center">
         <h1 class="bold">{localizedHeader}</h1>
       </div>
     </header>
@@ -39,8 +39,8 @@ const { currentPage, localizedHeader } = Astro.props as Props;
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("main-header")) {
-      const header = document.getElementById("main-header") as HTMLElement;
+    if (document.getElementById("header")) {
+      const header = document.getElementById("header") as HTMLElement;
 
       let lastScrollTop = 0;
       let ticking = false;
