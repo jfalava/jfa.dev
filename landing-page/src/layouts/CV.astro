@@ -17,6 +17,7 @@ interface Props {
   metaImageAlt: string;
   localizedBackToHome: string;
   localizedHeader: string;
+  localizedNavIndex: string;
   localizedSocials: string;
   localizedWebReleases: string;
   localizedContact: string;
@@ -39,6 +40,7 @@ const {
   metaImageAlt,
   localizedBackToHome,
   localizedHeader,
+  localizedNavIndex,
   localizedSocials,
   localizedWebReleases,
   localizedContact,
@@ -139,6 +141,7 @@ function localizedHome() {
   localizedOtherLinks={localizedOtherLinks}
   localizedSiteMap={localizedSiteMap}
   localizedAcknowledgements={localizedAcknowledgements}
+  localizedNavIndex={localizedNavIndex}
 >
   <article id="aboutme-card">
     <AboutMe />
@@ -147,7 +150,7 @@ function localizedHome() {
     <Skills />
     <div class="flex justify-end">
       <StyledBlockquote blockquoteType={BlockquoteType.Warning}>
-        <span class="dank-mono ml-2">This is outdated!</span>
+        <span class="ml-2 geist">This is outdated!</span>
       </StyledBlockquote>
     </div>
   </article>
@@ -177,7 +180,7 @@ function localizedHome() {
   <div class="mt-[2%] mobile-only:mt-[5%] flex justify-end">
     <StyledBlockquote blockquoteType={BlockquoteType.Updated}>
       <div class="flex items-center">
-        <CompleteCurrentLocalTime c="dank-mono text-base" lang={locale} />
+        <CompleteCurrentLocalTime c="geist text-base" lang={locale} />
       </div>
     </StyledBlockquote>
   </div>

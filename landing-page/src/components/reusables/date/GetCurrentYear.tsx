@@ -25,7 +25,7 @@ const CurrentYear: React.FC<Props> = ({ lang }) => {
     <p
       data-timestamp={unixTimestamp}
       title={fullDate}
-      className="bold text-lg mobile-only:text-base select-none cursor-help"
+      className="jb-bold text-lg mobile-only:text-base select-none cursor-help"
     >
       &nbsp;{fullDate}
     </p>

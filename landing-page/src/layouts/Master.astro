@@ -33,6 +33,7 @@ interface Props {
   metaImageAlt: string;
   currentPage: string;
   localizedHeader: string;
+  localizedNavIndex: string;
   localizedSocials: string;
   localizedWebReleases: string;
   localizedContact: string;
@@ -53,6 +54,7 @@ const {
   metaImageAlt,
   currentPage,
   localizedHeader,
+  localizedNavIndex,
   localizedSocials,
   localizedWebReleases,
   localizedContact,
@@ -109,7 +111,12 @@ const {
   <body
     class="flex flex-col w-full min-h-[100dvh] bg-[#efefef] text-[#181a1b] dark:bg-[#181a1b] dark:text-[#efefef]"
   >
-    <Header currentPage={currentPage} localizedHeader={localizedHeader} />
+    <Header
+      locale={locale}
+      currentPage={currentPage}
+      localizedHeader={localizedHeader}
+      localizedNavIndex={localizedNavIndex}
+    />
     <ScrollToTopButton client:load />
     <main
       class="flex-grow ultrawide-only:w-[50%] ultrawide-only:ml-[25%]
