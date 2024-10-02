@@ -14,13 +14,67 @@ const { currentPage, localizedHeader } = Astro.props as Props;
     font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
     line-height: 2;
   }
+  .fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+  }
+  .header-hidden {
+    transform: translateY(-100%);
+  }
 </style>
+
 {
   currentPage !== "index" && (
-    <header class="flex justify-evenly items-center mt-2 mb-[2%]">
+    <header id="main-header" class="bg-[#3756f2] select-none text-[#efefef]">
       <div class="flex justify-center items-center">
         <h1 class="bold">{localizedHeader}</h1>
       </div>
     </header>
   )
 }
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("main-header")) {
+      const header = document.getElementById("main-header") as HTMLElement;
+
+      let lastScrollTop = 0;
+      let ticking = false;
+
+      function handleScroll() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const headerHeight = header.offsetHeight;
+
+        if (scrollTop > headerHeight && scrollTop > lastScrollTop) {
+          // Scrolling down
+          header.classList.add("fixed-header", "header-hidden");
+        } else if (scrollTop <= headerHeight || scrollTop < lastScrollTop) {
+          // Scrolling up or at the top
+          header.classList.remove("header-hidden");
+          if (scrollTop <= 0) {
+            header.classList.remove("fixed-header");
+          } else {
+            header.classList.add("fixed-header");
+          }
+        }
+
+        lastScrollTop = scrollTop;
+        ticking = false;
+      }
+
+      window.addEventListener("scroll", () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    }
+  });
+</script>
