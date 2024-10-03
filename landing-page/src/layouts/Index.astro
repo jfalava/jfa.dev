@@ -6,7 +6,9 @@ import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro"
 import BentoLayout from "@/components/index/current-projects/BentoLayout.astro";
 import BentoElement from "@/components/index/current-projects/BentoElement.astro";
 import { TagType } from "@/types/TagType.ts";
-import T from "@/components/reusables/tags/Technology.astro";
+import TechTag, {
+  TechnologyType,
+} from "@/components/reusables/tags/TechnologyTag.tsx";
 import TechTagContainer from "@/components/reusables/tags/TechTagContainer.astro";
 // Links
 import LinkButton from "@/components/index/links/LinkButton.astro";
@@ -178,16 +180,14 @@ const {
             projectTitle="jfa.dev"
             projectStatus={TagType.UnderDevelopment}
             repoLink="https://github.com/jfalava/jfa.dev/"
-            repoHosting="github"
+            repoHosting="GitHub"
           >
-            <div class="">
-              <TechTagContainer>
-                <T lT={localizedTechnology} t="Astro" />
-                <T lT={localizedTechnology} t="React" />
-                <T lT={localizedTechnology} t="Cloudflare Pages" />
-                <T lT={localizedTechnology} t="Cloudflare Workers" />
-              </TechTagContainer>
-            </div>
+            <TechTagContainer>
+              <TechTag t={TechnologyType.Astro} />
+              <TechTag t={TechnologyType.React} />
+              <TechTag t={TechnologyType.Cloudflare_Pages} />
+              <TechTag t={TechnologyType.Cloudflare_Workers} />
+            </TechTagContainer>
           </BentoElement>
           <BentoElement
             bentoID="machine-outfitting"
@@ -195,13 +195,11 @@ const {
             projectTitle="Machine Outfitting"
             projectStatus={TagType.Maintained}
             repoLink="https://github.com/jfalava/machine-outfitting"
-            repoHosting="github"
+            repoHosting="GitHub"
           >
-            <div class="">
-              <TechTagContainer>
-                <T lT={localizedTechnology} t="PowerShell" />
-              </TechTagContainer>
-            </div>
+            <TechTagContainer>
+              <TechTag t={TechnologyType.PowerShell} />
+            </TechTagContainer>
           </BentoElement>
           <BentoElement
             bentoID="dotfiles"
@@ -209,14 +207,12 @@ const {
             projectTitle="dotfiles"
             projectStatus={TagType.Maintained}
             repoLink="https://github.com/jfalava/dotfiles-and-such"
-            repoHosting="github"
+            repoHosting="GitHub"
           >
-            <div class="">
-              <TechTagContainer>
-                <T lT={localizedTechnology} t="PowerShell" />{" "}
-                <T lT={localizedTechnology} t="Sh" />
-              </TechTagContainer>
-            </div>
+            <TechTagContainer>
+              <TechTag t={TechnologyType.PowerShell} />
+              <TechTag t={TechnologyType.Sh} />
+            </TechTagContainer>
           </BentoElement>
           <BentoElement
             bentoID="make-a-test"
@@ -224,17 +220,15 @@ const {
             projectTitle="make-a-test"
             projectStatus={TagType.UnderDevelopment}
             repoLink="https://github.com/jfalava/make-a-test"
-            repoHosting="github"
+            repoHosting="GitHub"
           >
-            <div class="">
-              <TechTagContainer>
-                <T lT={localizedTechnology} t="React" />
-                <T lT={localizedTechnology} t="Astro" />
-                <T lT={localizedTechnology} t="JSON" />
-                <T lT={localizedTechnology} t="Cloudflare D1" />
-                <T lT={localizedTechnology} t="Cloudflare Workers" />
-              </TechTagContainer>
-            </div>
+            <TechTagContainer>
+              <TechTag t={TechnologyType.React} />
+              <TechTag t={TechnologyType.Astro} />
+              <TechTag t={TechnologyType.JSON} />
+              <TechTag t={TechnologyType.Cloudflare_D1} />
+              <TechTag t={TechnologyType.Cloudflare_Workers} />
+            </TechTagContainer>
           </BentoElement>
           <BentoElement
             bentoID="oc-content-page"
@@ -242,17 +236,15 @@ const {
             projectTitle="OC Content Page"
             projectStatus={TagType.NDA}
             repoLink="#super-secret-repo"
-            repoHosting="git"
+            repoHosting="Git"
           >
-            <div class="">
-              <TechTagContainer>
-                <T lT={localizedTechnology} t="Cloudflare Pages" />
-                <T lT={localizedTechnology} t="Cloudflare D1" />
-                <T lT={localizedTechnology} t="Cloudflare Workers" />
-                <T lT={localizedTechnology} t="Astro" />
-                <T lT={localizedTechnology} t="React" />
-              </TechTagContainer>
-            </div>
+            <TechTagContainer>
+              <TechTag t={TechnologyType.Astro} />
+              <TechTag t={TechnologyType.React} />
+              <TechTag t={TechnologyType.Cloudflare_Pages} />
+              <TechTag t={TechnologyType.Cloudflare_Workers} />
+              <TechTag t={TechnologyType.Cloudflare_D1} />
+            </TechTagContainer>
           </BentoElement>
           <BentoElement
             bentoID="manifold"
@@ -260,14 +252,13 @@ const {
             projectTitle="Manifold"
             projectStatus={TagType.UnderDevelopment}
             repoLink="https://github.com/jfalava/manifold"
-            repoHosting="github"
+            repoHosting="GitHub"
           >
-            <div class="">
-              <TechTagContainer>
-                <T lT={localizedTechnology} t="TypeScript" />
-                <T lT={localizedTechnology} t="API" />
-              </TechTagContainer>
-            </div>
+            <TechTagContainer>
+              <TechTag t={TechnologyType.TypeScript} />
+              <TechTag t={TechnologyType.Rust} />
+              <TechTag t={TechnologyType.Cloudflare_Workers} />
+            </TechTagContainer>
           </BentoElement>
         </BentoLayout>
       ) : (
