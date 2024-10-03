@@ -37,7 +37,6 @@ const TechTag: React.FC<Props> = ({ t }) => {
           </svg>
         </div>
       )}
-
       {t === TechnologyType.React && (
         <div
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#3e9dbc] bg-[#087ea4]"
@@ -55,7 +54,6 @@ const TechTag: React.FC<Props> = ({ t }) => {
           </svg>
         </div>
       )}
-
       {t === TechnologyType.PowerShell && (
         <div
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#3c67a2] bg-[#002353]"
@@ -73,7 +71,6 @@ const TechTag: React.FC<Props> = ({ t }) => {
           </svg>
         </div>
       )}
-
       {t === TechnologyType.Sh && (
         <div
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-green-400 bg-green-700"
@@ -91,7 +88,6 @@ const TechTag: React.FC<Props> = ({ t }) => {
           </svg>
         </div>
       )}
-
       {t === TechnologyType.Cloudflare_Workers && (
         <div
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#f49b4e] bg-[#f6821f]"
