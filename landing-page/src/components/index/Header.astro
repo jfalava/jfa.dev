@@ -1,6 +1,4 @@
 ---
-import { Image } from "astro:assets";
-import PFP from "/public/images/seidor_pfp.avif";
 interface Props {
   localizedHeaderDescription: string | { __html: string };
 }
@@ -16,26 +14,42 @@ const { localizedHeaderDescription } = Astro.props;
     line-height: 2;
   }
 </style>
-<header class="flex justify-evenly items-center mt-2 mb-[2%] bg-none">
-  <div class="grid grid-cols-1 justify-start items-center">
-    <h1 class="geist-variable font-bold">Jorge Fernando Álava</h1>
-    {
-      typeof localizedHeaderDescription === "string" ? (
-        <p>{localizedHeaderDescription}</p>
-      ) : (
-        <p set:html={localizedHeaderDescription.__html} />
-      )
-    }
+<header class="mt-2 mb-[2%] bg-none">
+  <div class="flex justify-center">
+    <h1 class="bold not-mobile:hidden">Jorge Fernando Álava</h1>
   </div>
-  <div class="grid grid-cols-1 gap-y-2 items-center">
-    <div class="rounded-lg glassbox p-2">
-      <Image src={PFP} alt="PFP" width="150" class="rounded-md" />
+  <div class="flex justify-evenly items-center">
+    <div class="grid grid-cols-1">
+      <h1 class="bold mobile-only:hidden">Jorge Fernando Álava</h1>
+      <div class="mobile-only:hidden ml-2">
+        {
+          typeof localizedHeaderDescription === "string" ? (
+            <p>{localizedHeaderDescription}</p>
+          ) : (
+            <p set:html={localizedHeaderDescription.__html} />
+          )
+        }
+      </div>
     </div>
-    <div class="flex justify-center" title="Discord: jfalava">
-      <img
-        src="https://api.statusbadges.me/badge/status/158683776233373696?simple=true"
-        alt="status"
-      />
+    <div class="grid grid-cols-2 gap-x-5 justify-center items-center">
+      <div class="not-mobile:hidden">
+        {
+          typeof localizedHeaderDescription === "string" ? (
+            <p>{localizedHeaderDescription}</p>
+          ) : (
+            <p set:html={localizedHeaderDescription.__html} />
+          )
+        }
+      </div>
+      <div
+        id="pfp-image-container"
+        class="rounded-md glassbox p-2 flex flex-grow"
+      >
+        <img
+          src="/images/seidor_pfp.avif"
+          class="h-auto mobile-only:w-28 w-32 rounded flex-1"
+        />
+      </div>
     </div>
   </div>
 </header>
