@@ -6,14 +6,16 @@ header {
 }
 
 @media (prefers-color-scheme: dark) {
-  body {
+  body,
+  dialog {
     background-image: url("/images/bg/white-noise.svg");
     background-size: auto;
     background-repeat: repeat;
   }
 }
 @media (prefers-color-scheme: light) {
-  body {
+  body,
+  dialog {
     background-image: url("/images/bg/black-noise.svg");
     background-size: auto;
     background-repeat: repeat;
