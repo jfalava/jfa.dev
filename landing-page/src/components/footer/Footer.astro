@@ -1,6 +1,6 @@
 ---
 import IA from "@/components/reusables/anchors/SimpleInternalAnchor.astro";
-import A from "@/components/reusables/anchors/SimpleExternalAnchor";
+import A from "@/components/reusables/anchors/SimpleExternalAnchor.tsx";
 interface Props {
   locale: string;
   localizedSocials: string;
@@ -22,9 +22,9 @@ const {
   localizedAcknowledgements,
 } = Astro.props as Props;
 // Timestamps
-import GetCurrentYear from "@/components/reusables/date/GetCurrentYear";
+import GetCurrentYear from "@/components/reusables/date/GetCurrentYear.tsx";
 // GitHub repo commits
-import LastCommit from "@/components/reusables/fetchers/GetLastCommit";
+import LastCommit from "@/components/reusables/fetchers/GetLastCommit.tsx";
 // Acknowledgements
 import Acknowledgements from "@/components/footer/Acknowledgements.astro";
 ---
@@ -46,63 +46,77 @@ import Acknowledgements from "@/components/footer/Acknowledgements.astro";
           id="socials-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg mb-2">{localizedSocials}</p>
-          <A h="https://twitter.com/jorgefalava">
-            <p class="italic mobile-only:text-sm">Twitter</p>
-          </A>
-          <A h="https://todon.eu/@jfalava">
-            <p class="italic mobile-only:text-sm">Mastodon</p>
-          </A>
-          <A h="https://linkedin.com/in/jfalava">
-            <p class="italic mobile-only:text-sm">LinkedIn</p>
-          </A>
+          <p class="bold text-lg mb-2">👥&nbsp;{localizedSocials}</p>
+          <div class="ml-2">
+            <A h="https://twitter.com/jorgefalava">
+              <p class="italic mobile-only:text-sm">Twitter</p>
+            </A>
+            <A h="https://todon.eu/@jfalava">
+              <p class="italic mobile-only:text-sm">Mastodon</p>
+            </A>
+            <A h="https://linkedin.com/in/jfalava">
+              <p class="italic mobile-only:text-sm">LinkedIn</p>
+            </A>
+          </div>
         </div>
         <div
           id="releases-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg mb-2">{localizedWebReleases}</p>
-          <div class="flex items-center italic mobile-only:text-sm">
-            <p class="italic mobile-only:text-sm">Prod:&nbsp;</p>
-            <LastCommit b="main" client:load />
-          </div>
-          <div class="flex items-center italic mobile-only:text-sm">
-            <p class="italic mobile-only:text-sm">Dev:&nbsp;</p>
-            <LastCommit b="dev" client:load />
+          <p class="bold text-lg mb-2">🌐&nbsp;{localizedWebReleases}</p>
+          <div class="ml-2">
+            <div class="flex items-center italic mobile-only:text-sm">
+              <p class="italic mobile-only:text-sm">Prod:&nbsp;</p>
+              <LastCommit b="main" client:load />
+            </div>
+            <div class="flex items-center italic mobile-only:text-sm">
+              <p class="italic mobile-only:text-sm">Dev:&nbsp;</p>
+              <LastCommit b="dev" client:load />
+            </div>
           </div>
         </div>
         <div
           id="contact-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg mb-2">{localizedContact}</p>
-          <IA t="mailto:hi@contact.jfa.dev" h="mailto:hi@contact.jfa.dev">
-            <p slot="simple-anchor-content" class="italic mobile-only:text-sm">
-              {localizedContactMe}
-            </p>
-          </IA>
-          <A h="https://keybase.io/jfalava/pgp_keys.asc">
-            <p class="italic mobile-only:text-sm">PGP</p>
-          </A>
+          <p class="bold text-lg mb-2">📧&nbsp;{localizedContact}</p>
+          <div class="ml-2">
+            <IA t="mailto:hi@contact.jfa.dev" h="mailto:hi@contact.jfa.dev">
+              <p
+                slot="simple-anchor-content"
+                class="italic mobile-only:text-sm"
+              >
+                {localizedContactMe}
+              </p>
+            </IA>
+            <A h="https://keybase.io/jfalava/pgp_keys.asc">
+              <p class="italic mobile-only:text-sm">PGP</p>
+            </A>
+          </div>
         </div>
         <div
           id="other-links-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg mb-2">{localizedOtherLinks}</p>
-          <IA t={localizedSiteMap} h="/sitemap-0.xml">
-            <p slot="simple-anchor-content" class="italic mobile-only:text-sm">
-              {localizedSiteMap}
-            </p>
-          </IA>
-          <a
-            id="acknowledgements-button"
-            role="button"
-            class="italic mobile-only:text-sm"
-            title={localizedAcknowledgements}
-          >
-            {localizedAcknowledgements}
-          </a>
+          <p class="bold text-lg mb-2">🔗&nbsp;{localizedOtherLinks}</p>
+          <div class="ml-2">
+            <IA t={localizedSiteMap} h="/sitemap-0.xml">
+              <p
+                slot="simple-anchor-content"
+                class="italic mobile-only:text-sm"
+              >
+                {localizedSiteMap}
+              </p>
+            </IA>
+            <a
+              id="acknowledgements-button"
+              role="button"
+              class="italic mobile-only:text-sm"
+              title={localizedAcknowledgements}
+            >
+              {localizedAcknowledgements}
+            </a>
+          </div>
         </div>
       </div>
       <div

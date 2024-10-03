@@ -79,7 +79,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
       )}
       {t === TechnologyType.Sh && (
         <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-green-400 bg-green-700"
+          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#7ff683] bg-[#199b1d]"
           title="Shell"
         >
           <div className="invert">
