@@ -1,19 +1,12 @@
 ---
-import IA from "@/components/reusables/anchors/SimpleInternalAnchor.astro";
 interface Props {
   locale: string;
   currentPage: string;
-  localizedHeader: string;
   localizedNavIndex: string;
   localizedCVIndex: string;
 }
-const {
-  locale,
-  currentPage,
-  localizedHeader,
-  localizedNavIndex,
-  localizedCVIndex,
-} = Astro.props as Props;
+const { locale, currentPage, localizedNavIndex, localizedCVIndex } =
+  Astro.props as Props;
 // Navbar
 function localizedHome() {
   if (locale === "es") {

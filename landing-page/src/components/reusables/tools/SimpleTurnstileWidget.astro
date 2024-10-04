@@ -59,7 +59,7 @@ const widgetID = `${turnstileID}-widget`;
   </div>
 </div>
 
-<script define:vars={{ turnstileID, protectedElementID, widgetID }}>
+<script is:inline define:vars={{ turnstileID, protectedElementID, widgetID }}>
   function loadScript(src) {
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");

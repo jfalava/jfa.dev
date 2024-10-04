@@ -24,8 +24,7 @@ interface Props {
   metaImageWidth: string;
   metaImageHeight: string;
   metaImageAlt: string;
-  localizedHeader: string;
-  localizedPersonalDescription:  string | { __html: string };
+  localizedPersonalDescription: string | { __html: string };
   localizedNavIndex: string;
   localizedCVIndex: string;
   localizedLinks: string;
@@ -50,7 +49,6 @@ const {
   metaImageAlt,
   localizedLinks,
   localizedSomeProjects,
-  localizedHeader,
   localizedPersonalDescription,
   localizedNavIndex,
   localizedCVIndex,
@@ -75,7 +73,6 @@ const {
   metaImageHeight={metaImageHeight}
   metaImageAlt={metaImageAlt}
   currentPage="index"
-  localizedHeader={localizedHeader}
   localizedNavIndex={localizedNavIndex}
   localizedCVIndex={localizedCVIndex}
   localizedSocials={localizedSocials}
@@ -87,10 +84,8 @@ const {
   localizedAcknowledgements={localizedAcknowledgements}
 >
   <article id="personal-description-card" class="mobile-only:mt-[5%] mt-[2%]">
-  <PersonalDesc
-    localizedPersonalDescription={localizedPersonalDescription}
-  />
-  <DivisorLine />
+    <PersonalDesc localizedPersonalDescription={localizedPersonalDescription} />
+    <DivisorLine />
   </article>
   <article
     id="links-card"
