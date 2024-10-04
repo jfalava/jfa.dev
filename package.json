@@ -18,7 +18,6 @@
     "deploy:redirect": "npm run deploy --workspace=manifold_redirect"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^11.1.0",
     "wrangler": "^3.78.12"
   }
 }

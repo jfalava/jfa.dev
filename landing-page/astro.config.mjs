@@ -7,8 +7,6 @@ import sitemap from "@astrojs/sitemap";
 import react from "@astrojs/react";
 import robots from "astro-robots";
 
-import cloudflare from "@astrojs/cloudflare";
-
 // https://astro.build/config
 export default defineConfig({
   integrations: [
@@ -29,18 +27,13 @@ export default defineConfig({
       ],
     }),
   ],
-
   i18n: {
     defaultLocale: "es",
     locales: ["es", "en", "pt"],
   },
-
   site: "https://jfa.dev",
   output: "static",
-
   prefetch: {
     defaultStrategy: "tap",
   },
-
-  adapter: cloudflare(),
 });
