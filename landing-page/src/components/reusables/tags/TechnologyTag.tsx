@@ -25,7 +25,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#8344ca] bg-[#4e178b]"
           title="Astro"
         >
-          <div className="invert">
+          <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-auto invert"
@@ -44,7 +44,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#3e9dbc] bg-[#087ea4]"
           title="React"
         >
-          <div className="invert">
+          <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-auto invert"
@@ -63,7 +63,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#3c67a2] bg-[#002353]"
           title="PowerShell"
         >
-          <div className="invert">
+          <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-auto invert"
@@ -82,7 +82,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#7ff683] bg-[#199b1d]"
           title="Shell"
         >
-          <div className="invert">
+          <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-auto invert"
@@ -140,7 +140,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#f49b4e] bg-[#f6821f]"
           title="Cloudflare D1"
         >
-          <div className="invert">
+          <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 65 64"
@@ -160,7 +160,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
           className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#579ae1] bg-[#2f74c0]"
           title="TypeScript"
         >
-          <div className="invert">
+          <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-auto invert"
@@ -207,7 +207,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
                 y2="85.228%"
               >
                 <stop offset="0%" />
-                <stop offset="100%" stop-color="#fff" />
+                <stop offset="100%" stopColor="#fff" />
               </linearGradient>
               <linearGradient
                 id="logosJson1"
@@ -217,7 +217,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
                 y2="14.79%"
               >
                 <stop offset="0%" />
-                <stop offset="100%" stop-color="#fff" />
+                <stop offset="100%" stopColor="#fff" />
               </linearGradient>
             </defs>
             <path
