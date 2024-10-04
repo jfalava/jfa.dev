@@ -46,7 +46,7 @@ import Acknowledgements from "@/components/footer/Acknowledgements.astro";
           id="socials-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg mb-2">👥&nbsp;{localizedSocials}</p>
+          <p class="geist-variable font-bold text-lg mb-2">👥&nbsp;{localizedSocials}</p>
           <div class="ml-2">
             <A h="https://twitter.com/jorgefalava">
               <p class="italic mobile-only:text-sm">Twitter</p>
@@ -63,7 +63,7 @@ import Acknowledgements from "@/components/footer/Acknowledgements.astro";
           id="releases-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg mb-2">🌐&nbsp;{localizedWebReleases}</p>
+          <p class="geist-variable font-bold text-lg mb-2">🌐&nbsp;{localizedWebReleases}</p>
           <div class="ml-2">
             <div class="flex items-center italic mobile-only:text-sm">
               <p class="italic mobile-only:text-sm">Prod:&nbsp;</p>
@@ -79,7 +79,7 @@ import Acknowledgements from "@/components/footer/Acknowledgements.astro";
           id="contact-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg mb-2">📧&nbsp;{localizedContact}</p>
+          <p class="geist-variable font-bold text-lg mb-2">📧&nbsp;{localizedContact}</p>
           <div class="ml-2">
             <IA t="mailto:hi@contact.jfa.dev" h="mailto:hi@contact.jfa.dev">
               <p
@@ -98,7 +98,7 @@ import Acknowledgements from "@/components/footer/Acknowledgements.astro";
           id="other-links-column"
           class="border-l pl-2 border-solid border-white"
         >
-          <p class="bold text-lg mb-2">🍱&nbsp;{localizedOtherLinks}</p>
+          <p class="geist-variable font-bold text-lg mb-2">🍱&nbsp;{localizedOtherLinks}</p>
           <div class="ml-2">
             <IA t={localizedSiteMap} h="/sitemap-0.xml">
               <p
@@ -123,10 +123,10 @@ import Acknowledgements from "@/components/footer/Acknowledgements.astro";
         id="copyright-column"
         class="flex items-center w-1150:mt-[5%] w-1150:justify-center mw-1150:justify-end"
       >
-        <p class="inline-block geist-variable font-bold text-lg">
+        <p class="inline-block geist-variable font-geist-variable font-bold text-lg">
           &copy;&nbsp;
         </p>
-        <p class="inline-block geist-variable font-bold text-lg">
+        <p class="inline-block geist-variable font-geist-variable font-bold text-lg">
           Jorge Fernando Álava,
         </p>
         <GetCurrentYear client:load />

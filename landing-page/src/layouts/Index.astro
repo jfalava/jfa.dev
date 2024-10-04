@@ -1,6 +1,8 @@
 ---
 import MasterLayout from "@/layouts/Master.astro";
 import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro";
+//
+import PersonalDesc from "@/components/index/PersonalDesc.astro";
 // Projects
 import BentoLayout from "@/components/index/current-projects/BentoLayout.astro";
 import BentoElement from "@/components/index/current-projects/BentoElement.astro";
@@ -23,6 +25,7 @@ interface Props {
   metaImageHeight: string;
   metaImageAlt: string;
   localizedHeader: string;
+  localizedPersonalDescription:  string | { __html: string };
   localizedNavIndex: string;
   localizedCVIndex: string;
   localizedLinks: string;
@@ -48,6 +51,7 @@ const {
   localizedLinks,
   localizedSomeProjects,
   localizedHeader,
+  localizedPersonalDescription,
   localizedNavIndex,
   localizedCVIndex,
   localizedSocials,
@@ -82,6 +86,12 @@ const {
   localizedSiteMap={localizedSiteMap}
   localizedAcknowledgements={localizedAcknowledgements}
 >
+  <article id="personal-description-card" class="mobile-only:mt-[5%] mt-[2%]">
+  <PersonalDesc
+    localizedPersonalDescription={localizedPersonalDescription}
+  />
+  <DivisorLine />
+  </article>
   <article
     id="links-card"
     class="mt-[2%] mb-[2%] mobile-only:mt-[5%] mobile-only:mb-[5%]"
@@ -89,7 +99,7 @@ const {
     <h2>🔗 {localizedLinks}</h2>
     <div
       id="links-buttons-container"
-      class="flex flex-grow mb-[2%] justify-evenly w-1150:grid w-1150:grid-cols-2 w-1150:gap-2"
+      class="flex flex-grow mb-[2%] justify-evenly w-1150:grid w-1150:grid-cols-1 w-1150:gap-2"
     >
       <LinkButton
         buttonHref=`https://music.apple.com/${locale}/playlist/20tracks/pl.u-9N9LL2eI2K5oXV`
