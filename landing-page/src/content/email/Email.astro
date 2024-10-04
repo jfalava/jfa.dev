@@ -19,9 +19,14 @@ const { localizedEmail } = Astro.props as Props;
 <div class="grid grid-cols-1 gap-y-2">
   <h2>{localizedEmail}:</h2>
   <div class="flex">
-    <A h="mailto:hello@jfa.dev" c="inline-block">
+    <a
+      role="button"
+      href="mailto:hello@jfa.dev"
+      class="inline-block"
+      title=`${localizedEmail}: hello@jfa.dev`
+    >
       <p id="email-fr-fr">hello@jfa.dev</p>
-    </A>
+    </a>
     <div id="copy-email-button" class="inline-block ml-2 cursor-pointer">
       <div class="dark:invert">
         <svg
