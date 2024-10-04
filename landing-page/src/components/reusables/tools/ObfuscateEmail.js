@@ -1,26 +1,20 @@
 (function () {
-  function y(s: string) {
-    return s.replace(/[a-zA-Z]/g, (c: string) => {
-      const charCode = c.charCodeAt(0);
-      const shift = (charCode <= 90 ? 90 : 122) >= charCode + 13 ? 13 : -13;
-      return String.fromCharCode(charCode + shift);
-    });
+  function y(s) {
+    return s.replace(/[a-zA-Z]/g, (c) =>
+      String.fromCharCode(
+        (c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26,
+      ),
+    );
   }
 
-  const reveal = document.getElementById("email") as HTMLElement;
-  const dialog = document.querySelector("dialog") as HTMLElement;
+  const reveal = document.getElementById("email");
+  const dialog = document.querySelector("dialog");
   reveal.addEventListener("click", () => {
     dialog.setAttribute("open", "open");
   });
 
   function revealEmail() {
-    const encodedEmail = "eW91ci5uZXcuZW1haWw=@rknzcyr.com"; // Result from encodeEmail()
-    const email =
-      atob(encodedEmail.split("@")[0]) +
-      "@" +
-      atob(y(encodedEmail.split("@")[1].split(".")[0])) +
-      "." +
-      encodedEmail.split(".")[1];
+    const email = "si" + atob("dGVAYW4=") + "na." + atob(y("oTqv")) + "t";
 
     const emailLink = document.createElement("a");
     emailLink.setAttribute("href", `mailto:${email}`);
@@ -36,8 +30,8 @@
     reveal.replaceWith(notInterested);
   }
 
-  const yesButton = dialog.querySelector("#yes-button") as HTMLElement;
-  const noButton = dialog.querySelector("#no-button") as HTMLElement;
+  const yesButton = dialog.querySelector("#yes-button");
+  const noButton = dialog.querySelector("#no-button");
 
   yesButton.addEventListener("click", () => {
     dialog.removeAttribute("open");
