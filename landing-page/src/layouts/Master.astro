@@ -34,6 +34,7 @@ interface Props {
   currentPage: string;
   localizedHeader: string;
   localizedNavIndex: string;
+  localizedCVIndex: string;
   localizedSocials: string;
   localizedWebReleases: string;
   localizedContact: string;
@@ -55,6 +56,7 @@ const {
   currentPage,
   localizedHeader,
   localizedNavIndex,
+  localizedCVIndex,
   localizedSocials,
   localizedWebReleases,
   localizedContact,
@@ -116,6 +118,7 @@ const {
       currentPage={currentPage}
       localizedHeader={localizedHeader}
       localizedNavIndex={localizedNavIndex}
+      localizedCVIndex={localizedCVIndex}
     />
     <ScrollToTopButton client:load />
     <main

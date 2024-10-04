@@ -4,16 +4,65 @@ interface Props {
   currentPage: string;
   localizedHeader: string;
   localizedNavIndex: string;
+  localizedCVIndex: string;
 }
-const { locale, currentPage, localizedHeader, localizedNavIndex } =
-  Astro.props as Props;
-function localizedHome() {
+const {
+  locale,
+  currentPage,
+  localizedHeader,
+  localizedNavIndex,
+  localizedCVIndex,
+} = Astro.props as Props;
+// Navbar
+const navItems = [
+  {
+    id: "index",
+    label: "Home",
+    icon: `<svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w1366:h-6 mobile-only:h-8 w-auto select-none dark:invert"
+            viewBox="0 0 36 36"
+          >
+            <path
+              fill="currentColor"
+              d="m33.71 17.29l-15-15a1 1 0 0 0-1.41 0l-15 15a1 1 0 0 0 1.41 1.41L18 4.41l14.29 14.3a1 1 0 0 0 1.41-1.41Z"
+              class="clr-i-outline clr-i-outline-path-1"></path>
+            <path
+              fill="currentColor"
+              d="M28 32h-5V22H13v10H8V18l-2 2v12a2 2 0 0 0 2 2h7V24h6v10h7a2 2 0 0 0 2-2V19.76l-2-2Z"
+              class="clr-i-outline clr-i-outline-path-2"></path>
+            <path fill="none" d="M0 0h36v36H0z"></path>
+          </svg>`,
+  },
+  {
+    id: "cv",
+    label: "CV",
+    icon: `<svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="dark:invert h-7 w-auto"
+          viewBox="0 0 14 14"
+          ><g fill="none" stroke="currentColor" stroke-linecap="round"
+            ><path
+              stroke-linejoin="round"
+              d="M4.098 3.65a1.15 1.15 0 1 0 2.3 0a1.15 1.15 0 0 0-2.3 0"
+            ></path><path
+              stroke-linejoin="round"
+              d="M3.5 5.94a2.2 2.2 0 0 1 .746-.834c.306-.2.652-.304 1.003-.304s.697.104 1.003.304c.307.199.563.486.746.834"
+            ></path><path
+              stroke-linejoin="round"
+              d="M12.5 12.5a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1H9L12.5 4z"
+            ></path><path d="M3.5 8.5h7m-7 2.5h4"></path></g
+          ></svg
+        >`,
+  },
+];
+function getLocalizedPath(id: string) {
   if (locale === "es") {
-    return `/`;
+    return id === "index" ? "/" : `/${id}`;
   } else if (locale) {
-    return `/${locale}/`;
+    return id === "index" ? `/${locale}/` : `/${locale}/${id}`;
   } else {
-    return `/`;
+    return id === "index" ? "/" : `/${id}`;
   }
 }
 ---
@@ -39,48 +88,59 @@ function localizedHome() {
   }
 </style>
 
-{
-  currentPage !== "index" && (
-    <header id="header" class="bg-[#3756f2] select-none text-[#efefef]">
-      <div class="flex justify-evenly items-center">
-        <div class="inline-block items-center">
-          <h1 class="bold">{localizedHeader}</h1>
+<header id="header" class="bg-[#3756f2] select-none text-[#efefef]">
+  <div class="flex justify-evenly items-center">
+    <div class="inline-block">
+      <div class="flex items-center">
+        <div class="inline-block invert">
+          <img src="/favicon.svg" class="h-9 w-auto mr-2" />
         </div>
-        {currentPage !== "index" && (
-          <a
-            href={localizedHome()}
-            class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:text-[#ff781e]"
-          >
-            <div class="inline-block dark:invert">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-7 w1366:h-6 mobile-only:h-8 w-auto select-none dark:invert"
-                viewBox="0 0 36 36"
-              >
-                <path
-                  fill="currentColor"
-                  d="m33.71 17.29l-15-15a1 1 0 0 0-1.41 0l-15 15a1 1 0 0 0 1.41 1.41L18 4.41l14.29 14.3a1 1 0 0 0 1.41-1.41Z"
-                  class="clr-i-outline clr-i-outline-path-1"
-                />
-                <path
-                  fill="currentColor"
-                  d="M28 32h-5V22H13v10H8V18l-2 2v12a2 2 0 0 0 2 2h7V24h6v10h7a2 2 0 0 0 2-2V19.76l-2-2Z"
-                  class="clr-i-outline clr-i-outline-path-2"
-                />
-                <path fill="none" d="M0 0h36v36H0z" />
-              </svg>
-            </div>
-            <div>
-              <span class="geist select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
-                {localizedNavIndex}
-              </span>
-            </div>
-          </a>
-        )}
+        <p class="geist-variable font-bold not-mobile:hidden inline-block">
+          JFA
+        </p>
+        <h1 class="geist-variable font-bold mobile-only:hidden inline-block">
+          Jorge Fernando Álava
+        </h1>
       </div>
-    </header>
-  )
-}
+    </div>
+    <nav class="flex justify-center gap-y-2">
+      {
+        navItems.map((item) => {
+          if (item.id !== currentPage) {
+            return (
+              <a
+                href={getLocalizedPath(item.id)}
+                class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:text-[#ff781e]"
+              >
+                <div class="inline-block dark:invert">
+                  <Fragment set:html={item.icon} />
+                </div>
+                <div>
+                  <span class="geist select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
+                    {item.id === "index" ? localizedNavIndex : localizedCVIndex}
+                  </span>
+                </div>
+              </a>
+            );
+          } else {
+            return (
+              <div class="flex items-center p-2 select-none border-b-2 border-[#ff781e] border-solid text-[#ff781e]">
+                <div class="inline-block dark:invert">
+                  <Fragment set:html={item.icon} />
+                </div>
+                <div>
+                  <span class="geist select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
+                    {item.id === "index" ? localizedNavIndex : localizedCVIndex}
+                  </span>
+                </div>
+              </div>
+            );
+          }
+        })
+      }
+    </nav>
+  </div>
+</header>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
