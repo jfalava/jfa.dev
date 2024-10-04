@@ -8,6 +8,7 @@ routes = [
   { pattern = "landing.jfa.dev", custom_domain = true },
   { pattern = "links.jfa.dev", custom_domain = true },
   { pattern = "cv.jfalava.eu", custom_domain = true },
+  { pattern = "www.jfa.dev", custom_domain = true },
 ]
 
 [observability]
