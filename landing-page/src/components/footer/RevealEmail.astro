@@ -17,7 +17,7 @@ const { locale, localizedEmail } = Astro.props as Props;
     turnstileID="email-turnstile"
     protectedElementID="reveal-email-email"
   />
-  <div id="reveal-email-email" class="hidden flex justify-center">
+  <div id="reveal-email-email" class="hidden flex justify-center mb-[5%]">
     <CurrentEmail localizedEmail={localizedEmail} />
   </div>
   <div class="flex justify-end">
