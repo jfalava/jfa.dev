@@ -26,6 +26,7 @@ interface Props {
   localizedSiteMap: string;
   localizedAcknowledgements: string;
   localizedDownloadTheCV: string;
+  localizedEmail: string;
 }
 
 const {
@@ -49,6 +50,7 @@ const {
   localizedSiteMap,
   localizedAcknowledgements,
   localizedDownloadTheCV,
+  localizedEmail,
 } = Astro.props as Props;
 // Skills
 let LocalizedSkills;
@@ -130,6 +132,7 @@ function localizedHome() {
   localizedAcknowledgements={localizedAcknowledgements}
   localizedNavIndex={localizedNavIndex}
   localizedCVIndex={localizedCVIndex}
+  localizedEmail={localizedEmail}
 >
   <article id="aboutme-card" style='p{font-family: "dm";}'>
     <AboutMe />

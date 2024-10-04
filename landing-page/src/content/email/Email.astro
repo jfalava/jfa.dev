@@ -1,0 +1,62 @@
+---
+interface Props {
+  localizedEmail: string;
+}
+
+const { localizedEmail } = Astro.props as Props;
+---
+
+<style>
+  h2 {
+    font-family: "geist-variable";
+  }
+  code {
+    font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
+    line-height: 2;
+  }
+</style>
+<div class="grid grid-cols-1 gap-y-2">
+  <h2>{localizedEmail}:</h2>
+  <div class="flex">
+    <code class="inline-block">hello@jfa.dev</code>
+    <div id="copy-email-button" class="inline-block ml-2 cursor-pointer">
+      <div class="dark:invert">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-auto dark:invert"
+          viewBox="0 0 20 20"
+          ><path
+            fill="currentColor"
+            d="M6 6V2c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2zm2 0h4a2 2 0 0 1 2 2v4h4V2H8zM2 8v10h10V8z"
+          ></path></svg
+        >
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const copyButton = document.getElementById("copy-email-button");
+    const emailCode = document.querySelector("code");
+
+    if (!copyButton || !emailCode) return;
+
+    const originalContent = copyButton.innerHTML;
+
+    copyButton.addEventListener("click", async () => {
+      try {
+        const textToCopy = emailCode.textContent || "";
+        await navigator.clipboard.writeText(textToCopy);
+
+        copyButton.innerHTML =
+          '<div class="text-[#5af542]"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-auto" viewBox="0 0 24 24"><mask id="lineMdCheckAll0"><g fill="none" stroke="currentColor" stroke-dasharray="24" stroke-dashoffset="24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M2 13.5l4 4l10.75 -10.75"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="24;0"/></path><path stroke="#000" stroke-width="6" d="M7.5 13.5l4 4l10.75 -10.75"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.4s" dur="0.4s" values="24;0"/></path><path d="M7.5 13.5l4 4l10.75 -10.75"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.4s" dur="0.4s" values="24;0"/></path></g></mask><rect width="24" height="24" fill="currentColor" mask="url(#lineMdCheckAll0)"/></svg></div>';
+
+        setTimeout(() => {
+          copyButton.innerHTML = originalContent;
+        }, 3000);
+      } catch (err) {
+        console.error("Failed to copy text: ", err);
+      }
+    });
+  });
+</script>

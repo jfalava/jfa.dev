@@ -1,6 +1,11 @@
 ---
-import CurrentEmail from "@/content/email/Email.md";
+import CurrentEmail from "@/content/email/Email.astro";
 import SimpleTurnstileWidget from "../reusables/tools/SimpleTurnstileWidget.astro";
+interface Props {
+  localizedEmail: string;
+}
+
+const { localizedEmail } = Astro.props as Props;
 ---
 
 <dialog
@@ -12,7 +17,7 @@ import SimpleTurnstileWidget from "../reusables/tools/SimpleTurnstileWidget.astr
     protectedElementID="reveal-email-dialog"
   />
   <div class="hidden flex justify-center">
-    <CurrentEmail />
+    <CurrentEmail localizedEmail={localizedEmail} />
   </div>
 </dialog>
 <script>

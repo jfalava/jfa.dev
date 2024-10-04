@@ -10,6 +10,7 @@ interface Props {
   localizedOtherLinks: string;
   localizedSiteMap: string;
   localizedAcknowledgements: string;
+  localizedEmail: string;
 }
 const {
   locale,
@@ -20,6 +21,7 @@ const {
   localizedOtherLinks,
   localizedSiteMap,
   localizedAcknowledgements,
+  localizedEmail,
 } = Astro.props as Props;
 // Timestamps
 import GetCurrentYear from "@/components/reusables/date/GetCurrentYear.tsx";
@@ -134,4 +136,4 @@ import RevealEmail from "@/components/footer/RevealEmail.astro";
   </div>
 </footer>
 <Acknowledgements locale={locale} />
-<RevealEmail />
+<RevealEmail localizedEmail={localizedEmail} />

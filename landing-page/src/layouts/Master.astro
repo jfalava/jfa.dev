@@ -41,6 +41,7 @@ interface Props {
   localizedOtherLinks: string;
   localizedSiteMap: string;
   localizedAcknowledgements: string;
+  localizedEmail: string;
 }
 const {
   locale,
@@ -62,6 +63,7 @@ const {
   localizedOtherLinks,
   localizedSiteMap,
   localizedAcknowledgements,
+  localizedEmail,
 } = Astro.props as Props;
 ---
 
@@ -137,6 +139,7 @@ const {
       localizedOtherLinks={localizedOtherLinks}
       localizedSiteMap={localizedSiteMap}
       localizedAcknowledgements={localizedAcknowledgements}
+      localizedEmail={localizedEmail}
     />
   </body>
 </html>
