@@ -14,9 +14,9 @@ const { localizedEmail } = Astro.props as Props;
 >
   <SimpleTurnstileWidget
     turnstileID="email-turnstile"
-    protectedElementID="reveal-email-dialog"
+    protectedElementID="reveal-email-email"
   />
-  <div class="hidden flex justify-center">
+  <div id="reveal-email-email" class="hidden flex justify-center">
     <CurrentEmail localizedEmail={localizedEmail} />
   </div>
 </dialog>
