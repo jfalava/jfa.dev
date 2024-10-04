@@ -1,0 +1,41 @@
+---
+import CurrentEmail from "@/content/email/Email.md";
+import SimpleTurnstileWidget from "../reusables/tools/SimpleTurnstileWidget.astro";
+---
+
+<dialog
+  id="reveal-email-dialog"
+  class="overflow-auto p-10 border-2 border-solid rounded-lg select-none dark:bg-[#181a1b] dark:text-[#efefef]"
+>
+  <SimpleTurnstileWidget
+    turnstileID="email-turnstile"
+    protectedElementID="reveal-email-dialog"
+  />
+  <div class="hidden flex justify-center">
+    <CurrentEmail />
+  </div>
+</dialog>
+<script>
+  const revealEmailDialog = document.getElementById(
+    "reveal-email-dialog",
+  ) as HTMLDialogElement;
+  const acknowledgementsButton = document.getElementById("reveal-email-button");
+
+  if (acknowledgementsButton && revealEmailDialog) {
+    acknowledgementsButton.addEventListener("click", () => {
+      revealEmailDialog.showModal();
+    });
+
+    revealEmailDialog.addEventListener("click", (event) => {
+      const dialogDimensions = revealEmailDialog.getBoundingClientRect();
+      if (
+        event.clientX < dialogDimensions.left ||
+        event.clientX > dialogDimensions.right ||
+        event.clientY < dialogDimensions.top ||
+        event.clientY > dialogDimensions.bottom
+      ) {
+        revealEmailDialog.close();
+      }
+    });
+  }
+</script>

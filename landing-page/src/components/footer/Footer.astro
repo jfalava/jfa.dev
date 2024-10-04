@@ -27,6 +27,8 @@ import GetCurrentYear from "@/components/reusables/date/GetCurrentYear.tsx";
 import LastCommit from "@/components/reusables/fetchers/GetLastCommit.tsx";
 // Acknowledgements
 import Acknowledgements from "@/components/footer/Acknowledgements.astro";
+// Email
+import RevealEmail from "@/components/footer/RevealEmail.astro";
 ---
 
 <footer
@@ -71,11 +73,14 @@ import Acknowledgements from "@/components/footer/Acknowledgements.astro";
       <div id="contact-column" class="border-l pl-2 border-solid border-white">
         <p class="bold text-lg mb-2">📧&nbsp;{localizedContact}</p>
         <div class="ml-2">
-          <IA t="mailto:hi@contact.jfa.dev" h="mailto:hi@contact.jfa.dev">
-            <p slot="simple-anchor-content" class="italic mobile-only:text-sm">
-              {localizedContactMe}
-            </p>
-          </IA>
+          <a
+            id="reveal-email-button"
+            role="button"
+            class="italic mobile-only:text-sm"
+            title={localizedContactMe}
+          >
+            {localizedContactMe}
+          </a>
           <A h="https://keybase.io/jfalava/pgp_keys.asc">
             <p class="italic mobile-only:text-sm">PGP</p>
           </A>
@@ -129,3 +134,4 @@ import Acknowledgements from "@/components/footer/Acknowledgements.astro";
   </div>
 </footer>
 <Acknowledgements locale={locale} />
+<RevealEmail />
