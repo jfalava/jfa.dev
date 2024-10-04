@@ -1,4 +1,5 @@
 ---
+import A from "@/components/reusables/anchors/SimpleExternalAnchor";
 interface Props {
   localizedEmail: string;
 }
@@ -18,7 +19,9 @@ const { localizedEmail } = Astro.props as Props;
 <div class="grid grid-cols-1 gap-y-2">
   <h2>{localizedEmail}:</h2>
   <div class="flex">
-    <code class="inline-block">hello@jfa.dev</code>
+    <A h="mailto:hello@jfa.dev" c="inline-block">
+      <p id="email-fr-fr">hello@jfa.dev</p>
+    </A>
     <div id="copy-email-button" class="inline-block ml-2 cursor-pointer">
       <div class="dark:invert">
         <svg
@@ -37,7 +40,7 @@ const { localizedEmail } = Astro.props as Props;
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const copyButton = document.getElementById("copy-email-button");
-    const emailCode = document.querySelector("code");
+    const emailCode = document.getElementById("email-fr-fr");
 
     if (!copyButton || !emailCode) return;
 
