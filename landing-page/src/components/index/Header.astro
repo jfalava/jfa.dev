@@ -16,23 +16,15 @@ const { localizedHeaderDescription } = Astro.props;
 </style>
 <header class="mt-2 mb-[2%] bg-none">
   <div class="flex justify-center">
-    <h1 class="bold not-mobile:hidden">Jorge Fernando Álava</h1>
+    <p class="bold not-mobile:hidden">Jorge Fernando Álava</p>
+    <h1 class="bold mobile-only:hidden">Jorge Fernando Álava</h1>
   </div>
   <div class="flex justify-evenly items-center">
-    <div class="grid grid-cols-1">
-      <h1 class="bold mobile-only:hidden">Jorge Fernando Álava</h1>
-      <div class="mobile-only:hidden ml-2">
-        {
-          typeof localizedHeaderDescription === "string" ? (
-            <p>{localizedHeaderDescription}</p>
-          ) : (
-            <p set:html={localizedHeaderDescription.__html} />
-          )
-        }
-      </div>
-    </div>
-    <div class="grid grid-cols-2 gap-x-5 justify-center items-center">
-      <div class="not-mobile:hidden">
+    <div
+      id="desktop-header"
+      class="flex justify-evenly gap-x-5 mobile-only:hidden"
+    >
+      <div class="ml-2 flex items-center">
         {
           typeof localizedHeaderDescription === "string" ? (
             <p>{localizedHeaderDescription}</p>
@@ -42,7 +34,30 @@ const { localizedHeaderDescription } = Astro.props;
         }
       </div>
       <div
-        id="pfp-image-container"
+        id="pfp-image-container-mobile"
+        class="rounded-md glassbox p-2 flex flex-grow"
+      >
+        <img
+          src="/images/seidor_pfp.avif"
+          class="h-auto mobile-only:w-28 w-32 rounded flex-1"
+        />
+      </div>
+    </div>
+    <div
+      id="mobile-header"
+      class="flex justify-evenly gap-x-5 items-center not-mobile:hidden"
+    >
+      <div>
+        {
+          typeof localizedHeaderDescription === "string" ? (
+            <p>{localizedHeaderDescription}</p>
+          ) : (
+            <p set:html={localizedHeaderDescription.__html} />
+          )
+        }
+      </div>
+      <div
+        id="pfp-image-container-mobile"
         class="rounded-md glassbox p-2 flex flex-grow"
       >
         <img
