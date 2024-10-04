@@ -1,26 +1,26 @@
 a {
-  transition: color 0.2s ease-in-out;
+  transition: color 0.1s ease-in-out;
 }
 
 a > svg {
-  transition: color 0.2s ease-in-out;
+  transition: color 0.1s ease-in-out;
 }
 
 svg {
-  transition: color 0.2s ease-in-out;
+  transition: color 0.1s ease-in-out;
 }
 
 summary {
-  transition: color 0.2s ease-in-out;
+  transition: color 0.1s ease-in-out;
 }
 a:hover {
   color: #ff781e;
-  transition: color 0.2s ease-in-out;
+  transition: color 0.1s ease-in-out;
 }
 
 footer a:hover {
   color: #ff781e;
-  transition: color 0.2s ease-in-out;
+  transition: color 0.1s ease-in-out;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -36,15 +36,15 @@ footer a:hover {
 
 button {
   text-decoration-line: none;
-  transition: text-decoration-line 0.2s ease-in-out;
+  transition: text-decoration-line 0.1s ease-in-out;
 }
 
 button:hover {
-  transition: text-decoration-line 0.2s ease-in-out;
+  transition: text-decoration-line 0.1s ease-in-out;
 }
 
 button {
-  transition: border-color 0.2s ease-in-out;
+  transition: border-color 0.1s ease-in-out;
 }
 
 @keyframes fade-in {

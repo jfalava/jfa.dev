@@ -9,7 +9,10 @@ const { localizedText, homeURL } = Astro.props as Props;
 <style>
   span,
   svg {
-    transition: color 0.2s ease-in-out;
+    transition: color 0.1s ease-in-out;
+  }
+  div{
+    transition: font-weight 0.1s ease-in-out;
   }
 </style>
 
@@ -26,7 +29,7 @@ const { localizedText, homeURL } = Astro.props as Props;
       title={localizedText}
     >
       <div
-        class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:border-[#ff781e] hover:text-[#ff781e]"
+        class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:border-[#ff781e] hover:text-[#ff781e] hover:font-bold"
       >
         <div class="inline-block dark:invert">
           <svg
@@ -47,7 +50,7 @@ const { localizedText, homeURL } = Astro.props as Props;
         </div>
         <div>
           <span
-            class="geist select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2"
+            class="geist-variable select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2"
           >
             {localizedText}
           </span>

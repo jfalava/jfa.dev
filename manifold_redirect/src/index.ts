@@ -20,6 +20,9 @@ export default {
 			case 'cv.jfalava.eu':
 				destinationPath = '/cv';
 				break;
+			case 'www.jfa.dev':
+				destinationPath = '/';
+				break;
 		}
 
 		const destinationURL = `https://${destinationHost}${destinationPath}${pathname}${search}`;

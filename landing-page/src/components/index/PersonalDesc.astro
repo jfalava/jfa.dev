@@ -1,0 +1,69 @@
+---
+interface Props {
+  localizedPersonalDescription: string | { __html: string };
+}
+const { localizedPersonalDescription } = Astro.props;
+---
+
+<style>
+  h1 {
+    font-size: clamp(1.8rem, 1vw + 0.5rem, 2.5rem);
+  }
+  p {
+    font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
+    line-height: 2;
+  }
+</style>
+<header class="mt-2 mb-[2%] bg-none">
+  <div class="flex justify-center">
+    <p class="geist-variable font-bold not-mobile:hidden">Jorge Fernando Álava</p>
+  </div>
+  <div class="flex justify-evenly items-center">
+    <div
+      id="desktop-header"
+      class="flex justify-evenly gap-x-5 mobile-only:hidden"
+    >
+      <div class="ml-2 flex items-center">
+        {
+          typeof localizedPersonalDescription === "string" ? (
+            <p>{localizedPersonalDescription}</p>
+          ) : (
+            <p set:html={localizedPersonalDescription.__html} />
+          )
+        }
+      </div>
+      <div
+        id="pfp-image-container-mobile"
+        class="rounded-md glassbox p-2 flex flex-grow"
+      >
+        <img
+          src="/images/seidor_pfp.avif"
+          class="h-auto mobile-only:w-28 w-32 rounded flex-1"
+        />
+      </div>
+    </div>
+    <div
+      id="mobile-header"
+      class="flex justify-evenly gap-x-5 items-center not-mobile:hidden"
+    >
+      <div>
+        {
+          typeof localizedPersonalDescription === "string" ? (
+            <p>{localizedPersonalDescription}</p>
+          ) : (
+            <p set:html={localizedPersonalDescription.__html} />
+          )
+        }
+      </div>
+      <div
+        id="pfp-image-container-mobile"
+        class="rounded-md glassbox p-2 flex flex-grow"
+      >
+        <img
+          src="/images/seidor_pfp.avif"
+          class="h-auto mobile-only:w-28 w-32 rounded flex-1"
+        />
+      </div>
+    </div>
+  </div>
+</header>
