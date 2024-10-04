@@ -2,10 +2,11 @@
 import CurrentEmail from "@/content/email/Email.astro";
 import SimpleTurnstileWidget from "../reusables/tools/SimpleTurnstileWidget.astro";
 interface Props {
+  locale: string;
   localizedEmail: string;
 }
 
-const { localizedEmail } = Astro.props as Props;
+const { locale, localizedEmail } = Astro.props as Props;
 ---
 
 <dialog
@@ -18,6 +19,29 @@ const { localizedEmail } = Astro.props as Props;
   />
   <div id="reveal-email-email" class="hidden flex justify-center">
     <CurrentEmail localizedEmail={localizedEmail} />
+  </div>
+  <div class="flex justify-end">
+    {
+      locale == "es" && (
+        <p>
+          Haz click fuera o pulsa <kbd>ESC</kbd> para cerrar.
+        </p>
+      )
+    }
+    {
+      locale == "en" && (
+        <p>
+          Press outside or <kbd>ESC</kbd> to dismiss.
+        </p>
+      )
+    }
+    {
+      locale == "pt" && (
+        <p>
+          Pressione fora ou <kbd>ESC</kbd> para ignorar.
+        </p>
+      )
+    }
   </div>
 </dialog>
 <script>
