@@ -1,0 +1,70 @@
+---
+import CurrentEmail from "@/content/email/Email.astro";
+import SimpleTurnstileWidget from "../reusables/tools/SimpleTurnstileWidget.astro";
+interface Props {
+  locale: string;
+  localizedEmail: string;
+}
+
+const { locale, localizedEmail } = Astro.props as Props;
+---
+
+<dialog
+  id="reveal-email-dialog"
+  class="overflow-auto p-10 border-2 border-solid rounded-lg select-none dark:bg-[#181a1b] dark:text-[#efefef]"
+>
+  <SimpleTurnstileWidget
+    turnstileID="email-turnstile"
+    protectedElementID="reveal-email-email"
+  />
+  <div id="reveal-email-email" class="hidden flex justify-center">
+    <CurrentEmail localizedEmail={localizedEmail} />
+  </div>
+  <div class="flex justify-end">
+    {
+      locale == "es" && (
+        <p>
+          Haz click fuera o pulsa <kbd>ESC</kbd> para cerrar.
+        </p>
+      )
+    }
+    {
+      locale == "en" && (
+        <p>
+          Press outside or <kbd>ESC</kbd> to dismiss.
+        </p>
+      )
+    }
+    {
+      locale == "pt" && (
+        <p>
+          Pressione fora ou <kbd>ESC</kbd> para ignorar.
+        </p>
+      )
+    }
+  </div>
+</dialog>
+<script>
+  const revealEmailDialog = document.getElementById(
+    "reveal-email-dialog",
+  ) as HTMLDialogElement;
+  const acknowledgementsButton = document.getElementById("reveal-email-button");
+
+  if (acknowledgementsButton && revealEmailDialog) {
+    acknowledgementsButton.addEventListener("click", () => {
+      revealEmailDialog.showModal();
+    });
+
+    revealEmailDialog.addEventListener("click", (event) => {
+      const dialogDimensions = revealEmailDialog.getBoundingClientRect();
+      if (
+        event.clientX < dialogDimensions.left ||
+        event.clientX > dialogDimensions.right ||
+        event.clientY < dialogDimensions.top ||
+        event.clientY > dialogDimensions.bottom
+      ) {
+        revealEmailDialog.close();
+      }
+    });
+  }
+</script>

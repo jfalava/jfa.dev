@@ -1,0 +1,143 @@
+---
+import "@/styles/dark-mode.css";
+interface Props {
+  turnstileID: string;
+  protectedElementID: string;
+}
+
+const { turnstileID, protectedElementID } = Astro.props as Props;
+const widgetID = `${turnstileID}-widget`;
+---
+
+<style>
+  @media (prefers-color-scheme: dark) {
+    .turnstile-container span {
+      color: #efefef;
+    }
+    .turnstile-container svg {
+      color: #efefef;
+    }
+  }
+</style>
+
+<div
+  id={turnstileID}
+  class="turnstile-container flex justify-center mt-[2%] mobile-only:mt-[5%] items-center rounded-md"
+  data-protectedturnstileid={protectedElementID}
+  data-turnstileid={turnstileID}
+>
+  <div class="p-2 rounded-md gap-2 grid grid-cols-1 justify-center mb-[2%]">
+    <div class="flex justify-center dark:invert">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-8 w1366:h-6 mobile-only:h-8 w-auto select-none dark:invert inline-block mr-2"
+        viewBox="0 0 24 24"
+        ><circle cx="4" cy="12" r="3" fill="currentColor"
+          ><animate
+            id="svgSpinners3DotsScale0"
+            attributeName="r"
+            begin="0;svgSpinners3DotsScale1.end-0.25s"
+            dur="0.75s"
+            values="3;.2;3"></animate></circle
+        ><circle cx="12" cy="12" r="3" fill="currentColor"
+          ><animate
+            attributeName="r"
+            begin="svgSpinners3DotsScale0.end-0.6s"
+            dur="0.75s"
+            values="3;.2;3"></animate></circle
+        ><circle cx="20" cy="12" r="3" fill="currentColor"
+          ><animate
+            id="svgSpinners3DotsScale1"
+            attributeName="r"
+            begin="svgSpinners3DotsScale0.end-0.45s"
+            dur="0.75s"
+            values="3;.2;3"></animate></circle
+        ></svg
+      >
+    </div>
+    <div id={widgetID} class="flex justify-center mb-[2%]"></div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ turnstileID, protectedElementID, widgetID }}>
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  async function initTurnstile() {
+    try {
+      await loadScript(
+        "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
+      );
+
+      const showProtectedContent = () => {
+        const captchaContainer = document.getElementById(turnstileID);
+        if (captchaContainer) {
+          captchaContainer.remove();
+        }
+
+        const protectedContent = document.getElementById(protectedElementID);
+        if (protectedContent) {
+          protectedContent.classList.remove("hidden");
+        }
+      };
+
+      const isCaptchaExpired = () => {
+        const captchaTimestamp = localStorage.getItem(
+          `captchaTimestamp_${turnstileID}`,
+        );
+        if (!captchaTimestamp) return true;
+
+        const now = new Date().getTime();
+        const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+
+        return now - parseInt(captchaTimestamp) > oneDayInMilliseconds;
+      };
+
+      const captchaCompleted = localStorage.getItem(
+        `captchaCompleted_${turnstileID}`,
+      );
+
+      if (captchaCompleted && !isCaptchaExpired()) {
+        showProtectedContent();
+      } else {
+        if (document.getElementById(widgetID)) {
+          window.turnstile.render(`#${widgetID}`, {
+            sitekey: "0x4AAAAAAAwumVI1FspxVFhb",
+            theme: "auto",
+            callback: function (token) {
+              localStorage.setItem(`captchaCompleted_${turnstileID}`, "true");
+              localStorage.setItem(
+                `captchaTimestamp_${turnstileID}`,
+                new Date().getTime().toString(),
+              );
+              showProtectedContent();
+            },
+            "expired-callback": () => {
+              localStorage.removeItem(`captchaCompleted_${turnstileID}`);
+              localStorage.removeItem(`captchaTimestamp_${turnstileID}`);
+            },
+            "error-callback": () => {
+              console.error("Turnstile encountered an error");
+            },
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error initializing Turnstile:", error);
+    }
+  }
+
+  // Run initTurnstile when the DOM is fully loaded
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTurnstile);
+  } else {
+    initTurnstile();
+  }
+</script>

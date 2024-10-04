@@ -32,7 +32,6 @@ interface Props {
   metaImageHeight: string;
   metaImageAlt: string;
   currentPage: string;
-  localizedHeader: string;
   localizedNavIndex: string;
   localizedCVIndex: string;
   localizedSocials: string;
@@ -42,6 +41,7 @@ interface Props {
   localizedOtherLinks: string;
   localizedSiteMap: string;
   localizedAcknowledgements: string;
+  localizedEmail: string;
 }
 const {
   locale,
@@ -54,7 +54,6 @@ const {
   metaImageHeight,
   metaImageAlt,
   currentPage,
-  localizedHeader,
   localizedNavIndex,
   localizedCVIndex,
   localizedSocials,
@@ -64,6 +63,7 @@ const {
   localizedOtherLinks,
   localizedSiteMap,
   localizedAcknowledgements,
+  localizedEmail,
 } = Astro.props as Props;
 ---
 
@@ -80,7 +80,11 @@ const {
 <html lang={locale}>
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="/images/icons/jfa_branding.svg" type="image/x-icon" />
+    <link
+      rel="icon"
+      href="/images/icons/jfa_branding.svg"
+      type="image/x-icon"
+    />
     <link rel="canonical" href={currentUrl} />
     <meta http-equiv="Content-Language" content={locale} />
     <meta name="color-scheme" content="light, dark" />
@@ -115,7 +119,6 @@ const {
     <Header
       locale={locale}
       currentPage={currentPage}
-      localizedHeader={localizedHeader}
       localizedNavIndex={localizedNavIndex}
       localizedCVIndex={localizedCVIndex}
     />
@@ -136,6 +139,7 @@ const {
       localizedOtherLinks={localizedOtherLinks}
       localizedSiteMap={localizedSiteMap}
       localizedAcknowledgements={localizedAcknowledgements}
+      localizedEmail={localizedEmail}
     />
   </body>
 </html>
