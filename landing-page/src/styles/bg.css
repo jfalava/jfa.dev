@@ -1,8 +1,18 @@
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100px 100px;
+  }
+}
+
 footer,
 header {
   background-image: url("/images/bg/white-noise.svg");
   background-size: auto;
   background-repeat: repeat;
+  animation: moveBackground 10s linear infinite;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -11,13 +21,16 @@ header {
     background-image: url("/images/bg/white-noise.svg");
     background-size: auto;
     background-repeat: repeat;
+    animation: moveBackground 10s linear infinite;
   }
 }
+
 @media (prefers-color-scheme: light) {
   body,
   dialog {
     background-image: url("/images/bg/black-noise.svg");
     background-size: auto;
     background-repeat: repeat;
+    animation: moveBackground 10s linear infinite;
   }
 }
