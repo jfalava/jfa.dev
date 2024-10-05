@@ -7,19 +7,15 @@ import OnHold from "@/components/reusables/tags/OnHold.tsx";
 import UnderDevelopment from "@/components/reusables/tags/UnderDevelopment";
 import NDA from "@/components/reusables/tags/NDA";
 import { TagType } from "@/types/TagType.ts";
-import RepoProvider, {
-  RepoHosting,
-} from "@/components/index/current-projects/RepositoryHosting.tsx";
 interface Props {
   bentoID: string;
   locale: string;
   projectTitle: string;
   projectStatus: TagType;
   repoLink: string;
-  repoHosting: string;
 }
 
-const { bentoID, locale, projectTitle, projectStatus, repoLink, repoHosting } =
+const { bentoID, locale, projectTitle, projectStatus, repoLink } =
   Astro.props as Props;
 
 const TagComponents = {
@@ -36,33 +32,35 @@ const Tag = TagComponents[projectStatus];
 
 <div
   id={bentoID}
-  class="glassbox p-3 rounded-lg grid grid-cols-1 button-glassbox cursor-auto"
+  class="glassbox p-3 rounded-lg grid grid-cols-1 cursor-auto"
   title={projectTitle}
 >
   <div class="flex items-center justify-evenly">
     <div class="flex items-center">
-      <div class="items-center dark:invert mr-2" title={projectTitle}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="dark:invert h-5 w-auto"
-          viewBox="0 0 24 24"
-          ><path
-            fill="currentColor"
-            d="M23 11v2c-.852 0-1 .35-1 1.314v4.498c0 2.514-1.46 3.156-4 3.188v-2c1.404-.032 2 .154 2-1.36v-4.297a3.1 3.1 0 0 1 .294-1.56a1.7 1.7 0 0 1 .997-.783a1.7 1.7 0 0 1-.997-.783A3.1 3.1 0 0 1 20 9.657V5.359c0-1.513-.596-1.327-2-1.359V2c2.54.032 4 .674 4 3.188v4.498c0 .963.148 1.314 1 1.314M1 11v2c.852 0 1 .35 1 1.314v4.498C2 21.326 3.46 21.968 6 22v-2c-1.404-.032-2 .154-2-1.36v-4.297a3.1 3.1 0 0 0-.294-1.56A1.7 1.7 0 0 0 2.709 12a1.7 1.7 0 0 0 .997-.783A3.1 3.1 0 0 0 4 9.657V5.359C4 3.846 4.596 4.032 6 4V2c-2.54.032-4 .674-4 3.188v4.498C2 10.649 1.852 11 1 11m17-2H6v6h12ZM8 11h8v2H8Z"
-          ></path></svg
+      <A h={repoLink} c="flex items-center">
+        <div
+          class="inline-block items-center dark:invert mr-2"
+          title={projectTitle}
         >
-      </div>
-      <div class="">
-        <h3 class="geist-variable font-semibold select-none text-base">
-          {projectTitle}
-        </h3>
-      </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="dark:invert h-4 w-auto"
+            viewBox="0 0 24 24"
+            ><path
+              fill="currentColor"
+              d="M23 11v2c-.852 0-1 .35-1 1.314v4.498c0 2.514-1.46 3.156-4 3.188v-2c1.404-.032 2 .154 2-1.36v-4.297a3.1 3.1 0 0 1 .294-1.56a1.7 1.7 0 0 1 .997-.783a1.7 1.7 0 0 1-.997-.783A3.1 3.1 0 0 1 20 9.657V5.359c0-1.513-.596-1.327-2-1.359V2c2.54.032 4 .674 4 3.188v4.498c0 .963.148 1.314 1 1.314M1 11v2c.852 0 1 .35 1 1.314v4.498C2 21.326 3.46 21.968 6 22v-2c-1.404-.032-2 .154-2-1.36v-4.297a3.1 3.1 0 0 0-.294-1.56A1.7 1.7 0 0 0 2.709 12a1.7 1.7 0 0 0 .997-.783A3.1 3.1 0 0 0 4 9.657V5.359C4 3.846 4.596 4.032 6 4V2c-2.54.032-4 .674-4 3.188v4.498C2 10.649 1.852 11 1 11m17-2H6v6h12ZM8 11h8v2H8Z"
+            ></path></svg
+          >
+        </div>
+        <div class="inline-block">
+          <h3 class="geist-variable font-semibold select-none text-base">
+            {projectTitle}
+          </h3>
+        </div>
+      </A>
     </div>
     <div class="flex gap-x-2">
       <Tag lang={locale} />
-      <A c="dark:invert flex items-center" h={repoLink}>
-        <RepoProvider rh={repoHosting as keyof typeof RepoHosting} />
-      </A>
     </div>
   </div>
   <div class="flex flex-wrap ml-1 mt-1">
