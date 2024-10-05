@@ -122,7 +122,7 @@ const {
       localizedNavIndex={localizedNavIndex}
       localizedCVIndex={localizedCVIndex}
     />
-    <div class="not-mobile:h-[80px] mobile-only:h-[70px]"></div>
+    <div class="not-mobile:h-[80px] mobile-only:h-[75px]"></div>
     <!-- Spacer to compensate for fixed header -->
     <ScrollToTopButton client:load />
     <main
@@ -154,6 +154,8 @@ const {
           translate-x-[50%] translate-y-[50%]"
       >
       </div>
+      <div class="not-mobile:h-[80px] mobile-only:h-[70px]"></div>
+      <!-- Spacer to compensate for fixed header -->
     </main>
     <Footer
       locale={locale}
