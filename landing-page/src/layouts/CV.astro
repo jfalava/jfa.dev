@@ -111,10 +111,20 @@ function localizedHome() {
   p {
     font-family: "dm";
   }
-  .grid-background {
-    background-size: 16px 16px;
-    background-image: linear-gradient(to right, #d7defe 1px, transparent 1px),
-      linear-gradient(to bottom, #d7defe 1px, transparent 1px);
+  @media (prefers-color-scheme: light) {
+    .grid-background {
+      background-size: 16px 16px;
+      background-image: linear-gradient(to right, #d7defe 1px, transparent 1px),
+        linear-gradient(to bottom, #d7defe 1px, transparent 1px);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .grid-background {
+      background-size: 16px 16px;
+      background-image: linear-gradient(to right, #313131 1px, transparent 1px),
+        linear-gradient(to bottom, #313131 1px, transparent 1px);
+    }
   }
 </style>
 <Master
