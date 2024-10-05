@@ -111,6 +111,11 @@ function localizedHome() {
   p {
     font-family: "dm";
   }
+  .grid-background {
+    background-size: 16px 16px;
+    background-image: linear-gradient(to right, #d7defe 1px, transparent 1px),
+      linear-gradient(to bottom, #d7defe 1px, transparent 1px);
+  }
 </style>
 <Master
   locale={locale}
@@ -134,40 +139,42 @@ function localizedHome() {
   localizedCVIndex={localizedCVIndex}
   localizedEmail={localizedEmail}
 >
-  <article id="aboutme-card" style='p{font-family: "dm";}'>
-    <AboutMe />
-  </article>
-  <article id="skills-card">
-    <Skills />
-    <div class="flex justify-end">
-      <StyledBlockquote blockquoteType={BlockquoteType.Warning}>
-        <span class="ml-2 geist">This is outdated!</span>
-      </StyledBlockquote>
-    </div>
-  </article>
-  <article id="work-exp-card">
-    <WorkExperience />
-    <div class="flex flex-grow justify-end" title={localizedDownloadTheCV}>
-      <div
-        class="cursor-pointer glassbox button-glassbox p-1 rounded-lg items-center"
-      >
-        <div class="dark:invert inline-block">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="dark:invert h-10 w-auto"
-            viewBox="0 0 24 24"
-            ><path
-              fill="currentColor"
-              d="m12 15.577l-3.539-3.538l.708-.72L11.5 13.65V5h1v8.65l2.33-2.33l.709.719zM6.616 19q-.691 0-1.153-.462T5 17.384v-2.423h1v2.423q0 .231.192.424t.423.192h10.77q.23 0 .423-.192t.192-.424v-2.423h1v2.423q0 .691-.462 1.153T17.384 19z"
-            ></path>
-          </svg>
+  <div class="grid-background mt-[1%] pl-[2%] pr-[2%] pt-[1%] pb-[1%]">
+    <article id="aboutme-card">
+      <AboutMe />
+    </article>
+    <article id="skills-card">
+      <Skills />
+      <div class="flex justify-end">
+        <StyledBlockquote blockquoteType={BlockquoteType.Warning}>
+          <span class="ml-2 geist">This is outdated!</span>
+        </StyledBlockquote>
+      </div>
+    </article>
+    <article id="work-exp-card">
+      <WorkExperience />
+      <div class="flex flex-grow justify-end" title={localizedDownloadTheCV}>
+        <div
+          class="cursor-pointer glassbox button-glassbox p-1 rounded-lg items-center"
+        >
+          <div class="dark:invert inline-block">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="dark:invert h-10 w-auto"
+              viewBox="0 0 24 24"
+              ><path
+                fill="currentColor"
+                d="m12 15.577l-3.539-3.538l.708-.72L11.5 13.65V5h1v8.65l2.33-2.33l.709.719zM6.616 19q-.691 0-1.153-.462T5 17.384v-2.423h1v2.423q0 .231.192.424t.423.192h10.77q.23 0 .423-.192t.192-.424v-2.423h1v2.423q0 .691-.462 1.153T17.384 19z"
+              ></path>
+            </svg>
+          </div>
         </div>
       </div>
-    </div>
-  </article>
-  <article id="education-card">
-    <Education />
-  </article>
+    </article>
+    <article id="education-card">
+      <Education />
+    </article>
+  </div>
   <div class="mt-[2%] mobile-only:mt-[5%] flex justify-end">
     <StyledBlockquote blockquoteType={BlockquoteType.Updated}>
       <div class="flex items-center">
