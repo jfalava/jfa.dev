@@ -65,7 +65,6 @@ const StyledBlockquote: React.FC<Props> = ({ blockquoteType, children }) => {
           </svg>
         </div>
       )}
-
       {blockquoteType === BlockquoteType.Tip && (
         <div className="text-green-500 inline-block">
           <svg
@@ -86,7 +85,6 @@ const StyledBlockquote: React.FC<Props> = ({ blockquoteType, children }) => {
           </svg>
         </div>
       )}
-
       {blockquoteType === BlockquoteType.Warning && (
         <div className="text-yellow-500 inline-block">
           <svg
@@ -101,7 +99,6 @@ const StyledBlockquote: React.FC<Props> = ({ blockquoteType, children }) => {
           </svg>
         </div>
       )}
-
       {blockquoteType === BlockquoteType.Danger && (
         <div className="text-red-500 inline-block">
           <svg
@@ -128,7 +125,6 @@ const StyledBlockquote: React.FC<Props> = ({ blockquoteType, children }) => {
           </svg>
         </div>
       )}
-
       {blockquoteType === BlockquoteType.Important && (
         <div className="text-purple-500 inline-block">
           <svg
@@ -142,7 +138,6 @@ const StyledBlockquote: React.FC<Props> = ({ blockquoteType, children }) => {
           </svg>
         </div>
       )}
-
       {blockquoteType === BlockquoteType.Updated && (
         <div className="text-teal-500 inline-block">
           <svg
@@ -161,7 +156,6 @@ const StyledBlockquote: React.FC<Props> = ({ blockquoteType, children }) => {
           </svg>
         </div>
       )}
-
       {blockquoteType === BlockquoteType.Language && (
         <div className="text-indigo-500 inline-block">
           <svg

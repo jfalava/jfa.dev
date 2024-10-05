@@ -96,112 +96,94 @@ function getLocalizedPath(id: string) {
 
 <header
   id="header"
-  class="bg-[#3756f2] select-none text-[#efefef] box-content pt-2 pb-2"
+  class="glassbox fixed top-0 left-0 w-full z-50
+        border-b border-dashed border-[#3756f2]
+        select-none dark:text-[#efefef] text-[rgb(24,26,27)]"
 >
-  <div class="flex justify-evenly items-center box-content">
-    <a href={localizedHome()} title="Jorge Fernando Álava">
-      <div class="flex items-center">
-        <div class="contents">
-          <div class="inline-block invert">
-            <svg
-              version="1.1"
-              class="h-9 w-auto mr-2 invert"
-              viewBox="500 500 1000 1000"
+  <div
+    class="relative w-[70%] mx-auto w-1150:w-[85%] mobile-only:w-[90%]
+          border-l border-r border-dashed border-[#3756f2]"
+  >
+    <div
+      id="left-header-diamond"
+      class="absolute bottom-0 left-0 h-3 w-3 z-10 rounded-[1px]
+          rotate-45 border border-[#3756f2] bg-white dark:bg-black
+          translate-x-[-50%] translate-y-[50%]"
+    >
+    </div>
+    <div
+      id="right-header-diamond"
+      class="absolute bottom-0 right-0 h-3 w-3 z-10 rounded-[1px]
+          rotate-45 border border-[#3756f2] bg-white dark:bg-black
+          translate-x-[50%] translate-y-[50%]"
+    >
+    </div>
+    <div class="p-3 flex justify-between items-center">
+      <a href={localizedHome()} title="Jorge Fernando Álava">
+        <div class="flex items-center">
+          <div class="contents">
+            <div class="inline-block invert">
+              <svg
+                version="1.1"
+                class="h-9 w-auto mr-2 invert"
+                viewBox="500 500 1000 1000"
+              >
+                <path
+                  class="st0"
+                  fill="currentColor"
+                  d="M1250.7,1450.1v-377.5h26.3l87.1,199.2c51.6,105.8,21.8,178.3-72.8,178.3H1250.7L1250.7,1450.1z M1250.7,798.8 h7l192.4,430.5V687.2c0-75.6-61.8-137.4-137.4-137.4h-62.1v122.7h81.9l-68.3,87.8h-13.6V798.8z M729.2,1234 c-34.2-1.3-63.7-8.4-88.6-21.3v229.2c14.6,5.3,30.3,8.2,46.6,8.2h563.5v-377.5h-120.9l-31.9,76.2l-31.7,76.8H959.5l55.9-124.7h0 l34.2-74.7l-40.1,46.2h-77.5l-1.3-1.4c-2.8,27.6-10.2,52.3-22.1,74c-15.7,28.5-37.9,50.4-66.8,65.9c-26.9,14.4-57.8,22.1-92.8,23.1 V1145c24.67-1.5,44.4-10.3,59-26.3c16.1-17.7,24.1-42.8,24.1-75.3v-76.2v-81.8h-78.3v-86.6h78.3h100h191l-39.2,87.2H931.9v101.9 h134.3h99h77.1l-38.2-93.3l-30.7,73.7H1075l76-169.5h99.7v-38.4h-81.9l40-87.8h42V549.9H687.2c-16.4,0-32.1,2.9-46.6,8.2v487.1h9 c0.4,32.1,8.5,56.8,24.4,74.1c13.6,14.67,32,23.3,55.3,25.4V1234z M640.6,1212.7c-14.3-7.4-27.1-16.7-38.3-27.9 c-33.1-32.9-49.9-79.5-50.3-139.7h88.6V558.1c-52.8,19.2-90.7,70-90.7,129.2v625.5c0,59.2,38,110,90.7,129.2V1212.7z"
+                >
+                </path>
+              </svg>
+            </div>
+            <h1
+              class="geist-variable font-bold mobile-only:hidden inline-block"
             >
-              <path
-                class="st0"
-                fill="currentColor"
-                d="M1250.7,1450.1v-377.5h26.3l87.1,199.2c51.6,105.8,21.8,178.3-72.8,178.3H1250.7L1250.7,1450.1z M1250.7,798.8 h7l192.4,430.5V687.2c0-75.6-61.8-137.4-137.4-137.4h-62.1v122.7h81.9l-68.3,87.8h-13.6V798.8z M729.2,1234 c-34.2-1.3-63.7-8.4-88.6-21.3v229.2c14.6,5.3,30.3,8.2,46.6,8.2h563.5v-377.5h-120.9l-31.9,76.2l-31.7,76.8H959.5l55.9-124.7h0 l34.2-74.7l-40.1,46.2h-77.5l-1.3-1.4c-2.8,27.6-10.2,52.3-22.1,74c-15.7,28.5-37.9,50.4-66.8,65.9c-26.9,14.4-57.8,22.1-92.8,23.1 V1145c24.8-1.5,44.4-10.3,59-26.3c16.1-17.7,24.1-42.8,24.1-75.3v-76.2v-81.8h-78.3v-86.6h78.3h100h191l-39.2,87.2H931.9v101.9 h134.3h99h77.1l-38.2-93.3l-30.7,73.7H1075l76-169.5h99.7v-38.4h-81.9l40-87.8h42V549.9H687.2c-16.4,0-32.1,2.9-46.6,8.2v487.1h9 c0.4,32.1,8.5,56.8,24.4,74.1c13.6,14.8,32,23.3,55.3,25.4V1234z M640.6,1212.7c-14.3-7.4-27.1-16.7-38.3-27.9 c-33.1-32.9-49.9-79.5-50.3-139.7h88.6V558.1c-52.8,19.2-90.7,70-90.7,129.2v625.5c0,59.2,38,110,90.7,129.2V1212.7z"
-              >
-              </path>
-            </svg>
+              Jorge Fernando Álava
+            </h1>
           </div>
-          <!-- <p class="geist-variable font-bold not-mobile:hidden inline-block">
-            JFA
-          </p> -->
-          <h1 class="geist-variable font-bold mobile-only:hidden inline-block">
-            Jorge Fernando Álava
-          </h1>
         </div>
-      </div>
-    </a>
-    <nav class="flex justify-center gap-y-2 box-content">
-      {
-        navItems.map((item) => {
-          if (item.id !== currentPage) {
-            return (
-              <a
-                href={getLocalizedPath(item.id)}
-                class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:text-[#ff781e] hover:font-bold"
-              >
-                <div class="inline-block dark:invert">
-                  <Fragment set:html={item.icon} />
+      </a>
+      <nav class="flex justify-center gap-y-2 box-content">
+        {
+          navItems.map((item) => {
+            if (item.id !== currentPage) {
+              return (
+                <a
+                  href={getLocalizedPath(item.id)}
+                  class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:text-[#ff781e] hover:font-bold"
+                >
+                  <div class="inline-block dark:invert">
+                    <Fragment set:html={item.icon} />
+                  </div>
+                  <div>
+                    <span class="geist-variable select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
+                      {item.id === "index"
+                        ? localizedNavIndex
+                        : localizedCVIndex}
+                    </span>
+                  </div>
+                </a>
+              );
+            } else {
+              return (
+                <div class="flex items-center p-2 select-none border-b-2 border-[#ff781e] border-solid text-[#ff781e] hover:font-bold box-content">
+                  <div class="inline-block dark:invert">
+                    <Fragment set:html={item.icon} />
+                  </div>
+                  <div>
+                    <span class="geist-variable font-bold select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
+                      {item.id === "index"
+                        ? localizedNavIndex
+                        : localizedCVIndex}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span class="geist-variable select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
-                    {item.id === "index" ? localizedNavIndex : localizedCVIndex}
-                  </span>
-                </div>
-              </a>
-            );
-          } else {
-            return (
-              <div class="flex items-center p-2 select-none border-b-2 border-[#ff781e] border-solid text-[#ff781e] hover:font-bold box-content">
-                <div class="inline-block dark:invert">
-                  <Fragment set:html={item.icon} />
-                </div>
-                <div>
-                  <span class="geist-variable font-bold select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
-                    {item.id === "index" ? localizedNavIndex : localizedCVIndex}
-                  </span>
-                </div>
-              </div>
-            );
-          }
-        })
-      }
-    </nav>
+              );
+            }
+          })
+        }
+      </nav>
+    </div>
   </div>
 </header>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("header")) {
-      const header = document.getElementById("header") as HTMLElement;
-
-      let lastScrollTop = 0;
-      let ticking = false;
-
-      function handleScroll() {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const headerHeight = header.offsetHeight;
-
-        if (scrollTop > headerHeight && scrollTop > lastScrollTop) {
-          // Scrolling down
-          header.classList.add("fixed-header", "header-hidden");
-        } else if (scrollTop <= headerHeight || scrollTop < lastScrollTop) {
-          // Scrolling up or at the top
-          header.classList.remove("header-hidden");
-          if (scrollTop <= 0) {
-            header.classList.remove("fixed-header");
-          } else {
-            header.classList.add("fixed-header");
-          }
-        }
-
-        lastScrollTop = scrollTop;
-        ticking = false;
-      }
-
-      window.addEventListener("scroll", () => {
-        if (!ticking) {
-          window.requestAnimationFrame(() => {
-            handleScroll();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      });
-    }
-  });
-</script>
