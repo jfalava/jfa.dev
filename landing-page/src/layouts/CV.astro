@@ -116,6 +116,9 @@ function localizedHome() {
       background-size: 16px 16px;
       background-image: linear-gradient(to right, #d7defe 1px, transparent 1px),
         linear-gradient(to bottom, #d7defe 1px, transparent 1px);
+      background-position: -3px -3px;
+      margin: 2rem -10px -10px -10px; /* Added top margin */
+      padding: 10px 10px 10px 10px;
     }
   }
 
@@ -124,9 +127,13 @@ function localizedHome() {
       background-size: 16px 16px;
       background-image: linear-gradient(to right, #313131 1px, transparent 1px),
         linear-gradient(to bottom, #313131 1px, transparent 1px);
+      background-position: -3px -3px;
+      margin: 2rem -10px -10px -10px;
+      padding: 10px 10px 10px 10px;
     }
   }
 </style>
+
 <Master
   locale={locale}
   metaTitle={metaTitle}
@@ -149,7 +156,7 @@ function localizedHome() {
   localizedCVIndex={localizedCVIndex}
   localizedEmail={localizedEmail}
 >
-  <div class="grid-background mt-[1%] pl-[2%] pr-[2%] pt-[1%] pb-[1%]">
+  <div class="grid-background">
     <article id="aboutme-card">
       <AboutMe />
     </article>
