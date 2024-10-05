@@ -96,27 +96,26 @@ function getLocalizedPath(id: string) {
 
 <header
   id="header"
-  class="fixed top-0 left-0 w-full z-50
+  class="glassbox fixed top-0 left-0 w-full z-50
         border-b border-dashed border-[#3756f2]
-        select-none text-[#efefef]
-        bg-[#181a1b]"
+        select-none dark:text-[#efefef] text-[rgb(24,26,27)]"
 >
   <div
     class="relative w-[70%] mx-auto w-1150:w-[85%] mobile-only:w-[90%]
-           border-l border-r border-dashed border-[#3756f2]"
+          border-l border-r border-dashed border-[#3756f2]"
   >
     <div
       id="left-header-diamond"
       class="absolute bottom-0 left-0 h-3 w-3 z-10 rounded-[1px]
-             rotate-45 border border-blue-300 dark:border-blue-500/60 bg-white/80 dark:bg-black
-             translate-x-[-50%] translate-y-[50%]"
+          rotate-45 border border-[#3756f2] bg-white dark:bg-black
+          translate-x-[-50%] translate-y-[50%]"
     >
     </div>
     <div
       id="right-header-diamond"
       class="absolute bottom-0 right-0 h-3 w-3 z-10 rounded-[1px]
-             rotate-45 border border-blue-300 dark:border-blue-500/60 bg-white/80 dark:bg-black
-             translate-x-[50%] translate-y-[50%]"
+          rotate-45 border border-[#3756f2] bg-white dark:bg-black
+          translate-x-[50%] translate-y-[50%]"
     >
     </div>
     <div class="p-3 flex justify-between items-center">
@@ -137,9 +136,6 @@ function getLocalizedPath(id: string) {
                 </path>
               </svg>
             </div>
-            <!-- <p class="geist-variable font-bold not-mobile:hidden inline-block">
-            JFA
-          </p> -->
             <h1
               class="geist-variable font-bold mobile-only:hidden inline-block"
             >
