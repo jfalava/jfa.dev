@@ -122,14 +122,38 @@ const {
       localizedNavIndex={localizedNavIndex}
       localizedCVIndex={localizedCVIndex}
     />
+    <div class="not-mobile:h-[80px] mobile-only:h-[70px]"></div>
+    <!-- Spacer to compensate for fixed header -->
     <ScrollToTopButton client:load />
     <main
-      class="flex-grow ultrawide-only:w-[50%] ultrawide-only:ml-[25%]
-        w-[60%] ml-[20%]
-        w-1150:w-[75%] w-1150:ml-[12.5%]
-        mobile-only:w-[90%] mobile-only:ml-[5%]"
+      class="flex-grow w-[70%] mx-auto
+    w-1150:w-[85%]
+    mobile-only:w-[90%]
+    border-l border-r border-dashed border-[#3756f2]
+    relative"
     >
-      <slot />
+      <div
+        class="w-[70%] mx-auto w-1150:w-[75%] mobile-only:w-[90%]
+      px-8
+      w-1150:px-6
+      mobile-only:px-4"
+      >
+        <slot />
+      </div>
+      <div
+        id="left-main-diamond"
+        class="absolute bottom-0 left-0 h-3 w-3 z-10 rounded-[1px]
+          rotate-45 border border-blue-300 dark:border-blue-500/60 bg-white/80 dark:bg-black
+          translate-x-[-50%] translate-y-[50%]"
+      >
+      </div>
+      <div
+        id="right-main-diamond"
+        class="absolute bottom-0 right-0 h-3 w-3 z-10 rounded-[1px]
+          rotate-45 border border-blue-300 dark:border-blue-500/60 bg-white/80 dark:bg-black
+          translate-x-[50%] translate-y-[50%]"
+      >
+      </div>
     </main>
     <Footer
       locale={locale}
