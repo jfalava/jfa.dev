@@ -46,7 +46,9 @@ import RevealEmail from "@/components/footer/RevealEmail.astro";
       class="not-mobile:flex not-mobile:justify-between gap-x-10 mobile-only:grid mobile-only:grid-cols-2 mobile-only:gap-y-3"
     >
       <div id="socials-column" class="border-l pl-2 border-solid border-white">
-        <p class="bold text-lg mb-2">👥&nbsp;{localizedSocials}</p>
+        <p class="geist-variable font-bold text-lg mb-2">
+          👥&nbsp;{localizedSocials}
+        </p>
         <div class="ml-2">
           <A h="https://twitter.com/jorgefalava">
             <p class="italic mobile-only:text-sm">Twitter</p>
@@ -60,7 +62,9 @@ import RevealEmail from "@/components/footer/RevealEmail.astro";
         </div>
       </div>
       <div id="releases-column" class="border-l pl-2 border-solid border-white">
-        <p class="bold text-lg mb-2">🌐&nbsp;{localizedWebReleases}</p>
+        <p class="geist-variable font-bold text-lg mb-2">
+          🌐&nbsp;{localizedWebReleases}
+        </p>
         <div class="ml-2">
           <div class="flex items-center italic mobile-only:text-sm">
             <p class="italic mobile-only:text-sm">Prod:&nbsp;</p>
@@ -73,7 +77,9 @@ import RevealEmail from "@/components/footer/RevealEmail.astro";
         </div>
       </div>
       <div id="contact-column" class="border-l pl-2 border-solid border-white">
-        <p class="bold text-lg mb-2">📧&nbsp;{localizedContact}</p>
+        <p class="geist-variable font-bold text-lg mb-2">
+          📧&nbsp;{localizedContact}
+        </p>
         <div class="ml-2">
           <a
             id="reveal-email-button"
@@ -92,7 +98,9 @@ import RevealEmail from "@/components/footer/RevealEmail.astro";
         id="other-links-column"
         class="border-l pl-2 border-solid border-white"
       >
-        <p class="bold text-lg mb-2">🍱&nbsp;{localizedOtherLinks}</p>
+        <p class="geist-variable font-bold text-lg mb-2">
+          🍱&nbsp;{localizedOtherLinks}
+        </p>
         <div class="ml-2">
           <IA t={localizedSiteMap} h="/sitemap-0.xml">
             <p slot="simple-anchor-content" class="italic mobile-only:text-sm">
