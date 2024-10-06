@@ -13,8 +13,8 @@ import TechTag, {
 import TechTagContainer from "@/components/reusables/tags/TechTagContainer.astro";
 // Links
 import LinkButton from "@/components/index/links/LinkButton.astro";
-// Tooltips
-import Tooltip from "@/components/reusables/text-elements/SimpleTooltip.astro";
+// SimpleTooltip
+import SimpleTooltip from "@/components/reusables/text-elements/SimpleTooltip.tsx";
 interface Props {
   locale: string;
   metaTitle: string;
@@ -151,6 +151,7 @@ const {
       BentoLayout ? (
         <BentoLayout>
           <BentoElement
+            client:load
             bentoID="jfa-dev"
             locale={locale}
             projectTitle="jfa.dev"
@@ -159,21 +160,14 @@ const {
             repoHosting="GitHub"
           >
             <TechTagContainer>
-              <Tooltip content="Astro">
-                <TechTag t={TechnologyType.Astro} />
-              </Tooltip>
-              <Tooltip content="React">
-                <TechTag t={TechnologyType.React} />
-              </Tooltip>
-              <Tooltip content="Cloudflare Pages">
-                <TechTag t={TechnologyType.Cloudflare_Pages} />
-              </Tooltip>
-              <Tooltip content="Cloudflare Workers">
-                <TechTag t={TechnologyType.Cloudflare_Workers} />
-              </Tooltip>
+              <TechTag client:load t={TechnologyType.Astro} />
+              <TechTag client:load t={TechnologyType.React} />
+              <TechTag client:load t={TechnologyType.Cloudflare_Pages} />
+              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
             </TechTagContainer>
           </BentoElement>
           <BentoElement
+            client:load
             bentoID="machine-outfitting"
             locale={locale}
             projectTitle="Machine Outfitting"
@@ -182,12 +176,11 @@ const {
             repoHosting="GitHub"
           >
             <TechTagContainer>
-              <Tooltip content="PowerShell">
-                <TechTag t={TechnologyType.PowerShell} />
-              </Tooltip>
+              <TechTag client:load t={TechnologyType.PowerShell} />
             </TechTagContainer>
           </BentoElement>
           <BentoElement
+            client:load
             bentoID="dotfiles"
             locale={locale}
             projectTitle="dotfiles"
@@ -196,15 +189,12 @@ const {
             repoHosting="GitHub"
           >
             <TechTagContainer>
-              <Tooltip content="PowerShell">
-                <TechTag t={TechnologyType.PowerShell} />
-              </Tooltip>
-              <Tooltip content="Sh">
-                <TechTag t={TechnologyType.Sh} />
-              </Tooltip>
+              <TechTag client:load t={TechnologyType.PowerShell} />
+              <TechTag client:load t={TechnologyType.Sh} />
             </TechTagContainer>
           </BentoElement>
           <BentoElement
+            client:load
             bentoID="make-a-test"
             locale={locale}
             projectTitle="make-a-test"
@@ -213,21 +203,14 @@ const {
             repoHosting="GitHub"
           >
             <TechTagContainer>
-              <Tooltip content="React">
-                <TechTag t={TechnologyType.React} />
-              </Tooltip>
-              <Tooltip content="JSON">
-                <TechTag t={TechnologyType.JSON} />
-              </Tooltip>
-              <Tooltip content="Cloudflare D1">
-                <TechTag t={TechnologyType.Cloudflare_D1} />
-              </Tooltip>
-              <Tooltip content="Cloudflare Workers">
-                <TechTag t={TechnologyType.Cloudflare_Workers} />
-              </Tooltip>
+              <TechTag client:load t={TechnologyType.React} />
+              <TechTag client:load t={TechnologyType.JSON} />
+              <TechTag client:load t={TechnologyType.Cloudflare_D1} />
+              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
             </TechTagContainer>
           </BentoElement>
           <BentoElement
+            client:load
             bentoID="applet-gallery"
             locale={locale}
             projectTitle="Applet: Gallery"
@@ -236,21 +219,14 @@ const {
             repoHosting="GitHub"
           >
             <TechTagContainer>
-              <Tooltip content="Astro">
-                <TechTag t={TechnologyType.Astro} />
-              </Tooltip>
-              <Tooltip content="React">
-                <TechTag t={TechnologyType.React} />
-              </Tooltip>
-              <Tooltip content="Cloudflare Workers">
-                <TechTag t={TechnologyType.Cloudflare_Workers} />
-              </Tooltip>
-              <Tooltip content="Cloudflare D1">
-                <TechTag t={TechnologyType.Cloudflare_D1} />
-              </Tooltip>
+              <TechTag client:load t={TechnologyType.Astro} />
+              <TechTag client:load t={TechnologyType.React} />
+              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
+              <TechTag client:load t={TechnologyType.Cloudflare_D1} />
             </TechTagContainer>
           </BentoElement>
           <BentoElement
+            client:load
             bentoID="manifold"
             locale={locale}
             projectTitle="Manifold"
@@ -259,15 +235,9 @@ const {
             repoHosting="GitHub"
           >
             <TechTagContainer>
-              <Tooltip content="TypeScript">
-                <TechTag t={TechnologyType.TypeScript} />
-              </Tooltip>
-              <Tooltip content="Rust">
-                <TechTag t={TechnologyType.Rust} />
-              </Tooltip>
-              <Tooltip content="Cloudflare Workers">
-                <TechTag t={TechnologyType.Cloudflare_Workers} />
-              </Tooltip>
+              <TechTag client:load t={TechnologyType.TypeScript} />
+              <TechTag client:load t={TechnologyType.Rust} />
+              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
             </TechTagContainer>
           </BentoElement>
         </BentoLayout>
