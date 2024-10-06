@@ -12,7 +12,7 @@ import { TagType } from "@/types/TagType.ts";
 import RepoProvider, {
   RepoHosting,
 } from "@/components/index/current-projects/RepositoryHosting.tsx";
-//
+
 interface Props {
   bentoID: string;
   locale: string;
@@ -24,17 +24,6 @@ interface Props {
 
 const { bentoID, locale, projectTitle, projectStatus, repoLink, repoHosting } =
   Astro.props as Props;
-
-const TagComponents = {
-  [TagType.Abandoned]: Abandoned,
-  [TagType.Archived]: Archived,
-  [TagType.Maintained]: Maintained,
-  [TagType.OnHold]: OnHold,
-  [TagType.UnderDevelopment]: UnderDevelopment,
-  [TagType.NDA]: NDA,
-};
-
-const Tag = TagComponents[projectStatus];
 ---
 
 <div id={bentoID} class="glassbox p-3 rounded-lg grid grid-cols-1 cursor-auto">
@@ -55,7 +44,28 @@ const Tag = TagComponents[projectStatus];
       </A>
     </div>
     <div class="flex gap-x-2">
-      <Tag lang={locale} />
+      {
+        projectStatus === TagType.Abandoned && (
+          <Abandoned lang={locale} client:load />
+        )
+      }
+      {
+        projectStatus === TagType.Archived && (
+          <Archived lang={locale} client:load />
+        )
+      }
+      {
+        projectStatus === TagType.Maintained && (
+          <Maintained lang={locale} client:load />
+        )
+      }
+      {projectStatus === TagType.OnHold && <OnHold lang={locale} client:load />}
+      {
+        projectStatus === TagType.UnderDevelopment && (
+          <UnderDevelopment lang={locale} client:load />
+        )
+      }
+      {projectStatus === TagType.NDA && <NDA lang={locale} client:load />}
     </div>
   </div>
   <div class="flex flex-wrap ml-1 mt-1">
