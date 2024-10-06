@@ -1,0 +1,35 @@
+---
+interface Props {
+  content: string;
+  position?: "top" | "right" | "bottom" | "left";
+}
+
+const { content, position = "top" } = Astro.props;
+
+const positionClasses = {
+  top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+  right: "top-1/2 left-full -translate-y-1/2 ml-2",
+  bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
+  left: "top-1/2 right-full -translate-y-1/2 mr-2",
+};
+
+const arrowClasses = {
+  top: "top-full left-1/2 -translate-x-1/2 border-t-gray-700",
+  right: "top-1/2 right-full -translate-y-1/2 border-r-gray-700",
+  bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-gray-700",
+  left: "top-1/2 left-full -translate-y-1/2 border-l-gray-700",
+};
+---
+
+<div class="relative inline-block group">
+  <slot />
+  <div
+    class={`absolute geist z-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-700 text-white text-sm rounded py-1 px-2 ${positionClasses[position]}`}
+  >
+    {content}
+    <div
+      class={`absolute w-0 h-0 border-4 border-transparent ${arrowClasses[position]}`}
+    >
+    </div>
+  </div>
+</div>

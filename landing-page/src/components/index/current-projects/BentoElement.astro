@@ -1,5 +1,7 @@
 ---
+// Anchors
 import A from "@/components/reusables/anchors/SimpleExternalAnchor.tsx";
+// Tags
 import Abandoned from "@/components/reusables/tags/Abandoned.tsx";
 import Archived from "@/components/reusables/tags/Archived.tsx";
 import Maintained from "@/components/reusables/tags/Maintained";
@@ -35,11 +37,7 @@ const TagComponents = {
 const Tag = TagComponents[projectStatus];
 ---
 
-<div
-  id={bentoID}
-  class="glassbox p-3 rounded-lg grid grid-cols-1 cursor-auto"
-  title={projectTitle}
->
+<div id={bentoID} class="glassbox p-3 rounded-lg grid grid-cols-1 cursor-auto">
   <div class="flex items-center justify-evenly">
     <div class="flex items-center">
       <A h={repoLink} c="flex items-center">

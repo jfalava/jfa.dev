@@ -21,10 +21,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
   return (
     <>
       {t === TechnologyType.Astro && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#8344ca] bg-[#4e178b]"
-          title="Astro"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#8344ca] bg-[#4e178b]">
           <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -40,10 +37,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.React && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#3e9dbc] bg-[#087ea4]"
-          title="React"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#3e9dbc] bg-[#087ea4]">
           <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -59,10 +53,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.PowerShell && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#3c67a2] bg-[#002353]"
-          title="PowerShell"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#3c67a2] bg-[#002353]">
           <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,10 +69,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.Sh && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#7ff683] bg-[#199b1d]"
-          title="Shell"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#7ff683] bg-[#199b1d]">
           <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -97,10 +85,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.Cloudflare_Workers && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#f49b4e] bg-[#f6821f]"
-          title="Cloudflare Workers"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#f49b4e] bg-[#f6821f]">
           <svg
             className="h-5 w-auto invert"
             aria-label="Cloudflare Pages"
@@ -116,10 +101,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.Cloudflare_Pages && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#f49b4e] bg-[#f6821f]"
-          title="Cloudflare Pages"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#f49b4e] bg-[#f6821f]">
           <svg
             aria-label="Cloudflare Workers"
             className="h-5 w-auto invert"
@@ -136,10 +118,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.Cloudflare_D1 && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#f49b4e] bg-[#f6821f]"
-          title="Cloudflare D1"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#f49b4e] bg-[#f6821f]">
           <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -156,10 +135,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.TypeScript && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#579ae1] bg-[#2f74c0]"
-          title="TypeScript"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#579ae1] bg-[#2f74c0]">
           <div className="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -175,10 +151,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.Rust && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#de6651] bg-[#e43717]"
-          title="Rust"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#de6651] bg-[#e43717]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-auto invert"
@@ -189,10 +162,7 @@ const TechTag: React.FC<Props> = ({ t }) => {
         </div>
       )}
       {t === TechnologyType.JSON && (
-        <div
-          className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#a3a3a3] bg-[#757575]"
-          title="JSON"
-        >
+        <div className="flex items-center flex-wrap p-1 rounded px-1.5 ml-1.5 select-none cursor-help border-2 border-[#a3a3a3] bg-[#757575]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-auto"
