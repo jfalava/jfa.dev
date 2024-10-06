@@ -1,5 +1,5 @@
 import React from "react";
-
+import SimpleTooltip from "@/components/reusables/text-elements/SimpleTooltip.tsx";
 interface Props {
   lang: string;
 }
@@ -19,12 +19,11 @@ const OnHold: React.FC<Props> = ({ lang }) => {
   };
 
   return (
-    <p
-      className="jetbrains p-1 text-white text-nowrap text-sm rounded px-1.5 ml-1.5 select-none whitespace-nowrap cursor-help border-2 border-[#9297f6] bg-[#555dfe]"
-      title={getTitle()}
-    >
-      {getTitle()}
-    </p>
+    <SimpleTooltip content={getTitle()}>
+      <p className="jetbrains p-1 text-white text-nowrap text-sm rounded px-1.5 ml-1.5 select-none whitespace-nowrap cursor-help border-2 border-[#9297f6] bg-[#555dfe]">
+        {getTitle()}
+      </p>
+    </SimpleTooltip>
   );
 };
 
