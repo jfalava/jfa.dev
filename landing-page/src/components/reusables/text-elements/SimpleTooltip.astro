@@ -1,0 +1,92 @@
+---
+interface Props {
+  content: string;
+  position?: "top" | "right" | "bottom" | "left";
+}
+
+const { content, position = "top" } = Astro.props;
+
+const positionClasses = {
+  top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+  right: "top-1/2 left-full -translate-y-1/2 ml-2",
+  bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
+  left: "top-1/2 right-full -translate-y-1/2 mr-2",
+};
+
+const arrowClasses = {
+  top: "top-full left-1/2 -translate-x-1/2 border-t-black",
+  right: "top-1/2 right-full -translate-y-1/2 border-r-black",
+  bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-black",
+  left: "top-1/2 left-full -translate-y-1/2 border-l-black",
+};
+---
+
+<div class="relative inline-block tooltip-container">
+  <slot />
+  <div
+    class={`absolute geist z-10 invisible opacity-0 transition-opacity duration-300 bg-black text-white text-sm rounded py-1 px-2 ${positionClasses[position]} tooltip-content`}
+  >
+    {content}
+    <div
+      class={`absolute w-0 h-0 border-4 border-transparent ${arrowClasses[position]}`}
+    >
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeTooltip: HTMLElement | null = null;
+
+  function showTooltip(tooltip: HTMLElement) {
+    if (activeTooltip && activeTooltip !== tooltip) {
+      hideTooltip(activeTooltip);
+    }
+    tooltip.classList.remove("invisible", "opacity-0");
+    activeTooltip = tooltip;
+  }
+
+  function hideTooltip(tooltip: HTMLElement) {
+    tooltip.classList.add("invisible", "opacity-0");
+    if (activeTooltip === tooltip) {
+      activeTooltip = null;
+    }
+  }
+
+  function handleTooltip(e: Event) {
+    const container = e.currentTarget as HTMLElement;
+    const tooltip = container.querySelector(".tooltip-content") as HTMLElement;
+
+    if (e.type === "mouseenter" || e.type === "touchstart") {
+      showTooltip(tooltip);
+    } else if (e.type === "mouseleave") {
+      hideTooltip(tooltip);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const tooltips = document.querySelectorAll(".tooltip-container");
+    tooltips.forEach((tooltip) => {
+      if (tooltip instanceof HTMLElement) {
+        tooltip.addEventListener("mouseenter", handleTooltip);
+        tooltip.addEventListener("mouseleave", handleTooltip);
+        tooltip.addEventListener("touchstart", handleTooltip, {
+          passive: true,
+        });
+      }
+    });
+
+    // Close tooltips when tapping outside
+    document.addEventListener(
+      "touchstart",
+      (e: Event) => {
+        const target = e.target as HTMLElement;
+        if (target && !target.closest(".tooltip-container")) {
+          if (activeTooltip) {
+            hideTooltip(activeTooltip);
+          }
+        }
+      },
+      { passive: true },
+    );
+  });
+</script>
