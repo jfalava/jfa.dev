@@ -14,9 +14,11 @@ const { localizedPersonalDescription } = Astro.props;
     line-height: 2;
   }
 </style>
-<header class="mt-2 mb-[2%] bg-none">
+<div class="mt-2 mb-[2%] mobile-only:mb-[10%] bg-none">
   <div class="flex justify-center">
-    <p class="geist-variable font-bold not-mobile:hidden">Jorge Fernando Álava</p>
+    <p class="geist-variable font-bold not-mobile:hidden">
+      Jorge Fernando Álava
+    </p>
   </div>
   <div class="flex justify-evenly items-center">
     <div
@@ -66,4 +68,4 @@ const { localizedPersonalDescription } = Astro.props;
       </div>
     </div>
   </div>
-</header>
+</div>

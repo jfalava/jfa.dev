@@ -8,7 +8,34 @@ interface Props {
 const { buttonText, buttonHref } = Astro.props as Props;
 ---
 
-<A h={buttonHref} c="flex items-center justify-center rounded-lg p-2">
+<A
+  h={buttonHref}
+  c="flex items-center justify-center p-1 relative border border-dashed border-[#3756f2]"
+>
+  <div
+    class="absolute top-0 left-0 h-2 w-2 z-10 rounded-[1px]
+      rotate-45 border border-[#3756f2] bg-white dark:bg-black
+      translate-x-[-50%] translate-y-[-50%]"
+  >
+  </div>
+  <div
+    class="absolute top-0 right-0 h-2 w-2 z-10 rounded-[1px]
+      rotate-45 border border-[#3756f2] bg-white dark:bg-black
+      translate-x-[50%] translate-y-[-50%]"
+  >
+  </div>
+  <div
+    class="absolute bottom-0 left-0 h-2 w-2 z-10 rounded-[1px]
+      rotate-45 border border-[#3756f2] bg-white dark:bg-black
+      translate-x-[-50%] translate-y-[50%]"
+  >
+  </div>
+  <div
+    class="absolute bottom-0 right-0 h-2 w-2 z-10 rounded-[1px]
+      rotate-45 border border-[#3756f2] bg-white dark:bg-black
+      translate-x-[50%] translate-y-[50%]"
+  >
+  </div>
   <div
     class="flex items-center p-2 select-none border-b-2 border-transparent border-solid hover:border-[#ff781e] hover:text-[#ff781e]"
   >

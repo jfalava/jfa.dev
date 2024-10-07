@@ -53,7 +53,7 @@ const SimpleTooltip: React.FC<SimpleTooltipProps> = ({
 
   return (
     <div
-      className="noise-bg relative inline-block tooltip-container text-nowrap z-[9999]"
+      className="noise-bg relative inline-block tooltip-container text-nowrap z-10"
       onMouseEnter={showTooltip}
       onMouseLeave={hideTooltip}
       onTouchStart={showTooltip}

@@ -8,6 +8,9 @@ import StyledBlockquote, {
 import SimpleTooltip from "@/components/reusables/text-elements/SimpleTooltip.tsx";
 //
 import CompleteCurrentLocalTime from "@/components/reusables/date/GetCurrentDate.tsx";
+//
+import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro";
+//
 interface Props {
   locale: string;
   metaTitle: string;
@@ -111,15 +114,12 @@ function localizedHome() {
     margin-top: 2%;
     margin-bottom: 2%;
   }
-  p {
-    font-family: "dm";
-  }
   @media (prefers-color-scheme: light) {
     .grid-background {
       background-size: 16px 16px;
       background-image: linear-gradient(to right, #d7defe 1px, transparent 1px),
         linear-gradient(to bottom, #d7defe 1px, transparent 1px);
-      background-position: -3px -3px;
+      background-position: -9px -12px;
       margin: 2rem -10px -10px -10px;
       padding: 10px 10px 10px 10px;
     }
@@ -130,7 +130,7 @@ function localizedHome() {
       background-size: 16px 16px;
       background-image: linear-gradient(to right, #313131 1px, transparent 1px),
         linear-gradient(to bottom, #313131 1px, transparent 1px);
-      background-position: -3px -3px;
+      background-position: -9px -12px;
       margin: 2rem -10px -10px -10px;
       padding: 10px 10px 10px 10px;
     }
@@ -163,21 +163,22 @@ function localizedHome() {
     <article id="aboutme-card">
       <AboutMe />
     </article>
+    <DivisorLine />
     <article id="skills-card">
       <Skills />
       <div class="flex justify-end">
         <StyledBlockquote blockquoteType={BlockquoteType.Warning}>
-          <span class="ml-2 geist">"Skills" and "About me" are outdated.</span>
+          <span class="ml-2 italic">"Skills" and "About me" are outdated.</span>
           <CompleteCurrentLocalTime
-            c="geist text-base mobile-only:text-xs"
+            c="italic text-base mobile-only:text-xs"
             lang="en"
           />
         </StyledBlockquote>
       </div>
     </article>
+    <DivisorLine />
     <article id="work-exp-card">
       <WorkExperience />
-
       <div class="flex flex-grow justify-end">
         <SimpleTooltip client:load content={localizedDownloadTheCV}>
           <div
@@ -198,15 +199,16 @@ function localizedHome() {
         </SimpleTooltip>
       </div>
     </article>
+    <DivisorLine />
     <article id="education-card">
       <Education />
     </article>
   </div>
-  <div class="mt-[2%] mobile-only:mt-[5%] flex justify-end">
+  <div id="last-updated" class="mt-[2%] mobile-only:mt-[5%] flex justify-end">
     <StyledBlockquote blockquoteType={BlockquoteType.Updated}>
       <div class="flex items-center">
         <CompleteCurrentLocalTime
-          c="geist text-base mobile-only:text-xs"
+          c="italic text-base mobile-only:text-xs"
           lang={locale}
         />
       </div>

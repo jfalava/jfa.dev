@@ -13,6 +13,7 @@ import TechTag, {
 import TechTagContainer from "@/components/reusables/tags/TechTagContainer.astro";
 // Links
 import LinkButton from "@/components/index/links/LinkButton.astro";
+import LinksContainer from "@/components/index/links/LinksContainer.astro";
 // SimpleTooltip
 import SimpleTooltip from "@/components/reusables/text-elements/SimpleTooltip.tsx";
 interface Props {
@@ -91,15 +92,9 @@ const {
     <PersonalDesc localizedPersonalDescription={localizedPersonalDescription} />
     <DivisorLine />
   </article>
-  <article
-    id="links-card"
-    class="mt-[2%] mb-[2%] mobile-only:mt-[5%] mobile-only:mb-[5%]"
-  >
+  <article id="links-card" class="">
     <h2>🔗 {localizedLinks}</h2>
-    <div
-      id="links-buttons-container"
-      class="flex flex-grow mb-[2%] justify-evenly w-1150:grid w-1150:grid-cols-1 w-1150:gap-2"
-    >
+    <LinksContainer>
       <LinkButton
         buttonHref=`https://music.apple.com/${locale}/playlist/20tracks/pl.u-9N9LL2eI2K5oXV`
         buttonText="#20Songs"
@@ -139,7 +134,7 @@ const {
           ></path>
         </svg>
       </LinkButton>
-    </div>
+    </LinksContainer>
   </article>
   <DivisorLine />
   <article
@@ -150,6 +145,18 @@ const {
     {
       BentoLayout ? (
         <BentoLayout>
+          <BentoElement
+            bentoID="machine-outfitting"
+            locale={locale}
+            projectTitle="Machine Outfitting"
+            projectStatus={TagType.Maintained}
+            repoLink="https://github.com/jfalava/machine-outfitting"
+            repoHosting="GitHub"
+          >
+            <TechTagContainer>
+              <TechTag client:load t={TechnologyType.PowerShell} />
+            </TechTagContainer>
+          </BentoElement>
           <BentoElement
             bentoID="jfa-dev"
             locale={locale}
@@ -165,18 +172,7 @@ const {
               <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
             </TechTagContainer>
           </BentoElement>
-          <BentoElement
-            bentoID="machine-outfitting"
-            locale={locale}
-            projectTitle="Machine Outfitting"
-            projectStatus={TagType.Maintained}
-            repoLink="https://github.com/jfalava/machine-outfitting"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.PowerShell} />
-            </TechTagContainer>
-          </BentoElement>
+
           <BentoElement
             bentoID="dotfiles"
             locale={locale}
@@ -188,21 +184,6 @@ const {
             <TechTagContainer>
               <TechTag client:load t={TechnologyType.PowerShell} />
               <TechTag client:load t={TechnologyType.Sh} />
-            </TechTagContainer>
-          </BentoElement>
-          <BentoElement
-            bentoID="make-a-test"
-            locale={locale}
-            projectTitle="make-a-test"
-            projectStatus={TagType.UnderDevelopment}
-            repoLink="https://github.com/jfalava/make-a-test"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.React} />
-              <TechTag client:load t={TechnologyType.JSON} />
-              <TechTag client:load t={TechnologyType.Cloudflare_D1} />
-              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
             </TechTagContainer>
           </BentoElement>
           <BentoElement
@@ -220,6 +201,22 @@ const {
               <TechTag client:load t={TechnologyType.Cloudflare_D1} />
             </TechTagContainer>
           </BentoElement>
+          <BentoElement
+            bentoID="make-a-test"
+            locale={locale}
+            projectTitle="make-a-test"
+            projectStatus={TagType.UnderDevelopment}
+            repoLink="https://github.com/jfalava/make-a-test"
+            repoHosting="GitHub"
+          >
+            <TechTagContainer>
+              <TechTag client:load t={TechnologyType.React} />
+              <TechTag client:load t={TechnologyType.JSON} />
+              <TechTag client:load t={TechnologyType.Cloudflare_D1} />
+              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
+            </TechTagContainer>
+          </BentoElement>
+
           <BentoElement
             bentoID="manifold"
             locale={locale}
