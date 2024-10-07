@@ -26,7 +26,10 @@ const { bentoID, locale, projectTitle, projectStatus, repoLink, repoHosting } =
   Astro.props as Props;
 ---
 
-<div id={bentoID} class="glassbox p-3 rounded-lg grid grid-cols-1 cursor-auto">
+<div
+  id={bentoID}
+  class="glassbox p-3 rounded-lg grid grid-cols-1 cursor-auto z-10"
+>
   <div class="flex items-center justify-evenly">
     <div class="flex items-center">
       <A h={repoLink} c="flex items-center">
@@ -43,7 +46,7 @@ const { bentoID, locale, projectTitle, projectStatus, repoLink, repoHosting } =
         </div>
       </A>
     </div>
-    <div class="flex gap-x-2">
+    <div class="flex gap-x-2 z-40">
       {
         projectStatus === TagType.Abandoned && (
           <Abandoned lang={locale} client:load />
