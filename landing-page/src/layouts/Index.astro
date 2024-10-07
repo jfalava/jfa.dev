@@ -146,6 +146,18 @@ const {
       BentoLayout ? (
         <BentoLayout>
           <BentoElement
+            bentoID="machine-outfitting"
+            locale={locale}
+            projectTitle="Machine Outfitting"
+            projectStatus={TagType.Maintained}
+            repoLink="https://github.com/jfalava/machine-outfitting"
+            repoHosting="GitHub"
+          >
+            <TechTagContainer>
+              <TechTag client:load t={TechnologyType.PowerShell} />
+            </TechTagContainer>
+          </BentoElement>
+          <BentoElement
             bentoID="jfa-dev"
             locale={locale}
             projectTitle="jfa.dev"
@@ -160,18 +172,7 @@ const {
               <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
             </TechTagContainer>
           </BentoElement>
-          <BentoElement
-            bentoID="machine-outfitting"
-            locale={locale}
-            projectTitle="Machine Outfitting"
-            projectStatus={TagType.Maintained}
-            repoLink="https://github.com/jfalava/machine-outfitting"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.PowerShell} />
-            </TechTagContainer>
-          </BentoElement>
+
           <BentoElement
             bentoID="dotfiles"
             locale={locale}
@@ -183,21 +184,6 @@ const {
             <TechTagContainer>
               <TechTag client:load t={TechnologyType.PowerShell} />
               <TechTag client:load t={TechnologyType.Sh} />
-            </TechTagContainer>
-          </BentoElement>
-          <BentoElement
-            bentoID="make-a-test"
-            locale={locale}
-            projectTitle="make-a-test"
-            projectStatus={TagType.UnderDevelopment}
-            repoLink="https://github.com/jfalava/make-a-test"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.React} />
-              <TechTag client:load t={TechnologyType.JSON} />
-              <TechTag client:load t={TechnologyType.Cloudflare_D1} />
-              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
             </TechTagContainer>
           </BentoElement>
           <BentoElement
@@ -215,6 +201,22 @@ const {
               <TechTag client:load t={TechnologyType.Cloudflare_D1} />
             </TechTagContainer>
           </BentoElement>
+          <BentoElement
+            bentoID="make-a-test"
+            locale={locale}
+            projectTitle="make-a-test"
+            projectStatus={TagType.UnderDevelopment}
+            repoLink="https://github.com/jfalava/make-a-test"
+            repoHosting="GitHub"
+          >
+            <TechTagContainer>
+              <TechTag client:load t={TechnologyType.React} />
+              <TechTag client:load t={TechnologyType.JSON} />
+              <TechTag client:load t={TechnologyType.Cloudflare_D1} />
+              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
+            </TechTagContainer>
+          </BentoElement>
+
           <BentoElement
             bentoID="manifold"
             locale={locale}
