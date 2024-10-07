@@ -13,6 +13,7 @@ import TechTag, {
 import TechTagContainer from "@/components/reusables/tags/TechTagContainer.astro";
 // Links
 import LinkButton from "@/components/index/links/LinkButton.astro";
+import LinksContainer from "@/components/index/links/LinksContainer.astro";
 // SimpleTooltip
 import SimpleTooltip from "@/components/reusables/text-elements/SimpleTooltip.tsx";
 interface Props {
@@ -91,15 +92,9 @@ const {
     <PersonalDesc localizedPersonalDescription={localizedPersonalDescription} />
     <DivisorLine />
   </article>
-  <article
-    id="links-card"
-    class="mt-[2%] mb-[2%] mobile-only:mt-[5%] mobile-only:mb-[5%]"
-  >
+  <article id="links-card" class="">
     <h2>🔗 {localizedLinks}</h2>
-    <div
-      id="links-buttons-container"
-      class="flex flex-grow mb-[2%] justify-evenly w-1150:grid w-1150:grid-cols-1 w-1150:gap-2"
-    >
+    <LinksContainer>
       <LinkButton
         buttonHref=`https://music.apple.com/${locale}/playlist/20tracks/pl.u-9N9LL2eI2K5oXV`
         buttonText="#20Songs"
@@ -139,7 +134,7 @@ const {
           ></path>
         </svg>
       </LinkButton>
-    </div>
+    </LinksContainer>
   </article>
   <DivisorLine />
   <article

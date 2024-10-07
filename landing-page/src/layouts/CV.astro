@@ -111,9 +111,6 @@ function localizedHome() {
     margin-top: 2%;
     margin-bottom: 2%;
   }
-  p {
-    font-family: "dm";
-  }
   @media (prefers-color-scheme: light) {
     .grid-background {
       background-size: 16px 16px;
@@ -167,9 +164,9 @@ function localizedHome() {
       <Skills />
       <div class="flex justify-end">
         <StyledBlockquote blockquoteType={BlockquoteType.Warning}>
-          <span class="ml-2 geist">"Skills" and "About me" are outdated.</span>
+          <span class="ml-2 italic">"Skills" and "About me" are outdated.</span>
           <CompleteCurrentLocalTime
-            c="geist text-base mobile-only:text-xs"
+            c="italic text-base mobile-only:text-xs"
             lang="en"
           />
         </StyledBlockquote>
@@ -177,7 +174,6 @@ function localizedHome() {
     </article>
     <article id="work-exp-card">
       <WorkExperience />
-
       <div class="flex flex-grow justify-end">
         <SimpleTooltip client:load content={localizedDownloadTheCV}>
           <div
@@ -202,11 +198,11 @@ function localizedHome() {
       <Education />
     </article>
   </div>
-  <div class="mt-[2%] mobile-only:mt-[5%] flex justify-end">
+  <div id="last-updated" class="mt-[2%] mobile-only:mt-[5%] flex justify-end">
     <StyledBlockquote blockquoteType={BlockquoteType.Updated}>
       <div class="flex items-center">
         <CompleteCurrentLocalTime
-          c="geist text-base mobile-only:text-xs"
+          c="italic text-base mobile-only:text-xs"
           lang={locale}
         />
       </div>
