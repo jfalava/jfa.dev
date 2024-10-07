@@ -17,7 +17,8 @@ header {
 
 @media (prefers-color-scheme: dark) {
   body,
-  dialog {
+  dialog,
+  .noise-bg {
     background-image: url("/images/bg/white-noise.svg");
     background-size: auto;
     background-repeat: repeat;
@@ -27,7 +28,8 @@ header {
 
 @media (prefers-color-scheme: light) {
   body,
-  dialog {
+  dialog,
+  .noise-bg {
     background-image: url("/images/bg/black-noise.svg");
     background-size: auto;
     background-repeat: repeat;

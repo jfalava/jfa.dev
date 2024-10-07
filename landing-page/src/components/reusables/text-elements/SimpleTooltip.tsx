@@ -23,12 +23,12 @@ const SimpleTooltip: React.FC<SimpleTooltipProps> = ({
   };
 
   const arrowClasses: Record<TooltipPosition, string> = {
-    top: "top-full left-1/2 -translate-x-1/2 dark:border-t-gray-600 border-t-blue-500",
+    top: "top-full left-1/2 -translate-x-1/2 dark:border-t-[#3a3d3f] border-t-[#3756f2]",
     right:
-      "top-1/2 right-full -translate-y-1/2 dark:border-r-gray-600 border-t-blue-500",
+      "top-1/2 right-full -translate-y-1/2 dark:border-r-[#3a3d3f] border-t-[#3756f2]",
     bottom:
-      "bottom-full left-1/2 -translate-x-1/2 dark:border-b-gray-600 border-t-blue-500",
-    left: "top-1/2 left-full -translate-y-1/2 dark:border-l-gray-600 border-t-blue-500",
+      "bottom-full left-1/2 -translate-x-1/2 dark:border-b-[#3a3d3f] border-t-[#3756f2]",
+    left: "top-1/2 left-full -translate-y-1/2 dark:border-l-[#3a3d3f] border-t-[#3756f2]",
   };
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const SimpleTooltip: React.FC<SimpleTooltipProps> = ({
 
   return (
     <div
-      className="relative inline-block tooltip-container text-nowrap"
+      className="noise-bg relative inline-block tooltip-container text-nowrap z-[9999]"
       onMouseEnter={showTooltip}
       onMouseLeave={hideTooltip}
       onTouchStart={showTooltip}
@@ -61,7 +61,7 @@ const SimpleTooltip: React.FC<SimpleTooltipProps> = ({
     >
       {children}
       <div
-        className={`absolute geist z-10 transition-opacity duration-300 glassbox dark:text-[#efefef] text-[#181a1b] text-sm rounded py-1 px-2 ${positionClasses[position]} ${isVisible ? "opacity-100" : "invisible opacity-0"}`}
+        className={`absolute geist z-10 transition-opacity duration-300 bg-[#3756f2] dark:bg-[#3a3d3f] text-[#efefef] text-sm rounded py-1 px-2 ${positionClasses[position]} ${isVisible ? "opacity-100" : "invisible opacity-0"}`}
       >
         {content}
         <div
