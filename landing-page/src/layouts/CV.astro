@@ -120,7 +120,7 @@ function localizedHome() {
       background-image: linear-gradient(to right, #d7defe 1px, transparent 1px),
         linear-gradient(to bottom, #d7defe 1px, transparent 1px);
       background-position: -3px -3px;
-      margin: 2rem -10px -10px -10px; /* Added top margin */
+      margin: 2rem -10px -10px -10px;
       padding: 10px 10px 10px 10px;
     }
   }
@@ -167,7 +167,11 @@ function localizedHome() {
       <Skills />
       <div class="flex justify-end">
         <StyledBlockquote blockquoteType={BlockquoteType.Warning}>
-          <span class="ml-2 geist">This is outdated!</span>
+          <span class="ml-2 geist">"Skills" and "About me" are outdated.</span>
+          <CompleteCurrentLocalTime
+            c="geist text-base mobile-only:text-xs"
+            lang="en"
+          />
         </StyledBlockquote>
       </div>
     </article>
