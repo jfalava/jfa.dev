@@ -1,3 +1,3 @@
 ## 🔎 Acerca de
 
-Resumen skillset
+TODO: skillset
