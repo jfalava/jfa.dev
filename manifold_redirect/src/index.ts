@@ -21,7 +21,7 @@ export default {
         destinationPath = "/cv";
         break;
       case "www.jfa.dev":
-        destinationPath = "/";
+        destinationPath = "";
         break;
     }
 
