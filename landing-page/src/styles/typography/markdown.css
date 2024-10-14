@@ -13,12 +13,10 @@ ul {
   list-style-type: disc;
   font-family: "geist";
   margin-left: 2rem;
-  font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
 }
 
 ol {
   list-style: decimal;
   font-family: "geist";
   margin-left: 2rem;
-  font-size: clamp(1rem, 1vw + 0.5rem, 1.2rem);
 }

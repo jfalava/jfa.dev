@@ -4,18 +4,10 @@ import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro"
 // mah mug
 import PersonalDesc from "@/components/index/PersonalDesc.astro";
 // Projects
-import BentoLayout from "@/components/index/current-projects/BentoLayout.astro";
-import BentoElement from "@/components/index/current-projects/BentoElement.astro";
-import { TagType } from "@/types/TagType.ts";
-import TechTag, {
-  TechnologyType,
-} from "@/components/reusables/tags/TechnologyTag.tsx";
-import TechTagContainer from "@/components/reusables/tags/TechTagContainer.astro";
+import AllProjects from "@/components/index/current-projects/AllProjects.astro";
 // Links
-import LinkButton from "@/components/index/links/LinkButton.astro";
-import LinksContainer from "@/components/index/links/LinksContainer.astro";
-// SimpleTooltip
-import SimpleTooltip from "@/components/reusables/text-elements/SimpleTooltip.tsx";
+import AllLinks from "@/components/index/links/AllLinks.astro";
+//
 interface Props {
   locale: string;
   metaTitle: string;
@@ -94,146 +86,11 @@ const {
   </article>
   <article id="links-card" class="">
     <h2>🔗 {localizedLinks}</h2>
-    <LinksContainer>
-      <LinkButton
-        buttonHref=`https://music.apple.com/${locale}/playlist/20tracks/pl.u-9N9LL2eI2K5oXV`
-        buttonText="#20Songs"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-7 w-auto dark:invert"
-          name="simple-anchor-content"
-          viewBox="0 0 32 32"
-          ><path
-            fill="currentColor"
-            d="M31.995 8.167c0-.984-.083-1.964-.318-2.922c-.422-1.745-1.417-3.078-2.906-4.057c-.766-.5-1.609-.807-2.505-.969a13.4 13.4 0 0 0-2.083-.198c-.052-.005-.109-.016-.167-.021H7.985q-.305.023-.609.036c-.995.057-1.984.161-2.922.536c-1.781.703-3.068 1.932-3.818 3.703c-.26.599-.391 1.234-.484 1.88c-.078.521-.12 1.047-.135 1.573c0 .042-.01.083-.01.125V24.15l.031.563c.068 1.089.208 2.167.667 3.167c.865 1.891 2.318 3.135 4.313 3.734c.557.172 1.141.25 1.724.302c.74.073 1.479.083 2.219.083h14.708q1.047-.002 2.094-.135c1.099-.141 2.13-.464 3.063-1.078a6.74 6.74 0 0 0 2.505-2.943c.25-.563.391-1.161.495-1.766c.151-.901.182-1.813.182-2.724c-.005-5.063 0-10.125-.005-15.188zm-8.563 5.317v7.615c0 .557-.078 1.104-.328 1.609c-.385.786-1.01 1.281-1.849 1.521a6 6 0 0 1-1.427.229a2.48 2.48 0 0 1-2.589-2.047a2.5 2.5 0 0 1 1.385-2.698c.427-.208.891-.333 1.354-.427c.505-.109 1.01-.208 1.51-.323c.37-.083.609-.307.682-.688c.021-.083.026-.172.026-.255v-7.26a1 1 0 0 0-.036-.245c-.052-.203-.198-.323-.406-.313c-.214.01-.422.047-.63.089q-1.525.297-3.042.609l-4.932.995c-.021.005-.047.016-.068.016c-.37.104-.5.271-.516.656c-.005.057 0 .115 0 .172c-.005 3.469 0 6.938-.005 10.406c0 .563-.063 1.115-.286 1.635c-.37.854-1.026 1.391-1.911 1.646a5.8 5.8 0 0 1-1.438.229c-1.276.047-2.339-.802-2.557-2.057c-.188-1.083.307-2.25 1.536-2.771c.479-.198.974-.307 1.479-.411l1.146-.234c.51-.109.776-.432.802-.953V8.187q.002-.251.057-.495c.094-.38.365-.599.729-.688c.339-.089.688-.151 1.031-.224c.979-.198 1.953-.396 2.932-.589l3.026-.615c.896-.177 1.786-.359 2.682-.536c.292-.057.589-.12.885-.141c.411-.036.698.224.74.641q.015.149.016.297v7.641z"
-          ></path></svg
-        >
-      </LinkButton>
-      <LinkButton buttonHref="https://keybase.io/jfalava" buttonText="Keybase">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-7 w-auto dark:invert"
-          viewBox="0 0 472 512"
-          ><path
-            fill="currentColor"
-            fill-rule="evenodd"
-            d="M150.308 182.819c-7.814-15.421-10.87-33.354-8.88-52.529c-51.56.435-56.84-20.355-57.715-40.875l1.854-29.93c1.215-19.6 18.697-34.919 38.338-34.919c41.422 1.62 45.335 2.598 56.818 15.284L209.103 0l23.498 13.825c-15.545 33.091-10.105 41.39-10.046 41.458c71.697 1.631 113.497 60.152 89.407 123.388C456.277 233.618 507.277 377.208 446.714 512H415.48c27.055-45.44 34.305-102.158 25.54-153.485c-72.846 107.605-171.848-71.037-366.178 90.307l21.625-67.794l-45.546 48.305c5.46 30.528 17.9 58.664 35.651 82.667H53.58a224.5 224.5 0 0 1-25.328-58.626l-27.2 28.848c-7.765-144.584 26.024-244.466 149.256-299.403m56.376 273.007c0-18.139-19.77-29.537-35.502-20.468s-15.732 31.866 0 40.935s35.502-2.329 35.502-20.467m126.412 0c0-18.139-19.771-29.537-35.503-20.468s-15.731 31.866 0 40.935s35.503-2.329 35.503-20.467M162.187 69.553c-6.145 11.102-11.254 22.234-14.946 33.664l-26.94-1.667c-5.425-.332-9.576-5.017-9.26-10.442l1.854-29.928c.324-5.225 4.658-9.268 9.866-9.268c.197 0 30.513 1.87 30.513 1.87c8.238 1.306 10.363 6.505 8.913 15.771m73.157 113.457l77.43 95.3c6.872 8.423-5.703 18.684-12.576 10.261l-7.71-9.505l-32.092 26.12l-20.398-24.869l32.225-26.23l-11.242-13.857l-15.472 12.697l-10.374-13.122l15.31-12.564l-27.676-33.97c-6.61-8.1 5.966-18.36 12.575-10.261"
-            clip-rule="evenodd"></path></svg
-        >
-      </LinkButton>
-      <LinkButton buttonHref="https://github.com/jfalava" buttonText="GitHub">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="dark:invert h-7 w-auto"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="currentColor"
-            d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"
-          ></path>
-        </svg>
-      </LinkButton>
-    </LinksContainer>
+    <AllLinks locale={locale} />
   </article>
   <DivisorLine />
-  <article
-    id="projects-card"
-    class="mt-[2%] mb-[2%] mobile-only:mt-[5%] mobile-only:mb-[5%]"
-  >
+  <article id="projects-card" class="mt-[2%] mb-[2%] mobile-only:my-[5%]">
     <h2 class="mobile-only:mb-[5%]">🚧 {localizedSomeProjects}</h2>
-    {
-      BentoLayout ? (
-        <BentoLayout>
-          <BentoElement
-            bentoID="machine-outfitting"
-            locale={locale}
-            projectTitle="Machine Outfitting"
-            projectStatus={TagType.Maintained}
-            repoLink="https://github.com/jfalava/machine-outfitting"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.PowerShell} />
-            </TechTagContainer>
-          </BentoElement>
-          <BentoElement
-            bentoID="jfa-dev"
-            locale={locale}
-            projectTitle="jfa.dev"
-            projectStatus={TagType.UnderDevelopment}
-            repoLink="https://github.com/jfalava/jfa.dev/"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.Astro} />
-              <TechTag client:load t={TechnologyType.React} />
-              <TechTag client:load t={TechnologyType.Cloudflare_Pages} />
-              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
-            </TechTagContainer>
-          </BentoElement>
-
-          <BentoElement
-            bentoID="dotfiles"
-            locale={locale}
-            projectTitle="dotfiles"
-            projectStatus={TagType.Maintained}
-            repoLink="https://github.com/jfalava/dotfiles-and-such"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.PowerShell} />
-              <TechTag client:load t={TechnologyType.Sh} />
-            </TechTagContainer>
-          </BentoElement>
-          <BentoElement
-            bentoID="applet-gallery"
-            locale={locale}
-            projectTitle="Applet: Gallery"
-            projectStatus={TagType.Archived}
-            repoLink="https://github.com/jfalava/gallery-applet"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.Astro} />
-              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
-              <TechTag client:load t={TechnologyType.Cloudflare_D1} />
-            </TechTagContainer>
-          </BentoElement>
-          <BentoElement
-            bentoID="make-a-test"
-            locale={locale}
-            projectTitle="make-a-test"
-            projectStatus={TagType.UnderDevelopment}
-            repoLink="https://github.com/jfalava/make-a-test"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.React} />
-              <TechTag client:load t={TechnologyType.JSON} />
-              <TechTag client:load t={TechnologyType.Cloudflare_D1} />
-              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
-            </TechTagContainer>
-          </BentoElement>
-
-          <BentoElement
-            bentoID="manifold"
-            locale={locale}
-            projectTitle="Manifold"
-            projectStatus={TagType.UnderDevelopment}
-            repoLink="https://github.com/jfalava/manifold"
-            repoHosting="GitHub"
-          >
-            <TechTagContainer>
-              <TechTag client:load t={TechnologyType.TypeScript} />
-              <TechTag client:load t={TechnologyType.Rust} />
-              <TechTag client:load t={TechnologyType.Cloudflare_Workers} />
-            </TechTagContainer>
-          </BentoElement>
-        </BentoLayout>
-      ) : (
-        <div>Error loading component</div>
-      )
-    }
+    <AllProjects locale={locale} />
   </article>
 </MasterLayout>
