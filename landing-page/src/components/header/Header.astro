@@ -159,11 +159,11 @@ function getLocalizedPath(id: string) {
                     <Fragment set:html={item.icon} />
                   </div>
                   <div>
-                    <span class="geist-variable select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
+                    <p class="geist-variable select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
                       {item.id === "index"
                         ? localizedNavIndex
                         : localizedCVIndex}
-                    </span>
+                    </p>
                   </div>
                 </a>
               );
@@ -174,11 +174,11 @@ function getLocalizedPath(id: string) {
                     <Fragment set:html={item.icon} />
                   </div>
                   <div>
-                    <span class="geist-variable font-bold select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
+                    <p class="geist-variable font-bold select-none text-base mobile-only:hidden w905:text-sm w1366:text-lg ml-2">
                       {item.id === "index"
                         ? localizedNavIndex
                         : localizedCVIndex}
-                    </span>
+                    </p>
                   </div>
                 </div>
               );
