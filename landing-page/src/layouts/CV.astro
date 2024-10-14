@@ -11,6 +11,8 @@ import CompleteCurrentLocalTime from "@/components/reusables/date/GetCurrentDate
 //
 import DivisorLine from "@/components/reusables/text-elements/DivisorLine.astro";
 //
+import DownloadCV from "@/components/cv/DownloadCV.astro";
+//
 interface Props {
   locale: string;
   metaTitle: string;
@@ -168,10 +170,10 @@ function localizedHome() {
       <Skills />
       <div class="flex justify-end">
         <StyledBlockquote blockquoteType={BlockquoteType.Warning}>
-          <p class="ml-2 italic">"Skills" and "About me" are outdated.</p>
+          <p class="ml-2 italic">Actualmente desactualizado.</p>
           <CompleteCurrentLocalTime
             c="italic text-base mobile-only:text-xs"
-            lang="en"
+            lang="es"
           />
         </StyledBlockquote>
       </div>
@@ -181,21 +183,7 @@ function localizedHome() {
       <WorkExperience />
       <div class="flex flex-grow justify-end">
         <SimpleTooltip client:load content={localizedDownloadTheCV}>
-          <div
-            class="cursor-pointer glassbox button-glassbox p-1 rounded-lg items-center"
-          >
-            <div class="dark:invert inline-block">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="dark:invert h-10 w-auto"
-                viewBox="0 0 24 24"
-                ><path
-                  fill="currentColor"
-                  d="m12 15.577l-3.539-3.538l.708-.72L11.5 13.65V5h1v8.65l2.33-2.33l.709.719zM6.616 19q-.691 0-1.153-.462T5 17.384v-2.423h1v2.423q0 .231.192.424t.423.192h10.77q.23 0 .423-.192t.192-.424v-2.423h1v2.423q0 .691-.462 1.153T17.384 19z"
-                ></path>
-              </svg>
-            </div>
-          </div>
+          <DownloadCV />
         </SimpleTooltip>
       </div>
     </article>
