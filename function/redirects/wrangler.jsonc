@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "jfa-redirect",
+  "main": "src/redirects.ts",
+  "compatibility_date": "2025-11-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+  },
+  "placement": { "mode": "smart" },
+  "routes": [
+    { "pattern": "cv.jfa.dev", "custom_domain": true },
+    { "pattern": "landing.jfa.dev", "custom_domain": true },
+    { "pattern": "cv.jfalava.eu", "custom_domain": true },
+    { "pattern": "www.jfa.dev", "custom_domain": true },
+    { "pattern": "link-shortener.jfa.ovh", "custom_domain": true },
+    { "pattern": "links.jfa.ovh", "custom_domain": true },
+    { "pattern": "links.jfa.dev", "custom_domain": true },
+    { "pattern": "link.jfa.dev", "custom_domain": true },
+  ],
+}
