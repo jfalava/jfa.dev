@@ -18,6 +18,7 @@
     "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
