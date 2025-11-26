@@ -21,7 +21,7 @@
       },
       "devDependencies": {
         "@cloudflare/workers-types": "^4.20251125.0",
-        "@types/bun": "^1.3.3",
+        "@types/bun": "catalog:",
         "@types/node": "catalog:",
         "@typescript/native-preview": "catalog:",
         "oxlint": "catalog:",
@@ -31,7 +31,7 @@
         "wrangler": "catalog:",
       },
     },
-    "web/jfa.dev": {
+    "web": {
       "name": "@jfa.dev/web",
       "version": "0.0.1",
       "dependencies": {
@@ -229,7 +229,7 @@
 
     "@jfa.dev/redirects": ["@jfa.dev/redirects@workspace:function/redirects"],
 
-    "@jfa.dev/web": ["@jfa.dev/web@workspace:web/jfa.dev"],
+    "@jfa.dev/web": ["@jfa.dev/web@workspace:web"],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 

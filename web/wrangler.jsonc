@@ -15,4 +15,7 @@
   },
   "placement": { "mode": "smart" },
   "routes": [{ "pattern": "jfa.dev", "custom_domain": true }],
+  "assets": {
+    "directory": "./dist",
+  },
 }
