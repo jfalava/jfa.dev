@@ -6,6 +6,7 @@ import Main from "@/layouts/Main.astro";
 <html class="text-black dark:text-white">
   <head>
     <meta name="generator" content={Astro.generator} />
+    <meta name="fediverse:creator" content="https://todon.eu/@jfalava" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -29,5 +30,8 @@ import Main from "@/layouts/Main.astro";
   </head>
   <body class="bg-white dark:bg-black text-black dark:text-white">
     <Main><slot /></Main>
+    <a href="https://github.com/jfalava" rel="me" class="sr-only"></a>
+    <a href="https://todon.eu/@jfalava" rel="me" class="sr-only"></a>
+    <a href="https://bsky.app/profile/jfa.dev" rel="me" class="sr-only"></a>
   </body>
 </html>
