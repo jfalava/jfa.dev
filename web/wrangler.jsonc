@@ -1,0 +1,21 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "jfa-dev",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2025-11-25",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+  },
+  "placement": { "mode": "smart" },
+  "routes": [{ "pattern": "jfa.dev", "custom_domain": true }],
+  "assets": {
+    "directory": "./dist",
+  },
+}

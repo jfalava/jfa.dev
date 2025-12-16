@@ -1,0 +1,30 @@
+{
+  "name": "@jfa.dev/web",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "check": "oxlint --fix --type-aware . && tsgo --noEmit",
+    "build": "bun run check && astro build",
+    "deploy": "bun run format && astro build && wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "format": "prettier --write .",
+    "lint": "oxlint --fix --type-aware ."
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.11",
+    "@tailwindcss/vite": "^4.1.17",
+    "astro": "^5.16.0",
+    "tailwindcss": "^4.1.17"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "catalog:",
+    "wrangler": "catalog:"
+  }
+}
