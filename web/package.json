@@ -3,19 +3,19 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "check": "oxlint --fix --type-aware . && tsgo --noEmit",
     "build": "bun run check && astro build",
-    "deploy": "bun run format && astro build && wrangler deploy",
     "cf-typegen": "wrangler types",
+    "check": "oxlint --fix --type-aware . && tsgo --noEmit",
+    "deploy": "bun run format && astro build && wrangler deploy",
+    "dev": "astro dev",
     "format": "prettier --write .",
     "lint": "oxlint --fix --type-aware ."
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.11",
-    "@tailwindcss/vite": "^4.1.17",
-    "astro": "^5.16.0",
-    "tailwindcss": "^4.1.17"
+    "@astrojs/cloudflare": "^12.6.12",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.16.6",
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@types/node": "catalog:",
