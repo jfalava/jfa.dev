@@ -6,28 +6,44 @@
       "web",
       "function/*"
     ],
-    "catalog": {
-      "@types/bun": "^1.3.4",
-      "@types/node": "^25.0.2",
-      "@typescript/native-preview": "^7.0.0-dev.20251216.1",
-      "oxlint": "^1.33.0",
-      "oxlint-tsgolint": "^0.9.1",
-      "prettier": "^3.7.4",
-      "typescript": "^5.9.3",
-      "wrangler": "^4.55.0"
+    "catalogs": {
+      "cloudflare": {
+        "@cloudflare/vite-plugin": "1.22.0",
+        "@cloudflare/workers-types": "^4.20260128.0"
+      },
+      "styling": {
+        "tailwindcss": "^4.1.18",
+        "@tailwindcss/vite": "4.1.18"
+      },
+      "backend": {
+        "hono": "4.11.7"
+      },
+      "build": {
+        "vite": "^8.0.0-beta.7",
+        "typescript": "5.9.3",
+        "@typescript/native-preview": "^7.0.0-dev.20260128.1",
+        "wrangler": "4.61.0",
+        "oxlint": "1.42.0",
+        "oxfmt": "0.27.0",
+        "oxlint-tsgolint": "0.11.2"
+      },
+      "types": {
+        "@types/bun": "1.3.7",
+        "@types/node": "25.0.10"
+      }
     }
   },
   "scripts": {
     "check:catalog": "bun scripts/check-catalog-usage.ts",
     "check:outdated": "bun scripts/check-outdated-catalog.ts",
-    "update:monorepo": "bun update --filter '*' && bun run check:catalog"
-  },
-  "devDependencies": {
-    "@types/bun": "^1.3.4",
-    "@types/jsdom": "^27.0.0",
-    "@types/node": "^25.0.2"
+    "format:global": "bun run --filter @jfa.dev/web --filter @jfa.dev/redirects format"
   },
   "dependencies": {
-    "jsdom": "^27.2.0"
+    "jsdom": "27.2.0"
+  },
+  "devDependencies": {
+    "@types/bun": "1.3.7",
+    "@types/jsdom": "27.0.0",
+    "@types/node": "25.0.2"
   }
 }

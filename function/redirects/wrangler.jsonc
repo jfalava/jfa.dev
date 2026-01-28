@@ -14,6 +14,8 @@
     { "pattern": "cv.jfa.dev", "custom_domain": true },
     { "pattern": "landing.jfa.dev", "custom_domain": true },
     { "pattern": "cv.jfalava.eu", "custom_domain": true },
+    { "pattern": "www.jfalava.ovh", "custom_domain": true },
+    { "pattern": "jfalava.ovh", "custom_domain": true },
     { "pattern": "www.jfa.dev", "custom_domain": true },
     { "pattern": "link-shortener.jfa.ovh", "custom_domain": true },
     { "pattern": "links.jfa.ovh", "custom_domain": true },

@@ -1,5 +1,0 @@
-worker-configuration.d.ts
-node_modules/
-.wrangler/
-.astro/
-dist/

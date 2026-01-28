@@ -4,25 +4,25 @@
   "private": true,
   "scripts": {
     "cf-typegen": "wrangler types",
-    "check": "oxlint --fix --type-aware . && tsgo --noEmit",
-    "deploy": "bun run cf-typegen && tsgo --noEmit && oxlint --fix --type-aware . && bun run format && wrangler deploy",
-    "dev": "bun run cf-typegen && wrangler dev",
-    "format": "prettier --write .",
-    "lint": "oxlint --fix --type-aware .",
-    "typecheck": "bun run cf-typegen && tsgo --noEmit"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251125.0",
-    "@types/bun": "catalog:",
-    "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
-    "oxlint": "catalog:",
-    "oxlint-tsgolint": "catalog:",
-    "prettier": "catalog:",
-    "typescript": "catalog:",
-    "wrangler": "catalog:"
+    "check": "oxlint --fix --type-aware && tsgo --noEmit",
+    "deploy": "wrangler types && tsgo --noEmit && oxlint --type-aware && oxfmt && wrangler deploy",
+    "dev": "wrangler types && wrangler dev",
+    "format": "oxfmt",
+    "lint": "oxlint --type-aware",
+    "typecheck": "wrangler types && tsgo --noEmit"
   },
   "dependencies": {
-    "hono": "^4.10.6"
+    "hono": "catalog:backend"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@types/bun": "catalog:types",
+    "@types/node": "catalog:types",
+    "@typescript/native-preview": "catalog:build",
+    "oxfmt": "catalog:build",
+    "oxlint": "catalog:build",
+    "oxlint-tsgolint": "catalog:build",
+    "typescript": "catalog:build",
+    "wrangler": "catalog:build"
   }
 }

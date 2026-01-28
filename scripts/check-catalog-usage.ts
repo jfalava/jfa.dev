@@ -2,33 +2,32 @@
 /* eslint-disable no-console */
 
 /**
- * Workspace catalog usage updater.
+ * Workspace catalog usage validator.
  *
- * This script enforces consistent use of the root `workspaces.catalog` across the monorepo
- * by automatically updating violations.
+ * This script enforces consistent use of the root `workspaces.catalog` across the monorepo.
  *
  * Rules:
  * - For every dependency key declared in root `workspaces.catalog`:
  *   - If a workspace uses that dependency, it MUST use `"catalog:"` as the version.
- *   - Any other version/range for those keys will be automatically updated to "catalog:".
+ *   - Any other version/range for those keys is considered a violation.
  *
  * Notes:
  * - Dependencies not present in the root catalog are ignored.
- * - This script modifies package.json files to fix catalog violations.
+ * - This is a read-only check; it does not modify any files.
  * - Implementation is Node/Bun compatible and does not rely on external glob libraries.
  *
- * Usage:
+ * Recommended usage (in root package.json):
  *
- *   # Update catalog violations (recommended command):
- *   bun run update:catalog:usage
+ *   "scripts": {
+ *     "check:catalog": "bun scripts/check-catalog-usage.ts"
+ *   }
  *
- *   # Legacy check command (still available):
+ * Then run:
+ *
  *   bun run check:catalog
- *
- * Both commands run the same script - it now automatically fixes violations instead of just reporting them.
  */
 
-import { readdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import process from "node:process";
 
@@ -37,12 +36,15 @@ type DepRecord = Record<string, string>;
 type WorkspacesObject = {
   packages?: unknown;
   catalog?: unknown;
+  catalogs?: unknown;
 };
 
 type PackageJson = {
   name?: string;
   private?: boolean;
   workspaces?: string[] | WorkspacesObject;
+  catalog?: DepRecord;
+  catalogs?: DepRecord;
   dependencies?: DepRecord;
   devDependencies?: DepRecord;
   peerDependencies?: DepRecord;
@@ -59,10 +61,6 @@ type WorkspaceViolation = {
     | "optionalDependencies";
   depName: string;
   actual: string;
-};
-
-type WorkspaceFix = WorkspaceViolation & {
-  fixed: boolean;
 };
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -93,7 +91,12 @@ function getRootPaths() {
 }
 
 /**
- * Extract the catalog map from root workspaces config.
+ * Extract the catalog map from root package.json.
+ *
+ * Supports multiple formats:
+ * 1. Bun: catalog (top-level field)
+ * 2. Legacy: workspaces.catalog (nested under workspaces)
+ * 3. Multiple catalogs: workspaces.catalogs (multiple named catalogs)
  */
 function getRootCatalog(rootPkgPath: string): DepRecord {
   const rootPkg = readJson(rootPkgPath);
@@ -101,31 +104,45 @@ function getRootCatalog(rootPkgPath: string): DepRecord {
     throw new Error(`Unable to read root package.json at ${rootPkgPath}`);
   }
 
-  const ws = rootPkg.workspaces;
-  if (!ws) {
-    return {};
-  }
-
-  let catalogSource: unknown;
-
-  if (Array.isArray(ws)) {
-    // Array form: no catalog object
-    catalogSource = undefined;
-  } else if (isRecord(ws)) {
-    const maybeCatalog = (ws as WorkspacesObject).catalog;
-    catalogSource = maybeCatalog;
-  }
-
-  if (!isRecord(catalogSource)) {
-    return {};
-  }
-
   const catalog: DepRecord = {};
-  for (const [key, value] of Object.entries(catalogSource)) {
-    if (typeof value === "string" && value.trim()) {
-      catalog[key] = value;
+
+  // Check for Bun-style top-level catalog first
+  if (rootPkg.catalog && isRecord(rootPkg.catalog)) {
+    for (const [key, value] of Object.entries(rootPkg.catalog)) {
+      if (typeof value === "string" && value.trim()) {
+        catalog[key] = value;
+      }
     }
   }
+
+  // Check for multiple catalogs under workspaces
+  const ws = rootPkg.workspaces;
+  if (ws && isRecord(ws)) {
+    const wso = ws as WorkspacesObject;
+
+    // Check for single catalog
+    if (wso.catalog && isRecord(wso.catalog)) {
+      for (const [key, value] of Object.entries(wso.catalog)) {
+        if (typeof value === "string" && value.trim()) {
+          catalog[key] = value;
+        }
+      }
+    }
+
+    // Check for multiple catalogs
+    if (wso.catalogs && isRecord(wso.catalogs)) {
+      for (const catalogGroup of Object.values(wso.catalogs)) {
+        if (isRecord(catalogGroup)) {
+          for (const [key, value] of Object.entries(catalogGroup)) {
+            if (typeof value === "string" && value.trim()) {
+              catalog[key] = value;
+            }
+          }
+        }
+      }
+    }
+  }
+
   return catalog;
 }
 
@@ -252,14 +269,14 @@ function collectWorkspacePackageJsonPaths(
 }
 
 /**
- * Fix catalog violations in a single workspace package.json.
+ * Validate a single workspace package.json against the catalog rules.
  */
-function fixPackageJson(
+function validatePackageJson(
   filePath: string,
   pkg: PackageJson,
   catalog: DepRecord,
-): WorkspaceFix[] {
-  const fixes: WorkspaceFix[] = [];
+): WorkspaceViolation[] {
+  const violations: WorkspaceViolation[] = [];
   const pkgName =
     pkg.name ??
     filePath
@@ -279,8 +296,6 @@ function fixPackageJson(
     "optionalDependencies",
   ];
 
-  let hasChanges = false;
-
   for (const depType of depTypes) {
     const deps = pkg[depType];
     if (!deps || !isRecord(deps)) {
@@ -294,39 +309,20 @@ function fixPackageJson(
         continue;
       }
 
-      if (version !== "catalog:") {
-        // Fix the violation
-        (typedDeps as Record<string, string>)[depName] = "catalog:";
-        hasChanges = true;
-
-        fixes.push({
+      // Check for both simple "catalog:" and named "catalog:name" formats
+      if (!version.startsWith("catalog:")) {
+        violations.push({
           file: filePath,
           pkgName,
           depType,
           depName,
           actual: version,
-          fixed: true,
         });
       }
     }
   }
 
-  // Write the updated package.json back to disk if we made changes
-  if (hasChanges) {
-    try {
-      const updatedJson = JSON.stringify(pkg, null, 2) + "\n";
-      writeFileSync(filePath, updatedJson, "utf8");
-      console.log(`✅ Updated ${filePath}`);
-    } catch (error) {
-      console.error(`❌ Failed to update ${filePath}:`, error);
-      // Mark all fixes as failed if we couldn't write the file
-      fixes.forEach((fix) => {
-        fix.fixed = false;
-      });
-    }
-  }
-
-  return fixes;
+  return violations;
 }
 
 /**
@@ -338,7 +334,7 @@ function main(): void {
   const catalog = getRootCatalog(rootPkgPath);
   if (Object.keys(catalog).length === 0) {
     console.log(
-      "No root workspaces.catalog entries found in package.json. Nothing to update.",
+      "No root workspaces.catalog entries found in package.json. Nothing to validate.",
     );
     return;
   }
@@ -346,14 +342,14 @@ function main(): void {
   const patterns = getWorkspacePatterns(rootPkgPath);
   if (patterns.length === 0) {
     console.log(
-      "No workspaces configuration with packages/globs found in root package.json. Nothing to update.",
+      "No workspaces configuration with packages/globs found in root package.json. Nothing to validate.",
     );
     return;
   }
 
   const workspacePkgPaths = collectWorkspacePackageJsonPaths(rootDir, patterns);
 
-  const allFixes: WorkspaceFix[] = [];
+  const allViolations: WorkspaceViolation[] = [];
 
   for (const pkgPath of workspacePkgPaths) {
     const pkg = readJson(pkgPath);
@@ -361,43 +357,34 @@ function main(): void {
       continue;
     }
 
-    const fixes = fixPackageJson(pkgPath, pkg, catalog);
-    if (fixes.length > 0) {
-      allFixes.push(...fixes);
+    const violations = validatePackageJson(pkgPath, pkg, catalog);
+    if (violations.length > 0) {
+      allViolations.push(...violations);
     }
   }
 
-  if (allFixes.length === 0) {
+  if (allViolations.length === 0) {
     console.log(
-      '✅ All workspaces already correctly use "catalog:" for catalog-managed dependencies.',
+      '✅ All workspaces correctly use "catalog:" for catalog-managed dependencies.',
     );
     return;
   }
 
-  console.log("\n📋 Summary of updates:");
+  console.error(
+    '❌ Detected dependencies that should use "catalog:" but are using explicit versions instead:\n',
+  );
 
-  const successfulFixes = allFixes.filter((fix) => fix.fixed);
-  const failedFixes = allFixes.filter((fix) => !fix.fixed);
-
-  for (const fix of successfulFixes) {
-    console.log(
-      `✅ ${fix.file} (${fix.pkgName}) :: ${fix.depType}.${fix.depName}: "${fix.actual}" → "catalog:"`,
+  for (const v of allViolations) {
+    console.error(
+      `- ${v.file} (${v.pkgName}) :: ${v.depType}.${v.depName} = "${v.actual}" (expected "catalog:")`,
     );
   }
 
-  if (failedFixes.length > 0) {
-    console.log("\n❌ Failed updates:");
-    for (const fix of failedFixes) {
-      console.log(
-        `❌ ${fix.file} (${fix.pkgName}) :: ${fix.depType}.${fix.depName}: "${fix.actual}" → "catalog:"`,
-      );
-    }
-    process.exitCode = 1;
-  } else {
-    console.log(
-      `\n🎉 Successfully updated ${successfulFixes.length} dependencies to use "catalog:"`,
-    );
-  }
+  console.error(
+    '\nTo fix: for each entry above, change the version to "catalog:" so it follows the root workspaces.catalog.',
+  );
+
+  process.exitCode = 1;
 }
 
 main();

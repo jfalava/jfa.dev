@@ -1,6 +1,4 @@
 #!/usr/bin/env bun
-/* eslint-disable no-console */
-
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { join } from "node:path";
@@ -75,9 +73,7 @@ function prettifyPackageJson(filePath: string): void {
     }
 
     if (packageJson.workspaces?.catalog) {
-      packageJson.workspaces.catalog = sortObjectKeys(
-        packageJson.workspaces.catalog,
-      );
+      packageJson.workspaces.catalog = sortObjectKeys(packageJson.workspaces.catalog);
     }
 
     writeFileSync(filePath, JSON.stringify(packageJson, null, 2) + "\n");
@@ -96,17 +92,13 @@ function findAllPackageJsonFiles(dir: string): string[] {
     for (const entry of entries) {
       const fullPath = join(dir, entry.name);
 
-      if (
-        entry.isDirectory() &&
-        !entry.name.startsWith(".") &&
-        entry.name !== "node_modules"
-      ) {
+      if (entry.isDirectory() && !entry.name.startsWith(".") && entry.name !== "node_modules") {
         files.push(...findAllPackageJsonFiles(fullPath));
       } else if (entry.name === "package.json") {
         files.push(fullPath);
       }
     }
-  } catch (error) {
+  } catch {
     // Ignore permission errors
   }
 
@@ -116,13 +108,21 @@ function findAllPackageJsonFiles(dir: string): string[] {
 async function main() {
   const packageJsonPath = "./package.json";
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
-  const catalog = packageJson.workspaces?.catalog || {};
+  const catalogs = packageJson.workspaces?.catalogs || {};
+  const allCatalogPackages: Record<string, string> = {};
+
+  for (const catalog of Object.values(catalogs)) {
+    const catalogObj = catalog as Record<string, string>;
+    for (const [name, version] of Object.entries(catalogObj)) {
+      allCatalogPackages[name] = version;
+    }
+  }
 
   console.log("🔍 Checking catalog for outdated packages...\n");
 
   const packages: PackageInfo[] = [];
 
-  for (const [name, version] of Object.entries(catalog)) {
+  for (const [name, version] of Object.entries(allCatalogPackages)) {
     const currentVersion = version as string;
     const latestVersion = await getLatestVersion(name);
     const outdated = isOutdated(currentVersion, latestVersion);
@@ -149,13 +149,6 @@ async function main() {
     const latest = parseVersion(pkg.latestVersion);
     console.log(`${pkg.name}: ${current} → ${latest}`);
   });
-
-  console.log(
-    "\n💡 To update all packages, run: bun run update:catalog:unsafe",
-  );
-  console.log(
-    "💡 To update specific package, run: bun update <package-name>@latest",
-  );
 
   console.log("\n🎨 Prettifying all package.json files...");
   const packageJsonFiles = findAllPackageJsonFiles(".");

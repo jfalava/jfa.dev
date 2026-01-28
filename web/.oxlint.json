@@ -5,25 +5,6 @@
     "browser": true,
     "es2022": true
   },
-  "parser": {
-    "typescript": true,
-    "jsx": true
-  },
-  "glob": {
-    "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": [
-      "dist/**",
-      ".tanstack/**",
-      ".wrangler/**",
-      "node_modules/**",
-      "coverage/**",
-      "**/*.config.*",
-      "**/*.d.ts"
-    ]
-  },
-  "typescript": {
-    "project": "./tsconfig.json"
-  },
   "rules": {
     "oxlint/recommended": "error",
     "tsgo/no-explicit-any": "error",
@@ -31,7 +12,7 @@
     "tsgo/no-unsafe-call": "error",
     "tsgo/no-unsafe-member-access": "error",
     "tsgo/no-unsafe-return": "error",
-
+    "ignorePatterns": ["worker-configuration.d.ts", "**/*.d.ts"],
     "no-unused-vars": [
       "error",
       {

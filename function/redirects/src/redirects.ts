@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+
 import { redirects } from "./redirects-config";
 
 const app = new Hono();
@@ -35,9 +36,7 @@ app.all("*", async (c) => {
   }
 
   const entry = redirects.find(
-    (e) =>
-      hostname === e.in ||
-      (!!e.preserveSubdomain && hostname.endsWith(`.${e.in}`)),
+    (e) => hostname === e.in || (!!e.preserveSubdomain && hostname.endsWith(`.${e.in}`)),
   );
 
   if (!entry) {

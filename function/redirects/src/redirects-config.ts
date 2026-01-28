@@ -7,6 +7,8 @@ interface RedirectEntry {
 export const redirects: RedirectEntry[] = [
   { in: "cv.jfa.dev", out: "jfa.dev" },
   { in: "landing.jfa.dev", out: "jfa.dev" },
+  { in: "jfalava.ovh", out: "jfa.dev" },
+  { in: "www.jfalava.ovh", out: "jfa.dev" },
   { in: "cv.jfalava.eu", out: "jfa.dev" },
   { in: "www.jfa.dev", out: "jfa.dev" },
   {

@@ -1,30 +1,29 @@
 {
   "name": "@jfa.dev/web",
-  "type": "module",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "build": "bun run check && astro build",
+    "build": "oxlint --type-aware && astro build",
     "cf-typegen": "wrangler types",
-    "check": "oxlint --fix --type-aware . && tsgo --noEmit",
-    "deploy": "bun run format && astro build && wrangler deploy",
+    "check": "oxlint --fix --type-aware && tsgo --noEmit",
+    "deploy": "tsgo --noEmit && oxlint --type-aware && oxfmt && astro build && wrangler deploy",
     "dev": "astro dev",
-    "format": "prettier --write .",
-    "lint": "oxlint --fix --type-aware ."
+    "format": "oxfmt",
+    "lint": "oxlint --type-aware"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.12",
-    "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.16.6",
-    "tailwindcss": "^4.1.18"
+    "@astrojs/cloudflare": "12.6.12",
+    "@tailwindcss/vite": "catalog:styling",
+    "astro": "5.16.15",
+    "tailwindcss": "catalog:styling"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
-    "oxlint": "catalog:",
-    "oxlint-tsgolint": "catalog:",
-    "prettier": "catalog:",
-    "prettier-plugin-astro": "^0.14.1",
-    "typescript": "catalog:",
-    "wrangler": "catalog:"
+    "@types/node": "catalog:types",
+    "@typescript/native-preview": "catalog:build",
+    "oxfmt": "catalog:build",
+    "oxlint": "catalog:build",
+    "oxlint-tsgolint": "catalog:build",
+    "typescript": "catalog:build",
+    "wrangler": "catalog:build"
   }
 }
