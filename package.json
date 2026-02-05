@@ -8,8 +8,8 @@
     ],
     "catalogs": {
       "cloudflare": {
-        "@cloudflare/vite-plugin": "1.22.0",
-        "@cloudflare/workers-types": "^4.20260128.0"
+        "@cloudflare/vite-plugin": "1.23.1",
+        "@cloudflare/workers-types": "^4.20260205.0"
       },
       "styling": {
         "tailwindcss": "^4.1.18",
@@ -21,15 +21,15 @@
       "build": {
         "vite": "^8.0.0-beta.7",
         "typescript": "5.9.3",
-        "@typescript/native-preview": "^7.0.0-dev.20260128.1",
-        "wrangler": "4.61.0",
-        "oxlint": "1.42.0",
-        "oxfmt": "0.27.0",
-        "oxlint-tsgolint": "0.11.2"
+        "@typescript/native-preview": "^7.0.0-dev.20260205.1",
+        "wrangler": "4.63.0",
+        "oxlint": "1.43.0",
+        "oxfmt": "0.28.0",
+        "oxlint-tsgolint": "0.11.4"
       },
       "types": {
-        "@types/bun": "1.3.7",
-        "@types/node": "25.0.10"
+        "@types/bun": "1.3.8",
+        "@types/node": "25.2.1"
       }
     }
   },
@@ -39,11 +39,11 @@
     "format:global": "bun run --filter @jfa.dev/web --filter @jfa.dev/redirects format"
   },
   "dependencies": {
-    "jsdom": "27.2.0"
+    "jsdom": "28.0.0"
   },
   "devDependencies": {
-    "@types/bun": "1.3.7",
+    "@types/bun": "1.3.8",
     "@types/jsdom": "27.0.0",
-    "@types/node": "25.0.2"
+    "@types/node": "25.2.1"
   }
 }

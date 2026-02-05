@@ -36,7 +36,7 @@ app.all("*", async (c) => {
   }
 
   const entry = redirects.find(
-    (e) => hostname === e.in || (!!e.preserveSubdomain && hostname.endsWith(`.${e.in}`)),
+    (e) => hostname === e.in || (Boolean(e.preserveSubdomain) && hostname.endsWith(`.${e.in}`)),
   );
 
   if (!entry) {
