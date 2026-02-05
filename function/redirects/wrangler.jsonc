@@ -21,5 +21,7 @@
     { "pattern": "links.jfa.ovh", "custom_domain": true },
     { "pattern": "links.jfa.dev", "custom_domain": true },
     { "pattern": "link.jfa.dev", "custom_domain": true },
+    { "pattern": "www.jfa.ovh", "custom_domain": true },
+    { "pattern": "jfa.ovh", "custom_domain": true },
   ],
 }
