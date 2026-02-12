@@ -29,12 +29,14 @@ const getAttr = (distance: number, maxDist: number, minVal: number, maxVal: numb
   return Math.max(minVal, val + minVal);
 };
 
-const debounce = (func: (...args: any[]) => void, delay: number) => {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  return (...args: any[]) => {
-    clearTimeout(timeoutId);
+const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay: number) => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  return (...args: TArgs) => {
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+    }
     timeoutId = setTimeout(() => {
-      func.apply(this, args);
+      func(...args);
     }, delay);
   };
 };
@@ -70,6 +72,8 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const chars = text.split("");
 
   useEffect(() => {
+    const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
+
     const handleMouseMove = (e: MouseEvent) => {
       cursorRef.current.x = e.clientX;
       cursorRef.current.y = e.clientY;
@@ -80,8 +84,8 @@ const TextPressure: React.FC<TextPressureProps> = ({
       cursorRef.current.y = t.clientY;
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    ownerWindow.addEventListener("mousemove", handleMouseMove);
+    ownerWindow.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     if (containerRef.current) {
       const { left, top, width, height } = containerRef.current.getBoundingClientRect();
@@ -92,8 +96,8 @@ const TextPressure: React.FC<TextPressureProps> = ({
     }
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("touchmove", handleTouchMove);
+      ownerWindow.removeEventListener("mousemove", handleMouseMove);
+      ownerWindow.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
 
@@ -126,10 +130,11 @@ const TextPressure: React.FC<TextPressureProps> = ({
   }, [chars.length, minFontSize, scale]);
 
   useEffect(() => {
+    const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
     const debouncedSetSize = debounce(setSize, 100);
     debouncedSetSize();
-    window.addEventListener("resize", debouncedSetSize);
-    return () => window.removeEventListener("resize", debouncedSetSize);
+    ownerWindow.addEventListener("resize", debouncedSetSize);
+    return () => ownerWindow.removeEventListener("resize", debouncedSetSize);
   }, [setSize]);
 
   useEffect(() => {
@@ -202,7 +207,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
         }
       `}</style>
     );
-  }, [fontFamily, fontUrl, stroke, textColor, strokeColor, strokeWidth]);
+  }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth]);
 
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-transparent">

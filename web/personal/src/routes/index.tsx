@@ -16,7 +16,7 @@ function App() {
         saturation={1.05}
       />
       <div className="relative z-10 flex min-h-screen items-center justify-center px-6">
-        <h1 className="text-center text-3xl font-medium tracking-tight text-primary-foreground drop-shadow-[0_2px_18px_rgba(0,0,0,0.35)] sm:text-4xl">
+        <h1 className="font-semibold text-center text-3xl tracking-tight text-primary-foreground drop-shadow-[0_2px_18px_rgba(0,0,0,0.35)] sm:text-4xl">
           jorge fernando álava
         </h1>
       </div>

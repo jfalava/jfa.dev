@@ -39,6 +39,16 @@ const hexToRgb = (hex: string): [number, number, number] => {
   ];
 };
 
+const toSrgb = (channel: number) => {
+  if (channel <= 0) {
+    return 0;
+  }
+  if (channel >= 1) {
+    return 1;
+  }
+  return channel <= 0.0031308 ? 12.92 * channel : 1.055 * Math.pow(channel, 1 / 2.4) - 0.055;
+};
+
 const oklchToRgb = (l: number, c: number, hDeg: number): [number, number, number] => {
   const h = (hDeg * Math.PI) / 180;
   const a = c * Math.cos(h);
@@ -55,16 +65,6 @@ const oklchToRgb = (l: number, c: number, hDeg: number): [number, number, number
   const linearR = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3;
   const linearG = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3;
   const linearB = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614701 * s3;
-
-  const toSrgb = (channel: number) => {
-    if (channel <= 0) {
-      return 0;
-    }
-    if (channel >= 1) {
-      return 1;
-    }
-    return channel <= 0.0031308 ? 12.92 * channel : 1.055 * Math.pow(channel, 1 / 2.4) - 0.055;
-  };
 
   return [toSrgb(linearR), toSrgb(linearG), toSrgb(linearB)];
 };
@@ -265,34 +265,36 @@ const Grainient: React.FC<GrainientProps> = ({
     container.appendChild(canvas);
 
     const geometry = new Triangle(gl);
+    const uniforms = {
+      iTime: { value: 0 },
+      iResolution: { value: new Float32Array([1, 1]) },
+      uTimeSpeed: { value: timeSpeed },
+      uColorBalance: { value: colorBalance },
+      uWarpStrength: { value: warpStrength },
+      uWarpFrequency: { value: warpFrequency },
+      uWarpSpeed: { value: warpSpeed },
+      uWarpAmplitude: { value: warpAmplitude },
+      uBlendAngle: { value: blendAngle },
+      uBlendSoftness: { value: blendSoftness },
+      uRotationAmount: { value: rotationAmount },
+      uNoiseScale: { value: noiseScale },
+      uGrainAmount: { value: grainAmount },
+      uGrainScale: { value: grainScale },
+      uGrainAnimated: { value: grainAnimated ? 1.0 : 0.0 },
+      uContrast: { value: contrast },
+      uGamma: { value: gamma },
+      uSaturation: { value: saturation },
+      uCenterOffset: { value: new Float32Array([centerX, centerY]) },
+      uZoom: { value: zoom },
+      uColor1: { value: new Float32Array(colorToRgb(color1)) },
+      uColor2: { value: new Float32Array(colorToRgb(color2)) },
+      uColor3: { value: new Float32Array(colorToRgb(color3)) },
+    };
+
     const program = new Program(gl, {
       vertex,
       fragment,
-      uniforms: {
-        iTime: { value: 0 },
-        iResolution: { value: new Float32Array([1, 1]) },
-        uTimeSpeed: { value: timeSpeed },
-        uColorBalance: { value: colorBalance },
-        uWarpStrength: { value: warpStrength },
-        uWarpFrequency: { value: warpFrequency },
-        uWarpSpeed: { value: warpSpeed },
-        uWarpAmplitude: { value: warpAmplitude },
-        uBlendAngle: { value: blendAngle },
-        uBlendSoftness: { value: blendSoftness },
-        uRotationAmount: { value: rotationAmount },
-        uNoiseScale: { value: noiseScale },
-        uGrainAmount: { value: grainAmount },
-        uGrainScale: { value: grainScale },
-        uGrainAnimated: { value: grainAnimated ? 1.0 : 0.0 },
-        uContrast: { value: contrast },
-        uGamma: { value: gamma },
-        uSaturation: { value: saturation },
-        uCenterOffset: { value: new Float32Array([centerX, centerY]) },
-        uZoom: { value: zoom },
-        uColor1: { value: new Float32Array(colorToRgb(color1)) },
-        uColor2: { value: new Float32Array(colorToRgb(color2)) },
-        uColor3: { value: new Float32Array(colorToRgb(color3)) },
-      },
+      uniforms,
     });
 
     const mesh = new Mesh(gl, { geometry, program });
@@ -302,7 +304,7 @@ const Grainient: React.FC<GrainientProps> = ({
       const width = Math.max(1, Math.floor(rect.width));
       const height = Math.max(1, Math.floor(rect.height));
       renderer.setSize(width, height);
-      const res = (program.uniforms.iResolution as { value: Float32Array }).value;
+      const res = uniforms.iResolution.value;
       res[0] = gl.drawingBufferWidth;
       res[1] = gl.drawingBufferHeight;
     };
@@ -314,7 +316,7 @@ const Grainient: React.FC<GrainientProps> = ({
     let raf = 0;
     const t0 = performance.now();
     const loop = (t: number) => {
-      (program.uniforms.iTime as { value: number }).value = (t - t0) * 0.001;
+      uniforms.iTime.value = (t - t0) * 0.001;
       renderer.render({ scene: mesh });
       raf = requestAnimationFrame(loop);
     };
