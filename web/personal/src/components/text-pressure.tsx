@@ -44,7 +44,7 @@ const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay
 const TextPressure: React.FC<TextPressureProps> = ({
   text = "Compressa",
   fontFamily = "Compressa VF",
-  fontUrl = "https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2",
+  fontUrl,
   width = true,
   weight = true,
   italic = true,
@@ -186,10 +186,14 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const styleElement = useMemo(() => {
     return (
       <style>{`
-        @font-face {
+        ${
+          fontUrl
+            ? `@font-face {
           font-family: '${fontFamily}';
           src: url('${fontUrl}');
           font-style: normal;
+        }`
+            : ""
         }
         .stroke span {
           position: relative;
@@ -216,7 +220,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
         ref={titleRef}
         className={`text-pressure-title ${className} ${
           flex ? "flex justify-between" : ""
-        } ${stroke ? "stroke" : ""} uppercase text-center`}
+        } ${stroke ? "stroke" : ""} text-center`}
         style={{
           fontFamily,
           fontSize: fontSize,
@@ -237,7 +241,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
             data-char={char}
             className="inline-block"
           >
-            {char}
+            {char === " " ? "\u00A0" : char}
           </span>
         ))}
       </h1>

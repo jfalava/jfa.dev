@@ -49,6 +49,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <Scripts />
+        <a href="https://github.com/jfalava" className="sr-only">
+          GitHub
+        </a>
       </body>
     </html>
   );
