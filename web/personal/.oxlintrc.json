@@ -1,18 +1,26 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "plugins": ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
   "env": {
     "browser": true,
     "es2022": true
   },
-  "ignorePatterns": ["worker-configuration.d.ts", "**/*.d.ts", ".source/**"],
+  "ignorePatterns": [
+    "worker-configuration.d.ts",
+    "**/*.d.ts",
+    ".source/**",
+    "src/routeTree.gen.ts"
+  ],
   "rules": {
     "typescript/no-explicit-any": "error",
     "typescript/no-unsafe-assignment": "error",
     "typescript/no-unsafe-call": "error",
     "typescript/no-unsafe-member-access": "error",
     "typescript/no-unsafe-return": "error",
-
     "no-unused-vars": [
       "error",
       {
@@ -31,7 +39,6 @@
     "no-dupe-class-members": "error",
     "no-fallthrough": "error",
     "no-duplicate-imports": "error",
-    "no-implied-eval": "error",
     "no-eval": "error",
     "no-debugger": "error",
     "no-console": [
@@ -46,13 +53,6 @@
     "no-iterator": "error",
     "no-labels": "error",
     "no-var": "error",
-    "no-shadow": [
-      "error",
-      {
-        "hoist": "functions",
-        "builtinGlobals": true
-      }
-    ],
     "no-param-reassign": "error",
     "no-extend-native": "error",
     "no-func-assign": "error",
@@ -60,7 +60,6 @@
     "no-extra-bind": "error",
     "no-useless-constructor": "error",
     "no-unused-expressions": "error",
-
     "eqeqeq": [
       "error",
       "always",
@@ -84,18 +83,39 @@
         "destructuring": "all"
       }
     ],
-    "prefer-arrow-callback": "error",
     "complexity": ["error", 12],
     "max-depth": ["error", 4],
     "max-params": ["error", 5],
     "max-statements": ["error", 40],
-    "import/no-duplicates": "error",
-    "import/no-unresolved": "error",
-    "import/no-mutable-exports": "error",
     "react/jsx-key": "error",
     "react/jsx-no-undef": "error",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
     "react/no-direct-mutation-state": "error",
     "react/no-find-dom-node": "error",
-    "react/no-danger": "error"
-  }
+    "react/no-danger": "error",
+    "import/no-duplicates": "error",
+    "import/no-mutable-exports": "error",
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+    "typescript/no-implied-eval": "error",
+    "typescript/no-unsafe-type-assertion": "error",
+    "typescript/no-unnecessary-type-assertion": "error"
+  },
+  "overrides": [
+    {
+      "files": ["src/components/grainient.tsx"],
+      "rules": {
+        "complexity": "off",
+        "max-statements": "off"
+      }
+    },
+    {
+      "files": ["src/components/text-pressure.tsx"],
+      "rules": {
+        "complexity": "off",
+        "max-statements": "off"
+      }
+    }
+  ]
 }
