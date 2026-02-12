@@ -4,27 +4,11 @@ import { redirects } from "./redirects-config";
 
 const app = new Hono();
 
-function htmlRedirect(destination: string): Response {
-  const body = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <title>Redirecting…</title>
-  <meta http-equiv="refresh" content="0; url=${destination}"/>
-  <script>
-    // As soon as this loads, tack on the hash and replace
-    window.location.replace("${destination}" + window.location.hash);
-  </script>
-</head>
-<body></body>
-</html>`;
-  return new Response(body, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-transform",
-    },
-  });
+function toAbsoluteBaseUrl(value: string): string {
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+  return `https://${value}`;
 }
 
 app.all("*", async (c) => {
@@ -50,8 +34,9 @@ app.all("*", async (c) => {
     targetHost = `${sub}.${entry.out}`;
   }
 
-  const destinationURL = `${targetHost}${pathname}${search}`;
-  return htmlRedirect(destinationURL);
+  const destinationBase = toAbsoluteBaseUrl(targetHost);
+  const destinationURL = new URL(`${pathname}${search}`, destinationBase).toString();
+  return Response.redirect(destinationURL, 308);
 });
 
 export default app;
