@@ -8,7 +8,7 @@
     "cf-typegen": "wrangler types",
     "check": "tsgo --noEmit && oxlint --fix --type-aware",
     "deploy": "tsgo --noEmit && oxlint --type-aware && oxfmt && vite build && wrangler deploy",
-    "dev": "vite dev --port 3000",
+    "dev": "vite dev --port 3000 --host",
     "format": "oxfmt",
     "lint": "oxlint --type-aware",
     "preview": "bun run build && vite preview",

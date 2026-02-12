@@ -20,16 +20,17 @@ function App() {
         <div className="h-36 w-full max-w-5xl sm:h-44">
           <TextPressure
             text="jorge fernando álava"
-            fontFamily="Pretendard Variable"
-            textColor="text-black"
+            textColor="#000000"
             stroke={false}
             flex={false}
             scale={false}
             width={false}
             weight
             italic={false}
+            useWebkitFallback
+            webkitFallbackClassName="font-sans text-black text-5xl md:text-7xl drop-shadow-none text-shadow-none"
             minFontSize={30}
-            className="font-medium leading-[0.95] tracking-tight drop-shadow-[0_10px_24px_rgba(0,0,0,0.28)] cursor-default select-none"
+            className="font-sans font-medium leading-[0.95] tracking-tight drop-shadow-none text-shadow-none cursor-default select-none"
           />
         </div>
       </div>

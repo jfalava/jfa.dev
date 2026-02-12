@@ -16,6 +16,8 @@ interface TextPressureProps {
   strokeWidth?: number;
   className?: string;
   minFontSize?: number;
+  useWebkitFallback?: boolean;
+  webkitFallbackClassName?: string;
 }
 
 const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => {
@@ -43,7 +45,7 @@ const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay
 
 const TextPressure: React.FC<TextPressureProps> = ({
   text = "Compressa",
-  fontFamily = "Compressa VF",
+  fontFamily,
   fontUrl,
   width = true,
   weight = true,
@@ -57,6 +59,8 @@ const TextPressure: React.FC<TextPressureProps> = ({
   strokeWidth = 2,
   className = "",
   minFontSize = 24,
+  useWebkitFallback = true,
+  webkitFallbackClassName = "",
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
@@ -68,10 +72,26 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const [fontSize, setFontSize] = useState(minFontSize);
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1);
+  const [isWebKitBrowser, setIsWebKitBrowser] = useState(false);
 
   const chars = text.split("");
+  const shouldRenderWebkitFallback = useWebkitFallback && isWebKitBrowser;
 
   useEffect(() => {
+    if (typeof navigator === "undefined") {
+      return;
+    }
+
+    const isWebKitEngine = /AppleWebKit/i.test(navigator.userAgent);
+    const isChromium = /Chrome|Chromium|CriOS|Edg|OPR/i.test(navigator.userAgent);
+    setIsWebKitBrowser(isWebKitEngine && !isChromium);
+  }, []);
+
+  useEffect(() => {
+    if (shouldRenderWebkitFallback) {
+      return;
+    }
+
     const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -99,9 +119,13 @@ const TextPressure: React.FC<TextPressureProps> = ({
       ownerWindow.removeEventListener("mousemove", handleMouseMove);
       ownerWindow.removeEventListener("touchmove", handleTouchMove);
     };
-  }, []);
+  }, [shouldRenderWebkitFallback]);
 
   const setSize = useCallback(() => {
+    if (shouldRenderWebkitFallback) {
+      return;
+    }
+
     if (!containerRef.current || !titleRef.current) {
       return;
     }
@@ -127,17 +151,25 @@ const TextPressure: React.FC<TextPressureProps> = ({
         setLineHeight(yRatio);
       }
     });
-  }, [chars.length, minFontSize, scale]);
+  }, [chars.length, minFontSize, scale, shouldRenderWebkitFallback]);
 
   useEffect(() => {
+    if (shouldRenderWebkitFallback) {
+      return;
+    }
+
     const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
     const debouncedSetSize = debounce(setSize, 100);
     debouncedSetSize();
     ownerWindow.addEventListener("resize", debouncedSetSize);
     return () => ownerWindow.removeEventListener("resize", debouncedSetSize);
-  }, [setSize]);
+  }, [setSize, shouldRenderWebkitFallback]);
 
   useEffect(() => {
+    if (shouldRenderWebkitFallback) {
+      return;
+    }
+
     let rafId: number;
     const animate = () => {
       mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
@@ -181,13 +213,13 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
     animate();
     return () => cancelAnimationFrame(rafId);
-  }, [width, weight, italic, alpha]);
+  }, [width, weight, italic, alpha, shouldRenderWebkitFallback]);
 
   const styleElement = useMemo(() => {
     return (
       <style>{`
         ${
-          fontUrl
+          fontUrl && fontFamily
             ? `@font-face {
           font-family: '${fontFamily}';
           src: url('${fontUrl}');
@@ -216,13 +248,26 @@ const TextPressure: React.FC<TextPressureProps> = ({
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-transparent">
       {styleElement}
+      {shouldRenderWebkitFallback ? (
+        <h1
+          className={`text-center ${className} ${webkitFallbackClassName}`}
+          style={{
+            fontFamily: fontFamily || undefined,
+            margin: 0,
+            color: stroke ? undefined : textColor,
+          }}
+        >
+          {text}
+        </h1>
+      ) : null}
       <h1
         ref={titleRef}
         className={`text-pressure-title ${className} ${
           flex ? "flex justify-between" : ""
         } ${stroke ? "stroke" : ""} text-center`}
         style={{
-          fontFamily,
+          display: shouldRenderWebkitFallback ? "none" : undefined,
+          fontFamily: fontFamily || undefined,
           fontSize: fontSize,
           lineHeight,
           transform: `scale(1, ${scaleY})`,
