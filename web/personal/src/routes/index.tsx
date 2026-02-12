@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import Grainient from "../components/grainient";
-import TextPressure from "../components/text-pressure";
+import Grainient from "@/components/grainient";
+import TextPressure from "@/components/text-pressure";
 
 export const Route = createFileRoute("/")({ component: App });
 
