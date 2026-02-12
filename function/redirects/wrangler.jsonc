@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "jfa-redirects",
   "main": "src/redirects.ts",
-  "compatibility_date": "2025-11-25",
+  "compatibility_date": "2026-01-01",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "preview_urls": false,
