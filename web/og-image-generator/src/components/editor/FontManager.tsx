@@ -44,16 +44,16 @@ export function FontManager() {
       link.rel = "stylesheet";
       link.href = url;
 
-      link.onload = () => {
+      link.addEventListener("load", () => {
         addGoogleFont(family, weights);
         setFontLoaded(family, true);
         setLoading(null);
-      };
+      });
 
-      link.onerror = () => {
+      link.addEventListener("error", () => {
         setLoading(null);
         console.error(`Failed to load font: ${family}`);
-      };
+      });
 
       document.head.appendChild(link);
     },
@@ -77,7 +77,7 @@ export function FontManager() {
         const link = document.createElement("link");
         link.rel = "stylesheet";
         link.href = url;
-        link.onload = () => setFontLoaded(f.family, true);
+        link.addEventListener("load", () => setFontLoaded(f.family, true));
         document.head.appendChild(link);
       });
   }, [fonts, setFontLoaded]);

@@ -2,18 +2,18 @@ import { nanoid } from "nanoid";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type {
-  Template,
-  EditorElement,
-  ElementType,
-  TextContent,
-  ImageContent,
-  BadgeContent,
-  ContainerContent,
-  TemplateVariable,
-  Font,
+import {
+  DEFAULT_FONTS,
+  type Template,
+  type EditorElement,
+  type ElementType,
+  type TextContent,
+  type ImageContent,
+  type BadgeContent,
+  type ContainerContent,
+  type TemplateVariable,
+  type Font,
 } from "@/types/editor";
-import { DEFAULT_FONTS } from "@/types/editor";
 
 interface EditorState {
   templates: Template[];

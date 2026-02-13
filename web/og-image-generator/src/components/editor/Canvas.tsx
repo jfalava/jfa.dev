@@ -29,7 +29,16 @@ function DraggableElement({ id, children }: DraggableElementProps) {
       style={style}
       {...listeners}
       {...attributes}
+      tabIndex={0}
       onClick={(e) => {
+        e.stopPropagation();
+        selectElement(id);
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") {
+          return;
+        }
+        e.preventDefault();
         e.stopPropagation();
         selectElement(id);
       }}
@@ -142,7 +151,15 @@ export function Canvas() {
           <div
             ref={canvasRef}
             id="og-canvas"
+            tabIndex={0}
             onClick={() => selectElement(null)}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter" && e.key !== " ") {
+                return;
+              }
+              e.preventDefault();
+              selectElement(null);
+            }}
             style={{
               width: CANVAS_WIDTH,
               height: CANVAS_HEIGHT,

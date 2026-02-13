@@ -25,6 +25,28 @@ import {
 import { useEditorStore } from "@/stores/editor-store";
 import type { ElementType, Template } from "@/types/editor";
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isTemplate(value: unknown): value is Template {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  const template = value;
+  return (
+    typeof template["id"] === "string" &&
+    typeof template["name"] === "string" &&
+    typeof template["description"] === "string" &&
+    typeof template["createdAt"] === "string" &&
+    typeof template["updatedAt"] === "string" &&
+    Array.isArray(template["elements"]) &&
+    typeof template["canvasBackground"] === "string" &&
+    Array.isArray(template["variables"])
+  );
+}
+
 export function Toolbar() {
   const addElement = useEditorStore((s) => s.addElement);
   const zoom = useEditorStore((s) => s.zoom);
@@ -87,16 +109,21 @@ export function Toolbar() {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
+    input.addEventListener("change", async () => {
+      const file = input.files?.[0];
       if (!file) {
         return;
       }
 
       const text = await file.text();
-      const data = JSON.parse(text) as Template;
+      const parsed: unknown = JSON.parse(text);
+      if (!isTemplate(parsed)) {
+        return;
+      }
+
+      const data: Template = parsed;
       importTemplate(data);
-    };
+    });
     input.click();
   };
 

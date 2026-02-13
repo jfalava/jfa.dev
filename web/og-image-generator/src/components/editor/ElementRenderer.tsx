@@ -6,7 +6,7 @@ interface ElementRendererProps {
 }
 
 function interpolateVariables(text: string, values: Record<string, string>): string {
-  return text.replace(/\{\{(\w+)\}\}/g, (_, key) => values[key] || `{{${key}}}`);
+  return text.replace(/\{\{(\w+)\}\}/g, (_match, key: string) => values[key] ?? `{{${key}}}`);
 }
 
 export function ElementRenderer({ element }: ElementRendererProps) {

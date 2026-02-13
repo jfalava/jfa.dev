@@ -87,13 +87,20 @@ export function TemplatesSidebar() {
                   ? "bg-accent text-accent-foreground"
                   : "hover:bg-muted"
               }`}
-              onClick={() => setCurrentTemplate(template.id)}
             >
-              <FileImage className="size-4 shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm">{template.name}</p>
-                <p className="text-xs text-muted-foreground">{template.elements.length} elements</p>
-              </div>
+              <button
+                type="button"
+                className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                onClick={() => setCurrentTemplate(template.id)}
+              >
+                <FileImage className="size-4 shrink-0" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm">{template.name}</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {template.elements.length} elements
+                  </span>
+                </span>
+              </button>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100">
                 <Button
                   size="icon-xs"
