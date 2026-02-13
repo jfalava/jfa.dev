@@ -1,7 +1,7 @@
-import appCss from "@styles/globals.css?url";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 
-import { NotFoundPage, RouteErrorBoundary } from "@/components/error-boundary";
+import Header from "../components/Header";
+import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -14,7 +14,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "jorge fernando álava",
+        title: "OG Image Generator",
       },
     ],
     links: [
@@ -22,35 +22,22 @@ export const Route = createRootRoute({
         rel: "stylesheet",
         href: appCss,
       },
-      {
-        rel: "manifest",
-        href: "/manifest.json",
-      },
-      {
-        rel: "icon",
-        href: "/favicon.ico",
-        type: "image/x-icon",
-      },
     ],
   }),
 
   shellComponent: RootDocument,
-  notFoundComponent: NotFoundPage,
-  errorComponent: RouteErrorBoundary,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="overflow-hidden">
+        <Header />
         {children}
         <Scripts />
-        <a href="https://github.com/jfalava" className="sr-only">
-          GitHub
-        </a>
       </body>
     </html>
   );

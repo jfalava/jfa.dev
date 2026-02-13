@@ -1,6 +1,6 @@
 {
-  "name": "@jfa.dev/personal-web",
-  "version": "0.3.0",
+  "name": "@jfa.dev/og-image-generator",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -19,6 +19,8 @@
   "dependencies": {
     "@base-ui/react": "catalog:react-ui",
     "@cloudflare/vite-plugin": "catalog:cloudflare",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/utilities": "^3.2.2",
     "@tailwindcss/vite": "catalog:styling",
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
@@ -26,21 +28,25 @@
     "@tanstack/router-plugin": "catalog:tanstack",
     "class-variance-authority": "catalog:styling",
     "clsx": "catalog:styling",
+    "html-to-image": "^1.11.13",
     "lucide-react": "catalog:react-ui",
-    "ogl": "1.0.11",
+    "nanoid": "^5.1.6",
     "react": "catalog:react-ui",
     "react-dom": "catalog:react-ui",
     "shadcn": "catalog:react-ui",
     "tailwind-merge": "catalog:styling",
     "tailwindcss": "catalog:styling",
     "tw-animate-css": "catalog:styling",
-    "vite-tsconfig-paths": "catalog:build"
+    "vite-tsconfig-paths": "catalog:build",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "@typescript/native-preview": "catalog:build",
     "@vitejs/plugin-react": "catalog:build",
+    "jsdom": "^27.4.0",
     "oxfmt": "catalog:build",
     "oxlint": "catalog:build",
     "oxlint-tsgolint": "catalog:build",

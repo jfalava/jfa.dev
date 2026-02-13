@@ -1,6 +1,6 @@
 {
   "name": "@jfa.dev/redirects",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "scripts": {
     "cf-typegen": "wrangler types",
