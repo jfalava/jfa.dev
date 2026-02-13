@@ -18,16 +18,15 @@ import {
 interface PersistedEditorState {
   templates?: Template[];
   fonts?: Array<
-    Font | { family: string; source: string; weights: number[]; loaded: boolean; stylesheetUrl?: string }
+    | Font
+    | { family: string; source: string; weights: number[]; loaded: boolean; stylesheetUrl?: string }
   >;
   gridEnabled?: boolean;
   gridSize?: number;
   showGrid?: boolean;
 }
 
-function normalizeFonts(
-  fonts: PersistedEditorState["fonts"] | undefined,
-): Font[] {
+function normalizeFonts(fonts: PersistedEditorState["fonts"] | undefined): Font[] {
   if (!Array.isArray(fonts)) {
     return [];
   }

@@ -29,7 +29,7 @@ export function PropertiesPanel() {
 
   if (!element) {
     return (
-      <div className="editor-panel editor-panel--properties p-4">
+      <div className="h-full w-full rounded-lg border bg-card p-4">
         <p className="text-sm text-muted-foreground">Select an element to edit its properties</p>
       </div>
     );
@@ -42,7 +42,7 @@ export function PropertiesPanel() {
   };
 
   return (
-    <div className="editor-panel editor-panel--properties overflow-y-auto">
+    <div className="h-full w-full overflow-y-auto rounded-lg border bg-card">
       <div className="border-b border-border/60 p-4">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm font-medium capitalize">{element.type}</span>

@@ -142,7 +142,7 @@ export function FontManager() {
   }, [fonts, loadStylesheet]);
 
   return (
-    <div ref={rootRef} className="editor-panel-section flex min-h-0 flex-1 flex-col">
+    <div ref={rootRef} className="flex min-h-0 flex-1 flex-col border-t border-border/60">
       <div className="flex items-center gap-2 border-b border-border p-3">
         <Type className="size-4" />
         <span className="text-sm font-medium">Fonts</span>
@@ -242,7 +242,11 @@ export function FontManager() {
                 onClick={handleAddExternal}
                 disabled={!externalFamily.trim() || !externalUrl.trim() || loading !== null}
               >
-                {loading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+                {loading ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Plus className="size-4" />
+                )}
               </Button>
             </div>
           </div>

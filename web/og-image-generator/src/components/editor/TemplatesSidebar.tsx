@@ -36,7 +36,7 @@ export function TemplatesSidebar() {
   };
 
   return (
-    <div className="editor-panel editor-panel--templates">
+    <div className="flex h-full min-h-0 flex-col">
       <div className="border-b border-border/60 p-3">
         <h2 className="mb-2 text-sm font-medium">Templates</h2>
         <div className="flex gap-1">

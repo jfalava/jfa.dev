@@ -17,7 +17,7 @@ export function CanvasSettings() {
   }
 
   return (
-    <div className="editor-panel-section">
+    <div className="border-t border-border/60">
       <div className="flex items-center gap-2 border-b border-border/60 p-3">
         <Paintbrush className="size-4" />
         <span className="text-sm font-medium">Canvas Settings</span>

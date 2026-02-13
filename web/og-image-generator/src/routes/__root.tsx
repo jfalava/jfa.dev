@@ -43,7 +43,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="app-shell overflow-hidden">
+      <body className="min-h-dvh bg-background text-foreground">
         <Header />
         {children}
         <Scripts />

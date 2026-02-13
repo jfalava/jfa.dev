@@ -42,7 +42,7 @@ function DraggableElement({ id, children }: DraggableElementProps) {
         e.stopPropagation();
         selectElement(id);
       }}
-      className={`absolute cursor-move ${selectedElementId === id ? "ring-2 ring-[var(--accent-strong)] ring-offset-1 ring-offset-[var(--panel)]" : ""}`}
+      className={`absolute cursor-move ${selectedElementId === id ? "ring-primary ring-2 ring-offset-1 ring-offset-background" : ""}`}
     >
       {children}
     </div>
@@ -145,7 +145,7 @@ export function Canvas() {
   }
 
   return (
-    <div className="canvas-wrap">
+    <div className="h-full overflow-auto p-4 lg:p-8">
       <div className="flex min-h-full items-center justify-center">
         <DndContext onDragEnd={handleDragEnd}>
           <div
@@ -167,7 +167,7 @@ export function Canvas() {
               transform: `scale(${zoom})`,
               transformOrigin: "center",
             }}
-            className="canvas-surface"
+            className="relative rounded-md border bg-card shadow-sm"
           >
             {showGrid && <GridOverlay gridSize={gridSize} />}
             {template.elements

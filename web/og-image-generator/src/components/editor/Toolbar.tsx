@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { useEditorStore } from "@/stores/editor-store";
 import type { ElementType, Template } from "@/types/editor";
 
@@ -132,7 +133,7 @@ export function Toolbar() {
   };
 
   return (
-    <div className="editor-toolbar">
+    <div className="flex min-h-12 items-center gap-2 overflow-x-auto border-b bg-card/50 px-3 py-2">
       {/* Template name */}
       {template && (
         <Input
@@ -142,7 +143,7 @@ export function Toolbar() {
         />
       )}
 
-      <div className="editor-toolbar__divider" />
+      <Separator orientation="vertical" className="h-6" />
 
       {/* Add elements */}
       <div className="flex gap-1">
@@ -184,7 +185,7 @@ export function Toolbar() {
         </Button>
       </div>
 
-      <div className="editor-toolbar__divider" />
+      <Separator orientation="vertical" className="h-6" />
 
       {/* Zoom controls */}
       <div className="flex items-center gap-2">
@@ -211,7 +212,7 @@ export function Toolbar() {
         </Button>
       </div>
 
-      <div className="editor-toolbar__divider" />
+      <Separator orientation="vertical" className="h-6" />
 
       {/* Grid controls */}
       <div className="flex items-center gap-2">
@@ -251,12 +252,7 @@ export function Toolbar() {
 
       {/* Export/Import */}
       <div className="flex gap-1">
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={handleImportJSON}
-          title="Import Template"
-        >
+        <Button size="sm" variant="outline" onClick={handleImportJSON} title="Import Template">
           <Upload className="size-4" />
           Import
         </Button>
