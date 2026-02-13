@@ -1,5 +1,5 @@
 import { Plus, Check, Loader2, Type } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,11 +22,47 @@ const POPULAR_GOOGLE_FONTS = [
 ];
 
 export function FontManager() {
+  const rootRef = useRef<HTMLDivElement>(null);
   const [fontInput, setFontInput] = useState("");
+  const [externalFamily, setExternalFamily] = useState("");
+  const [externalUrl, setExternalUrl] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
   const fonts = useEditorStore((s) => s.fonts);
   const addGoogleFont = useEditorStore((s) => s.addGoogleFont);
+  const addExternalFont = useEditorStore((s) => s.addExternalFont);
   const setFontLoaded = useEditorStore((s) => s.setFontLoaded);
+
+  const loadStylesheet = useCallback(
+    (url: string, family: string, onComplete?: (loaded: boolean) => void) => {
+      const ownerDocument = rootRef.current?.ownerDocument;
+      if (!ownerDocument) {
+        return;
+      }
+
+      const existing = ownerDocument.querySelector<HTMLLinkElement>(
+        `link[rel="stylesheet"][href="${CSS.escape(url)}"]`,
+      );
+      if (existing) {
+        setFontLoaded(family, true);
+        onComplete?.(true);
+        return;
+      }
+
+      const link = ownerDocument.createElement("link");
+      link.rel = "stylesheet";
+      link.href = url;
+      link.addEventListener("load", () => {
+        setFontLoaded(family, true);
+        onComplete?.(true);
+      });
+      link.addEventListener("error", () => {
+        onComplete?.(false);
+        console.error(`Failed to load font stylesheet: ${url}`);
+      });
+      ownerDocument.head.appendChild(link);
+    },
+    [setFontLoaded],
+  );
 
   const loadGoogleFont = useCallback(
     async (family: string) => {
@@ -40,24 +76,14 @@ export function FontManager() {
       const weightsStr = weights.join(";");
       const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weightsStr}&display=swap`;
 
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = url;
-
-      link.addEventListener("load", () => {
-        addGoogleFont(family, weights);
-        setFontLoaded(family, true);
+      loadStylesheet(url, family, (loaded) => {
+        if (loaded) {
+          addGoogleFont(family, weights);
+        }
         setLoading(null);
       });
-
-      link.addEventListener("error", () => {
-        setLoading(null);
-        console.error(`Failed to load font: ${family}`);
-      });
-
-      document.head.appendChild(link);
     },
-    [fonts, addGoogleFont, setFontLoaded],
+    [fonts, addGoogleFont, loadStylesheet],
   );
 
   const handleAddCustom = () => {
@@ -68,28 +94,61 @@ export function FontManager() {
     setFontInput("");
   };
 
+  const handleAddExternal = () => {
+    const family = externalFamily.trim();
+    const url = externalUrl.trim();
+    if (!family || !url) {
+      return;
+    }
+
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      return;
+    }
+
+    const normalizedUrl = parsedUrl.toString();
+    if (fonts.some((font) => font.family === family || font.stylesheetUrl === normalizedUrl)) {
+      return;
+    }
+
+    setLoading(family);
+    loadStylesheet(normalizedUrl, family, (loaded) => {
+      if (loaded) {
+        addExternalFont(family, normalizedUrl);
+      }
+      setLoading(null);
+    });
+    setExternalFamily("");
+    setExternalUrl("");
+  };
+
   useEffect(() => {
     fonts
-      .filter((f) => f.source === "google" && !f.loaded)
-      .forEach((f) => {
-        const weights = f.weights.join(";");
-        const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(f.family)}:wght@${weights}&display=swap`;
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = url;
-        link.addEventListener("load", () => setFontLoaded(f.family, true));
-        document.head.appendChild(link);
+      .filter((font) => !font.loaded)
+      .forEach((font) => {
+        if (font.source === "google") {
+          const weights = font.weights.length > 0 ? `:wght@${font.weights.join(";")}` : "";
+          const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font.family)}${weights}&display=swap`;
+          loadStylesheet(url, font.family);
+          return;
+        }
+
+        if (font.source === "external" && font.stylesheetUrl) {
+          loadStylesheet(font.stylesheetUrl, font.family);
+        }
       });
-  }, [fonts, setFontLoaded]);
+  }, [fonts, loadStylesheet]);
 
   return (
-    <div className="border-t border-border bg-card">
+    <div ref={rootRef} className="editor-panel-section flex min-h-0 flex-1 flex-col">
       <div className="flex items-center gap-2 border-b border-border p-3">
         <Type className="size-4" />
         <span className="text-sm font-medium">Fonts</span>
       </div>
 
-      <div className="max-h-64 space-y-3 overflow-y-auto p-3">
+      <div className="flex-1 space-y-3 overflow-y-auto p-3">
         {/* Current fonts */}
         <div className="space-y-1">
           <Label className="text-xs">Available Fonts</Label>
@@ -101,7 +160,6 @@ export function FontManager() {
                 style={{ fontFamily: f.family }}
               >
                 {f.family}
-                {f.source === "bundled" && <span className="text-muted-foreground">(bundled)</span>}
               </span>
             ))}
           </div>
@@ -161,6 +219,35 @@ export function FontManager() {
             >
               Google Fonts
             </a>
+          </p>
+        </div>
+
+        <div>
+          <Label className="text-xs">External Stylesheet Font</Label>
+          <div className="mt-1 space-y-2">
+            <Input
+              value={externalFamily}
+              onChange={(e) => setExternalFamily(e.target.value)}
+              placeholder="Font family name (e.g. Pretendard)"
+            />
+            <div className="flex gap-1">
+              <Input
+                value={externalUrl}
+                onChange={(e) => setExternalUrl(e.target.value)}
+                placeholder="https://.../font.css"
+                onKeyDown={(e) => e.key === "Enter" && handleAddExternal()}
+              />
+              <Button
+                size="sm"
+                onClick={handleAddExternal}
+                disabled={!externalFamily.trim() || !externalUrl.trim() || loading !== null}
+              >
+                {loading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+              </Button>
+            </div>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add a CSS URL that declares the font-face and the family name you will use.
           </p>
         </div>
       </div>

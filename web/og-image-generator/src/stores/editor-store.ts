@@ -15,6 +15,50 @@ import {
   type Font,
 } from "@/types/editor";
 
+interface PersistedEditorState {
+  templates?: Template[];
+  fonts?: Array<
+    Font | { family: string; source: string; weights: number[]; loaded: boolean; stylesheetUrl?: string }
+  >;
+  gridEnabled?: boolean;
+  gridSize?: number;
+  showGrid?: boolean;
+}
+
+function normalizeFonts(
+  fonts: PersistedEditorState["fonts"] | undefined,
+): Font[] {
+  if (!Array.isArray(fonts)) {
+    return [];
+  }
+
+  return fonts
+    .filter(
+      (
+        font,
+      ): font is {
+        family: string;
+        source: string;
+        weights: number[];
+        loaded: boolean;
+        stylesheetUrl?: string;
+      } =>
+        typeof font === "object" &&
+        font !== null &&
+        typeof font.family === "string" &&
+        Array.isArray(font.weights) &&
+        typeof font.loaded === "boolean" &&
+        (font.source === "google" || font.source === "external"),
+    )
+    .map((font) => ({
+      family: font.family,
+      source: font.source === "external" ? "external" : "google",
+      weights: font.weights.filter((weight): weight is number => typeof weight === "number"),
+      loaded: font.loaded,
+      stylesheetUrl: typeof font.stylesheetUrl === "string" ? font.stylesheetUrl : undefined,
+    }));
+}
+
 interface EditorState {
   templates: Template[];
   currentTemplateId: string | null;
@@ -53,6 +97,7 @@ interface EditorState {
 
   // Font actions
   addGoogleFont: (family: string, weights: number[]) => void;
+  addExternalFont: (family: string, stylesheetUrl: string) => void;
   setFontLoaded: (family: string, loaded: boolean) => void;
 
   // View actions
@@ -69,7 +114,7 @@ function createDefaultTextContent(): TextContent {
   return {
     type: "text",
     text: "New Text",
-    fontFamily: "Inter",
+    fontFamily: "Manrope",
     fontSize: 32,
     fontWeight: 500,
     lineHeight: 1.2,
@@ -91,7 +136,7 @@ function createDefaultBadgeContent(): BadgeContent {
   return {
     type: "badge",
     text: "Badge",
-    fontFamily: "Inter",
+    fontFamily: "Manrope",
     fontSize: 16,
     fontWeight: 500,
     backgroundColor: "rgba(59, 130, 246, 0.9)",
@@ -429,6 +474,20 @@ export const useEditorStore = create<EditorState>()(
           fonts: [...state.fonts, { family, source: "google", weights, loaded: false }],
         }));
       },
+      addExternalFont: (family, stylesheetUrl) => {
+        set((state) => ({
+          fonts: [
+            ...state.fonts,
+            {
+              family,
+              source: "external",
+              weights: [],
+              loaded: false,
+              stylesheetUrl,
+            },
+          ],
+        }));
+      },
 
       setFontLoaded: (family, loaded) => {
         set((state) => ({
@@ -462,6 +521,21 @@ export const useEditorStore = create<EditorState>()(
     }),
     {
       name: "og-generator-storage",
+      version: 2,
+      migrate: (persistedState: unknown): PersistedEditorState => {
+        const state =
+          typeof persistedState === "object" && persistedState !== null
+            ? (persistedState as PersistedEditorState)
+            : {};
+
+        return {
+          templates: Array.isArray(state.templates) ? state.templates : [],
+          fonts: normalizeFonts(state.fonts),
+          gridEnabled: state.gridEnabled ?? true,
+          gridSize: state.gridSize ?? 24,
+          showGrid: state.showGrid ?? true,
+        };
+      },
       partialize: (state) => ({
         templates: state.templates,
         fonts: state.fonts,

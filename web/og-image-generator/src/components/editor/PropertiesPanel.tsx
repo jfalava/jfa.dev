@@ -29,7 +29,7 @@ export function PropertiesPanel() {
 
   if (!element) {
     return (
-      <div className="w-72 border-l border-border bg-card p-4">
+      <div className="editor-panel editor-panel--properties p-4">
         <p className="text-sm text-muted-foreground">Select an element to edit its properties</p>
       </div>
     );
@@ -42,8 +42,8 @@ export function PropertiesPanel() {
   };
 
   return (
-    <div className="w-72 overflow-y-auto border-l border-border bg-card">
-      <div className="border-b border-border p-4">
+    <div className="editor-panel editor-panel--properties overflow-y-auto">
+      <div className="border-b border-border/60 p-4">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm font-medium capitalize">{element.type}</span>
           <div className="flex gap-1">
@@ -152,7 +152,7 @@ export function PropertiesPanel() {
       </div>
 
       {/* Tailwind Classes */}
-      <div className="border-b border-border p-4">
+      <div className="border-b border-border/60 p-4">
         <Label className="text-xs">Tailwind Classes</Label>
         <Input
           value={element.tailwindClasses}

@@ -36,8 +36,8 @@ export function TemplatesSidebar() {
   };
 
   return (
-    <div className="flex w-56 flex-col border-r border-border bg-card">
-      <div className="border-b border-border p-3">
+    <div className="editor-panel editor-panel--templates">
+      <div className="border-b border-border/60 p-3">
         <h2 className="mb-2 text-sm font-medium">Templates</h2>
         <div className="flex gap-1">
           <Input
@@ -65,7 +65,7 @@ export function TemplatesSidebar() {
               <button
                 key={i}
                 onClick={() => handleLoadPreset(preset)}
-                className="w-full rounded bg-muted p-2 text-left text-xs transition-colors hover:bg-muted/80"
+                className="w-full rounded-md border border-border/60 bg-muted/60 p-2 text-left text-xs transition-colors hover:bg-muted/90"
               >
                 <p className="font-medium">{preset.name}</p>
                 <p className="text-muted-foreground">{preset.description}</p>
@@ -82,10 +82,10 @@ export function TemplatesSidebar() {
           templates.map((template) => (
             <div
               key={template.id}
-              className={`group flex cursor-pointer items-center gap-2 rounded p-2 transition-colors ${
+              className={`group flex cursor-pointer items-center gap-2 rounded-md border border-transparent p-2 transition-colors ${
                 currentTemplateId === template.id
-                  ? "bg-accent text-accent-foreground"
-                  : "hover:bg-muted"
+                  ? "border-border bg-accent/70 text-accent-foreground shadow-[0_6px_16px_rgba(15,23,42,0.12)]"
+                  : "hover:border-border/50 hover:bg-muted/70"
               }`}
             >
               <button

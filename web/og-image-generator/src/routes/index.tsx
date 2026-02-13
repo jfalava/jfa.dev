@@ -14,22 +14,23 @@ export const Route = createFileRoute("/")({ component: EditorPage });
 
 function EditorPage() {
   return (
-    <div className="flex h-[calc(100vh-48px)] flex-col">
+    <div data-editor-shell className="editor-shell">
       <Toolbar />
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar - Templates + Settings */}
-        <div className="flex flex-col">
+      <div className="editor-workbench">
+        <aside className="editor-left-rail" aria-label="Template settings">
           <TemplatesSidebar />
           <CanvasSettings />
           <VariablesPanel />
           <FontManager />
-        </div>
+        </aside>
 
-        {/* Canvas area */}
-        <Canvas />
+        <section className="editor-stage" aria-label="Canvas">
+          <Canvas />
+        </section>
 
-        {/* Right sidebar - Properties */}
-        <PropertiesPanel />
+        <aside className="editor-right-rail" aria-label="Element properties">
+          <PropertiesPanel />
+        </aside>
       </div>
     </div>
   );

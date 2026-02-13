@@ -17,8 +17,8 @@ export function CanvasSettings() {
   }
 
   return (
-    <div className="border-t border-border bg-card">
-      <div className="flex items-center gap-2 border-b border-border p-3">
+    <div className="editor-panel-section">
+      <div className="flex items-center gap-2 border-b border-border/60 p-3">
         <Paintbrush className="size-4" />
         <span className="text-sm font-medium">Canvas Settings</span>
       </div>
@@ -62,7 +62,7 @@ export function CanvasSettings() {
               <button
                 key={preset.label}
                 onClick={() => updateTemplate(template.id, { canvasBackground: preset.value })}
-                className="rounded border border-border px-2 py-1 text-xs transition-colors hover:bg-muted"
+                className="rounded-md border border-border/70 px-2 py-1 text-xs transition-transform hover:scale-[1.02]"
                 style={{ background: preset.value }}
               >
                 <span className="text-white drop-shadow">{preset.label}</span>

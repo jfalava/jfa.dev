@@ -42,7 +42,7 @@ function DraggableElement({ id, children }: DraggableElementProps) {
         e.stopPropagation();
         selectElement(id);
       }}
-      className={`absolute cursor-move ${selectedElementId === id ? "ring-2 ring-blue-500 ring-offset-1" : ""}`}
+      className={`absolute cursor-move ${selectedElementId === id ? "ring-2 ring-[var(--accent-strong)] ring-offset-1 ring-offset-[var(--panel)]" : ""}`}
     >
       {children}
     </div>
@@ -138,19 +138,19 @@ export function Canvas() {
 
   if (!template) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-muted/30">
+      <div className="flex flex-1 items-center justify-center">
         <p className="text-muted-foreground">Select or create a template to start editing</p>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-auto bg-muted/30 p-8">
+    <div className="canvas-wrap">
       <div className="flex min-h-full items-center justify-center">
         <DndContext onDragEnd={handleDragEnd}>
           <div
             ref={canvasRef}
-            id="og-canvas"
+            data-og-canvas
             tabIndex={0}
             onClick={() => selectElement(null)}
             onKeyDown={(e) => {
@@ -167,7 +167,7 @@ export function Canvas() {
               transform: `scale(${zoom})`,
               transformOrigin: "center",
             }}
-            className="relative shadow-2xl"
+            className="canvas-surface"
           >
             {showGrid && <GridOverlay gridSize={gridSize} />}
             {template.elements

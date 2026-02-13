@@ -84,17 +84,13 @@ export interface TemplateVariable {
 
 export interface Font {
   family: string;
-  source: "bundled" | "google";
+  source: "google" | "external";
   weights: number[];
   loaded: boolean;
+  stylesheetUrl?: string;
 }
 
 export const CANVAS_WIDTH = 1200;
 export const CANVAS_HEIGHT = 630;
 
-export const DEFAULT_FONTS: Font[] = [
-  { family: "Inter", source: "bundled", weights: [400, 500, 600, 700], loaded: true },
-  { family: "Against", source: "bundled", weights: [400], loaded: false },
-  { family: "Pretendard", source: "bundled", weights: [400, 500, 600, 700], loaded: false },
-  { family: "Zilla Slab", source: "bundled", weights: [400, 500, 600, 700], loaded: false },
-];
+export const DEFAULT_FONTS: Font[] = [];

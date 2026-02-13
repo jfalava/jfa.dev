@@ -12,6 +12,7 @@ import {
   Grid3X3,
   Magnet,
 } from "lucide-react";
+import type { MouseEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,8 +70,10 @@ export function Toolbar() {
     addElement(type);
   };
 
-  const handleExportPNG = async () => {
-    const canvas = document.getElementById("og-canvas");
+  const handleExportPNG = async (event: MouseEvent<HTMLButtonElement>) => {
+    const ownerDocument = event.currentTarget.ownerDocument;
+    const shell = event.currentTarget.closest("[data-editor-shell]");
+    const canvas = shell?.querySelector<HTMLElement>("[data-og-canvas]");
     if (!canvas) {
       return;
     }
@@ -81,7 +84,7 @@ export function Toolbar() {
       pixelRatio: 2,
     });
 
-    const link = document.createElement("a");
+    const link = ownerDocument.createElement("a");
     link.download = `${template?.name || "og-image"}.png`;
     link.href = dataUrl;
     link.click();
@@ -105,8 +108,9 @@ export function Toolbar() {
     URL.revokeObjectURL(url);
   };
 
-  const handleImportJSON = () => {
-    const input = document.createElement("input");
+  const handleImportJSON = (event: MouseEvent<HTMLButtonElement>) => {
+    const ownerDocument = event.currentTarget.ownerDocument;
+    const input = ownerDocument.createElement("input");
     input.type = "file";
     input.accept = ".json";
     input.addEventListener("change", async () => {
@@ -128,7 +132,7 @@ export function Toolbar() {
   };
 
   return (
-    <div className="flex h-12 items-center gap-4 border-b border-border bg-card px-4">
+    <div className="editor-toolbar">
       {/* Template name */}
       {template && (
         <Input
@@ -138,7 +142,7 @@ export function Toolbar() {
         />
       )}
 
-      <div className="h-6 w-px bg-border" />
+      <div className="editor-toolbar__divider" />
 
       {/* Add elements */}
       <div className="flex gap-1">
@@ -180,7 +184,7 @@ export function Toolbar() {
         </Button>
       </div>
 
-      <div className="h-6 w-px bg-border" />
+      <div className="editor-toolbar__divider" />
 
       {/* Zoom controls */}
       <div className="flex items-center gap-2">
@@ -207,7 +211,7 @@ export function Toolbar() {
         </Button>
       </div>
 
-      <div className="h-6 w-px bg-border" />
+      <div className="editor-toolbar__divider" />
 
       {/* Grid controls */}
       <div className="flex items-center gap-2">
@@ -247,7 +251,12 @@ export function Toolbar() {
 
       {/* Export/Import */}
       <div className="flex gap-1">
-        <Button size="sm" variant="outline" onClick={handleImportJSON} title="Import Template">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleImportJSON}
+          title="Import Template"
+        >
           <Upload className="size-4" />
           Import
         </Button>

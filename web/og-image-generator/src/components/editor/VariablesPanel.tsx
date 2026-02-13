@@ -39,8 +39,8 @@ export function VariablesPanel() {
   };
 
   return (
-    <div className="border-t border-border bg-card">
-      <div className="flex items-center gap-2 border-b border-border p-3">
+    <div className="editor-panel-section">
+      <div className="flex items-center gap-2 border-b border-border/60 p-3">
         <Variable className="size-4" />
         <span className="text-sm font-medium">Variables</span>
       </div>
@@ -70,7 +70,7 @@ export function VariablesPanel() {
         )}
 
         {/* Add new variable */}
-        <div className="space-y-2 border-t border-border pt-2">
+        <div className="space-y-2 border-t border-border/60 pt-2">
           <p className="text-xs font-medium">Add Variable</p>
           <div className="grid grid-cols-3 gap-2">
             <div>

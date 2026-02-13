@@ -26,7 +26,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "text",
           text: "{{siteName}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 32,
           fontWeight: 600,
           lineHeight: 1.2,
@@ -45,7 +45,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "text",
           text: "{{title}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 72,
           fontWeight: 700,
           lineHeight: 1.1,
@@ -64,7 +64,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "text",
           text: "{{description}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 28,
           fontWeight: 400,
           lineHeight: 1.4,
@@ -112,7 +112,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "text",
           text: "{{siteName}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 32,
           fontWeight: 600,
           lineHeight: 1.2,
@@ -131,7 +131,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "badge",
           text: "{{artist}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 16,
           fontWeight: 500,
           backgroundColor: "rgba(239, 68, 68, 0.9)",
@@ -153,7 +153,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "badge",
           text: "{{character}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 16,
           fontWeight: 500,
           backgroundColor: "rgba(34, 197, 94, 0.9)",
@@ -175,7 +175,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "text",
           text: "Post #{{postId}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 16,
           fontWeight: 400,
           lineHeight: 1.2,
@@ -207,7 +207,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "badge",
           text: "BLOG",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 12,
           fontWeight: 600,
           backgroundColor: "rgba(59, 130, 246, 0.9)",
@@ -229,7 +229,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "text",
           text: "{{title}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 56,
           fontWeight: 700,
           lineHeight: 1.15,
@@ -248,7 +248,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "text",
           text: "{{excerpt}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 24,
           fontWeight: 400,
           lineHeight: 1.4,
@@ -267,7 +267,7 @@ export const PRESET_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[
         content: {
           type: "text",
           text: "{{author}} • {{date}}",
-          fontFamily: "Inter",
+          fontFamily: "Manrope",
           fontSize: 16,
           fontWeight: 400,
           lineHeight: 1.2,
