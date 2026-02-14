@@ -16,6 +16,10 @@ export const Route = createRootRoute({
       {
         title: "OG Image Generator",
       },
+      {
+        name: "theme-color",
+        content: "#4f46e5",
+      },
     ],
     links: [
       {
@@ -30,6 +34,10 @@ export const Route = createRootRoute({
         rel: "icon",
         href: "/favicon.ico",
         type: "image/x-icon",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/apple-touch-icon.png",
       },
     ],
   }),
