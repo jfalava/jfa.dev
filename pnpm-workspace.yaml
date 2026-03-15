@@ -14,7 +14,7 @@ catalog:
 
 catalogs:
   backend:
-    "hono": "4.11.9"
+    "hono": "4.12.7"
   build:
     "@typescript/native-preview": "7.0.0-dev.20260315.1"
     "@vitejs/plugin-react": "6.0.1"

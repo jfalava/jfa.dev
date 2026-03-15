@@ -1,5 +1,5 @@
 {
-  "name": "@jfa.dev/og-image-generator",
+  "name": "@jfa.dev/og-img-gen",
   "version": "0.2.0",
   "private": true,
   "type": "module",
