@@ -3,13 +3,13 @@
   "version": "0.7.1",
   "private": true,
   "scripts": {
-    "cf-typegen": "vp run wrangler types",
+    "cf-typegen": "wrangler types",
     "check": "vp check",
-    "deploy": "vp run wrangler deploy",
-    "dev": "vp run wrangler dev",
+    "deploy": "vp check && wrangler deploy",
+    "dev": "wrangler dev",
     "format": "vp fmt",
     "lint": "vp lint",
-    "typecheck": "vp check"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "hono": "catalog:backend"

@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "build": "vp build",
-    "cf-typegen": "vp run wrangler types",
+    "cf-typegen": "wrangler types",
     "check": "vp check",
-    "deploy": "vp build && vp run wrangler deploy",
-    "dev": "vp run wrangler dev",
+    "deploy": "vp check && wrangler deploy",
+    "dev": "wrangler dev",
     "format": "vp fmt",
-    "lint": "vp lint"
+    "lint": "vp lint",
+    "typecheck": "vp check"
   },
   "dependencies": {
     "hono": "catalog:backend"

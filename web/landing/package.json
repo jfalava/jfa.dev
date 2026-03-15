@@ -5,16 +5,16 @@
   "type": "module",
   "scripts": {
     "build": "vp build",
-    "cf-typegen": "vp run wrangler types",
+    "cf-typegen": "wrangler types",
     "check": "vp check",
-    "deploy": "vp build && vp run wrangler deploy",
+    "deploy": "vp check && vp build && wrangler deploy",
     "dev": "vp dev --port 3000 --host",
     "format": "vp fmt",
     "lint": "vp lint",
     "preview": "vp preview",
     "serve": "vp preview",
     "test": "vp test",
-    "typecheck": "vp check"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "catalog:react-ui",
