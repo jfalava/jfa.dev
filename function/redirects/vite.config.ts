@@ -77,8 +77,8 @@ export default defineConfig({
       "import/no-cycle": "error",
       "import/no-self-import": "error",
       "typescript/no-implied-eval": "error",
-      "typescript/no-unsafe-type-assertion": "off",
-      "typescript/no-unnecessary-type-assertion": "off",
+      "typescript/no-unsafe-type-assertion": "error",
+      "typescript/no-unnecessary-type-assertion": "error",
     },
   },
   fmt: {
