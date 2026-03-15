@@ -1,16 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "jfa-og-image-generator",
+  "name": "jfa-dev-og-img-gen",
   "compatibility_date": "2026-01-01",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
   "observability": {
     "enabled": true,
   },
-  "routes": [
-    {
-      "pattern": "og-image-gen.jfa.dev",
-      "custom_domain": true,
-    },
-  ],
+  "workers_dev": true,
+  "preview_urls": true,
 }

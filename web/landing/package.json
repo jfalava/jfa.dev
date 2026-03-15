@@ -4,16 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
+    "build": "vp build",
     "cf-typegen": "wrangler types",
-    "check": "tsgo --noEmit && oxlint --fix --type-aware",
-    "deploy": "tsgo --noEmit && oxlint --type-aware && oxfmt && vite build && wrangler deploy",
-    "dev": "vite dev --port 3000 --host",
-    "format": "oxfmt",
-    "lint": "oxlint --type-aware",
-    "preview": "bun run build && vite preview",
-    "serve": "vite preview",
-    "test": "vitest run",
+    "check": "vp check",
+    "deploy": "vp check && vp build && wrangler deploy",
+    "dev": "vp dev --port 3000 --host",
+    "format": "vp fmt",
+    "lint": "vp lint",
+    "preview": "vp preview",
+    "serve": "vp preview",
+    "test": "vp test",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
@@ -33,19 +33,15 @@
     "shadcn": "catalog:react-ui",
     "tailwind-merge": "catalog:styling",
     "tailwindcss": "catalog:styling",
-    "tw-animate-css": "catalog:styling",
-    "vite-tsconfig-paths": "catalog:build"
+    "tw-animate-css": "catalog:styling"
   },
   "devDependencies": {
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "@typescript/native-preview": "catalog:build",
     "@vitejs/plugin-react": "catalog:build",
-    "oxfmt": "catalog:build",
-    "oxlint": "catalog:build",
-    "oxlint-tsgolint": "catalog:build",
     "typescript": "catalog:build",
-    "vite": "catalog:build",
-    "wrangler": "catalog:build"
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
   }
 }

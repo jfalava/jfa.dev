@@ -1,25 +1,25 @@
 {
-  "name": "@jfa.dev/redirects",
-  "version": "0.7.1",
+  "name": "@jfa.dev/router",
+  "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
+    "build": "vp build",
     "cf-typegen": "wrangler types",
     "check": "vp check",
     "deploy": "vp check && wrangler deploy",
     "dev": "wrangler dev",
     "format": "vp fmt",
     "lint": "vp lint",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "vp check"
   },
   "dependencies": {
     "hono": "catalog:backend"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:cloudflare",
-    "@types/bun": "catalog:types",
-    "@types/node": "catalog:types",
-    "@typescript/native-preview": "catalog:build",
     "typescript": "catalog:build",
-    "vite-plus": "catalog:"
+    "vite-plus": "catalog:",
+    "wrangler": "catalog:build"
   }
 }
