@@ -3,13 +3,13 @@
   "version": "0.7.1",
   "private": true,
   "scripts": {
-    "cf-typegen": "wrangler types",
-    "check": "oxlint --fix --type-aware && tsgo --noEmit",
-    "deploy": "wrangler types && tsgo --noEmit && oxlint --type-aware && oxfmt && wrangler deploy",
-    "dev": "wrangler types && wrangler dev",
-    "format": "oxfmt",
-    "lint": "oxlint --type-aware",
-    "typecheck": "wrangler types && tsgo --noEmit"
+    "cf-typegen": "vp run wrangler types",
+    "check": "vp check",
+    "deploy": "vp run wrangler deploy",
+    "dev": "vp run wrangler dev",
+    "format": "vp fmt",
+    "lint": "vp lint",
+    "typecheck": "vp check"
   },
   "dependencies": {
     "hono": "catalog:backend"
@@ -19,10 +19,7 @@
     "@types/bun": "catalog:types",
     "@types/node": "catalog:types",
     "@typescript/native-preview": "catalog:build",
-    "oxfmt": "catalog:build",
-    "oxlint": "catalog:build",
-    "oxlint-tsgolint": "catalog:build",
     "typescript": "catalog:build",
-    "wrangler": "catalog:build"
+    "vite-plus": "catalog:"
   }
 }
