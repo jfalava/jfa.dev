@@ -7,8 +7,8 @@ settings:
 catalogs:
   backend:
     hono:
-      specifier: 4.11.9
-      version: 4.11.9
+      specifier: 4.12.7
+      version: 4.12.7
   build:
     '@typescript/native-preview':
       specifier: 7.0.0-dev.20260315.1
@@ -127,7 +127,7 @@ importers:
     dependencies:
       hono:
         specifier: catalog:backend
-        version: 4.11.9
+        version: 4.12.7
     devDependencies:
       '@cloudflare/workers-types':
         specifier: catalog:cloudflare
@@ -152,7 +152,7 @@ importers:
     dependencies:
       hono:
         specifier: catalog:backend
-        version: 4.11.9
+        version: 4.12.7
     devDependencies:
       typescript:
         specifier: catalog:build
@@ -2684,8 +2684,8 @@ packages:
   headers-polyfill@4.0.3:
     resolution: {integrity: sha512-IScLbePpkvO846sIwOtOTDjutRMWdXdJmXdMvk6gCBHxFO8d+QKOQedyZSxFTTFYRSmlgSTDtXqqq4pcenBXLQ==}
 
-  hono@4.11.9:
-    resolution: {integrity: sha512-Eaw2YTGM6WOxA6CXbckaEvslr2Ne4NFsKrvc0v97JD5awbmeBLO5w9Ho9L9kmKonrwF9RJlW6BxT1PVv/agBHQ==}
+  hono@4.12.7:
+    resolution: {integrity: sha512-jq9l1DM0zVIvsm3lv9Nw9nlJnMNPOcAtsbsgiUhWcFzPE99Gvo6yRTlszSLLYacMeQ6quHD6hMfId8crVHvexw==}
     engines: {node: '>=16.9.0'}
 
   hono@4.12.8:
@@ -6258,7 +6258,7 @@ snapshots:
 
   headers-polyfill@4.0.3: {}
 
-  hono@4.11.9: {}
+  hono@4.12.7: {}
 
   hono@4.12.8: {}
 
