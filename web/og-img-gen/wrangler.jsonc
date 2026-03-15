@@ -7,4 +7,6 @@
   "observability": {
     "enabled": true,
   },
+  "workers_dev": true,
+  "preview_urls": true,
 }

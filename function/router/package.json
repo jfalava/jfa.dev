@@ -1,0 +1,24 @@
+{
+  "name": "@jfa.dev/router",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "cf-typegen": "vp run wrangler types",
+    "check": "vp check",
+    "deploy": "vp build && vp run wrangler deploy",
+    "dev": "vp run wrangler dev",
+    "format": "vp fmt",
+    "lint": "vp lint"
+  },
+  "dependencies": {
+    "hono": "catalog:backend"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "typescript": "catalog:build",
+    "vite-plus": "catalog:",
+    "wrangler": "catalog:build"
+  }
+}

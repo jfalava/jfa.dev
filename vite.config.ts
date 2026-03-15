@@ -1,9 +1,6 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
-  staged: {
-    "*": "vp check --fix",
-  },
   lint: { options: { typeAware: true, typeCheck: true } },
   fmt: {
     printWidth: 100,
@@ -17,6 +14,6 @@ export default defineConfig({
     experimentalSortPackageJson: {
       sortScripts: true,
     },
-    ignorePatterns: ["node_modules/**", "pnpm-*yaml", "**/routeTree.gen.ts"],
+    ignorePatterns: ["node_modules/**", "pnpm-*.yaml", "**/routeTree.gen.ts"],
   },
 });

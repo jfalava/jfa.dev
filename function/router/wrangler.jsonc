@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "jfa-dev-router",
+  "main": "src/router.ts",
+  "compatibility_date": "2026-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+  },
+  "routes": [
+    {
+      "pattern": "jfa.dev",
+      "custom_domain": true,
+    },
+  ],
+  "services": [
+    {
+      "binding": "LANDING",
+      "service": "jfa-dev-landing",
+    },
+    {
+      "binding": "OG_IMG_GEN",
+      "service": "jfa-dev-og-img-gen",
+    },
+  ],
+  "vars": {
+    "ROUTES": "{\"smoothTransitions\":true,\"routes\":[{\"binding\":\"LANDING\",\"path\":\"/\",\"preload\":true},{\"binding\":\"OG_IMG_GEN\",\"path\":\"/og-img-gen\",\"preload\":true}]}",
+  },
+}
