@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-
 import Grainient from "@/components/grainient";
 import TextPressure from "@/components/text-pressure";
+
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({ component: App });
 
@@ -30,7 +30,7 @@ function App() {
             useWebkitFallback
             webkitFallbackClassName="font-sans text-black text-5xl md:text-7xl drop-shadow-none text-shadow-none"
             minFontSize={30}
-            className="font-sans font-medium leading-[0.95] tracking-tight drop-shadow-none text-shadow-none cursor-default select-none"
+            className="cursor-default font-sans leading-[0.95] font-medium tracking-tight drop-shadow-none select-none text-shadow-none"
           />
         </div>
       </div>

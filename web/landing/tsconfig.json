@@ -22,7 +22,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@styles/*": ["./styles/*"]
+      "@styles/*": ["./src/styles/*"]
     }
   }
 }
