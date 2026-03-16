@@ -16,19 +16,12 @@
     "newlinesBetween": true,
     "internalPattern": ["./"],
     "sortSideEffects": false,
-    "groups": [
-      "side_effect",
-      "builtin",
-      ["parent", "type_parent"],
-      ["sibling", "type_sibling"],
-      ["index", "type_index"],
-      "unknown"
-    ]
+    "groups": ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"]
   },
   "ignorePatterns": [
     "cloudflare-env.d.ts",
     "worker-configuration.d.ts",
-    ".wrangler/",
-    "node_modules/"
+    ".wrangler/**",
+    "node_modules/**"
   ]
 }

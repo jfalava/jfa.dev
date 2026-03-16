@@ -1,8 +1,7 @@
-import { Hono } from "hono";
-
 import { handleMountedApp } from "./vmfe";
-
 import type { RouteConfig, RoutesConfig } from "./vmfe";
+
+import { Hono } from "hono";
 
 type Bindings = {
   LANDING: Fetcher;
