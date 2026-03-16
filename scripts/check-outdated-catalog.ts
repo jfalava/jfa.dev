@@ -73,7 +73,9 @@ function prettifyPackageJson(filePath: string): void {
     }
 
     if (packageJson.workspaces?.catalog) {
-      packageJson.workspaces.catalog = sortObjectKeys(packageJson.workspaces.catalog);
+      packageJson.workspaces.catalog = sortObjectKeys(
+        packageJson.workspaces.catalog,
+      );
     }
 
     writeFileSync(filePath, JSON.stringify(packageJson, null, 2) + "\n");
@@ -92,7 +94,11 @@ function findAllPackageJsonFiles(dir: string): string[] {
     for (const entry of entries) {
       const fullPath = join(dir, entry.name);
 
-      if (entry.isDirectory() && !entry.name.startsWith(".") && entry.name !== "node_modules") {
+      if (
+        entry.isDirectory() &&
+        !entry.name.startsWith(".") &&
+        entry.name !== "node_modules"
+      ) {
         files.push(...findAllPackageJsonFiles(fullPath));
       } else if (entry.name === "package.json") {
         files.push(fullPath);
