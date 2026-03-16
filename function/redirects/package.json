@@ -5,7 +5,7 @@
   "scripts": {
     "cf-typegen": "wrangler types",
     "check": "vp check",
-    "deploy": "vp check && wrangler deploy",
+    "deploy": "vp check && pnpm wrangler deploy",
     "dev": "wrangler dev",
     "format": "vp fmt",
     "lint": "vp lint",
