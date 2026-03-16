@@ -47,11 +47,11 @@ const TextPressure: React.FC<TextPressureProps> = ({
   text = "Compressa",
   fontFamily,
   fontUrl,
-  width = true,
+  width: widthEffect = true,
   weight = true,
   italic = true,
   alpha = false,
-  flex = true,
+  flex: flexEffect = true,
   stroke = false,
   scale = false,
   textColor = "#FFFFFF",
@@ -192,7 +192,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
           const d = dist(mouseRef.current, charCenter);
 
-          const wdth = width ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
+          const wdth = widthEffect ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
           const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
           const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
           const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : "1";
@@ -213,7 +213,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
     animate();
     return () => cancelAnimationFrame(rafId);
-  }, [width, weight, italic, alpha, shouldRenderWebkitFallback]);
+  }, [widthEffect, weight, italic, alpha, shouldRenderWebkitFallback]);
 
   const styleElement = useMemo(() => {
     return (
@@ -263,7 +263,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
       <h1
         ref={titleRef}
         className={`text-pressure-title ${className} ${
-          flex ? "flex justify-between" : ""
+          flexEffect ? "flex justify-between" : ""
         } ${stroke ? "stroke" : ""} text-center`}
         style={{
           display: shouldRenderWebkitFallback ? "none" : undefined,
