@@ -246,7 +246,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
   }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-transparent">
+    <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-transparent">
       {styleElement}
       {shouldRenderWebkitFallback ? (
         <h1

@@ -1,7 +1,7 @@
+import { NotFoundPage, RouteErrorBoundary } from "@/components/error-boundary";
+
 import appCss from "@styles/globals.css?url";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
-
-import { NotFoundPage, RouteErrorBoundary } from "@/components/error-boundary";
 
 export const Route = createRootRoute({
   head: () => ({

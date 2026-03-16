@@ -1,8 +1,8 @@
+import { Button } from "@/components/ui/button";
+
 import { Link, type ErrorComponentProps, useRouter } from "@tanstack/react-router";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
-
-import { Button } from "@/components/ui/button";
 
 export function NotFoundPage() {
   const router = useRouter();
@@ -54,7 +54,7 @@ export function RouteErrorBoundary({ error, reset }: ErrorComponentProps) {
 
         {error instanceof Error && (
           <div className="mb-6 rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-left">
-            <p className="wrap-break-word font-mono text-sm text-destructive">{error.message}</p>
+            <p className="font-mono text-sm wrap-break-word text-destructive">{error.message}</p>
           </div>
         )}
 
