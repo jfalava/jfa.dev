@@ -1,6 +1,6 @@
-import { Hono } from "hono";
-
 import { redirects } from "./redirects-config";
+
+import { Hono } from "hono";
 
 const app = new Hono();
 

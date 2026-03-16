@@ -1,9 +1,9 @@
-import { Paintbrush } from "lucide-react";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useEditorStore } from "@/stores/editor-store";
+
+import { Paintbrush } from "lucide-react";
 
 export function CanvasSettings() {
   const currentTemplateId = useEditorStore((s) => s.currentTemplateId);

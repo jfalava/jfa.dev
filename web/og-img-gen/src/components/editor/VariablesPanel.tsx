@@ -1,10 +1,10 @@
-import { Plus, Trash2, Variable } from "lucide-react";
-import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEditorStore } from "@/stores/editor-store";
+
+import { Plus, Trash2, Variable } from "lucide-react";
+import { useState } from "react";
 
 export function VariablesPanel() {
   const [newKey, setNewKey] = useState("");

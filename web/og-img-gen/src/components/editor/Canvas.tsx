@@ -1,10 +1,10 @@
-import { DndContext, useDraggable, type DragEndEvent } from "@dnd-kit/core";
-import { useRef, useCallback, useMemo } from "react";
-
 import { useEditorStore } from "@/stores/editor-store";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "@/types/editor";
 
 import { ElementRenderer } from "./ElementRenderer";
+
+import { DndContext, useDraggable, type DragEndEvent } from "@dnd-kit/core";
+import { useRef, useCallback, useMemo } from "react";
 
 interface DraggableElementProps {
   id: string;
@@ -24,12 +24,12 @@ function DraggableElement({ id, children }: DraggableElementProps) {
     : {};
 
   return (
-    <div
-      ref={setNodeRef}
+    <button
+      ref={setNodeRef as React.Ref<HTMLButtonElement>}
       style={style}
       {...listeners}
       {...attributes}
-      tabIndex={0}
+      type="button"
       onClick={(e) => {
         e.stopPropagation();
         selectElement(id);
@@ -42,10 +42,10 @@ function DraggableElement({ id, children }: DraggableElementProps) {
         e.stopPropagation();
         selectElement(id);
       }}
-      className={`absolute cursor-move ${selectedElementId === id ? "ring-primary ring-2 ring-offset-1 ring-offset-background" : ""}`}
+      className={`absolute cursor-move border-none bg-transparent p-0 text-left ${selectedElementId === id ? "ring-2 ring-primary ring-offset-1 ring-offset-background" : ""}`}
     >
       {children}
-    </div>
+    </button>
   );
 }
 
@@ -152,6 +152,7 @@ export function Canvas() {
             ref={canvasRef}
             data-og-canvas
             tabIndex={0}
+            role="application"
             onClick={() => selectElement(null)}
             onKeyDown={(e) => {
               if (e.key !== "Enter" && e.key !== " ") {

@@ -1,10 +1,10 @@
-import { Plus, Trash2, Copy, FileImage, Sparkles } from "lucide-react";
-import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PRESET_TEMPLATES } from "@/data/preset-templates";
 import { useEditorStore } from "@/stores/editor-store";
+
+import { Plus, Trash2, Copy, FileImage, Sparkles } from "lucide-react";
+import { useState } from "react";
 
 export function TemplatesSidebar() {
   const [newName, setNewName] = useState("");
