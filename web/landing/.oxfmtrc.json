@@ -19,7 +19,7 @@
     "groups": ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"]
   },
   "sortTailwindcss": {
-    "stylesheet": "./styles/globals.css",
+    "stylesheet": "./src/styles/globals.css",
     "functions": ["clsx", "cn", "cva", "twMerge"],
     "preserveDuplicates": false,
     "preserveWhitespace": false

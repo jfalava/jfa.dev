@@ -1,3 +1,16 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { useEditorStore } from "@/stores/editor-store";
+import type { ElementType, Template } from "@/types/editor";
+
 import { toPng } from "html-to-image";
 import {
   Type,
@@ -13,19 +26,6 @@ import {
   Magnet,
 } from "lucide-react";
 import type { MouseEvent } from "react";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { useEditorStore } from "@/stores/editor-store";
-import type { ElementType, Template } from "@/types/editor";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);

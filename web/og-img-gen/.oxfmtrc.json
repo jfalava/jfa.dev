@@ -16,18 +16,10 @@
     "newlinesBetween": true,
     "internalPattern": ["@/"],
     "sortSideEffects": false,
-    "groups": [
-      "side_effect",
-      "builtin",
-      "internal",
-      "parent",
-      "sibling",
-      "index",
-      "unknown"
-    ]
+    "groups": ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"]
   },
   "sortTailwindcss": {
-    "stylesheet": "./src/styles/globals.css",
+    "stylesheet": "./src/styles.css",
     "functions": ["clsx", "cn", "cva", "twMerge"],
     "preserveDuplicates": false,
     "preserveWhitespace": false

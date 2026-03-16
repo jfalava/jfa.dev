@@ -1,5 +1,3 @@
-import { Trash2, Copy, Lock, Unlock, Eye, EyeOff, ChevronUp, ChevronDown } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +11,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useEditorStore } from "@/stores/editor-store";
 import type { TextContent, ImageContent, BadgeContent, ContainerContent } from "@/types/editor";
+
+import { Trash2, Copy, Lock, Unlock, Eye, EyeOff, ChevronUp, ChevronDown } from "lucide-react";
 
 export function PropertiesPanel() {
   const selectedElementId = useEditorStore((s) => s.selectedElementId);

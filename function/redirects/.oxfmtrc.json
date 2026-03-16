@@ -16,15 +16,7 @@
     "newlinesBetween": true,
     "internalPattern": ["@/"],
     "sortSideEffects": false,
-    "groups": [
-      "side_effect",
-      "builtin",
-      "internal",
-      "parent",
-      "sibling",
-      "index",
-      "unknown"
-    ]
+    "groups": ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"]
   },
   "ignorePatterns": [
     "cloudflare-env.d.ts",

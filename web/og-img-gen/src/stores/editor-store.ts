@@ -1,7 +1,3 @@
-import { nanoid } from "nanoid";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-
 import {
   DEFAULT_FONTS,
   type Template,
@@ -14,6 +10,10 @@ import {
   type TemplateVariable,
   type Font,
 } from "@/types/editor";
+
+import { nanoid } from "nanoid";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface PersistedEditorState {
   templates?: Template[];

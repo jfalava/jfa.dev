@@ -1,10 +1,10 @@
-import { Plus, Check, Loader2, Type } from "lucide-react";
-import { useState, useEffect, useCallback, useRef } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEditorStore } from "@/stores/editor-store";
+
+import { Plus, Check, Loader2, Type } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 const POPULAR_GOOGLE_FONTS = [
   "Roboto",

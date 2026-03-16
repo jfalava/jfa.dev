@@ -1,5 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
-
 import {
   Canvas,
   Toolbar,
@@ -9,6 +7,8 @@ import {
   CanvasSettings,
   FontManager,
 } from "@/components/editor";
+
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({ component: EditorPage });
 
@@ -34,7 +34,7 @@ function EditorPage() {
           <Canvas />
         </section>
 
-        <aside className="min-h-0 flex" aria-label="Element properties">
+        <aside className="flex min-h-0" aria-label="Element properties">
           <PropertiesPanel />
         </aside>
       </div>
