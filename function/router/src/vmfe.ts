@@ -100,16 +100,19 @@ class AssetAttributeRewriter {
   private parseSrcsetCandidates(val: string): string[] {
     const candidates: string[] = [];
     let current = "";
-    let depth = 0;
+    let inQuote: "'" | '"' | null = null;
+    let parenDepth = 0;
 
     for (const char of val) {
-      if (char === "'" || char === '"') {
-        depth = depth === 0 ? 1 : 0;
-      } else if (char === "(" && depth === 0) {
-        depth = 2;
-      } else if (char === ")" && depth === 2) {
-        depth = 0;
-      } else if (char === "," && depth === 0) {
+      if ((char === "'" || char === '"') && inQuote === null) {
+        inQuote = char;
+      } else if ((char === "'" || char === '"') && inQuote === char) {
+        inQuote = null;
+      } else if (char === "(" && inQuote === null) {
+        parenDepth++;
+      } else if (char === ")" && inQuote === null) {
+        parenDepth--;
+      } else if (char === "," && inQuote === null && parenDepth === 0) {
         candidates.push(current.trim());
         current = "";
         continue;

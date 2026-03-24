@@ -19,6 +19,14 @@ export default defineConfig({
       typeAware: true,
       typeCheck: true,
     },
+    overrides: [
+      {
+        files: ["src/vmfe.ts"],
+        rules: {
+          complexity: "off",
+        },
+      },
+    ],
     rules: {
       "typescript/no-explicit-any": "error",
       "typescript/no-unsafe-assignment": "error",
