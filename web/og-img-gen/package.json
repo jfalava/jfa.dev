@@ -46,6 +46,7 @@
     "shadcn": "catalog:react-ui",
     "tailwindcss": "catalog:styling",
     "typescript": "catalog:build",
+    "wrangler": "catalog:build",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   }
