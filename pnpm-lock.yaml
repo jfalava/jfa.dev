@@ -150,6 +150,9 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 0.1.13(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.2(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0))
+      wrangler:
+        specifier: catalog:build
+        version: 4.77.0(@cloudflare/workers-types@4.20260317.1)
 
   function/router:
     dependencies:
@@ -248,6 +251,9 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 0.1.13(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.2(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0))
+      wrangler:
+        specifier: catalog:build
+        version: 4.77.0(@cloudflare/workers-types@4.20260317.1)
 
   web/og-img-gen:
     dependencies:
@@ -342,6 +348,9 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 0.1.13(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.2(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(tsx@4.21.0))
+      wrangler:
+        specifier: catalog:build
+        version: 4.77.0(@cloudflare/workers-types@4.20260317.1)
 
 packages:
 
