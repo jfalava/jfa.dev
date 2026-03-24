@@ -16,13 +16,14 @@ export type RoutesConfig = RouteConfig[] | { smoothTransitions?: boolean; routes
 /* ----------------------------- utilities ----------------------------- */
 
 function normalizePath(path: string): string {
-  if (!path.startsWith("/")) {
-    path = "/" + path;
+  let normalized = path;
+  if (!normalized.startsWith("/")) {
+    normalized = "/" + normalized;
   }
-  if (path !== "/" && path.endsWith("/")) {
-    path = path.slice(0, -1);
+  if (normalized !== "/" && normalized.endsWith("/")) {
+    normalized = normalized.slice(0, -1);
   }
-  return path;
+  return normalized;
 }
 
 function hasAssetPrefix(path: string, prefixes: string[]): boolean {
@@ -30,6 +31,40 @@ function hasAssetPrefix(path: string, prefixes: string[]): boolean {
 }
 
 /* ---------------------- HTML rewriting ---------------------- */
+
+const ASSET_ATTRIBUTES = [
+  "href",
+  "src",
+  "poster",
+  "content",
+  "action",
+  "cite",
+  "formaction",
+  "manifest",
+  "ping",
+  "archive",
+  "code",
+  "codebase",
+  "data",
+  "url",
+  "srcset",
+  "data-src",
+  "data-href",
+  "data-url",
+  "data-srcset",
+  "data-background",
+  "data-image",
+  "data-link",
+  "data-poster",
+  "data-video",
+  "data-audio",
+  "component-url",
+  "astro-component-url",
+  "sveltekit-url",
+  "renderer-url",
+  "background",
+  "xlink:href",
+];
 
 class AssetAttributeRewriter {
   private mount: string;
@@ -49,96 +84,96 @@ class AssetAttributeRewriter {
     if (this.mount === "/") {
       return true;
     }
-    return path.startsWith(this.mount + "/");
+    return path.startsWith(`${this.mount}/`);
   }
 
-  element(el: Element) {
+  private rewriteLinkIcon(el: Element): void {
+    const rel = el.getAttribute("rel")?.toLowerCase();
+    const href = el.getAttribute("href");
+    if (rel && (rel.includes("icon") || rel.includes("shortcut")) && href) {
+      if (href.startsWith("/") && !this.isScoped(href)) {
+        el.setAttribute("href", this.prepend(href));
+      }
+    }
+  }
+
+  private parseSrcsetCandidates(val: string): string[] {
+    const candidates: string[] = [];
+    let current = "";
+    let depth = 0;
+
+    for (const char of val) {
+      if (char === "'" || char === '"') {
+        depth = depth === 0 ? 1 : 0;
+      } else if (char === "(" && depth === 0) {
+        depth = 2;
+      } else if (char === ")" && depth === 2) {
+        depth = 0;
+      } else if (char === "," && depth === 0) {
+        candidates.push(current.trim());
+        current = "";
+        continue;
+      }
+      current += char;
+    }
+
+    if (current.trim()) {
+      candidates.push(current.trim());
+    }
+    return candidates;
+  }
+
+  private rewriteSrcset(val: string): string {
+    const candidates = this.parseSrcsetCandidates(val);
+
+    return candidates
+      .map((candidate) => {
+        const parts = candidate.split(/\s+/);
+        const url = parts[0];
+        if (url.startsWith("/") && !this.isScoped(url) && hasAssetPrefix(url, this.assetPrefixes)) {
+          return this.prepend(url) + (parts[1] ? " " + parts[1] : "");
+        }
+        return candidate;
+      })
+      .join(", ");
+  }
+
+  private rewriteAttribute(el: Element, attr: string): void {
+    const val = el.getAttribute(attr);
+    if (!val) {
+      return;
+    }
+
+    if (attr === "srcset" || attr.endsWith("srcset")) {
+      const rewritten = this.rewriteSrcset(val);
+      if (rewritten !== val) {
+        el.setAttribute(attr, rewritten);
+      }
+      return;
+    }
+
+    if (!val.startsWith("/")) {
+      return;
+    }
+    if (this.isScoped(val)) {
+      return;
+    }
+    if (!hasAssetPrefix(val, this.assetPrefixes)) {
+      return;
+    }
+
+    el.setAttribute(attr, this.prepend(val));
+  }
+
+  element(el: Element): void {
     const tagName = el.tagName?.toLowerCase();
 
     if (tagName === "link") {
-      const rel = el.getAttribute("rel")?.toLowerCase();
-      const href = el.getAttribute("href");
-      if (rel && (rel.includes("icon") || rel.includes("shortcut")) && href) {
-        if (href.startsWith("/") && !this.isScoped(href)) {
-          el.setAttribute("href", this.prepend(href));
-        }
-      }
+      this.rewriteLinkIcon(el);
     }
 
-    const attrs = [
-      "href",
-      "src",
-      "poster",
-      "content",
-      "action",
-      "cite",
-      "formaction",
-      "manifest",
-      "ping",
-      "archive",
-      "code",
-      "codebase",
-      "data",
-      "url",
-      "srcset",
-      "data-src",
-      "data-href",
-      "data-url",
-      "data-srcset",
-      "data-background",
-      "data-image",
-      "data-link",
-      "data-poster",
-      "data-video",
-      "data-audio",
-      "component-url",
-      "astro-component-url",
-      "sveltekit-url",
-      "renderer-url",
-      "background",
-      "xlink:href",
-    ];
-
-    for (const attr of attrs) {
-      const val = el.getAttribute(attr);
-      if (!val) {
-        continue;
-      }
-
-      if (attr === "srcset") {
-        const rewritten = val
-          .split(",")
-          .map((src) => {
-            const trimmed = src.trim();
-            const parts = trimmed.split(/\s+/);
-            const url = parts[0];
-            if (
-              url.startsWith("/") &&
-              !this.isScoped(url) &&
-              hasAssetPrefix(url, this.assetPrefixes)
-            ) {
-              return this.prepend(url) + (parts[1] ? " " + parts[1] : "");
-            }
-            return trimmed;
-          })
-          .join(", ");
-        if (rewritten !== val) {
-          el.setAttribute(attr, rewritten);
-        }
-        continue;
-      }
-
-      if (!val.startsWith("/")) {
-        continue;
-      }
-      if (this.isScoped(val)) {
-        continue;
-      }
-      if (!hasAssetPrefix(val, this.assetPrefixes)) {
-        continue;
-      }
-
-      el.setAttribute(attr, this.prepend(val));
+    for (const attr of ASSET_ATTRIBUTES) {
+      this.rewriteAttribute(el, attr);
     }
   }
 }
@@ -146,7 +181,7 @@ class AssetAttributeRewriter {
 class SmoothTransitionsInjector {
   private injected = false;
 
-  element(el: Element) {
+  element(el: Element): void {
     if (this.injected) {
       return;
     }
@@ -174,7 +209,7 @@ class SpeculationRulesInjector {
     this.json = JSON.stringify({ prefetch: [{ urls: mounts }] });
   }
 
-  element(el: Element) {
+  element(el: Element): void {
     if (this.injected) {
       return;
     }
@@ -191,7 +226,7 @@ class PreloadScriptInjector {
     this.path = mount === "/" ? "/__mf-preload.js" : `${mount}/__mf-preload.js`;
   }
 
-  element(el: Element) {
+  element(el: Element): void {
     if (this.injected) {
       return;
     }
@@ -210,12 +245,23 @@ function cloneHeadersForTransform(original: Headers): Headers {
   return headers;
 }
 
-function rewriteLocation(location: string, mount: string, requestUrl: URL): string {
-  mount = normalizePath(mount);
+function isPathScoped(pathname: string, mount: string): boolean {
+  if (mount === "/") {
+    return true;
+  }
+  return pathname === mount || pathname.startsWith(`${mount}/`);
+}
+
+function rewriteLocation(location: string, mount: string, forwardUrl: URL): string {
+  const normalizedMount = normalizePath(mount);
   try {
-    const url = new URL(location, requestUrl.origin);
-    if (url.origin === requestUrl.origin && url.pathname.startsWith("/")) {
-      url.pathname = mount === "/" ? url.pathname : mount + url.pathname;
+    const url = new URL(location, forwardUrl);
+    if (url.origin === forwardUrl.origin && url.pathname.startsWith("/")) {
+      if (isPathScoped(url.pathname, normalizedMount)) {
+        // Already scoped, don't double-prefix
+        return url.toString();
+      }
+      url.pathname = normalizedMount === "/" ? url.pathname : normalizedMount + url.pathname;
       return url.toString();
     }
   } catch {
@@ -224,8 +270,8 @@ function rewriteLocation(location: string, mount: string, requestUrl: URL): stri
   return location;
 }
 
-function rewriteSetCookie(headers: Headers, mount: string) {
-  mount = normalizePath(mount);
+function rewriteSetCookie(headers: Headers, mount: string): void {
+  const normalizedMount = normalizePath(mount);
   const getSetCookie = (headers as unknown as { getSetCookie?: () => string[] }).getSetCookie;
   if (!getSetCookie) {
     return;
@@ -237,7 +283,7 @@ function rewriteSetCookie(headers: Headers, mount: string) {
   headers.delete("Set-Cookie");
   for (const cookie of cookies) {
     if (/;\s*Path=\//i.test(cookie)) {
-      const newPath = mount === "/" ? "/" : `${mount}/`;
+      const newPath = normalizedMount === "/" ? "/" : `${normalizedMount}/`;
       headers.append("Set-Cookie", cookie.replace(/;\s*Path=\//i, `; Path=${newPath}`));
     } else {
       headers.append("Set-Cookie", cookie);
@@ -281,6 +327,114 @@ function isChromium(ua: string): boolean {
   return hasChrome && !isFirefox && !isSafari;
 }
 
+/* ----------------------- URL handling ----------------------- */
+
+function buildForwardUrl(requestUrl: string, mount: string): URL {
+  const normalizedMount = normalizePath(mount);
+  const forwardUrl = new URL(requestUrl);
+
+  if (normalizedMount !== "/") {
+    if (forwardUrl.pathname === normalizedMount) {
+      forwardUrl.pathname = "/";
+    } else if (forwardUrl.pathname.startsWith(`${normalizedMount}/`)) {
+      forwardUrl.pathname = forwardUrl.pathname.slice(normalizedMount.length) || "/";
+    }
+  }
+
+  return forwardUrl;
+}
+
+/* ----------------------- response handlers ----------------------- */
+
+async function handleRedirectResponse(
+  upstreamResp: Response,
+  headers: Headers,
+  mount: string,
+  forwardUrl: URL,
+): Promise<Response> {
+  const loc = headers.get("location");
+  if (loc) {
+    headers.set("location", rewriteLocation(loc, mount, forwardUrl));
+  }
+  rewriteSetCookie(headers, mount);
+  return new Response(null, { status: upstreamResp.status, headers });
+}
+
+interface HtmlResponseContext {
+  upstreamResp: Response;
+  headers: Headers;
+  mount: string;
+  assetPrefixes: string[];
+  request: Request;
+  smoothTransitions?: boolean;
+  preloadStaticMounts?: string[];
+}
+
+async function handleHtmlResponse(ctx: HtmlResponseContext): Promise<Response> {
+  const {
+    upstreamResp,
+    headers,
+    mount,
+    assetPrefixes,
+    request,
+    smoothTransitions,
+    preloadStaticMounts,
+  } = ctx;
+  const html = await upstreamResp.text();
+  const headersOut = cloneHeadersForTransform(headers);
+  rewriteSetCookie(headersOut, mount);
+
+  const ua = request.headers.get("user-agent") || "";
+  const chromium = isChromium(ua);
+
+  const rewriter = new HTMLRewriter().on("*", new AssetAttributeRewriter(mount, assetPrefixes));
+
+  if (smoothTransitions) {
+    rewriter.on("head", new SmoothTransitionsInjector());
+  }
+
+  if (preloadStaticMounts?.length) {
+    if (chromium) {
+      rewriter.on("head", new SpeculationRulesInjector(preloadStaticMounts));
+    } else {
+      rewriter.on("body", new PreloadScriptInjector(mount));
+    }
+  }
+
+  return rewriter.transform(
+    new Response(html, {
+      status: upstreamResp.status,
+      statusText: upstreamResp.statusText,
+      headers: headersOut,
+    }),
+  );
+}
+
+async function handleCssResponse(
+  upstreamResp: Response,
+  headers: Headers,
+  mount: string,
+  assetPrefixes: string[],
+): Promise<Response> {
+  const css = await upstreamResp.text();
+  const headersOut = cloneHeadersForTransform(headers);
+  rewriteSetCookie(headersOut, mount);
+
+  const prefix = mount === "/" ? "" : mount;
+  const pattern = assetPrefixes
+    .map((p) => p.slice(1, -1))
+    .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("|");
+  const regex = new RegExp(`url\\(\\s*(['"]?)(/(?:${pattern})/)`, "g");
+  const rewritten = css.replace(regex, `url($1${prefix}$2`);
+
+  return new Response(rewritten, {
+    status: upstreamResp.status,
+    statusText: upstreamResp.statusText,
+    headers: headersOut,
+  });
+}
+
 /* ----------------------- main handler ----------------------- */
 
 export async function handleMountedApp(
@@ -293,17 +447,7 @@ export async function handleMountedApp(
     preloadStaticMounts?: string[];
   },
 ): Promise<Response> {
-  mount = normalizePath(mount);
-
-  const forwardUrl = new URL(request.url);
-
-  if (mount !== "/") {
-    if (forwardUrl.pathname === mount) {
-      forwardUrl.pathname = "/";
-    } else if (forwardUrl.pathname.startsWith(mount + "/")) {
-      forwardUrl.pathname = forwardUrl.pathname.slice(mount.length) || "/";
-    }
-  }
+  const forwardUrl = buildForwardUrl(request.url, mount);
 
   if (options?.preloadStaticMounts?.length && forwardUrl.pathname === "/__mf-preload.js") {
     return preloadScriptResponse(options.preloadStaticMounts);
@@ -315,65 +459,25 @@ export async function handleMountedApp(
 
   // Redirects
   if (upstreamResp.status >= 300 && upstreamResp.status < 400) {
-    const loc = headers.get("location");
-    if (loc) {
-      headers.set("location", rewriteLocation(loc, mount, new URL(request.url)));
-    }
-    rewriteSetCookie(headers, mount);
-    return new Response(null, { status: upstreamResp.status, headers });
+    return handleRedirectResponse(upstreamResp, headers, mount, forwardUrl);
   }
 
   // HTML
   if (contentType.includes("text/html")) {
-    const html = await upstreamResp.text();
-    const headersOut = cloneHeadersForTransform(headers);
-    rewriteSetCookie(headersOut, mount);
-
-    const ua = request.headers.get("user-agent") || "";
-    const chromium = isChromium(ua);
-
-    const rewriter = new HTMLRewriter().on("*", new AssetAttributeRewriter(mount, assetPrefixes));
-
-    if (options?.smoothTransitions) {
-      rewriter.on("head", new SmoothTransitionsInjector());
-    }
-
-    if (options?.preloadStaticMounts?.length) {
-      if (chromium) {
-        rewriter.on("head", new SpeculationRulesInjector(options.preloadStaticMounts));
-      } else {
-        rewriter.on("body", new PreloadScriptInjector(mount));
-      }
-    }
-
-    return rewriter.transform(
-      new Response(html, {
-        status: upstreamResp.status,
-        statusText: upstreamResp.statusText,
-        headers: headersOut,
-      }),
-    );
+    return handleHtmlResponse({
+      upstreamResp,
+      headers,
+      mount,
+      assetPrefixes,
+      request,
+      smoothTransitions: options?.smoothTransitions,
+      preloadStaticMounts: options?.preloadStaticMounts,
+    });
   }
 
   // CSS
   if (contentType.includes("text/css")) {
-    const css = await upstreamResp.text();
-    const headersOut = cloneHeadersForTransform(headers);
-    rewriteSetCookie(headersOut, mount);
-
-    const prefix = mount === "/" ? "" : mount;
-    const pattern = assetPrefixes
-      .map((p) => p.slice(1, -1))
-      .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-      .join("|");
-    const regex = new RegExp(`url\\(\\s*(['"]?)(/(?:${pattern})/)`, "g");
-    const rewritten = css.replace(regex, `url($1${prefix}$2`);
-
-    return new Response(rewritten, {
-      status: upstreamResp.status,
-      statusText: upstreamResp.statusText,
-      headers: headersOut,
-    });
+    return handleCssResponse(upstreamResp, headers, mount, assetPrefixes);
   }
 
   // Passthrough

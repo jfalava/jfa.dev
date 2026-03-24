@@ -11,6 +11,9 @@ export default defineConfig({
       browser: true,
       es2022: true,
     },
+    globals: {
+      HTMLRewriter: "readonly",
+    },
     ignorePatterns: ["worker-configuration.d.ts", "**/*.d.ts"],
     options: {
       typeAware: true,
