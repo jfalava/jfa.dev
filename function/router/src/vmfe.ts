@@ -118,7 +118,7 @@ class AssetAttributeRewriter {
       return;
     }
 
-    if (attr === "srcset") {
+    if (attr === "srcset" || attr.endsWith("srcset")) {
       const rewritten = this.rewriteSrcset(val);
       if (rewritten !== val) {
         el.setAttribute(attr, rewritten);
@@ -219,11 +219,11 @@ function cloneHeadersForTransform(original: Headers): Headers {
   return headers;
 }
 
-function rewriteLocation(location: string, mount: string, requestUrl: URL): string {
+function rewriteLocation(location: string, mount: string, forwardUrl: URL): string {
   const normalizedMount = normalizePath(mount);
   try {
-    const url = new URL(location, requestUrl.origin);
-    if (url.origin === requestUrl.origin && url.pathname.startsWith("/")) {
+    const url = new URL(location, forwardUrl);
+    if (url.origin === forwardUrl.origin && url.pathname.startsWith("/")) {
       url.pathname = normalizedMount === "/" ? url.pathname : normalizedMount + url.pathname;
       return url.toString();
     }
@@ -313,11 +313,11 @@ async function handleRedirectResponse(
   upstreamResp: Response,
   headers: Headers,
   mount: string,
-  request: Request,
+  forwardUrl: URL,
 ): Promise<Response> {
   const loc = headers.get("location");
   if (loc) {
-    headers.set("location", rewriteLocation(loc, mount, new URL(request.url)));
+    headers.set("location", rewriteLocation(loc, mount, forwardUrl));
   }
   rewriteSetCookie(headers, mount);
   return new Response(null, { status: upstreamResp.status, headers });
@@ -422,7 +422,7 @@ export async function handleMountedApp(
 
   // Redirects
   if (upstreamResp.status >= 300 && upstreamResp.status < 400) {
-    return handleRedirectResponse(upstreamResp, headers, mount, request);
+    return handleRedirectResponse(upstreamResp, headers, mount, forwardUrl);
   }
 
   // HTML

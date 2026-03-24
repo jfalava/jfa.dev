@@ -11,21 +11,53 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
+function segmentsMatch(routeSegments: string[], pathnameSegments: string[]): boolean {
+  if (routeSegments.length > pathnameSegments.length) {
+    return false;
+  }
+  for (let i = 0; i < routeSegments.length; i++) {
+    const routeSeg = routeSegments[i];
+    const pathSeg = pathnameSegments[i];
+    if (routeSeg.startsWith(":")) {
+      continue;
+    }
+    if (routeSeg !== pathSeg) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function findMatchingRoute(
   pathname: string,
   routeDefs: RouteConfig[],
 ): { route: RouteConfig; mount: string } | null {
   let matched: { route: RouteConfig; mount: string } | null = null;
+  let matchedScore = 0;
+
+  const pathnameSegments = pathname.split("/").filter(Boolean);
 
   for (const route of routeDefs) {
     if (route.path === "/") {
       if (!matched) {
         matched = { route, mount: "/" };
+        matchedScore = 0;
       }
-    } else if (pathname === route.path || pathname.startsWith(`${route.path}/`)) {
-      if (!matched || route.path.length > matched.mount.length) {
-        matched = { route, mount: route.path };
-      }
+      continue;
+    }
+
+    const routeSegments = route.path.split("/").filter(Boolean);
+
+    if (!segmentsMatch(routeSegments, pathnameSegments)) {
+      continue;
+    }
+
+    const score = routeSegments.length;
+    if (score > matchedScore) {
+      const mountSegments = pathnameSegments.slice(0, routeSegments.length);
+      const mount = "/" + mountSegments.join("/");
+      matched = { route, mount };
+      matchedScore = score;
     }
   }
 
