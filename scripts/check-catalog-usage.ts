@@ -1,5 +1,5 @@
-#!/usr/bin/env bun
-/* eslint-disable no-console */
+#!/usr/bin/env node
+/* eslint-disable */
 
 /**
  * Workspace catalog usage validator.
@@ -14,17 +14,17 @@
  * Notes:
  * - Dependencies not present in the root catalog are ignored.
  * - This is a read-only check; it does not modify any files.
- * - Implementation is Node/Bun compatible and does not rely on external glob libraries.
+ * - Implementation is Node/pnpm compatible and does not rely on external glob libraries.
  *
  * Recommended usage (in root package.json):
  *
  *   "scripts": {
- *     "check:catalog": "bun scripts/check-catalog-usage.ts"
+ *     "check:catalog": "tsx scripts/check-catalog-usage.ts"
  *   }
  *
  * Then run:
  *
- *   bun run check:catalog
+ *   pnpm run check:catalog
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
@@ -94,7 +94,7 @@ function getRootPaths() {
  * Extract the catalog map from root package.json.
  *
  * Supports multiple formats:
- * 1. Bun: catalog (top-level field)
+ * 1. pnpm: catalog (top-level field)
  * 2. Legacy: workspaces.catalog (nested under workspaces)
  * 3. Multiple catalogs: workspaces.catalogs (multiple named catalogs)
  */
@@ -106,7 +106,7 @@ function getRootCatalog(rootPkgPath: string): DepRecord {
 
   const catalog: DepRecord = {};
 
-  // Check for Bun-style top-level catalog first
+  // Check for pnpm-style top-level catalog first
   if (rootPkg.catalog && isRecord(rootPkg.catalog)) {
     for (const [key, value] of Object.entries(rootPkg.catalog)) {
       if (typeof value === "string" && value.trim()) {
