@@ -97,17 +97,43 @@ class AssetAttributeRewriter {
     }
   }
 
+  private parseSrcsetCandidates(val: string): string[] {
+    const candidates: string[] = [];
+    let current = "";
+    let depth = 0;
+
+    for (const char of val) {
+      if (char === "'" || char === '"') {
+        depth = depth === 0 ? 1 : 0;
+      } else if (char === "(" && depth === 0) {
+        depth = 2;
+      } else if (char === ")" && depth === 2) {
+        depth = 0;
+      } else if (char === "," && depth === 0) {
+        candidates.push(current.trim());
+        current = "";
+        continue;
+      }
+      current += char;
+    }
+
+    if (current.trim()) {
+      candidates.push(current.trim());
+    }
+    return candidates;
+  }
+
   private rewriteSrcset(val: string): string {
-    return val
-      .split(",")
-      .map((src) => {
-        const trimmed = src.trim();
-        const parts = trimmed.split(/\s+/);
+    const candidates = this.parseSrcsetCandidates(val);
+
+    return candidates
+      .map((candidate) => {
+        const parts = candidate.split(/\s+/);
         const url = parts[0];
         if (url.startsWith("/") && !this.isScoped(url) && hasAssetPrefix(url, this.assetPrefixes)) {
           return this.prepend(url) + (parts[1] ? " " + parts[1] : "");
         }
-        return trimmed;
+        return candidate;
       })
       .join(", ");
   }
@@ -219,11 +245,22 @@ function cloneHeadersForTransform(original: Headers): Headers {
   return headers;
 }
 
+function isPathScoped(pathname: string, mount: string): boolean {
+  if (mount === "/") {
+    return true;
+  }
+  return pathname === mount || pathname.startsWith(`${mount}/`);
+}
+
 function rewriteLocation(location: string, mount: string, forwardUrl: URL): string {
   const normalizedMount = normalizePath(mount);
   try {
     const url = new URL(location, forwardUrl);
     if (url.origin === forwardUrl.origin && url.pathname.startsWith("/")) {
+      if (isPathScoped(url.pathname, normalizedMount)) {
+        // Already scoped, don't double-prefix
+        return url.toString();
+      }
       url.pathname = normalizedMount === "/" ? url.pathname : normalizedMount + url.pathname;
       return url.toString();
     }
