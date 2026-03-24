@@ -1,5 +1,4 @@
-import { handleMountedApp } from "./vmfe";
-import type { RouteConfig, RoutesConfig } from "./vmfe";
+import { handleMountedApp, type RouteConfig, type RoutesConfig } from "./vmfe";
 
 import { Hono } from "hono";
 
@@ -12,12 +11,10 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.all("*", async (c) => {
-  const config: RoutesConfig = JSON.parse(c.env.ROUTES);
-  const routeDefs: RouteConfig[] = Array.isArray(config) ? config : config.routes;
-
-  const pathname = new URL(c.req.url).pathname;
-
+function findMatchingRoute(
+  pathname: string,
+  routeDefs: RouteConfig[],
+): { route: RouteConfig; mount: string } | null {
   let matched: { route: RouteConfig; mount: string } | null = null;
 
   for (const route of routeDefs) {
@@ -25,12 +22,33 @@ app.all("*", async (c) => {
       if (!matched) {
         matched = { route, mount: "/" };
       }
-    } else if (pathname === route.path || pathname.startsWith(route.path + "/")) {
+    } else if (pathname === route.path || pathname.startsWith(`${route.path}/`)) {
       if (!matched || route.path.length > matched.mount.length) {
         matched = { route, mount: route.path };
       }
     }
   }
+
+  return matched;
+}
+
+function getPreloadMounts(routeDefs: RouteConfig[], currentMount: string): string[] {
+  return routeDefs
+    .filter((r) => r.preload && !r.path.includes(":") && r.path !== currentMount)
+    .map((r) => r.path);
+}
+
+function parseRoutesConfig(routesJson: string): RoutesConfig {
+  const parsed = JSON.parse(routesJson) as unknown;
+  return parsed as RoutesConfig;
+}
+
+app.all("*", async (c) => {
+  const config = parseRoutesConfig(c.env.ROUTES);
+  const routeDefs: RouteConfig[] = Array.isArray(config) ? config : config.routes;
+
+  const pathname = new URL(c.req.url).pathname;
+  const matched = findMatchingRoute(pathname, routeDefs);
 
   if (!matched) {
     return c.text("Not found", 404);
@@ -42,10 +60,7 @@ app.all("*", async (c) => {
   }
 
   const assetPrefixes = buildAssetPrefixes(c.env.ASSET_PREFIXES);
-
-  const preloadMounts = routeDefs
-    .filter((r) => r.preload && !r.path.includes(":") && r.path !== matched!.mount)
-    .map((r) => r.path);
+  const preloadMounts = getPreloadMounts(routeDefs, matched.mount);
 
   return handleMountedApp(c.req.raw, binding, matched.mount, assetPrefixes, {
     smoothTransitions: !Array.isArray(config) ? config.smoothTransitions : undefined,
@@ -61,7 +76,7 @@ function buildAssetPrefixes(envVar?: string): string[] {
   }
 
   try {
-    const custom = JSON.parse(envVar);
+    const custom = JSON.parse(envVar) as unknown;
     if (Array.isArray(custom)) {
       const normalized = custom
         .filter((p): p is string => typeof p === "string" && p.trim() !== "")
