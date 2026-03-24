@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check:catalog": "vp run scripts/check-catalog-usage.ts",
+    "check:catalog": "vp exec bun scripts/check-catalog-usage.ts",
     "check:global": "vp run --filter @jfa.dev/landing --filter @jfa.dev/redirects --filter @jfa.dev/og-img-gen check",
-    "check:outdated": "vp run scripts/check-outdated-catalog.ts",
+    "check:outdated": "vp exec bun scripts/check-outdated-catalog.ts",
     "format": "vp fmt",
     "format:global": "vp run --filter @jfa.dev/landing --filter @jfa.dev/redirects --filter @jfa.dev/og-img-gen format"
   },
