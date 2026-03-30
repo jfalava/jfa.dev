@@ -41,8 +41,8 @@
     "@typescript/native-preview": "catalog:build",
     "@vitejs/plugin-react": "catalog:build",
     "typescript": "catalog:build",
-    "vite": "catalog:",
-    "vite-plus": "catalog:",
+    "vite": "catalog:build",
+    "vite-plus": "catalog:build",
     "wrangler": "catalog:build"
   }
 }
