@@ -6,7 +6,7 @@ allowBuilds:
   msw: true
   sharp: true
   workerd: true
-
+minimumReleaseAge: 10080
 catalogs:
   backend:
     "hono": "4.12.9"
