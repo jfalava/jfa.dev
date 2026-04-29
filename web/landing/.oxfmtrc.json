@@ -24,11 +24,5 @@
     "preserveDuplicates": false,
     "preserveWhitespace": false
   },
-  "ignorePatterns": [
-    "cloudflare-env.d.ts",
-    "worker-configuration.d.ts",
-    "src/routeTree.gen.ts",
-    ".wrangler/**",
-    "node_modules/**"
-  ]
+  "ignorePatterns": ["*.d.ts", "src/routeTree.gen.ts", ".wrangler/**", "node_modules/**"]
 }
