@@ -18,10 +18,5 @@
     "sortSideEffects": false,
     "groups": ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"]
   },
-  "ignorePatterns": [
-    "cloudflare-env.d.ts",
-    "worker-configuration.d.ts",
-    ".wrangler/**",
-    "node_modules/**"
-  ]
+  "ignorePatterns": ["*.d.ts", ".wrangler/**", "node_modules/**"]
 }
