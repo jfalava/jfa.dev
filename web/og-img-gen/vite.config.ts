@@ -24,7 +24,7 @@ const config = defineConfig({
       browser: true,
       es2022: true,
     },
-    ignorePatterns: ["worker-configuration.d.ts", "**/*.d.ts", "src/routeTree.gen.ts"],
+    ignorePatterns: ["*.d.ts", "**/*.d.ts", "src/routeTree.gen.ts"],
     options: {
       typeAware: true,
       typeCheck: true,
