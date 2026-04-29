@@ -241,96 +241,95 @@ const Grainient: React.FC<GrainientProps> = ({
   const fallbackBackground = `linear-gradient(135deg, ${color1} 0%, ${color2} 55%, ${color3} 100%)`;
 
   useEffect(() => {
-    if (!containerRef.current) {
-      return;
-    }
-    if (shouldUseStaticFallback()) {
-      return;
-    }
+    let cleanup: (() => void) | undefined;
 
-    const renderer = new Renderer({
-      webgl: 2,
-      alpha: true,
-      antialias: false,
-      dpr: Math.min(window.devicePixelRatio || 1, 2),
-    });
+    if (containerRef.current && !shouldUseStaticFallback()) {
+      const renderer = new Renderer({
+        webgl: 2,
+        alpha: true,
+        antialias: false,
+        dpr: Math.min(window.devicePixelRatio || 1, 2),
+      });
 
-    const gl = renderer.gl;
-    const canvas = gl.canvas as HTMLCanvasElement;
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    canvas.style.display = "block";
+      const gl = renderer.gl;
+      const canvas = gl.canvas as HTMLCanvasElement;
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.style.display = "block";
 
-    const container = containerRef.current;
-    container.appendChild(canvas);
+      const container = containerRef.current;
+      container.appendChild(canvas);
 
-    const geometry = new Triangle(gl);
-    const uniforms = {
-      iTime: { value: 0 },
-      iResolution: { value: new Float32Array([1, 1]) },
-      uTimeSpeed: { value: timeSpeed },
-      uColorBalance: { value: colorBalance },
-      uWarpStrength: { value: warpStrength },
-      uWarpFrequency: { value: warpFrequency },
-      uWarpSpeed: { value: warpSpeed },
-      uWarpAmplitude: { value: warpAmplitude },
-      uBlendAngle: { value: blendAngle },
-      uBlendSoftness: { value: blendSoftness },
-      uRotationAmount: { value: rotationAmount },
-      uNoiseScale: { value: noiseScale },
-      uGrainAmount: { value: grainAmount },
-      uGrainScale: { value: grainScale },
-      uGrainAnimated: { value: grainAnimated ? 1.0 : 0.0 },
-      uContrast: { value: contrast },
-      uGamma: { value: gamma },
-      uSaturation: { value: saturation },
-      uCenterOffset: { value: new Float32Array([centerX, centerY]) },
-      uZoom: { value: zoom },
-      uColor1: { value: new Float32Array(colorToRgb(color1)) },
-      uColor2: { value: new Float32Array(colorToRgb(color2)) },
-      uColor3: { value: new Float32Array(colorToRgb(color3)) },
-    };
+      const geometry = new Triangle(gl);
+      const uniforms = {
+        iTime: { value: 0 },
+        iResolution: { value: new Float32Array([1, 1]) },
+        uTimeSpeed: { value: timeSpeed },
+        uColorBalance: { value: colorBalance },
+        uWarpStrength: { value: warpStrength },
+        uWarpFrequency: { value: warpFrequency },
+        uWarpSpeed: { value: warpSpeed },
+        uWarpAmplitude: { value: warpAmplitude },
+        uBlendAngle: { value: blendAngle },
+        uBlendSoftness: { value: blendSoftness },
+        uRotationAmount: { value: rotationAmount },
+        uNoiseScale: { value: noiseScale },
+        uGrainAmount: { value: grainAmount },
+        uGrainScale: { value: grainScale },
+        uGrainAnimated: { value: grainAnimated ? 1.0 : 0.0 },
+        uContrast: { value: contrast },
+        uGamma: { value: gamma },
+        uSaturation: { value: saturation },
+        uCenterOffset: { value: new Float32Array([centerX, centerY]) },
+        uZoom: { value: zoom },
+        uColor1: { value: new Float32Array(colorToRgb(color1)) },
+        uColor2: { value: new Float32Array(colorToRgb(color2)) },
+        uColor3: { value: new Float32Array(colorToRgb(color3)) },
+      };
 
-    const program = new Program(gl, {
-      vertex,
-      fragment,
-      uniforms,
-    });
+      const program = new Program(gl, {
+        vertex,
+        fragment,
+        uniforms,
+      });
 
-    const mesh = new Mesh(gl, { geometry, program });
+      const mesh = new Mesh(gl, { geometry, program });
 
-    const setSize = () => {
-      const rect = container.getBoundingClientRect();
-      const width = Math.max(1, Math.floor(rect.width));
-      const height = Math.max(1, Math.floor(rect.height));
-      renderer.setSize(width, height);
-      const res = uniforms.iResolution.value;
-      res[0] = gl.drawingBufferWidth;
-      res[1] = gl.drawingBufferHeight;
-    };
+      const setSize = () => {
+        const rect = container.getBoundingClientRect();
+        const width = Math.max(1, Math.floor(rect.width));
+        const height = Math.max(1, Math.floor(rect.height));
+        renderer.setSize(width, height);
+        const res = uniforms.iResolution.value;
+        res[0] = gl.drawingBufferWidth;
+        res[1] = gl.drawingBufferHeight;
+      };
 
-    const ro = new ResizeObserver(setSize);
-    ro.observe(container);
-    setSize();
+      const ro = new ResizeObserver(setSize);
+      ro.observe(container);
+      setSize();
 
-    let raf = 0;
-    const t0 = performance.now();
-    const loop = (t: number) => {
-      uniforms.iTime.value = (t - t0) * 0.001;
-      renderer.render({ scene: mesh });
+      let raf = 0;
+      const t0 = performance.now();
+      const loop = (t: number) => {
+        uniforms.iTime.value = (t - t0) * 0.001;
+        renderer.render({ scene: mesh });
+        raf = requestAnimationFrame(loop);
+      };
       raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
 
-    return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      try {
-        container.removeChild(canvas);
-      } catch {
-        // Ignore
-      }
-    };
+      cleanup = () => {
+        cancelAnimationFrame(raf);
+        ro.disconnect();
+        try {
+          container.removeChild(canvas);
+        } catch {
+          // Ignore
+        }
+      };
+    }
+
+    return cleanup;
   }, [
     timeSpeed,
     colorBalance,

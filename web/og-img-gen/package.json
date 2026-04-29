@@ -7,7 +7,7 @@
     "build": "vp build",
     "cf-typegen": "wrangler types",
     "check": "vp check",
-    "deploy": "vp check && vp build && wrangler deploy",
+    "deploy": "vp run typecheck && vp lint && vp build && wrangler deploy",
     "dev": "vp dev --port 3000 --host",
     "format": "vp fmt",
     "lint": "vp lint",

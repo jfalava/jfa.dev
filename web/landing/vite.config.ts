@@ -92,7 +92,6 @@ const config = defineConfig({
       "max-statements": ["error", 40],
       "react/jsx-key": "error",
       "react/jsx-no-undef": "error",
-      "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
       "react/no-direct-mutation-state": "error",
       "react/no-find-dom-node": "error",
