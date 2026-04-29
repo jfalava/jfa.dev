@@ -151,6 +151,7 @@ export function Canvas() {
           <div
             ref={canvasRef}
             data-og-canvas
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- canvas is focusable to support keyboard deselection
             tabIndex={0}
             role="application"
             onClick={() => selectElement(null)}

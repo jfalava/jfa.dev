@@ -33,7 +33,7 @@ const getAttr = (distance: number, maxDist: number, minVal: number, maxVal: numb
 
 const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay: number) => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  return (...args: TArgs) => {
+  const debounced = (...args: TArgs) => {
     if (timeoutId !== undefined) {
       clearTimeout(timeoutId);
     }
@@ -41,6 +41,13 @@ const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay
       func(...args);
     }, delay);
   };
+  debounced.cancel = () => {
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+      timeoutId = undefined;
+    }
+  };
+  return debounced;
 };
 
 const TextPressure: React.FC<TextPressureProps> = ({
@@ -88,37 +95,38 @@ const TextPressure: React.FC<TextPressureProps> = ({
   }, []);
 
   useEffect(() => {
-    if (shouldRenderWebkitFallback) {
-      return;
+    let cleanup: (() => void) | undefined;
+
+    if (!shouldRenderWebkitFallback) {
+      const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
+      const handleMouseMove = (e: MouseEvent) => {
+        cursorRef.current.x = e.clientX;
+        cursorRef.current.y = e.clientY;
+      };
+      const handleTouchMove = (e: TouchEvent) => {
+        const t = e.touches[0];
+        cursorRef.current.x = t.clientX;
+        cursorRef.current.y = t.clientY;
+      };
+
+      ownerWindow.addEventListener("mousemove", handleMouseMove);
+      ownerWindow.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+      if (containerRef.current) {
+        const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+        mouseRef.current.x = left + width / 2;
+        mouseRef.current.y = top + height / 2;
+        cursorRef.current.x = mouseRef.current.x;
+        cursorRef.current.y = mouseRef.current.y;
+      }
+
+      cleanup = () => {
+        ownerWindow.removeEventListener("mousemove", handleMouseMove);
+        ownerWindow.removeEventListener("touchmove", handleTouchMove);
+      };
     }
 
-    const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      cursorRef.current.x = e.clientX;
-      cursorRef.current.y = e.clientY;
-    };
-    const handleTouchMove = (e: TouchEvent) => {
-      const t = e.touches[0];
-      cursorRef.current.x = t.clientX;
-      cursorRef.current.y = t.clientY;
-    };
-
-    ownerWindow.addEventListener("mousemove", handleMouseMove);
-    ownerWindow.addEventListener("touchmove", handleTouchMove, { passive: true });
-
-    if (containerRef.current) {
-      const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-      mouseRef.current.x = left + width / 2;
-      mouseRef.current.y = top + height / 2;
-      cursorRef.current.x = mouseRef.current.x;
-      cursorRef.current.y = mouseRef.current.y;
-    }
-
-    return () => {
-      ownerWindow.removeEventListener("mousemove", handleMouseMove);
-      ownerWindow.removeEventListener("touchmove", handleTouchMove);
-    };
+    return cleanup;
   }, [shouldRenderWebkitFallback]);
 
   const setSize = useCallback(() => {
@@ -154,65 +162,72 @@ const TextPressure: React.FC<TextPressureProps> = ({
   }, [chars.length, minFontSize, scale, shouldRenderWebkitFallback]);
 
   useEffect(() => {
-    if (shouldRenderWebkitFallback) {
-      return;
+    let cleanup: (() => void) | undefined;
+
+    if (!shouldRenderWebkitFallback) {
+      const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
+      const debouncedSetSize = debounce(setSize, 100);
+      debouncedSetSize();
+      ownerWindow.addEventListener("resize", debouncedSetSize);
+      cleanup = () => {
+        ownerWindow.removeEventListener("resize", debouncedSetSize);
+        debouncedSetSize.cancel();
+      };
     }
 
-    const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
-    const debouncedSetSize = debounce(setSize, 100);
-    debouncedSetSize();
-    ownerWindow.addEventListener("resize", debouncedSetSize);
-    return () => ownerWindow.removeEventListener("resize", debouncedSetSize);
+    return cleanup;
   }, [setSize, shouldRenderWebkitFallback]);
 
   useEffect(() => {
-    if (shouldRenderWebkitFallback) {
-      return;
+    let cleanup: (() => void) | undefined;
+
+    if (!shouldRenderWebkitFallback) {
+      let rafId: number;
+      const animate = () => {
+        mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
+        mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
+
+        if (titleRef.current) {
+          const titleRect = titleRef.current.getBoundingClientRect();
+          const maxDist = titleRect.width / 2;
+
+          spansRef.current.forEach((span) => {
+            if (!span) {
+              return;
+            }
+
+            const rect = span.getBoundingClientRect();
+            const charCenter = {
+              x: rect.x + rect.width / 2,
+              y: rect.y + rect.height / 2,
+            };
+
+            const d = dist(mouseRef.current, charCenter);
+
+            const wdth = widthEffect ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
+            const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
+            const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
+            const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : "1";
+
+            const newFontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
+
+            if (span.style.fontVariationSettings !== newFontVariationSettings) {
+              span.style.fontVariationSettings = newFontVariationSettings;
+            }
+            if (alpha && span.style.opacity !== alphaVal) {
+              span.style.opacity = alphaVal;
+            }
+          });
+        }
+
+        rafId = requestAnimationFrame(animate);
+      };
+
+      animate();
+      cleanup = () => cancelAnimationFrame(rafId);
     }
 
-    let rafId: number;
-    const animate = () => {
-      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
-      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
-
-      if (titleRef.current) {
-        const titleRect = titleRef.current.getBoundingClientRect();
-        const maxDist = titleRect.width / 2;
-
-        spansRef.current.forEach((span) => {
-          if (!span) {
-            return;
-          }
-
-          const rect = span.getBoundingClientRect();
-          const charCenter = {
-            x: rect.x + rect.width / 2,
-            y: rect.y + rect.height / 2,
-          };
-
-          const d = dist(mouseRef.current, charCenter);
-
-          const wdth = widthEffect ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
-          const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
-          const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
-          const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : "1";
-
-          const newFontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
-
-          if (span.style.fontVariationSettings !== newFontVariationSettings) {
-            span.style.fontVariationSettings = newFontVariationSettings;
-          }
-          if (alpha && span.style.opacity !== alphaVal) {
-            span.style.opacity = alphaVal;
-          }
-        });
-      }
-
-      rafId = requestAnimationFrame(animate);
-    };
-
-    animate();
-    return () => cancelAnimationFrame(rafId);
+    return cleanup;
   }, [widthEffect, weight, italic, alpha, shouldRenderWebkitFallback]);
 
   const styleElement = useMemo(() => {

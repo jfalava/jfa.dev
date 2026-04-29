@@ -194,6 +194,8 @@ function createDefaultElement(type: ElementType): EditorElement {
         size: { width: 400, height: 300 },
         content: createDefaultContainerContent(),
       };
+    default:
+      throw new Error(`Unknown element type: ${type as string}`);
   }
 }
 

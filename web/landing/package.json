@@ -7,7 +7,7 @@
     "build": "vp build",
     "cf-typegen": "wrangler types",
     "check": "vp check",
-    "deploy": "vp check && vp build && wrangler deploy",
+    "deploy": "vp run typecheck && vp lint && vp build && wrangler deploy",
     "dev": "vp dev --port 3000 --host",
     "format": "vp fmt",
     "lint": "vp lint",
@@ -38,7 +38,7 @@
   "devDependencies": {
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
-    "@typescript/native-preview": "catalog:build",
+    "@typescript/native-preview": "^7.0.0-dev.20260421.2",
     "@vitejs/plugin-react": "catalog:build",
     "typescript": "catalog:build",
     "vite": "catalog:build",

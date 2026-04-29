@@ -24,7 +24,7 @@ const config = defineConfig({
       browser: true,
       es2022: true,
     },
-    ignorePatterns: ["worker-configuration.d.ts", "**/*.d.ts", "src/routeTree.gen.ts"],
+    ignorePatterns: ["*.d.ts", "**/*.d.ts", "src/routeTree.gen.ts"],
     options: {
       typeAware: true,
       typeCheck: true,
@@ -87,7 +87,6 @@ const config = defineConfig({
       "max-statements": ["error", 40],
       "react/jsx-key": "error",
       "react/jsx-no-undef": "error",
-      "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
       "react/no-direct-mutation-state": "error",
       "react/no-find-dom-node": "error",
@@ -102,14 +101,11 @@ const config = defineConfig({
     },
     overrides: [
       {
-        files: ["src/components/grainient.tsx"],
-        rules: {
-          complexity: "off",
-          "max-statements": "off",
-        },
-      },
-      {
-        files: ["src/components/text-pressure.tsx"],
+        files: [
+          "**/PropertiesPanel.tsx",
+          "**/Toolbar.tsx",
+          "**/FontManager.tsx",
+        ],
         rules: {
           complexity: "off",
           "max-statements": "off",

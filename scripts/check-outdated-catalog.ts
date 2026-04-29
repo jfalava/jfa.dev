@@ -1,5 +1,4 @@
-#!/usr/bin/env node
-/* eslint-disable */
+#!/usr/bin/env bun
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { join } from "node:path";
@@ -9,12 +8,11 @@ interface PackageInfo {
   currentVersion: string;
   latestVersion: string;
   outdated: boolean;
-  catalog: string;
 }
 
 async function getLatestVersion(packageName: string): Promise<string> {
   try {
-    const output = execSync(`pnpm view ${packageName} version`, {
+    const output = execSync(`bun pm view ${packageName} version`, {
       encoding: "utf8",
       stdio: "pipe",
     }).trim();
@@ -26,7 +24,7 @@ async function getLatestVersion(packageName: string): Promise<string> {
 }
 
 function parseVersion(version: string): string {
-  return version.replace(/^["']?\^?~?/, "").replace(/["']$/, "");
+  return version.replace(/^[\^~]/, "");
 }
 
 function isOutdated(current: string, latest: string): boolean {
@@ -49,8 +47,8 @@ function isOutdated(current: string, latest: string): boolean {
   return false;
 }
 
-function sortObjectKeys(obj: Record<string, any>): Record<string, any> {
-  const sorted: Record<string, any> = {};
+function sortObjectKeys(obj: Record<string, unknown>): Record<string, unknown> {
+  const sorted: Record<string, unknown> = {};
   const keys = Object.keys(obj).sort();
   for (const key of keys) {
     sorted[key] = obj[key];
@@ -72,6 +70,12 @@ function prettifyPackageJson(filePath: string): void {
 
     if (packageJson.scripts) {
       packageJson.scripts = sortObjectKeys(packageJson.scripts);
+    }
+
+    if (packageJson.workspaces?.catalog) {
+      packageJson.workspaces.catalog = sortObjectKeys(
+        packageJson.workspaces.catalog,
+      );
     }
 
     writeFileSync(filePath, JSON.stringify(packageJson, null, 2) + "\n");
@@ -107,123 +111,37 @@ function findAllPackageJsonFiles(dir: string): string[] {
   return files;
 }
 
-/**
- * Parse pnpm-workspace.yaml to extract catalogs.
- * Handles both top-level "catalog:" and "catalogs:" sections.
- */
-function parsePnpmWorkspaceYaml(content: string): { catalog?: Record<string, string>; catalogs?: Record<string, Record<string, string>> } {
-  const lines = content.split('\n');
-  const result: { catalog?: Record<string, string>; catalogs?: Record<string, string, Record<string, string>> } = {};
-  let currentSection: string | null = null;
-  let currentSubSection: string | null = null;
-  let indentLevel = 0;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    // Skip empty lines and comments
-    if (!trimmed || trimmed.startsWith('#')) continue;
-
-    // Calculate indent level
-    const leadingSpaces = line.length - line.trimStart().length;
-
-    // Check for section headers (no indent or low indent)
-    if (leadingSpaces === 0) {
-      if (trimmed === 'catalog:') {
-        result.catalog = {};
-        currentSection = 'catalog';
-        currentSubSection = null;
-        continue;
-      } else if (trimmed === 'catalogs:') {
-        result.catalogs = {};
-        currentSection = 'catalogs';
-        currentSubSection = null;
-        continue;
-      } else if (trimmed.endsWith(':')) {
-        // Some other section, reset
-        currentSection = null;
-        currentSubSection = null;
-        continue;
-      }
-    }
-
-    // Parse entries within catalog section
-    if (currentSection === 'catalog' && leadingSpaces >= 2) {
-      const match = trimmed.match(/^([^:]+):\s*["']?([^"']+)["']?$/);
-      if (match) {
-        result.catalog![match[1]] = match[2];
-      }
-    }
-
-    // Parse entries within catalogs section
-    if (currentSection === 'catalogs') {
-      if (leadingSpaces === 2 && trimmed.endsWith(':')) {
-        // Named catalog (e.g., "build:", "react-ui:")
-        currentSubSection = trimmed.slice(0, -1);
-        result.catalogs![currentSubSection] = {};
-      } else if (currentSubSection && leadingSpaces >= 4) {
-        // Package entry within named catalog
-        const match = trimmed.match(/^([^:]+):\s*["']?([^"']+)["']?$/);
-        if (match) {
-          result.catalogs![currentSubSection][match[1]] = match[2];
-        }
-      }
-    }
-  }
-
-  return result;
-}
-
 async function main() {
-  const workspaceYamlPath = "./pnpm-workspace.yaml";
-  const workspaceContent = readFileSync(workspaceYamlPath, "utf8");
-  const { catalog, catalogs } = parsePnpmWorkspaceYaml(workspaceContent);
+  const packageJsonPath = "./package.json";
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
+  const catalogs = packageJson.workspaces?.catalogs || {};
+  const allCatalogPackages: Record<string, string> = {};
 
-  const allCatalogPackages: PackageInfo[] = [];
-
-  // Collect packages from default catalog
-  if (catalog) {
-    for (const [name, version] of Object.entries(catalog)) {
-      allCatalogPackages.push({
-        name,
-        currentVersion: version,
-        latestVersion: "",
-        outdated: false,
-        catalog: "default",
-      });
+  for (const catalog of Object.values(catalogs)) {
+    const catalogObj = catalog as Record<string, string>;
+    for (const [name, version] of Object.entries(catalogObj)) {
+      allCatalogPackages[name] = version;
     }
   }
 
-  // Collect packages from named catalogs
-  if (catalogs) {
-    for (const [catalogName, packages] of Object.entries(catalogs)) {
-      for (const [name, version] of Object.entries(packages)) {
-        allCatalogPackages.push({
-          name,
-          currentVersion: version,
-          latestVersion: "",
-          outdated: false,
-          catalog: catalogName,
-        });
-      }
-    }
+  console.log("🔍 Checking catalog for outdated packages...\n");
+
+  const packages: PackageInfo[] = [];
+
+  for (const [name, version] of Object.entries(allCatalogPackages)) {
+    const currentVersion = version as string;
+    const latestVersion = await getLatestVersion(name);
+    const outdated = isOutdated(currentVersion, latestVersion);
+
+    packages.push({
+      name,
+      currentVersion,
+      latestVersion,
+      outdated,
+    });
   }
 
-  if (allCatalogPackages.length === 0) {
-    console.log("❌ No catalogs found in pnpm-workspace.yaml");
-    process.exit(1);
-  }
-
-  console.log(`🔍 Checking ${allCatalogPackages.length} catalog packages for updates...\n`);
-
-  // Check each package for latest version
-  for (const pkg of allCatalogPackages) {
-    pkg.latestVersion = await getLatestVersion(pkg.name);
-    pkg.outdated = isOutdated(pkg.currentVersion, pkg.latestVersion);
-  }
-
-  const outdatedPackages = allCatalogPackages.filter((pkg) => pkg.outdated);
+  const outdatedPackages = packages.filter((pkg) => pkg.outdated);
 
   if (outdatedPackages.length === 0) {
     console.log("✅ All catalog packages are up to date!");
@@ -235,7 +153,7 @@ async function main() {
   outdatedPackages.forEach((pkg) => {
     const current = parseVersion(pkg.currentVersion);
     const latest = parseVersion(pkg.latestVersion);
-    console.log(`${pkg.name}: ${current} → ${latest} (catalog: ${pkg.catalog})`);
+    console.log(`${pkg.name}: ${current} → ${latest}`);
   });
 
   console.log("\n🎨 Prettifying all package.json files...");
