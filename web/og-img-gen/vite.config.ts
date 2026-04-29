@@ -99,22 +99,7 @@ const config = defineConfig({
       "typescript/no-unsafe-type-assertion": "error",
       "typescript/no-unnecessary-type-assertion": "error",
     },
-    overrides: [
-      {
-        files: ["src/components/grainient.tsx"],
-        rules: {
-          complexity: "off",
-          "max-statements": "off",
-        },
-      },
-      {
-        files: ["src/components/text-pressure.tsx"],
-        rules: {
-          complexity: "off",
-          "max-statements": "off",
-        },
-      },
-    ],
+    overrides: [],
   },
 });
 

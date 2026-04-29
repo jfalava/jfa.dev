@@ -47,8 +47,8 @@ function isOutdated(current: string, latest: string): boolean {
   return false;
 }
 
-function sortObjectKeys(obj: Record<string, any>): Record<string, any> {
-  const sorted: Record<string, any> = {};
+function sortObjectKeys(obj: Record<string, unknown>): Record<string, unknown> {
+  const sorted: Record<string, unknown> = {};
   const keys = Object.keys(obj).sort();
   for (const key of keys) {
     sorted[key] = obj[key];

@@ -326,6 +326,10 @@ const Grainient: React.FC<GrainientProps> = ({
         } catch {
           // Ignore
         }
+        const loseContext = renderer.gl.getExtension("WEBGL_lose_context");
+        if (loseContext) {
+          loseContext.loseContext();
+        }
       };
     }
 
