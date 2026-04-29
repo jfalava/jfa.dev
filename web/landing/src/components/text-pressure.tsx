@@ -33,7 +33,7 @@ const getAttr = (distance: number, maxDist: number, minVal: number, maxVal: numb
 
 const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay: number) => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  return (...args: TArgs) => {
+  const debounced = (...args: TArgs) => {
     if (timeoutId !== undefined) {
       clearTimeout(timeoutId);
     }
@@ -41,6 +41,13 @@ const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay
       func(...args);
     }, delay);
   };
+  debounced.cancel = () => {
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+      timeoutId = undefined;
+    }
+  };
+  return debounced;
 };
 
 const TextPressure: React.FC<TextPressureProps> = ({
@@ -162,7 +169,10 @@ const TextPressure: React.FC<TextPressureProps> = ({
       const debouncedSetSize = debounce(setSize, 100);
       debouncedSetSize();
       ownerWindow.addEventListener("resize", debouncedSetSize);
-      cleanup = () => ownerWindow.removeEventListener("resize", debouncedSetSize);
+      cleanup = () => {
+        ownerWindow.removeEventListener("resize", debouncedSetSize);
+        debouncedSetSize.cancel();
+      };
     }
 
     return cleanup;

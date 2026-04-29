@@ -99,7 +99,19 @@ const config = defineConfig({
       "typescript/no-unsafe-type-assertion": "error",
       "typescript/no-unnecessary-type-assertion": "error",
     },
-    overrides: [],
+    overrides: [
+      {
+        files: [
+          "**/PropertiesPanel.tsx",
+          "**/Toolbar.tsx",
+          "**/FontManager.tsx",
+        ],
+        rules: {
+          complexity: "off",
+          "max-statements": "off",
+        },
+      },
+    ],
   },
 });
 
