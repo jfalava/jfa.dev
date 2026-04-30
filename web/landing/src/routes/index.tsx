@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({ component: App });
 
 function App() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#0e1116]">
+    <main className="relative h-[100dvh] min-h-[100svh] overflow-hidden overscroll-none bg-[#0e1116]">
       <Grainient
         className="pointer-events-none absolute inset-0 size-full"
         color1="#f2f6ff"
@@ -16,7 +16,7 @@ function App() {
         grainAmount={0.1}
         saturation={1}
       />
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
+      <div className="relative z-10 flex h-full items-center justify-center px-6 py-12">
         <div className="h-36 w-full max-w-5xl sm:h-44">
           <TextPressure
             text="jorge fernando álava"
