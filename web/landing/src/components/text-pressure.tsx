@@ -16,8 +16,6 @@ interface TextPressureProps {
   strokeWidth?: number;
   className?: string;
   minFontSize?: number;
-  useWebkitFallback?: boolean;
-  webkitFallbackClassName?: string;
 }
 
 const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => {
@@ -31,34 +29,25 @@ const getAttr = (distance: number, maxDist: number, minVal: number, maxVal: numb
   return Math.max(minVal, val + minVal);
 };
 
-const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay: number) => {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  const debounced = (...args: TArgs) => {
-    if (timeoutId !== undefined) {
-      clearTimeout(timeoutId);
-    }
+const debounce = (func: (...args: any[]) => void, delay: number) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: any[]) => {
+    clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
-      func(...args);
+      func.apply(this, args);
     }, delay);
   };
-  debounced.cancel = () => {
-    if (timeoutId !== undefined) {
-      clearTimeout(timeoutId);
-      timeoutId = undefined;
-    }
-  };
-  return debounced;
 };
 
 const TextPressure: React.FC<TextPressureProps> = ({
   text = "Compressa",
-  fontFamily,
-  fontUrl,
-  width: widthEffect = true,
+  fontFamily = "Compressa VF",
+  fontUrl = "https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2",
+  width = true,
   weight = true,
   italic = true,
   alpha = false,
-  flex: flexEffect = true,
+  flex = true,
   stroke = false,
   scale = false,
   textColor = "#FFFFFF",
@@ -66,8 +55,6 @@ const TextPressure: React.FC<TextPressureProps> = ({
   strokeWidth = 2,
   className = "",
   minFontSize = 24,
-  useWebkitFallback = true,
-  webkitFallbackClassName = "",
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
@@ -79,61 +66,38 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const [fontSize, setFontSize] = useState(minFontSize);
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1);
-  const [isWebKitBrowser, setIsWebKitBrowser] = useState(false);
 
   const chars = text.split("");
-  const shouldRenderWebkitFallback = useWebkitFallback && isWebKitBrowser;
 
   useEffect(() => {
-    if (typeof navigator === "undefined") {
-      return;
+    const handleMouseMove = (e: MouseEvent) => {
+      cursorRef.current.x = e.clientX;
+      cursorRef.current.y = e.clientY;
+    };
+    const handleTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      cursorRef.current.x = t.clientX;
+      cursorRef.current.y = t.clientY;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    if (containerRef.current) {
+      const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+      mouseRef.current.x = left + width / 2;
+      mouseRef.current.y = top + height / 2;
+      cursorRef.current.x = mouseRef.current.x;
+      cursorRef.current.y = mouseRef.current.y;
     }
 
-    const isWebKitEngine = /AppleWebKit/i.test(navigator.userAgent);
-    const isChromium = /Chrome|Chromium|CriOS|Edg|OPR/i.test(navigator.userAgent);
-    setIsWebKitBrowser(isWebKitEngine && !isChromium);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, []);
 
-  useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    if (!shouldRenderWebkitFallback) {
-      const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
-      const handleMouseMove = (e: MouseEvent) => {
-        cursorRef.current.x = e.clientX;
-        cursorRef.current.y = e.clientY;
-      };
-      const handleTouchMove = (e: TouchEvent) => {
-        const t = e.touches[0];
-        cursorRef.current.x = t.clientX;
-        cursorRef.current.y = t.clientY;
-      };
-
-      ownerWindow.addEventListener("mousemove", handleMouseMove);
-      ownerWindow.addEventListener("touchmove", handleTouchMove, { passive: true });
-
-      if (containerRef.current) {
-        const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-        mouseRef.current.x = left + width / 2;
-        mouseRef.current.y = top + height / 2;
-        cursorRef.current.x = mouseRef.current.x;
-        cursorRef.current.y = mouseRef.current.y;
-      }
-
-      cleanup = () => {
-        ownerWindow.removeEventListener("mousemove", handleMouseMove);
-        ownerWindow.removeEventListener("touchmove", handleTouchMove);
-      };
-    }
-
-    return cleanup;
-  }, [shouldRenderWebkitFallback]);
-
   const setSize = useCallback(() => {
-    if (shouldRenderWebkitFallback) {
-      return;
-    }
-
     if (!containerRef.current || !titleRef.current) {
       return;
     }
@@ -159,88 +123,68 @@ const TextPressure: React.FC<TextPressureProps> = ({
         setLineHeight(yRatio);
       }
     });
-  }, [chars.length, minFontSize, scale, shouldRenderWebkitFallback]);
+  }, [chars.length, minFontSize, scale]);
 
   useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    if (!shouldRenderWebkitFallback) {
-      const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
-      const debouncedSetSize = debounce(setSize, 100);
-      debouncedSetSize();
-      ownerWindow.addEventListener("resize", debouncedSetSize);
-      cleanup = () => {
-        ownerWindow.removeEventListener("resize", debouncedSetSize);
-        debouncedSetSize.cancel();
-      };
-    }
-
-    return cleanup;
-  }, [setSize, shouldRenderWebkitFallback]);
+    const debouncedSetSize = debounce(setSize, 100);
+    debouncedSetSize();
+    window.addEventListener("resize", debouncedSetSize);
+    return () => window.removeEventListener("resize", debouncedSetSize);
+  }, [setSize]);
 
   useEffect(() => {
-    let cleanup: (() => void) | undefined;
+    let rafId: number;
+    const animate = () => {
+      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
+      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
 
-    if (!shouldRenderWebkitFallback) {
-      let rafId: number;
-      const animate = () => {
-        mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
-        mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
+      if (titleRef.current) {
+        const titleRect = titleRef.current.getBoundingClientRect();
+        const maxDist = titleRect.width / 2;
 
-        if (titleRef.current) {
-          const titleRect = titleRef.current.getBoundingClientRect();
-          const maxDist = titleRect.width / 2;
+        spansRef.current.forEach((span) => {
+          if (!span) {
+            return;
+          }
 
-          spansRef.current.forEach((span) => {
-            if (!span) {
-              return;
-            }
+          const rect = span.getBoundingClientRect();
+          const charCenter = {
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2,
+          };
 
-            const rect = span.getBoundingClientRect();
-            const charCenter = {
-              x: rect.x + rect.width / 2,
-              y: rect.y + rect.height / 2,
-            };
+          const d = dist(mouseRef.current, charCenter);
 
-            const d = dist(mouseRef.current, charCenter);
+          const wdth = width ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
+          const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
+          const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
+          const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : "1";
 
-            const wdth = widthEffect ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
-            const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
-            const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
-            const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : "1";
+          const newFontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
 
-            const newFontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
+          if (span.style.fontVariationSettings !== newFontVariationSettings) {
+            span.style.fontVariationSettings = newFontVariationSettings;
+          }
+          if (alpha && span.style.opacity !== alphaVal) {
+            span.style.opacity = alphaVal;
+          }
+        });
+      }
 
-            if (span.style.fontVariationSettings !== newFontVariationSettings) {
-              span.style.fontVariationSettings = newFontVariationSettings;
-            }
-            if (alpha && span.style.opacity !== alphaVal) {
-              span.style.opacity = alphaVal;
-            }
-          });
-        }
+      rafId = requestAnimationFrame(animate);
+    };
 
-        rafId = requestAnimationFrame(animate);
-      };
-
-      animate();
-      cleanup = () => cancelAnimationFrame(rafId);
-    }
-
-    return cleanup;
-  }, [widthEffect, weight, italic, alpha, shouldRenderWebkitFallback]);
+    animate();
+    return () => cancelAnimationFrame(rafId);
+  }, [width, weight, italic, alpha]);
 
   const styleElement = useMemo(() => {
     return (
       <style>{`
-        ${
-          fontUrl && fontFamily
-            ? `@font-face {
+        @font-face {
           font-family: '${fontFamily}';
           src: url('${fontUrl}');
           font-style: normal;
-        }`
-            : ""
         }
         .stroke span {
           position: relative;
@@ -258,31 +202,18 @@ const TextPressure: React.FC<TextPressureProps> = ({
         }
       `}</style>
     );
-  }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth]);
+  }, [fontFamily, fontUrl, stroke, textColor, strokeColor, strokeWidth]);
 
   return (
     <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-transparent">
       {styleElement}
-      {shouldRenderWebkitFallback ? (
-        <h1
-          className={`text-center ${className} ${webkitFallbackClassName}`}
-          style={{
-            fontFamily: fontFamily || undefined,
-            margin: 0,
-            color: stroke ? undefined : textColor,
-          }}
-        >
-          {text}
-        </h1>
-      ) : null}
       <h1
         ref={titleRef}
         className={`text-pressure-title ${className} ${
-          flexEffect ? "flex justify-between" : ""
-        } ${stroke ? "stroke" : ""} text-center`}
+          flex ? "flex justify-between" : ""
+        } ${stroke ? "stroke" : ""} text-center uppercase`}
         style={{
-          display: shouldRenderWebkitFallback ? "none" : undefined,
-          fontFamily: fontFamily || undefined,
+          fontFamily,
           fontSize: fontSize,
           lineHeight,
           transform: `scale(1, ${scaleY})`,
@@ -301,7 +232,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
             data-char={char}
             className="inline-block"
           >
-            {char === " " ? "\u00A0" : char}
+            {char}
           </span>
         ))}
       </h1>
