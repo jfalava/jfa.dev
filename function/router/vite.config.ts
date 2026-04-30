@@ -1,6 +1,27 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  fmt: {
+    printWidth: 100,
+    tabWidth: 2,
+    useTabs: false,
+    endOfLine: "lf",
+    semi: true,
+    singleQuote: false,
+    trailingComma: "all",
+    insertFinalNewline: true,
+    sortPackageJson: {
+      sortScripts: true,
+    },
+    sortImports: {
+      order: "asc",
+      newlinesBetween: true,
+      internalPattern: ["./"],
+      sortSideEffects: false,
+      groups: ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"],
+    },
+    ignorePatterns: ["*.d.ts", ".wrangler/**", "node_modules/**"],
+  },
   lint: {
     plugins: ["eslint", "typescript", "unicorn", "oxc", "import", "promise"],
     categories: {
