@@ -107,29 +107,34 @@ const colorToRgb = (color: string): [number, number, number] => {
 };
 
 const shouldUseStaticFallback = (): boolean => {
-  if (typeof window === "undefined" || typeof navigator === "undefined") {
+  if (typeof window === "undefined") {
     return true;
   }
 
-  const ua = navigator.userAgent;
-  const isIOS =
-    /iPad|iPhone|iPod/.test(ua) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const hasWebgl2 = typeof WebGL2RenderingContext !== "undefined";
-
-  return isIOS || prefersReducedMotion || !hasWebgl2;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 };
 
-const vertex = `#version 300 es
+const isWebgl2Context = (
+  gl: WebGLRenderingContext | WebGL2RenderingContext,
+): gl is WebGL2RenderingContext => {
+  return typeof WebGL2RenderingContext !== "undefined" && gl instanceof WebGL2RenderingContext;
+};
+
+const vertexWebgl2 = `#version 300 es
 in vec2 position;
 void main() {
   gl_Position = vec4(position, 0.0, 1.0);
 }
 `;
 
-const fragment = `#version 300 es
-precision highp float;
+const vertexWebgl1 = `
+attribute vec2 position;
+void main() {
+  gl_Position = vec4(position, 0.0, 1.0);
+}
+`;
+
+const fragmentHead = `precision highp float;
 uniform vec2 iResolution;
 uniform float iTime;
 uniform float uTimeSpeed;
@@ -153,8 +158,9 @@ uniform float uZoom;
 uniform vec3 uColor1;
 uniform vec3 uColor2;
 uniform vec3 uColor3;
-out vec4 fragColor;
-#define S(a,b,t) smoothstep(a,b,t)
+`;
+
+const fragmentBody = `#define S(a,b,t) smoothstep(a,b,t)
 mat2 Rot(float a){float s=sin(a),c=cos(a);return mat2(c,-s,s,c);}
 vec2 hash(vec2 p){p=vec2(dot(p,vec2(2127.1,81.17)),dot(p,vec2(1269.5,283.37)));return fract(sin(p)*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.0-2.0*f);float n=mix(mix(dot(-1.0+2.0*hash(i+vec2(0.0,0.0)),f-vec2(0.0,0.0)),dot(-1.0+2.0*hash(i+vec2(1.0,0.0)),f-vec2(1.0,0.0)),u.x),mix(dot(-1.0+2.0*hash(i+vec2(0.0,1.0)),f-vec2(0.0,1.0)),dot(-1.0+2.0*hash(i+vec2(1.0,1.0)),f-vec2(1.0,1.0)),u.x),u.y);return 0.5+0.5*n;}
@@ -205,10 +211,48 @@ void mainImage(out vec4 o, vec2 C){
 
   o=vec4(col,1.0);
 }
+`;
+
+const fragmentWebgl2 = `#version 300 es
+precision highp float;
+uniform vec2 iResolution;
+uniform float iTime;
+uniform float uTimeSpeed;
+uniform float uColorBalance;
+uniform float uWarpStrength;
+uniform float uWarpFrequency;
+uniform float uWarpSpeed;
+uniform float uWarpAmplitude;
+uniform float uBlendAngle;
+uniform float uBlendSoftness;
+uniform float uRotationAmount;
+uniform float uNoiseScale;
+uniform float uGrainAmount;
+uniform float uGrainScale;
+uniform float uGrainAnimated;
+uniform float uContrast;
+uniform float uGamma;
+uniform float uSaturation;
+uniform vec2 uCenterOffset;
+uniform float uZoom;
+uniform vec3 uColor1;
+uniform vec3 uColor2;
+uniform vec3 uColor3;
+out vec4 fragColor;
+${fragmentBody}
 void main(){
   vec4 o=vec4(0.0);
   mainImage(o,gl_FragCoord.xy);
   fragColor=o;
+}
+`;
+
+const fragmentWebgl1 = `${fragmentHead}
+${fragmentBody}
+void main(){
+  vec4 o=vec4(0.0);
+  mainImage(o,gl_FragCoord.xy);
+  gl_FragColor=o;
 }
 `;
 
@@ -252,6 +296,11 @@ const Grainient: React.FC<GrainientProps> = ({
       });
 
       const gl = renderer.gl;
+      if (!gl) {
+        return undefined;
+      }
+
+      const usesWebgl2 = isWebgl2Context(gl);
       const canvas = gl.canvas as HTMLCanvasElement;
       canvas.style.width = "100%";
       canvas.style.height = "100%";
@@ -288,8 +337,8 @@ const Grainient: React.FC<GrainientProps> = ({
       };
 
       const program = new Program(gl, {
-        vertex,
-        fragment,
+        vertex: usesWebgl2 ? vertexWebgl2 : vertexWebgl1,
+        fragment: usesWebgl2 ? fragmentWebgl2 : fragmentWebgl1,
         uniforms,
       });
 
