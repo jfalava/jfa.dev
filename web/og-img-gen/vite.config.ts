@@ -14,6 +14,33 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  fmt: {
+    printWidth: 100,
+    tabWidth: 2,
+    useTabs: false,
+    endOfLine: "lf",
+    semi: true,
+    singleQuote: false,
+    trailingComma: "all",
+    insertFinalNewline: true,
+    sortPackageJson: {
+      sortScripts: true,
+    },
+    sortImports: {
+      order: "asc",
+      newlinesBetween: true,
+      internalPattern: ["@/"],
+      sortSideEffects: false,
+      groups: ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"],
+    },
+    sortTailwindcss: {
+      stylesheet: "./src/styles.css",
+      functions: ["clsx", "cn", "cva", "twMerge"],
+      preserveDuplicates: false,
+      preserveWhitespace: false,
+    },
+    ignorePatterns: ["*.d.ts", "src/routeTree.gen.ts", ".wrangler/**", "node_modules/**"],
+  },
   lint: {
     plugins: ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],
     categories: {
@@ -101,11 +128,7 @@ const config = defineConfig({
     },
     overrides: [
       {
-        files: [
-          "**/PropertiesPanel.tsx",
-          "**/Toolbar.tsx",
-          "**/FontManager.tsx",
-        ],
+        files: ["**/PropertiesPanel.tsx", "**/Toolbar.tsx", "**/FontManager.tsx"],
         rules: {
           complexity: "off",
           "max-statements": "off",

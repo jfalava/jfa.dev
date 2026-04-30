@@ -31,12 +31,12 @@ const getAttr = (distance: number, maxDist: number, minVal: number, maxVal: numb
   return Math.max(minVal, val + minVal);
 };
 
-const debounce = (func: (...args: any[]) => void, delay: number) => {
+const debounce = <Args extends unknown[]>(func: (...args: Args) => void, delay: number) => {
   let timeoutId: ReturnType<typeof setTimeout>;
-  return (...args: any[]) => {
+  return (...args: Args) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
-      func.apply(this, args);
+      func(...args);
     }, delay);
   };
 };
@@ -88,9 +88,14 @@ const TextPressure: React.FC<TextPressureProps> = ({
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     if (containerRef.current) {
-      const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-      mouseRef.current.x = left + width / 2;
-      mouseRef.current.y = top + height / 2;
+      const {
+        left,
+        top,
+        width: containerWidth,
+        height: containerHeight,
+      } = containerRef.current.getBoundingClientRect();
+      mouseRef.current.x = left + containerWidth / 2;
+      mouseRef.current.y = top + containerHeight / 2;
       cursorRef.current.x = mouseRef.current.x;
       cursorRef.current.y = mouseRef.current.y;
     }
@@ -223,7 +228,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
         }
       `}</style>
     );
-  }, [fontFamily, fontUrl, stroke, textColor, strokeColor, strokeWidth]);
+  }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth]);
 
   let spanIndex = 0;
 
