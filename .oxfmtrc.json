@@ -11,5 +11,11 @@
   "experimentalSortPackageJson": {
     "sortScripts": true
   },
-  "ignorePatterns": ["web/**", "function/**", "node_modules/", "pnpm-lock.yaml"]
+  "ignorePatterns": [
+    "web/**",
+    "function/**",
+    "node_modules/**",
+    "pnpm-lock.yaml",
+    "bun.lock"
+  ]
 }
