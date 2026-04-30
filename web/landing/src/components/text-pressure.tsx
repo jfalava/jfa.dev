@@ -31,34 +31,25 @@ const getAttr = (distance: number, maxDist: number, minVal: number, maxVal: numb
   return Math.max(minVal, val + minVal);
 };
 
-const debounce = <TArgs extends unknown[]>(func: (...args: TArgs) => void, delay: number) => {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  const debounced = (...args: TArgs) => {
-    if (timeoutId !== undefined) {
-      clearTimeout(timeoutId);
-    }
+const debounce = <Args extends unknown[]>(func: (...args: Args) => void, delay: number) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: Args) => {
+    clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
       func(...args);
     }, delay);
   };
-  debounced.cancel = () => {
-    if (timeoutId !== undefined) {
-      clearTimeout(timeoutId);
-      timeoutId = undefined;
-    }
-  };
-  return debounced;
 };
 
 const TextPressure: React.FC<TextPressureProps> = ({
   text = "Compressa",
-  fontFamily,
+  fontFamily = '"Pretendard Variable", Pretendard, sans-serif',
   fontUrl,
-  width: widthEffect = true,
+  width = false,
   weight = true,
-  italic = true,
+  italic = false,
   alpha = false,
-  flex: flexEffect = true,
+  flex = true,
   stroke = false,
   scale = false,
   textColor = "#FFFFFF",
@@ -66,8 +57,6 @@ const TextPressure: React.FC<TextPressureProps> = ({
   strokeWidth = 2,
   className = "",
   minFontSize = 24,
-  useWebkitFallback = true,
-  webkitFallbackClassName = "",
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
@@ -79,68 +68,52 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const [fontSize, setFontSize] = useState(minFontSize);
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1);
-  const [isWebKitBrowser, setIsWebKitBrowser] = useState(false);
 
-  const chars = text.split("");
-  const shouldRenderWebkitFallback = useWebkitFallback && isWebKitBrowser;
+  const tokens = text.match(/\S+|\s+/g) ?? [];
+  const charCount = text.length;
+  const animatedCharCount = text.replace(/\s/g, "").length;
 
   useEffect(() => {
-    if (typeof navigator === "undefined") {
-      return;
+    const handleMouseMove = (e: MouseEvent) => {
+      cursorRef.current.x = e.clientX;
+      cursorRef.current.y = e.clientY;
+    };
+    const handleTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      cursorRef.current.x = t.clientX;
+      cursorRef.current.y = t.clientY;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    if (containerRef.current) {
+      const {
+        left,
+        top,
+        width: containerWidth,
+        height: containerHeight,
+      } = containerRef.current.getBoundingClientRect();
+      mouseRef.current.x = left + containerWidth / 2;
+      mouseRef.current.y = top + containerHeight / 2;
+      cursorRef.current.x = mouseRef.current.x;
+      cursorRef.current.y = mouseRef.current.y;
     }
 
-    const isWebKitEngine = /AppleWebKit/i.test(navigator.userAgent);
-    const isChromium = /Chrome|Chromium|CriOS|Edg|OPR/i.test(navigator.userAgent);
-    setIsWebKitBrowser(isWebKitEngine && !isChromium);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, []);
 
-  useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    if (!shouldRenderWebkitFallback) {
-      const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
-      const handleMouseMove = (e: MouseEvent) => {
-        cursorRef.current.x = e.clientX;
-        cursorRef.current.y = e.clientY;
-      };
-      const handleTouchMove = (e: TouchEvent) => {
-        const t = e.touches[0];
-        cursorRef.current.x = t.clientX;
-        cursorRef.current.y = t.clientY;
-      };
-
-      ownerWindow.addEventListener("mousemove", handleMouseMove);
-      ownerWindow.addEventListener("touchmove", handleTouchMove, { passive: true });
-
-      if (containerRef.current) {
-        const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-        mouseRef.current.x = left + width / 2;
-        mouseRef.current.y = top + height / 2;
-        cursorRef.current.x = mouseRef.current.x;
-        cursorRef.current.y = mouseRef.current.y;
-      }
-
-      cleanup = () => {
-        ownerWindow.removeEventListener("mousemove", handleMouseMove);
-        ownerWindow.removeEventListener("touchmove", handleTouchMove);
-      };
-    }
-
-    return cleanup;
-  }, [shouldRenderWebkitFallback]);
-
   const setSize = useCallback(() => {
-    if (shouldRenderWebkitFallback) {
-      return;
-    }
-
     if (!containerRef.current || !titleRef.current) {
       return;
     }
 
     const { width: containerW, height: containerH } = containerRef.current.getBoundingClientRect();
 
-    let newFontSize = containerW / (chars.length / 2);
+    let newFontSize = charCount > 0 ? containerW / (charCount / 2) : minFontSize;
     newFontSize = Math.max(newFontSize, minFontSize);
 
     setFontSize(newFontSize);
@@ -159,82 +132,79 @@ const TextPressure: React.FC<TextPressureProps> = ({
         setLineHeight(yRatio);
       }
     });
-  }, [chars.length, minFontSize, scale, shouldRenderWebkitFallback]);
+  }, [charCount, minFontSize, scale]);
 
   useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    if (!shouldRenderWebkitFallback) {
-      const ownerWindow = containerRef.current?.ownerDocument?.defaultView ?? window;
-      const debouncedSetSize = debounce(setSize, 100);
-      debouncedSetSize();
-      ownerWindow.addEventListener("resize", debouncedSetSize);
-      cleanup = () => {
-        ownerWindow.removeEventListener("resize", debouncedSetSize);
-        debouncedSetSize.cancel();
-      };
-    }
-
-    return cleanup;
-  }, [setSize, shouldRenderWebkitFallback]);
+    spansRef.current = spansRef.current.slice(0, animatedCharCount);
+  }, [animatedCharCount]);
 
   useEffect(() => {
-    let cleanup: (() => void) | undefined;
+    const debouncedSetSize = debounce(setSize, 100);
+    debouncedSetSize();
+    window.addEventListener("resize", debouncedSetSize);
+    return () => window.removeEventListener("resize", debouncedSetSize);
+  }, [setSize]);
 
-    if (!shouldRenderWebkitFallback) {
-      let rafId: number;
-      const animate = () => {
-        mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
-        mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
+  useEffect(() => {
+    let rafId: number;
+    const animate = () => {
+      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
+      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
 
-        if (titleRef.current) {
-          const titleRect = titleRef.current.getBoundingClientRect();
-          const maxDist = titleRect.width / 2;
+      if (titleRef.current) {
+        const titleRect = titleRef.current.getBoundingClientRect();
+        const maxDist = titleRect.width / 2;
 
-          spansRef.current.forEach((span) => {
-            if (!span) {
-              return;
-            }
+        spansRef.current.forEach((span) => {
+          if (!span) {
+            return;
+          }
 
-            const rect = span.getBoundingClientRect();
-            const charCenter = {
-              x: rect.x + rect.width / 2,
-              y: rect.y + rect.height / 2,
-            };
+          const rect = span.getBoundingClientRect();
+          const charCenter = {
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2,
+          };
 
-            const d = dist(mouseRef.current, charCenter);
+          const d = dist(mouseRef.current, charCenter);
 
-            const wdth = widthEffect ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
-            const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
-            const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
-            const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : "1";
+          const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
+          const wdth = width ? Math.floor(getAttr(d, maxDist, 5, 200)) : undefined;
+          const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
+          const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : "1";
 
-            const newFontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
+          const fontVariationSettings = [`'wght' ${wght}`];
 
-            if (span.style.fontVariationSettings !== newFontVariationSettings) {
-              span.style.fontVariationSettings = newFontVariationSettings;
-            }
-            if (alpha && span.style.opacity !== alphaVal) {
-              span.style.opacity = alphaVal;
-            }
-          });
-        }
+          if (wdth) {
+            fontVariationSettings.push(`'wdth' ${wdth}`);
+          }
+          if (italic) {
+            fontVariationSettings.push(`'ital' ${italVal}`);
+          }
 
-        rafId = requestAnimationFrame(animate);
-      };
+          const newFontVariationSettings = fontVariationSettings.join(", ");
 
-      animate();
-      cleanup = () => cancelAnimationFrame(rafId);
-    }
+          if (span.style.fontVariationSettings !== newFontVariationSettings) {
+            span.style.fontVariationSettings = newFontVariationSettings;
+          }
+          if (alpha && span.style.opacity !== alphaVal) {
+            span.style.opacity = alphaVal;
+          }
+        });
+      }
 
-    return cleanup;
-  }, [widthEffect, weight, italic, alpha, shouldRenderWebkitFallback]);
+      rafId = requestAnimationFrame(animate);
+    };
+
+    animate();
+    return () => cancelAnimationFrame(rafId);
+  }, [width, weight, italic, alpha]);
 
   const styleElement = useMemo(() => {
     return (
       <style>{`
         ${
-          fontUrl && fontFamily
+          fontUrl
             ? `@font-face {
           font-family: '${fontFamily}';
           src: url('${fontUrl}');
@@ -260,29 +230,18 @@ const TextPressure: React.FC<TextPressureProps> = ({
     );
   }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth]);
 
+  let spanIndex = 0;
+
   return (
-    <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-transparent">
+    <div ref={containerRef} className="relative h-full w-full overflow-visible bg-transparent">
       {styleElement}
-      {shouldRenderWebkitFallback ? (
-        <h1
-          className={`text-center ${className} ${webkitFallbackClassName}`}
-          style={{
-            fontFamily: fontFamily || undefined,
-            margin: 0,
-            color: stroke ? undefined : textColor,
-          }}
-        >
-          {text}
-        </h1>
-      ) : null}
       <h1
         ref={titleRef}
         className={`text-pressure-title ${className} ${
-          flexEffect ? "flex justify-between" : ""
-        } ${stroke ? "stroke" : ""} text-center`}
+          flex ? "flex flex-wrap justify-between" : ""
+        } ${stroke ? "stroke" : ""} text-center uppercase`}
         style={{
-          display: shouldRenderWebkitFallback ? "none" : undefined,
-          fontFamily: fontFamily || undefined,
+          fontFamily,
           fontSize: fontSize,
           lineHeight,
           transform: `scale(1, ${scaleY})`,
@@ -292,18 +251,33 @@ const TextPressure: React.FC<TextPressureProps> = ({
           color: stroke ? undefined : textColor,
         }}
       >
-        {chars.map((char, i) => (
-          <span
-            key={i}
-            ref={(el) => {
-              spansRef.current[i] = el;
-            }}
-            data-char={char}
-            className="inline-block"
-          >
-            {char === " " ? "\u00A0" : char}
-          </span>
-        ))}
+        {tokens.map((token, tokenIndex) => {
+          if (/^\s+$/.test(token)) {
+            return " ";
+          }
+
+          return (
+            <span key={tokenIndex} className="inline-block whitespace-nowrap">
+              {token.split("").map((char) => {
+                const currentSpanIndex = spanIndex;
+                spanIndex += 1;
+
+                return (
+                  <span
+                    key={currentSpanIndex}
+                    ref={(el) => {
+                      spansRef.current[currentSpanIndex] = el;
+                    }}
+                    data-char={char}
+                    className="inline-block"
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </span>
+          );
+        })}
       </h1>
     </div>
   );
