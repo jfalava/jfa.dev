@@ -16,6 +16,8 @@ interface TextPressureProps {
   strokeWidth?: number;
   className?: string;
   minFontSize?: number;
+  useWebkitFallback?: boolean;
+  webkitFallbackClassName?: string;
 }
 
 const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => {
@@ -41,11 +43,11 @@ const debounce = (func: (...args: any[]) => void, delay: number) => {
 
 const TextPressure: React.FC<TextPressureProps> = ({
   text = "Compressa",
-  fontFamily = "Compressa VF",
-  fontUrl = "https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2",
-  width = true,
+  fontFamily = '"Pretendard Variable", Pretendard, sans-serif',
+  fontUrl,
+  width = false,
   weight = true,
-  italic = true,
+  italic = false,
   alpha = false,
   flex = true,
   stroke = false,
@@ -67,7 +69,9 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1);
 
-  const chars = text.split("");
+  const tokens = text.match(/\S+|\s+/g) ?? [];
+  const charCount = text.length;
+  const animatedCharCount = text.replace(/\s/g, "").length;
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -104,7 +108,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
     const { width: containerW, height: containerH } = containerRef.current.getBoundingClientRect();
 
-    let newFontSize = containerW / (chars.length / 2);
+    let newFontSize = charCount > 0 ? containerW / (charCount / 2) : minFontSize;
     newFontSize = Math.max(newFontSize, minFontSize);
 
     setFontSize(newFontSize);
@@ -123,7 +127,11 @@ const TextPressure: React.FC<TextPressureProps> = ({
         setLineHeight(yRatio);
       }
     });
-  }, [chars.length, minFontSize, scale]);
+  }, [charCount, minFontSize, scale]);
+
+  useEffect(() => {
+    spansRef.current = spansRef.current.slice(0, animatedCharCount);
+  }, [animatedCharCount]);
 
   useEffect(() => {
     const debouncedSetSize = debounce(setSize, 100);
@@ -155,12 +163,21 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
           const d = dist(mouseRef.current, charCenter);
 
-          const wdth = width ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
           const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
+          const wdth = width ? Math.floor(getAttr(d, maxDist, 5, 200)) : undefined;
           const italVal = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
           const alphaVal = alpha ? getAttr(d, maxDist, 0, 1).toFixed(2) : "1";
 
-          const newFontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
+          const fontVariationSettings = [`'wght' ${wght}`];
+
+          if (wdth) {
+            fontVariationSettings.push(`'wdth' ${wdth}`);
+          }
+          if (italic) {
+            fontVariationSettings.push(`'ital' ${italVal}`);
+          }
+
+          const newFontVariationSettings = fontVariationSettings.join(", ");
 
           if (span.style.fontVariationSettings !== newFontVariationSettings) {
             span.style.fontVariationSettings = newFontVariationSettings;
@@ -181,10 +198,14 @@ const TextPressure: React.FC<TextPressureProps> = ({
   const styleElement = useMemo(() => {
     return (
       <style>{`
-        @font-face {
+        ${
+          fontUrl
+            ? `@font-face {
           font-family: '${fontFamily}';
           src: url('${fontUrl}');
           font-style: normal;
+        }`
+            : ""
         }
         .stroke span {
           position: relative;
@@ -204,13 +225,15 @@ const TextPressure: React.FC<TextPressureProps> = ({
     );
   }, [fontFamily, fontUrl, stroke, textColor, strokeColor, strokeWidth]);
 
+  let spanIndex = 0;
+
   return (
-    <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-transparent">
+    <div ref={containerRef} className="relative h-full w-full overflow-visible bg-transparent">
       {styleElement}
       <h1
         ref={titleRef}
         className={`text-pressure-title ${className} ${
-          flex ? "flex justify-between" : ""
+          flex ? "flex flex-wrap justify-between" : ""
         } ${stroke ? "stroke" : ""} text-center uppercase`}
         style={{
           fontFamily,
@@ -223,19 +246,30 @@ const TextPressure: React.FC<TextPressureProps> = ({
           color: stroke ? undefined : textColor,
         }}
       >
-        {chars.map((char, i) => {
-          const displayChar = char === " " ? "\u00A0" : char;
+        {tokens.map((token, tokenIndex) => {
+          if (/^\s+$/.test(token)) {
+            return " ";
+          }
 
           return (
-            <span
-              key={i}
-              ref={(el) => {
-                spansRef.current[i] = el;
-              }}
-              data-char={displayChar}
-              className="inline-block whitespace-pre"
-            >
-              {displayChar}
+            <span key={tokenIndex} className="inline-block whitespace-nowrap">
+              {token.split("").map((char) => {
+                const currentSpanIndex = spanIndex;
+                spanIndex += 1;
+
+                return (
+                  <span
+                    key={currentSpanIndex}
+                    ref={(el) => {
+                      spansRef.current[currentSpanIndex] = el;
+                    }}
+                    data-char={char}
+                    className="inline-block"
+                  >
+                    {char}
+                  </span>
+                );
+              })}
             </span>
           );
         })}
