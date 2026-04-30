@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({ component: App });
 
 function App() {
   return (
-    <main className="relative h-[100dvh] min-h-[100svh] overflow-hidden overscroll-none bg-[#0e1116]">
+    <main className="relative h-dvh min-h-svh overflow-hidden overscroll-none bg-[#0e1116]">
       <Grainient
         className="pointer-events-none absolute inset-0 size-full"
         color1="#f2f6ff"
