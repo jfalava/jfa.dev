@@ -223,18 +223,22 @@ const TextPressure: React.FC<TextPressureProps> = ({
           color: stroke ? undefined : textColor,
         }}
       >
-        {chars.map((char, i) => (
-          <span
-            key={i}
-            ref={(el) => {
-              spansRef.current[i] = el;
-            }}
-            data-char={char}
-            className="inline-block"
-          >
-            {char}
-          </span>
-        ))}
+        {chars.map((char, i) => {
+          const displayChar = char === " " ? "\u00A0" : char;
+
+          return (
+            <span
+              key={i}
+              ref={(el) => {
+                spansRef.current[i] = el;
+              }}
+              data-char={displayChar}
+              className="inline-block whitespace-pre"
+            >
+              {displayChar}
+            </span>
+          );
+        })}
       </h1>
     </div>
   );
