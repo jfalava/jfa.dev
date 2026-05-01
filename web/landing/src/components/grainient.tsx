@@ -288,17 +288,12 @@ const Grainient: React.FC<GrainientProps> = ({
     let cleanup: (() => void) | undefined;
 
     if (containerRef.current && !shouldUseStaticFallback()) {
-      let renderer: Renderer;
-      try {
-        renderer = new Renderer({
-          webgl: 2,
-          alpha: true,
-          antialias: false,
-          dpr: Math.min(window.devicePixelRatio || 1, 2),
-        });
-      } catch {
-        return undefined;
-      }
+      const renderer = new Renderer({
+        webgl: 2,
+        alpha: true,
+        antialias: false,
+        dpr: Math.min(window.devicePixelRatio || 1, 2),
+      });
 
       const gl = renderer.gl;
       if (!gl) {
