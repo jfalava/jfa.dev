@@ -90,11 +90,7 @@ function findAllPackageJsonFiles(dir: string): string[] {
     for (const entry of entries) {
       const fullPath = join(dir, entry.name);
 
-      if (
-        entry.isDirectory() &&
-        !entry.name.startsWith(".") &&
-        entry.name !== "node_modules"
-      ) {
+      if (entry.isDirectory() && !entry.name.startsWith(".") && entry.name !== "node_modules") {
         files.push(...findAllPackageJsonFiles(fullPath));
       } else if (entry.name === "package.json") {
         files.push(fullPath);
@@ -111,9 +107,15 @@ function findAllPackageJsonFiles(dir: string): string[] {
  * Parse pnpm-workspace.yaml to extract catalogs.
  * Handles both top-level "catalog:" and "catalogs:" sections.
  */
-function parsePnpmWorkspaceYaml(content: string): { catalog?: Record<string, string>; catalogs?: Record<string, Record<string, string>> } {
-  const lines = content.split('\n');
-  const result: { catalog?: Record<string, string>; catalogs?: Record<string, string, Record<string, string>> } = {};
+function parsePnpmWorkspaceYaml(content: string): {
+  catalog?: Record<string, string>;
+  catalogs?: Record<string, Record<string, string>>;
+} {
+  const lines = content.split("\n");
+  const result: {
+    catalog?: Record<string, string>;
+    catalogs?: Record<string, string, Record<string, string>>;
+  } = {};
   let currentSection: string | null = null;
   let currentSubSection: string | null = null;
   let indentLevel = 0;
@@ -123,24 +125,24 @@ function parsePnpmWorkspaceYaml(content: string): { catalog?: Record<string, str
     const trimmed = line.trim();
 
     // Skip empty lines and comments
-    if (!trimmed || trimmed.startsWith('#')) continue;
+    if (!trimmed || trimmed.startsWith("#")) continue;
 
     // Calculate indent level
     const leadingSpaces = line.length - line.trimStart().length;
 
     // Check for section headers (no indent or low indent)
     if (leadingSpaces === 0) {
-      if (trimmed === 'catalog:') {
+      if (trimmed === "catalog:") {
         result.catalog = {};
-        currentSection = 'catalog';
+        currentSection = "catalog";
         currentSubSection = null;
         continue;
-      } else if (trimmed === 'catalogs:') {
+      } else if (trimmed === "catalogs:") {
         result.catalogs = {};
-        currentSection = 'catalogs';
+        currentSection = "catalogs";
         currentSubSection = null;
         continue;
-      } else if (trimmed.endsWith(':')) {
+      } else if (trimmed.endsWith(":")) {
         // Some other section, reset
         currentSection = null;
         currentSubSection = null;
@@ -149,7 +151,7 @@ function parsePnpmWorkspaceYaml(content: string): { catalog?: Record<string, str
     }
 
     // Parse entries within catalog section
-    if (currentSection === 'catalog' && leadingSpaces >= 2) {
+    if (currentSection === "catalog" && leadingSpaces >= 2) {
       const match = trimmed.match(/^([^:]+):\s*["']?([^"']+)["']?$/);
       if (match) {
         result.catalog![match[1]] = match[2];
@@ -157,8 +159,8 @@ function parsePnpmWorkspaceYaml(content: string): { catalog?: Record<string, str
     }
 
     // Parse entries within catalogs section
-    if (currentSection === 'catalogs') {
-      if (leadingSpaces === 2 && trimmed.endsWith(':')) {
+    if (currentSection === "catalogs") {
+      if (leadingSpaces === 2 && trimmed.endsWith(":")) {
         // Named catalog (e.g., "build:", "react-ui:")
         currentSubSection = trimmed.slice(0, -1);
         result.catalogs![currentSubSection] = {};

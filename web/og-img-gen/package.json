@@ -31,7 +31,7 @@
     "react-dom": "catalog:react-ui",
     "tailwind-merge": "catalog:styling",
     "tw-animate-css": "catalog:styling",
-    "zustand": "5.0.12"
+    "zustand": "5.0.13"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "catalog:cloudflare",

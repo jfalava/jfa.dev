@@ -51,11 +51,7 @@ type PackageJson = {
 type WorkspaceViolation = {
   file: string;
   pkgName: string;
-  depType:
-    | "dependencies"
-    | "devDependencies"
-    | "peerDependencies"
-    | "optionalDependencies";
+  depType: "dependencies" | "devDependencies" | "peerDependencies" | "optionalDependencies";
   depName: string;
   actual: string;
 };
@@ -140,11 +136,7 @@ function getRootCatalog(rootPkgPath: string): DepRecord {
 
 function getGroupForPackage(pkgName: string, rootPkgPath: string): string {
   const rootPkg = readJson(rootPkgPath);
-  if (
-    !rootPkg?.workspaces ||
-    Array.isArray(rootPkg.workspaces) ||
-    !isRecord(rootPkg.workspaces)
-  ) {
+  if (!rootPkg?.workspaces || Array.isArray(rootPkg.workspaces) || !isRecord(rootPkg.workspaces)) {
     return "";
   }
   const catalogsSource = rootPkg.workspaces.catalogs;
@@ -199,9 +191,7 @@ function getWorkspacePatterns(rootPkgPath: string): string[] {
   if (isRecord(ws)) {
     const wso = ws as WorkspacesObject;
     if (Array.isArray(wso.packages)) {
-      return (wso.packages as unknown[])
-        .map((x) => String(x))
-        .filter((x) => x.length > 0);
+      return (wso.packages as unknown[]).map((x) => String(x)).filter((x) => x.length > 0);
     }
   }
 
@@ -218,10 +208,7 @@ function getWorkspacePatterns(rootPkgPath: string): string[] {
  *
  * We intentionally avoid a full glob engine.
  */
-function resolveWorkspacePatternToDirs(
-  rootDir: string,
-  pattern: string,
-): string[] {
+function resolveWorkspacePatternToDirs(rootDir: string, pattern: string): string[] {
   const trimmed = pattern.trim();
   if (!trimmed) {
     return [];
@@ -275,10 +262,7 @@ function resolveWorkspacePatternToDirs(
 /**
  * Collect paths to workspace package.json files based on workspace patterns.
  */
-function collectWorkspacePackageJsonPaths(
-  rootDir: string,
-  patterns: string[],
-): string[] {
+function collectWorkspacePackageJsonPaths(rootDir: string, patterns: string[]): string[] {
   const pkgPaths = new Set<string>();
 
   for (const pattern of patterns) {
@@ -316,16 +300,8 @@ function fixPackageJson(
       .replace(/\.json$/, "");
 
   const depTypes: Array<
-    | "dependencies"
-    | "devDependencies"
-    | "peerDependencies"
-    | "optionalDependencies"
-  > = [
-    "dependencies",
-    "devDependencies",
-    "peerDependencies",
-    "optionalDependencies",
-  ];
+    "dependencies" | "devDependencies" | "peerDependencies" | "optionalDependencies"
+  > = ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"];
 
   let hasChanges = false;
 
@@ -385,9 +361,7 @@ function main(): void {
 
   const catalog = getRootCatalog(rootPkgPath);
   if (Object.keys(catalog).length === 0) {
-    console.log(
-      "No root workspaces.catalog entries found in package.json. Nothing to update.",
-    );
+    console.log("No root workspaces.catalog entries found in package.json. Nothing to update.");
     return;
   }
 
