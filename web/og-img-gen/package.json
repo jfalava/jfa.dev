@@ -26,7 +26,7 @@
     "clsx": "catalog:styling",
     "html-to-image": "1.11.13",
     "lucide-react": "catalog:react-ui",
-    "nanoid": "5.1.14",
+    "nanoid": "5.1.15",
     "react": "catalog:react-ui",
     "react-dom": "catalog:react-ui",
     "tailwind-merge": "catalog:styling",

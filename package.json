@@ -8,23 +8,23 @@
     ],
     "catalogs": {
       "backend": {
-        "hono": "4.12.26"
+        "hono": "4.12.27"
       },
       "build": {
-        "@typescript/native-preview": "7.0.0-dev.20260619.1",
-        "@vitejs/plugin-react": "6.0.2",
-        "oxfmt": "0.55.0",
+        "@typescript/native-preview": "7.0.0-dev.20260623.1",
+        "@vitejs/plugin-react": "6.0.3",
+        "oxfmt": "0.56.0",
         "oxlint": "1.57.0",
         "oxlint-tsgolint": "0.18.1",
         "typescript": "6.0.3",
-        "vite": "8.0.16",
+        "vite": "8.1.0",
         "vite-plus": "0.2.1",
         "vitest": "4.1.2",
-        "wrangler": "4.102.0"
+        "wrangler": "4.103.0"
       },
       "cloudflare": {
-        "@cloudflare/vite-plugin": "1.42.0",
-        "@cloudflare/workers-types": "4.20260619.1"
+        "@cloudflare/vite-plugin": "1.42.1",
+        "@cloudflare/workers-types": "4.20260623.1"
       },
       "react-ui": {
         "@base-ui/react": "1.6.0",
