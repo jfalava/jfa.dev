@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:cloudflare",
-    "oxfmt": "catalog:build",
+    "@types/bun": "catalog:types",
+    "@types/node": "catalog:types",
     "typescript": "catalog:build",
     "vite-plus": "catalog:build",
     "wrangler": "catalog:build"
