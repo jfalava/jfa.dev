@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "cf-typegen": "wrangler types",
-    "check": "vp check",
-    "deploy": "vp check && pnpm wrangler deploy",
+    "check": "vp run typecheck && vp check",
+    "deploy": "vp run check && wrangler deploy",
     "dev": "wrangler dev",
     "format": "vp fmt",
     "lint": "vp lint",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "hono": "catalog:backend"
@@ -18,7 +18,6 @@
     "@cloudflare/workers-types": "catalog:cloudflare",
     "@types/bun": "catalog:types",
     "@types/node": "catalog:types",
-    "@typescript/native-preview": "catalog:build",
     "typescript": "catalog:build",
     "vite-plus": "catalog:build",
     "wrangler": "catalog:build"

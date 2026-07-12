@@ -59,15 +59,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <a href="https://github.com/jfalava" className="sr-only" rel="me">
           GitHub
         </a>
-        <a href="https://twitter.com/jorgefalava" className="sr-only" rel="me">
-          Twitter
-        </a>
-        <a href="https://bsky.app/profile/jfa.dev" className="sr-only" rel="me">
-          Bluesky
-        </a>
-        <a href="https://todon.eu/@jfalava" className="sr-only" rel="me">
-          Mastodon
-        </a>
       </body>
     </html>
   );

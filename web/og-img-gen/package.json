@@ -6,14 +6,14 @@
   "scripts": {
     "build": "vp build",
     "cf-typegen": "wrangler types",
-    "check": "vp check",
+    "check": "vp run typecheck && vp check",
     "deploy": "vp run typecheck && vp lint && vp build && wrangler deploy",
     "dev": "vp dev --port 3000 --host",
     "format": "vp fmt",
     "lint": "vp lint",
     "preview": "vp preview",
     "serve": "vp preview",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "catalog:react-ui",
@@ -26,7 +26,7 @@
     "clsx": "catalog:styling",
     "html-to-image": "1.11.13",
     "lucide-react": "catalog:react-ui",
-    "nanoid": "5.1.11",
+    "nanoid": "5.1.16",
     "react": "catalog:react-ui",
     "react-dom": "catalog:react-ui",
     "tailwind-merge": "catalog:styling",
@@ -40,7 +40,6 @@
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
-    "@typescript/native-preview": "catalog:build",
     "@vitejs/plugin-react": "catalog:build",
     "jsdom": "29.1.1",
     "shadcn": "catalog:react-ui",

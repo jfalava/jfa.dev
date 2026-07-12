@@ -1,12 +1,12 @@
 {
   "name": "@jfa.dev/landing",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "vp build",
     "cf-typegen": "wrangler types",
-    "check": "vp check",
+    "check": "vp run typecheck && vp check",
     "deploy": "vp run typecheck && vp lint && vp build && wrangler deploy",
     "dev": "vp dev --port 3000 --host",
     "format": "vp fmt",
@@ -14,7 +14,7 @@
     "preview": "vp preview",
     "serve": "vp preview",
     "test": "vp test",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "catalog:react-ui",
@@ -38,7 +38,6 @@
   "devDependencies": {
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
-    "@typescript/native-preview": "catalog:build",
     "@vitejs/plugin-react": "catalog:build",
     "typescript": "catalog:build",
     "vite": "catalog:build",

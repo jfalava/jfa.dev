@@ -6,19 +6,20 @@
   "scripts": {
     "build": "vp build",
     "cf-typegen": "wrangler types",
-    "check": "vp check",
-    "deploy": "vp check && wrangler deploy",
+    "check": "vp run typecheck && vp check",
+    "deploy": "vp run check && wrangler deploy",
     "dev": "wrangler dev",
     "format": "vp fmt",
     "lint": "vp lint",
-    "typecheck": "vp check"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "hono": "catalog:backend"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:cloudflare",
-    "oxfmt": "catalog:build",
+    "@types/bun": "catalog:types",
+    "@types/node": "catalog:types",
     "typescript": "catalog:build",
     "vite-plus": "catalog:build",
     "wrangler": "catalog:build"
