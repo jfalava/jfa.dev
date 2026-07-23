@@ -6,14 +6,6 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { type PluginOption, defineConfig, lazyPlugins } from "vite-plus";
 
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion - vite and vite-plus-core PluginOption are structurally identical but nominally distinct across declaration files
-const plugins = [
-  cloudflare({ viteEnvironment: { name: "ssr" } }),
-  tailwindcss(),
-  tanstackStart(),
-  viteReact(),
-] as PluginOption[];
-
 const config = defineConfig({
   resolve: {
     alias: {
@@ -21,7 +13,17 @@ const config = defineConfig({
     },
     tsconfigPaths: true,
   },
-  plugins: lazyPlugins(() => plugins),
+  // oxlint-disable typescript/no-unsafe-type-assertion - vite and vite-plus-core PluginOption are structurally identical but nominally distinct across declaration files
+  plugins: lazyPlugins(
+    () =>
+      [
+        cloudflare({ viteEnvironment: { name: "ssr" } }),
+        tailwindcss(),
+        tanstackStart(),
+        viteReact(),
+      ] as PluginOption[],
+  ),
+  // oxlint-enable typescript/no-unsafe-type-assertion
   fmt: {
     printWidth: 100,
     tabWidth: 2,
