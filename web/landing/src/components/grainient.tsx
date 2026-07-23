@@ -54,13 +54,13 @@ const oklchToRgb = (l: number, c: number, hDeg: number): [number, number, number
   const a = c * Math.cos(h);
   const b = c * Math.sin(h);
 
-  const l_ = l + 0.3963377774 * a + 0.2158037573 * b;
-  const m_ = l - 0.1055613458 * a - 0.0638541728 * b;
-  const s_ = l - 0.0894841775 * a - 1.291485548 * b;
+  const lPrime = l + 0.3963377774 * a + 0.2158037573 * b;
+  const mPrime = l - 0.1055613458 * a - 0.0638541728 * b;
+  const sPrime = l - 0.0894841775 * a - 1.291485548 * b;
 
-  const l3 = l_ * l_ * l_;
-  const m3 = m_ * m_ * m_;
-  const s3 = s_ * s_ * s_;
+  const l3 = lPrime * lPrime * lPrime;
+  const m3 = mPrime * mPrime * mPrime;
+  const s3 = sPrime * sPrime * sPrime;
 
   const linearR = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3;
   const linearG = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3;
@@ -301,7 +301,7 @@ const Grainient: React.FC<GrainientProps> = ({
       }
 
       const usesWebgl2 = isWebgl2Context(gl);
-      const canvas = gl.canvas as HTMLCanvasElement;
+      const canvas = gl.canvas;
       canvas.style.width = "100%";
       canvas.style.height = "100%";
       canvas.style.display = "block";

@@ -35,7 +35,7 @@ export function NotFoundPage() {
 }
 
 export function RouteErrorBoundary({ error, reset }: ErrorComponentProps) {
-  const safeReset = typeof reset === "function" ? (reset as () => void) : undefined;
+  const safeReset = typeof reset === "function" ? reset : undefined;
 
   useEffect(() => {
     console.error("Route Error:", error);
