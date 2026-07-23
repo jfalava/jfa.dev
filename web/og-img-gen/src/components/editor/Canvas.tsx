@@ -1,10 +1,10 @@
+import { DndContext, useDraggable, type DragEndEvent } from "@dnd-kit/core";
+import { useRef, useCallback, useMemo } from "react";
+
 import { useEditorStore } from "@/stores/editor-store";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "@/types/editor";
 
 import { ElementRenderer } from "./ElementRenderer";
-
-import { DndContext, useDraggable, type DragEndEvent } from "@dnd-kit/core";
-import { useRef, useCallback, useMemo } from "react";
 
 interface DraggableElementProps {
   id: string;

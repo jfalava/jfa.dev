@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vp build",
     "cf-typegen": "wrangler types",
-    "check": "vp run typecheck && vp check",
+    "check": "vp check --fix",
     "deploy": "vp run check && wrangler deploy",
     "dev": "wrangler dev",
     "format": "vp fmt",

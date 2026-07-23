@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-
 import { Link, type ErrorComponentProps, useRouter } from "@tanstack/react-router";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
+
+import { Button } from "@/components/ui/button";
 
 export function NotFoundPage() {
   const router = useRouter();
