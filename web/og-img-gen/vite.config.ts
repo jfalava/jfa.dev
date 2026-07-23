@@ -2,18 +2,21 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import { defineConfig } from "vite-plus";
+import { type PluginOption, defineConfig, lazyPlugins } from "vite-plus";
+
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- vite and vite-plus-core PluginOption are structurally identical but nominally distinct across declaration files
+const plugins = [
+  cloudflare({ viteEnvironment: { name: "ssr" } }),
+  tailwindcss(),
+  tanstackStart(),
+  viteReact(),
+] as PluginOption[];
 
 const config = defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
-  plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
+  plugins: lazyPlugins(() => plugins),
   fmt: {
     printWidth: 100,
     tabWidth: 2,
