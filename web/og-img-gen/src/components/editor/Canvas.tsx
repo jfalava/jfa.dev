@@ -25,7 +25,7 @@ function DraggableElement({ id, children }: DraggableElementProps) {
 
   return (
     <button
-      ref={setNodeRef as React.Ref<HTMLButtonElement>}
+      ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
@@ -148,6 +148,7 @@ export function Canvas() {
     <div className="h-full overflow-auto p-4 lg:p-8">
       <div className="flex min-h-full items-center justify-center">
         <DndContext onDragEnd={handleDragEnd}>
+          {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the canvas handles keyboard and pointer deselection while containing draggable buttons */}
           <div
             ref={canvasRef}
             data-og-canvas

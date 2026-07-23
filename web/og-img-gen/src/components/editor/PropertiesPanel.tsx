@@ -37,7 +37,7 @@ export function PropertiesPanel() {
 
   const updateContent = <T extends typeof element.content>(updates: Partial<T>) => {
     updateElement(element.id, {
-      content: { ...element.content, ...updates } as typeof element.content,
+      content: { ...element.content, ...updates },
     });
   };
 
