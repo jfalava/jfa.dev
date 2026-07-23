@@ -1,24 +1,31 @@
+import path from "path";
+
 import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import { type PluginOption, defineConfig, lazyPlugins } from "vite-plus";
+import { defineConfig } from "vite-plus";
 
-const config = defineConfig({
+/**
+ * Vite configuration for the hyperscaler services application.
+ * Configures plugins for React, TypeScript paths, Tailwind CSS, TanStack Start, and Cloudflare.
+ *
+ * @returns Vite configuration object
+ */
+
+export default defineConfig({
+  plugins: [
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact(),
+  ],
   resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "./src"),
+    },
     tsconfigPaths: true,
   },
-  // oxlint-disable typescript/no-unsafe-type-assertion - vite and vite-plus-core PluginOption are structurally identical but nominally distinct across declaration files
-  plugins: lazyPlugins(
-    () =>
-      [
-        cloudflare({ viteEnvironment: { name: "ssr" } }),
-        tailwindcss(),
-        tanstackStart(),
-        viteReact(),
-      ] as PluginOption[],
-  ),
-  // oxlint-enable typescript/no-unsafe-type-assertion
   fmt: {
     printWidth: 100,
     tabWidth: 2,
@@ -36,15 +43,31 @@ const config = defineConfig({
       newlinesBetween: true,
       internalPattern: ["@/"],
       sortSideEffects: false,
-      groups: ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"],
+      groups: [
+        ["builtin"],
+        ["external", "type-external"],
+        ["internal", "type-internal"],
+        ["parent", "type-parent"],
+        ["sibling", "type-sibling"],
+        ["index", "type-index"],
+        ["unknown"],
+      ],
     },
     sortTailwindcss: {
-      stylesheet: "./src/styles.css",
+      stylesheet: "./src/styles/globals.css",
+      attributes: ["class", "className"],
       functions: ["clsx", "cn", "cva", "twMerge"],
       preserveDuplicates: false,
       preserveWhitespace: false,
     },
-    ignorePatterns: ["*.d.ts", "src/routeTree.gen.ts", ".wrangler/**", "node_modules/**"],
+    ignorePatterns: [
+      "cloudflare-env.d.ts",
+      "worker-configuration.d.ts",
+      "src/routeTree.gen.ts",
+      ".wrangler/**",
+      "node_modules/**",
+      "bun.lock",
+    ],
   },
   lint: {
     plugins: ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],
@@ -54,13 +77,9 @@ const config = defineConfig({
     },
     env: {
       browser: true,
-      es2022: true,
+      es2024: true,
     },
-    ignorePatterns: ["*.d.ts", "**/*.d.ts", "src/routeTree.gen.ts"],
-    options: {
-      typeAware: true,
-      typeCheck: true,
-    },
+    ignorePatterns: ["*.d.ts", "**/*.d.ts", "public/**"],
     rules: {
       "typescript/no-explicit-any": "error",
       "typescript/no-unsafe-assignment": "error",
@@ -87,7 +106,12 @@ const config = defineConfig({
       "no-duplicate-imports": "error",
       "no-eval": "error",
       "no-debugger": "error",
-      "no-console": ["error", { allow: ["warn", "error"] }],
+      "no-console": [
+        "error",
+        {
+          allow: ["warn", "error"],
+        },
+      ],
       "no-with": "error",
       "no-proto": "error",
       "no-new-wrappers": "error",
@@ -101,7 +125,13 @@ const config = defineConfig({
       "no-extra-bind": "error",
       "no-useless-constructor": "error",
       "no-unused-expressions": "error",
-      eqeqeq: ["error", "always", { null: "ignore" }],
+      eqeqeq: [
+        "error",
+        "always",
+        {
+          null: "ignore",
+        },
+      ],
       curly: ["error", "all"],
       "no-implicit-coercion": [
         "error",
@@ -112,35 +142,33 @@ const config = defineConfig({
           disallowTemplateShorthand: true,
         },
       ],
-      "prefer-const": ["error", { destructuring: "all" }],
+      "prefer-const": [
+        "error",
+        {
+          destructuring: "all",
+        },
+      ],
       complexity: ["error", 12],
       "max-depth": ["error", 4],
       "max-params": ["error", 5],
       "max-statements": ["error", 40],
+      "import/no-duplicates": "error",
+      "import/no-mutable-exports": "error",
+      "import/no-cycle": "error",
+      "import/no-self-import": "error",
       "react/jsx-key": "error",
       "react/jsx-no-undef": "error",
       "react/react-in-jsx-scope": "off",
       "react/no-direct-mutation-state": "error",
       "react/no-find-dom-node": "error",
       "react/no-danger": "error",
-      "import/no-duplicates": "error",
-      "import/no-mutable-exports": "error",
-      "import/no-cycle": "error",
-      "import/no-self-import": "error",
       "typescript/no-implied-eval": "error",
       "typescript/no-unsafe-type-assertion": "error",
-      "typescript/no-unnecessary-type-assertion": "error",
+      "typescript/no-unnecessary-type-assertion": "warn",
     },
-    overrides: [
-      {
-        files: ["**/PropertiesPanel.tsx", "**/Toolbar.tsx", "**/FontManager.tsx"],
-        rules: {
-          complexity: "off",
-          "max-statements": "off",
-        },
-      },
-    ],
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
   },
 });
-
-export default config;

@@ -1,3 +1,5 @@
+import { createFileRoute } from "@tanstack/react-router";
+
 import {
   Canvas,
   Toolbar,
@@ -7,8 +9,6 @@ import {
   CanvasSettings,
   FontManager,
 } from "@/components/editor";
-
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({ component: EditorPage });
 
