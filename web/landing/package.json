@@ -33,9 +33,9 @@
     "tw-animate-css": "catalog:styling"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
-    "@cloudflare/workers-types": "catalog:cloudflare",
     "@vitejs/plugin-react": "catalog:build",
     "typescript": "catalog:build",
     "vite": "catalog:build",

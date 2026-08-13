@@ -1,11 +1,11 @@
-import path from "path";
 import { env as processEnv } from "node:process";
+import path from "path";
 
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import { defineConfig } from "vite-plus";
 import type { Plugin, UserConfig } from "vite";
+import { defineConfig } from "vite-plus";
 
 function normalizeBasePath(value: string): string {
   const trimmed = value.trim();
@@ -44,12 +44,7 @@ function alchemyBasePath(): Plugin {
 
 export default defineConfig({
   base: normalizeBasePath(processEnv.VITE_ASSET_BASE_PATH ?? processEnv.VITE_BASE_PATH ?? "/"),
-  plugins: [
-    alchemyBasePath(),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
+  plugins: [alchemyBasePath(), tailwindcss(), tanstackStart(), viteReact()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
@@ -90,11 +85,7 @@ export default defineConfig({
       preserveDuplicates: false,
       preserveWhitespace: false,
     },
-    ignorePatterns: [
-      "src/routeTree.gen.ts",
-      "node_modules/**",
-      "bun.lock",
-    ],
+    ignorePatterns: ["src/routeTree.gen.ts", "node_modules/**", "bun.lock"],
   },
   lint: {
     plugins: ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],

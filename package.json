@@ -59,14 +59,13 @@
       }
     }
   },
-  "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9"
-  },
   "type": "module",
   "scripts": {
-    "dev": "bun run --filter @jfa.dev/iac dev",
     "deploy": "bun run --filter @jfa.dev/iac deploy",
-    "iac:plan": "bun run --filter @jfa.dev/iac plan"
+    "dev": "bun run --filter @jfa.dev/iac dev",
+    "format:global": "bun run --filter @jfa.dev/landing format && bun run --filter @jfa.dev/landing format && bun run --filter @jfa.dev/og-img-gen format && bun run --filter @jfa.dev/og-img-gen format && bun run --filter @jfa.dev/hyperscaler-services format && bun run --filter @jfa.dev/hyperscaler-services format",
+    "iac:plan": "bun run --filter @jfa.dev/iac plan",
+    "predeploy": "bun run --filter @jfa.dev/landing typecheck && bun run --filter @jfa.dev/landing lint && bun run --filter @jfa.dev/og-img-gen typecheck && bun run --filter @jfa.dev/og-img-gen lint && bun run --filter @jfa.dev/hyperscaler-services typecheck && bun run --filter @jfa.dev/hyperscaler-services lint"
   },
   "dependencies": {
     "jsdom": "30.0.1"
@@ -78,6 +77,9 @@
     "oxfmt": "0.63.0",
     "typescript": "7.0.2",
     "vite-plus": "0.2.9"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9"
   },
   "packageManager": "bun@1.3.14"
 }

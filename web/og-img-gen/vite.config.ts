@@ -13,11 +13,7 @@ import { defineConfig } from "vite-plus";
  */
 
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
+  plugins: [tailwindcss(), tanstackStart(), viteReact()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
@@ -58,12 +54,7 @@ export default defineConfig({
       preserveDuplicates: false,
       preserveWhitespace: false,
     },
-    ignorePatterns: [
-      "cloudflare-env.d.ts",
-      "src/routeTree.gen.ts",
-      "node_modules/**",
-      "bun.lock",
-    ],
+    ignorePatterns: ["cloudflare-env.d.ts", "src/routeTree.gen.ts", "node_modules/**", "bun.lock"],
   },
   lint: {
     plugins: ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],

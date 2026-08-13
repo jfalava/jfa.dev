@@ -20,7 +20,5 @@ export function appPath(path: string): string {
     return normalizedPath;
   }
 
-  return normalizedPath === "/"
-    ? `${appBasePath}/`
-    : `${appBasePath}${normalizedPath}`;
+  return normalizedPath === "/" ? `${appBasePath}/` : `${appBasePath}${normalizedPath}`;
 }
