@@ -268,6 +268,30 @@ function isPathScoped(pathname: string, mount: string): boolean {
   return pathname === mount || pathname.startsWith(`${mount}/`);
 }
 
+function mountedRelativePath(pathname: string, mount: string): string | null {
+  const normalizedMount = normalizePath(mount);
+  if (!isPathScoped(pathname, normalizedMount)) {
+    return null;
+  }
+
+  if (normalizedMount === "/") {
+    return pathname;
+  }
+
+  return pathname === normalizedMount
+    ? "/"
+    : pathname.slice(normalizedMount.length);
+}
+
+function isMountedAssetRequest(
+  pathname: string,
+  mount: string,
+  assetPrefixes: string[],
+): boolean {
+  const relativePath = mountedRelativePath(pathname, mount);
+  return relativePath !== null && hasAssetPrefix(relativePath, assetPrefixes);
+}
+
 function rewriteLocation(location: string, mount: string, forwardUrl: URL): string {
   const normalizedMount = normalizePath(mount);
   try {
@@ -522,9 +546,17 @@ export async function handleMountedApp(
     preserveMount?: boolean;
   },
 ): Promise<Response> {
-  const forwardUrl = buildForwardUrl(request.url, mount, options?.preserveMount ?? false);
+  const requestURL = new URL(request.url);
+  const preserveMount =
+    options?.preserveMount === true ||
+    isMountedAssetRequest(requestURL.pathname, mount, assetPrefixes);
+  const forwardUrl = buildForwardUrl(request.url, mount, preserveMount);
 
-  if (options?.preloadStaticMounts?.length && forwardUrl.pathname === "/__mf-preload.js") {
+  const relativePath = mountedRelativePath(requestURL.pathname, mount);
+  if (
+    options?.preloadStaticMounts?.length &&
+    (forwardUrl.pathname === "/__mf-preload.js" || relativePath === "/__mf-preload.js")
+  ) {
     return preloadScriptResponse(options.preloadStaticMounts);
   }
 

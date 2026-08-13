@@ -58,6 +58,26 @@ describe("mounted app forwarding", () => {
     );
   });
 
+  test("preserves the mount for known static assets", async () => {
+    let forwardedRequest: Request | undefined;
+    const upstream = createUpstream(async (request) => {
+      forwardedRequest = request;
+      return new Response("asset");
+    });
+
+    const response = await handleMountedApp(
+      new Request("https://jfa.dev/hyperscaler-services/assets/app.css"),
+      upstream,
+      "/hyperscaler-services",
+      ["/assets/", "/theme-init.js"],
+    );
+
+    expect(await response.text()).toBe("asset");
+    expect(forwardedRequest?.url).toBe(
+      "https://jfa.dev/hyperscaler-services/assets/app.css",
+    );
+  });
+
   test("rewrites redirects and cookie paths", async () => {
     const upstream = createUpstream(
       async () =>
