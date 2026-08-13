@@ -23,4 +23,5 @@ export const redirects: RedirectEntry[] = [
   { in: "www.jfa.dev", out: "https://jfa.dev" },
   { in: "links.jfa.dev", out: "https://jfa.dev" },
   { in: "link.jfa.dev", out: "https://jfa.dev" },
+
 ];
