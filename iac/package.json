@@ -3,11 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "deploy": "ALCHEMY_STAGE=production alchemy deploy --stage --yes",
+    "deploy": "alchemy deploy --stage ${ALCHEMY_STAGE:-production} --yes",
     "dev": "alchemy dev --stage local",
     "format": "oxfmt",
     "lint": "oxlint src alchemy.run.ts",
-    "plan": "ALCHEMY_STAGE=production alchemy deploy --stage --dry-run",
+    "plan": "alchemy deploy --stage ${ALCHEMY_STAGE:-production} --dry-run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

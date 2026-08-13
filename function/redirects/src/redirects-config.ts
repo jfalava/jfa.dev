@@ -1,6 +1,7 @@
 interface RedirectEntry {
   in: string; // Base hostname to match
   out: string; // Base destination hostname (with protocol)
+  pathPrefix?: string; // Optional destination path prefix
   preserveSubdomain?: boolean;
 }
 
@@ -23,5 +24,14 @@ export const redirects: RedirectEntry[] = [
   { in: "www.jfa.dev", out: "https://jfa.dev" },
   { in: "links.jfa.dev", out: "https://jfa.dev" },
   { in: "link.jfa.dev", out: "https://jfa.dev" },
-
+  {
+    in: "hyperscalers.jfa.dev",
+    out: "https://jfa.dev",
+    pathPrefix: "/hyperscaler-services",
+  },
+  {
+    in: "hyperscaler-services.jfa.dev",
+    out: "https://jfa.dev",
+    pathPrefix: "/hyperscaler-services",
+  },
 ];

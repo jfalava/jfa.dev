@@ -19,12 +19,6 @@ export const infrastructureInventory = {
     domains: [],
     publicRoutes: ["/og-img-gen"],
   },
-  hyperscalerStandalone: {
-    worker: "hyperscaler-services",
-    domains: ["hyperscalers.jfa.dev"],
-    publicRoutes: ["/"],
-    basePath: "/",
-  },
   hyperscalerMounted: {
     worker: "hyperscaler-services-mounted",
     domains: [],
@@ -49,9 +43,8 @@ export const infrastructureInventory = {
       "www.jfa.dev",
       "links.jfa.dev",
       "link.jfa.dev",
-    ],
-    notes: [
-      "booru.satuya.com remains outside this stack until its tBCProject owner is migrated.",
-    ],
+      "hyperscalers.jfa.dev",
+      "hyperscaler-services.jfa.dev",
+    ]
   },
 } as const;

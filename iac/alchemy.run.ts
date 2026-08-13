@@ -22,7 +22,6 @@ export default Alchemy.Stack(
         router: workers.router.workerName,
         landing: workers.landing.workerName,
         ogImgGen: workers.ogImgGen.workerName,
-        hyperscalerStandalone: workers.hyperscalerStandalone.workerName,
         hyperscalerMounted: workers.hyperscalerMounted.workerName,
         redirects: workers.redirects.workerName,
       },

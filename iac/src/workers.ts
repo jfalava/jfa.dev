@@ -59,36 +59,6 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     ...(isLocal ? { dev: localDev(3101) } : {}),
   }).pipe(adopt(true));
 
-  const hyperscalerStandalone = yield* Cloudflare.Website.Vite(
-    "HyperscalerStandaloneWorker",
-    {
-      ...workerDefaults(config.workers.hyperscalerStandalone),
-      name: config.workers.hyperscalerStandalone.name,
-      rootDir: resolve(repositoryRoot, "web/hyperscaler-services"),
-      assets: {
-        runWorkerFirst: false,
-      },
-      ...(config.workers.hyperscalerStandalone.basePath === undefined
-        ? {}
-        : {
-            env: {
-              VITE_BASE_PATH: config.workers.hyperscalerStandalone.basePath,
-              ...(config.workers.hyperscalerStandalone.assetBasePath ===
-              undefined
-                ? {}
-                : {
-                    VITE_ASSET_BASE_PATH:
-                      config.workers.hyperscalerStandalone.assetBasePath,
-                  }),
-            },
-          }),
-      ...(config.workers.hyperscalerStandalone.domain === undefined
-        ? {}
-        : { domain: config.workers.hyperscalerStandalone.domain }),
-      ...(isLocal ? { dev: localDev(3103) } : {}),
-    },
-  ).pipe(adopt(true));
-
   const hyperscalerMounted = yield* Cloudflare.Website.Vite(
     "HyperscalerMountedWorker",
     {
@@ -148,7 +118,6 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   return {
     landing,
     ogImgGen,
-    hyperscalerStandalone,
     hyperscalerMounted,
     router,
     redirects,

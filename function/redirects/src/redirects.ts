@@ -11,6 +11,20 @@ function toAbsoluteBaseUrl(value: string): string {
   return `https://${value}`;
 }
 
+function normalizePathPrefix(value: string | undefined): string {
+  if (!value) {
+    return "";
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "/") {
+    return "";
+  }
+
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.replace(/\/+$/, "");
+}
+
 app.all("*", async (c) => {
   const url = new URL(c.req.url);
   const { hostname, pathname, search } = url;
@@ -35,8 +49,11 @@ app.all("*", async (c) => {
   }
 
   const destinationBase = toAbsoluteBaseUrl(targetHost);
-  const destinationURL = new URL(`${pathname}${search}`, destinationBase).toString();
-  return Response.redirect(destinationURL, 308);
+  const destinationURL = new URL(destinationBase);
+  const pathPrefix = normalizePathPrefix(entry.pathPrefix);
+  destinationURL.pathname = `${pathPrefix}${pathname === "/" ? "/" : pathname}`;
+  destinationURL.search = search;
+  return Response.redirect(destinationURL.toString(), 308);
 });
 
 export default app;

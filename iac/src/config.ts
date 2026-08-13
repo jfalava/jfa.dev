@@ -25,7 +25,6 @@ export type StageConfig = {
     router: WorkerConfig;
     landing: WorkerConfig;
     ogImgGen: WorkerConfig;
-    hyperscalerStandalone: WorkerConfig;
     hyperscalerMounted: WorkerConfig;
     redirects: WorkerConfig;
   };
@@ -69,6 +68,8 @@ const redirectAliases = [
   "www.jfa.dev",
   "links.jfa.dev",
   "link.jfa.dev",
+  "hyperscalers.jfa.dev",
+  "hyperscaler-services.jfa.dev",
 ];
 
 function stageName(baseName: string, stage: InfrastructureStage): string {
@@ -144,14 +145,6 @@ export function getStageConfig(stage: string | undefined): StageConfig {
         observability: true,
         workersDev: true,
       }),
-      hyperscalerStandalone: worker("hyperscaler-services", normalizedStage, {
-        compatibilityDate: compatibilityDate(normalizedStage, "2026-08-13"),
-        observability: false,
-        workersDev: normalizedStage !== "production",
-        domain: "hyperscalers.jfa.dev",
-        basePath: "/",
-        assetBasePath: "/",
-      }),
       hyperscalerMounted: worker(
         "hyperscaler-services-mounted",
         normalizedStage,
@@ -160,7 +153,7 @@ export function getStageConfig(stage: string | undefined): StageConfig {
           observability: false,
           workersDev: normalizedStage !== "production",
           basePath: "/hyperscaler-services",
-          assetBasePath: "/",
+          assetBasePath: "/hyperscaler-services",
         },
       ),
       redirects: worker("jfa-redirects", normalizedStage, {
