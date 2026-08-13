@@ -1,39 +1,11 @@
-import { env as processEnv } from "node:process";
 import path from "path";
 
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import type { Plugin, UserConfig } from "vite";
 import { defineConfig } from "vite-plus";
 
-function normalizeBasePath(value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed || trimmed === "/") {
-    return "/";
-  }
-
-  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-  return withLeadingSlash.replace(/\/+$/, "");
-}
-
-function alchemyBasePath(): Plugin {
-  return {
-    name: "jfa-dev-alchemy-base-path",
-    config(config: UserConfig) {
-      const injected = config.define?.["import.meta.env.VITE_ASSET_BASE_PATH"] as
-        | string
-        | undefined;
-      const configured = injected
-        ? normalizeBasePath(JSON.parse(injected) as string)
-        : normalizeBasePath(processEnv.VITE_ASSET_BASE_PATH ?? processEnv.VITE_BASE_PATH ?? "/");
-
-      return {
-        base: configured === "/" ? "/" : `${configured}/`,
-      };
-    },
-  };
-}
+const MOUNT_PATH = "/hyperscaler-services/";
 
 /**
  * Vite configuration for the hyperscaler services application.
@@ -43,8 +15,8 @@ function alchemyBasePath(): Plugin {
  */
 
 export default defineConfig({
-  base: normalizeBasePath(processEnv.VITE_ASSET_BASE_PATH ?? processEnv.VITE_BASE_PATH ?? "/"),
-  plugins: [alchemyBasePath(), tailwindcss(), tanstackStart(), viteReact()],
+  base: MOUNT_PATH,
+  plugins: [tailwindcss(), tanstackStart(), viteReact()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

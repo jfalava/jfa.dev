@@ -40,6 +40,7 @@ const routeDefinitions = {
       binding: "HYPERSCALER_SERVICES",
       path: "/hyperscaler-services",
       preload: true,
+      preserveMount: true,
     },
   ],
 };
