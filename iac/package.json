@@ -1,0 +1,27 @@
+{
+  "name": "@jfa.dev/iac",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "alchemy deploy --stage ${ALCHEMY_STAGE:-development} --yes",
+    "dev": "alchemy dev --stage local",
+    "format": "oxfmt",
+    "lint": "oxlint src alchemy.run.ts",
+    "plan": "alchemy deploy --stage ${ALCHEMY_STAGE:-development} --dry-run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/platform-bun": "catalog:iac",
+    "@effect/platform-node": "catalog:iac",
+    "alchemy": "catalog:iac",
+    "effect": "catalog:iac"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@types/bun": "catalog:types",
+    "@types/node": "catalog:types",
+    "oxfmt": "catalog:build",
+    "oxlint": "catalog:build",
+    "typescript": "catalog:build"
+  }
+}

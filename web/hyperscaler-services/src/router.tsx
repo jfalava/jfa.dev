@@ -1,0 +1,28 @@
+import { createRouter } from "@tanstack/react-router";
+
+import { appBasePath } from "@/lib/site-paths";
+
+import { routeTree } from "./routeTree.gen";
+
+/**
+ * Creates and configures the application router.
+ *
+ * @returns Configured router instance with route tree and scroll restoration
+ */
+export function getRouter() {
+  const serverBasePath = import.meta.env.SSR ? "/" : appBasePath;
+
+  const router = createRouter({
+    routeTree,
+    basepath: serverBasePath,
+    scrollRestoration: true,
+  });
+
+  return router;
+}
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: ReturnType<typeof getRouter>;
+  }
+}

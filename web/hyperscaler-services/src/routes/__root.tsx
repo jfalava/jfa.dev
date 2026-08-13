@@ -1,0 +1,114 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+/// <reference types="vite/client" />
+import type { ReactNode } from "react";
+
+import { ThemeProvider } from "@/hooks/use-theme";
+import { appPath } from "@/lib/site-paths";
+import appCss from "@/styles/globals.css?url";
+
+/**
+ * Query client instance with default configuration.
+ */
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      {
+        charSet: "utf-8",
+      },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
+      },
+      {
+        name: "description",
+        content:
+          "An open-source directory of equivalent services across AWS, Azure, GCP, Oracle Cloud and Cloudflare",
+      },
+      {
+        title: "Hyperscaler Services",
+      },
+    ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: appCss,
+      },
+      {
+        rel: "manifest",
+        href: appPath("/manifest.json"),
+      },
+      {
+        rel: "icon",
+        href: appPath("/favicon.ico"),
+        type: "image/x-icon",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: appPath("/apple-touch-icon.png"),
+      },
+    ],
+  }),
+  notFoundComponent: () => (
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <div className="text-center">
+        <h1 className="mb-4 text-4xl font-bold text-foreground">404 - Page Not Found</h1>
+        <p className="mb-8 text-muted-foreground">The page you're looking for doesn't exist.</p>
+        <a
+          href={appPath("/")}
+          className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Go Home
+        </a>
+      </div>
+    </div>
+  ),
+  component: RootComponent,
+});
+
+/**
+ * Root component wrapper for the application.
+ *
+ * @returns Root component with document wrapper
+ */
+function RootComponent() {
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  );
+}
+
+/**
+ * Document wrapper component with theme script and providers.
+ * Includes theme initialization script to prevent flash of incorrect theme.
+ *
+ * @param props - Component props with children
+ * @returns HTML document structure with providers
+ */
+function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script src={appPath("/theme-init.js")}></script>
+        <HeadContent />
+      </head>
+      <body className="flex min-h-screen flex-col bg-background font-sans text-base text-foreground transition-colors duration-200">
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <main className="flex-1">{children}</main>
+          </QueryClientProvider>
+        </ThemeProvider>
+        <Scripts />
+      </body>
+    </html>
+  );
+}

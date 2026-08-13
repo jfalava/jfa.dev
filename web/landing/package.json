@@ -5,10 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vp build",
-    "cf-typegen": "wrangler types",
     "check": "vp check --fix",
-    "deploy": "vp run typecheck && vp lint && vp build && wrangler deploy",
-    "dev": "vp dev --port 3000 --host",
+    "dev": "vp dev --port 3100 --host",
     "format": "vp fmt",
     "lint": "vp lint",
     "preview": "vp preview",
@@ -18,7 +16,6 @@
   },
   "dependencies": {
     "@base-ui/react": "catalog:react-ui",
-    "@cloudflare/vite-plugin": "catalog:cloudflare",
     "@tailwindcss/vite": "catalog:styling",
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
@@ -38,10 +35,10 @@
   "devDependencies": {
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
+    "@cloudflare/workers-types": "catalog:cloudflare",
     "@vitejs/plugin-react": "catalog:build",
     "typescript": "catalog:build",
     "vite": "catalog:build",
-    "vite-plus": "catalog:build",
-    "wrangler": "catalog:build"
+    "vite-plus": "catalog:build"
   }
 }

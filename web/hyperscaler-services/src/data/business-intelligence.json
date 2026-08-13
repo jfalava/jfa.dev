@@ -1,0 +1,43 @@
+[
+  {
+    "category": "business-intelligence",
+    "categoryName": {
+      "en": "Business Intelligence",
+      "es": "Inteligencia de Negocios"
+    },
+    "aws": "QuickSight",
+    "awsUrl": "https://aws.amazon.com/quicksight/",
+    "azure": "Power BI",
+    "azureUrl": "https://learn.microsoft.com/en-us/power-bi/fundamentals/power-bi-overview",
+    "gcp": "Looker",
+    "gcpUrl": "https://cloud.google.com/looker",
+    "oracle": "Oracle Analytics Cloud",
+    "oracleUrl": "https://www.oracle.com/business-analytics/",
+    "cloudflare": "Web Analytics",
+    "cloudflareUrl": "https://developers.cloudflare.com/analytics/web-analytics/",
+    "description": {
+      "en": "Analytics and visualization tools",
+      "es": "Herramientas de análisis y visualización"
+    }
+  },
+  {
+    "category": "business-intelligence",
+    "categoryName": {
+      "en": "Business Intelligence",
+      "es": "Inteligencia de Negocios"
+    },
+    "aws": "QuickSight (Embedded)",
+    "awsUrl": "https://docs.aws.amazon.com/quicksight/latest/user/embedded-analytics.html",
+    "azure": "Power BI Embedded",
+    "azureUrl": "https://learn.microsoft.com/en-us/power-bi/developer/embedded/embedded-analytics-power-bi",
+    "gcp": "Looker (Embedded)",
+    "gcpUrl": "https://cloud.google.com/looker",
+    "oracle": "Oracle Analytics Cloud (Embedded)",
+    "oracleUrl": "https://www.oracle.com/business-analytics/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Embedded analytics and dashboards for applications",
+      "es": "Analítica y paneles integrados para aplicaciones"
+    }
+  }
+]

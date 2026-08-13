@@ -1,6 +1,5 @@
 import path from "path";
 
-import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -15,7 +14,6 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
@@ -62,9 +60,7 @@ export default defineConfig({
     },
     ignorePatterns: [
       "cloudflare-env.d.ts",
-      "worker-configuration.d.ts",
       "src/routeTree.gen.ts",
-      ".wrangler/**",
       "node_modules/**",
       "bun.lock",
     ],

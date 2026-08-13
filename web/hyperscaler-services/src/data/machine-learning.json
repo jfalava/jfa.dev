@@ -1,0 +1,63 @@
+[
+  {
+    "category": "machine-learning",
+    "categoryName": {
+      "en": "Machine Learning",
+      "es": "Aprendizaje Automático"
+    },
+    "aws": "SageMaker",
+    "awsUrl": "https://aws.amazon.com/sagemaker/",
+    "azure": "Azure Machine Learning",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/machine-learning/",
+    "gcp": "Vertex AI",
+    "gcpUrl": "https://cloud.google.com/vertex-ai",
+    "oracle": "Data Science",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/data-science/",
+    "cloudflare": "—",
+    "description": {
+      "en": "End-to-end ML platform",
+      "es": "Plataforma de ML de extremo a extremo"
+    }
+  },
+  {
+    "category": "machine-learning",
+    "categoryName": {
+      "en": "Machine Learning",
+      "es": "Aprendizaje Automático"
+    },
+    "aws": "SageMaker Autopilot",
+    "awsUrl": "https://aws.amazon.com/sagemaker/autopilot/",
+    "azure": "Automated ML",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/machine-learning/concept-automated-ml",
+    "gcp": "Vertex AI AutoML",
+    "gcpUrl": "https://cloud.google.com/vertex-ai/docs/beginner/beginners-guide",
+    "oracle": "AutoML",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/data-science/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Automated machine learning",
+      "es": "Aprendizaje automático automatizado"
+    }
+  },
+  {
+    "category": "machine-learning",
+    "categoryName": {
+      "en": "Machine Learning",
+      "es": "Aprendizaje Automático"
+    },
+    "aws": "SageMaker (Inference)",
+    "awsUrl": "https://aws.amazon.com/sagemaker/",
+    "azure": "Azure Machine Learning (Endpoints)",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/machine-learning/",
+    "gcp": "Vertex AI (Prediction)",
+    "gcpUrl": "https://cloud.google.com/vertex-ai",
+    "oracle": "OCI Data Science (Model Deployment)",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/data-science/",
+    "cloudflare": "Workers AI",
+    "cloudflareUrl": "https://developers.cloudflare.com/workers-ai/",
+    "description": {
+      "en": "Model inference and serving",
+      "es": "Inferencia y servicio de modelos"
+    }
+  }
+]

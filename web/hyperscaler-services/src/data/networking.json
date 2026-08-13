@@ -1,0 +1,394 @@
+[
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "VPC",
+    "awsUrl": "https://aws.amazon.com/vpc/",
+    "azure": "Virtual Network",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/virtual-network/",
+    "gcp": "VPC",
+    "gcpUrl": "https://cloud.google.com/vpc",
+    "oracle": "VCN",
+    "oracleUrl": "https://www.oracle.com/cloud/networking/virtual-cloud-network/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Private network in the cloud",
+      "es": "Red privada en la nube"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "NAT Gateway",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html",
+    "azure": "NAT Gateway",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/nat-gateway/nat-overview",
+    "gcp": "Cloud NAT",
+    "gcpUrl": "https://cloud.google.com/nat",
+    "oracle": "NAT Gateway",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/NATgateway.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Outbound Internet connectivity",
+      "es": "Conectividad de Internet de salida"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Route Tables",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html",
+    "azure": "User Defined Routes",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview",
+    "gcp": "Routes",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/routes",
+    "oracle": "Route Tables",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingroutetables.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Custom network routing",
+      "es": "Enrutamiento de red personalizado"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Site-to-Site VPN",
+    "awsUrl": "https://aws.amazon.com/vpn/",
+    "azure": "VPN Gateway",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/vpn-gateway/",
+    "gcp": "Cloud VPN",
+    "gcpUrl": "https://cloud.google.com/network-connectivity/docs/vpn",
+    "oracle": "Site-to-Site VPN",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingIPsec.htm",
+    "cloudflare": "Magic WAN",
+    "cloudflareUrl": "https://developers.cloudflare.com/magic-wan/",
+    "description": {
+      "en": "VPN connectivity up to 10 Gbps",
+      "es": "Conectividad VPN de hasta 10 Gbps"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Direct Connect",
+    "awsUrl": "https://aws.amazon.com/directconnect/",
+    "azure": "ExpressRoute",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/expressroute/",
+    "gcp": "Cloud Interconnect",
+    "gcpUrl": "https://cloud.google.com/network-connectivity/docs/interconnect",
+    "oracle": "FastConnect",
+    "oracleUrl": "https://www.oracle.com/cloud/networking/fastconnect/",
+    "cloudflare": "Network Interconnect",
+    "cloudflareUrl": "https://developers.cloudflare.com/network-interconnect/",
+    "description": {
+      "en": "Dedicated private network connections",
+      "es": "Conexiones de red privadas dedicadas"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Network Load Balancer",
+    "awsUrl": "https://aws.amazon.com/elasticloadbalancing/network-load-balancer/",
+    "azure": "Load Balancer",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/load-balancer/",
+    "gcp": "Network Load Balancing",
+    "gcpUrl": "https://cloud.google.com/load-balancing/docs/network",
+    "oracle": "Network Load Balancer",
+    "oracleUrl": "https://www.oracle.com/cloud/networking/load-balancing/",
+    "cloudflare": "Load Balancing",
+    "cloudflareUrl": "https://developers.cloudflare.com/load-balancing/",
+    "description": {
+      "en": "Layer 4 TCP/UDP load balancing",
+      "es": "Equilibrio de carga TCP/UDP de capa 4"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Application Load Balancer",
+    "awsUrl": "https://aws.amazon.com/elasticloadbalancing/application-load-balancer/",
+    "azure": "Application Gateway",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/application-gateway/",
+    "gcp": "Cloud Load Balancing",
+    "gcpUrl": "https://cloud.google.com/load-balancing",
+    "oracle": "Load Balancer",
+    "oracleUrl": "https://www.oracle.com/cloud/networking/load-balancing/",
+    "cloudflare": "Load Balancing",
+    "cloudflareUrl": "https://developers.cloudflare.com/load-balancing/",
+    "description": {
+      "en": "Layer 7 application load balancing",
+      "es": "Equilibrio de carga de aplicaciones de capa 7"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Route 53",
+    "awsUrl": "https://aws.amazon.com/route53/",
+    "azure": "DNS",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/dns/",
+    "gcp": "Cloud DNS",
+    "gcpUrl": "https://cloud.google.com/dns",
+    "oracle": "DNS",
+    "oracleUrl": "https://www.oracle.com/cloud/networking/dns/",
+    "cloudflare": "DNS",
+    "cloudflareUrl": "https://developers.cloudflare.com/dns/",
+    "description": {
+      "en": "Domain name system service",
+      "es": "Servicio de sistema de nombres de dominio"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Route 53",
+    "awsUrl": "https://aws.amazon.com/route53/",
+    "azure": "Traffic Manager",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/traffic-manager/",
+    "gcp": "Cloud DNS",
+    "gcpUrl": "https://cloud.google.com/dns",
+    "oracle": "Traffic Management",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/TrafficManagement/Concepts/overview.htm",
+    "cloudflare": "Load Balancing (Traffic Steering)",
+    "cloudflareUrl": "https://developers.cloudflare.com/load-balancing/understand-basics/traffic-steering/",
+    "description": {
+      "en": "DNS-level traffic routing",
+      "es": "Enrutamiento de tráfico a nivel de DNS"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Global Accelerator",
+    "awsUrl": "https://aws.amazon.com/global-accelerator/",
+    "azure": "Traffic Manager",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/traffic-manager/",
+    "gcp": "Cloud Load Balancing",
+    "gcpUrl": "https://cloud.google.com/load-balancing",
+    "oracle": "Traffic Management",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/TrafficManagement/Concepts/overview.htm",
+    "cloudflare": "Argo Smart Routing",
+    "cloudflareUrl": "https://developers.cloudflare.com/argo-smart-routing/",
+    "description": {
+      "en": "Global routing and performance",
+      "es": "Enrutamiento global y rendimiento"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "CloudFront",
+    "awsUrl": "https://aws.amazon.com/cloudfront/",
+    "azure": "CDN",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cdn/",
+    "gcp": "Cloud CDN",
+    "gcpUrl": "https://cloud.google.com/cdn",
+    "oracle": "CDN",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/TrafficManagement/Concepts/overview.htm",
+    "cloudflare": "CDN",
+    "cloudflareUrl": "https://developers.cloudflare.com/cache/",
+    "description": {
+      "en": "Content delivery network",
+      "es": "Red de distribución de contenido"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "PrivateLink",
+    "awsUrl": "https://aws.amazon.com/privatelink/",
+    "azure": "Private Link",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/private-link/",
+    "gcp": "Private Service Connect",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/private-service-connect",
+    "oracle": "Private Endpoint",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/servicegateway.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Private connectivity to PaaS",
+      "es": "Conectividad privada a PaaS"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "VPC Endpoints",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html",
+    "azure": "Private Endpoint",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview",
+    "gcp": "Private Service Connect",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/private-service-connect",
+    "oracle": "Service Gateway",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/servicegateway.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Private endpoint connectivity",
+      "es": "Conectividad de punto final privado"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "VPC Peering",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html",
+    "azure": "Virtual Network Peering",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview",
+    "gcp": "VPC Peering",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/vpc-peering",
+    "oracle": "VCN Peering",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/VCNpeering.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Connect virtual networks",
+      "es": "Conectar redes virtuales"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Transit Gateway",
+    "awsUrl": "https://aws.amazon.com/transit-gateway/",
+    "azure": "Virtual WAN",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/virtual-wan/",
+    "gcp": "Network Connectivity Center",
+    "gcpUrl": "https://cloud.google.com/network-connectivity/docs/network-connectivity-center",
+    "oracle": "DRG (Dynamic Routing Gateway)",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingDRGs.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Multi-environment network connectivity",
+      "es": "Conectividad de red de múltiples entornos"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "VPC Flow Logs",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html",
+    "azure": "Network Watcher",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/network-watcher/",
+    "gcp": "VPC Flow Logs",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/flow-logs",
+    "oracle": "VCN Flow Logs",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Concepts/vcn_flow_logs.htm",
+    "cloudflare": "Network Analytics",
+    "cloudflareUrl": "https://developers.cloudflare.com/analytics/network-analytics/",
+    "description": {
+      "en": "Network traffic monitoring",
+      "es": "Monitoreo de tráfico de red"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "API Gateway",
+    "awsUrl": "https://aws.amazon.com/api-gateway/",
+    "azure": "API Management",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/api-management/",
+    "gcp": "API Gateway",
+    "gcpUrl": "https://cloud.google.com/api-gateway",
+    "oracle": "API Gateway",
+    "oracleUrl": "https://www.oracle.com/cloud/api-gateway/",
+    "cloudflare": "API Shield",
+    "cloudflareUrl": "https://developers.cloudflare.com/api-shield/",
+    "description": {
+      "en": "API management and security",
+      "es": "Gestión y seguridad de APIs"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Network Firewall",
+    "awsUrl": "https://aws.amazon.com/network-firewall/",
+    "azure": "Azure Firewall",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/azure-firewall/",
+    "gcp": "Cloud NGFW",
+    "gcpUrl": "https://cloud.google.com/firewall",
+    "oracle": "OCI Network Firewall",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/network-firewall/home.htm",
+    "cloudflare": "Magic Firewall",
+    "cloudflareUrl": "https://developers.cloudflare.com/magic-firewall/",
+    "description": {
+      "en": "Managed cloud network firewall",
+      "es": "Cortafuegos de red en la nube administrado"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Shield",
+    "awsUrl": "https://aws.amazon.com/shield/",
+    "azure": "DDoS Protection",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ddos-protection/",
+    "gcp": "Cloud Armor (DDoS protection)",
+    "gcpUrl": "https://cloud.google.com/armor",
+    "oracle": "DDoS Protection (built-in)",
+    "oracleUrl": "https://docs.oracle.com/en/solutions/learn-ddos-prevention-oci/index.html",
+    "cloudflare": "Magic Transit / Advanced DDoS",
+    "cloudflareUrl": "https://developers.cloudflare.com/magic-transit/",
+    "description": {
+      "en": "Distributed denial-of-service (DDoS) protection",
+      "es": "Protección contra denegación de servicio distribuida (DDoS)"
+    }
+  }
+]

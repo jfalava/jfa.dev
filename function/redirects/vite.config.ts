@@ -20,7 +20,7 @@ export default defineConfig({
       sortSideEffects: false,
       groups: ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"],
     },
-    ignorePatterns: ["*.d.ts", ".wrangler/**", "node_modules/**"],
+    ignorePatterns: ["*.d.ts", "node_modules/**"],
   },
   lint: {
     plugins: ["eslint", "react", "typescript", "unicorn", "oxc", "import", "promise"],
@@ -32,11 +32,22 @@ export default defineConfig({
       browser: true,
       es2022: true,
     },
-    ignorePatterns: ["worker-configuration.d.ts", "**/*.d.ts"],
+    globals: {
+      Bun: "readonly",
+    },
+    ignorePatterns: ["**/*.d.ts"],
     options: {
       typeAware: true,
       typeCheck: true,
     },
+    overrides: [
+      {
+        files: ["src/dev.ts"],
+        rules: {
+          "typescript/no-unsafe-type-assertion": "off",
+        },
+      },
+    ],
     rules: {
       "typescript/no-explicit-any": "error",
       "typescript/no-unsafe-assignment": "error",

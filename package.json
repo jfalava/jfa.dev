@@ -3,6 +3,7 @@
   "private": true,
   "workspaces": {
     "packages": [
+      "iac",
       "web/*",
       "function/*"
     ],
@@ -16,14 +17,18 @@
         "oxlint": "1.57.0",
         "oxlint-tsgolint": "7.0.2001",
         "typescript": "7.0.2",
-        "vite": "npm:@voidzero-dev/vite-plus-core@0.2.5",
-        "vite-plus": "0.2.5",
-        "vitest": "4.1.2",
-        "wrangler": "4.113.0"
+        "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9",
+        "vite-plus": "0.2.9",
+        "vitest": "4.1.2"
       },
       "cloudflare": {
-        "@cloudflare/vite-plugin": "1.46.0",
         "@cloudflare/workers-types": "5.20260721.1"
+      },
+      "iac": {
+        "alchemy": "2.0.0-beta.72",
+        "effect": "4.0.0-rc.108",
+        "@effect/platform-bun": "4.0.0-rc.108",
+        "@effect/platform-node": "4.0.0-rc.108"
       },
       "react-ui": {
         "@base-ui/react": "1.6.0",
@@ -54,27 +59,25 @@
       }
     }
   },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9"
+  },
   "type": "module",
   "scripts": {
-    "check:catalog": "vp exec bun scripts/check-catalog-usage.ts",
-    "check:global": "vp run --filter @jfa.dev/landing --filter @jfa.dev/redirects --filter @jfa.dev/og-img-gen check",
-    "check:outdated": "vp exec bun scripts/check-outdated-catalog.ts",
-    "format": "vp fmt",
-    "format:global": "vp run --filter @jfa.dev/landing --filter @jfa.dev/redirects --filter @jfa.dev/og-img-gen format"
+    "dev": "bun run --filter @jfa.dev/iac dev",
+    "deploy": "bun run --filter @jfa.dev/iac deploy",
+    "iac:plan": "bun run --filter @jfa.dev/iac plan"
   },
   "dependencies": {
-    "jsdom": "29.1.1"
+    "jsdom": "30.0.1"
   },
   "devDependencies": {
     "@types/bun": "1.3.14",
-    "@types/jsdom": "28.0.3",
-    "@types/node": "26.1.1",
-    "oxfmt": "0.58.0",
+    "@types/jsdom": "30.0.0",
+    "@types/node": "26.2.0",
+    "oxfmt": "0.63.0",
     "typescript": "7.0.2",
-    "vite-plus": "0.2.4"
-  },
-  "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.5"
+    "vite-plus": "0.2.9"
   },
   "packageManager": "bun@1.3.14"
 }

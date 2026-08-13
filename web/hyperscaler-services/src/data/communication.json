@@ -1,0 +1,40 @@
+[
+  {
+    "category": "communication",
+    "categoryName": {
+      "en": "Communication",
+      "es": "Comunicación"
+    },
+    "aws": "SES",
+    "awsUrl": "https://aws.amazon.com/ses/",
+    "azure": "Azure Communication Services Email",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/communication-services/concepts/email/email-overview",
+    "gcp": "—",
+    "oracle": "Email Delivery",
+    "oracleUrl": "https://www.oracle.com/cloud/networking/email-delivery/",
+    "cloudflare": "Email Service (Email Sending)",
+    "cloudflareUrl": "https://developers.cloudflare.com/email-service/",
+    "description": {
+      "en": "Email sending service",
+      "es": "Servicio de envío de correos electrónicos"
+    }
+  },
+  {
+    "category": "communication",
+    "categoryName": {
+      "en": "Communication",
+      "es": "Comunicación"
+    },
+    "aws": "Pinpoint",
+    "awsUrl": "https://aws.amazon.com/pinpoint/",
+    "azure": "Communication Services (SMS/Voice)",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/communication-services/",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": {
+      "en": "SMS and voice messaging APIs",
+      "es": "APIs de mensajería SMS y voz"
+    }
+  }
+]

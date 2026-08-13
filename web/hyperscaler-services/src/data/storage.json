@@ -1,0 +1,263 @@
+[
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "S3",
+    "awsUrl": "https://aws.amazon.com/s3/",
+    "azure": "Blob Storage",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/storage/blobs/",
+    "gcp": "Cloud Storage",
+    "gcpUrl": "https://cloud.google.com/storage",
+    "oracle": "Object Storage",
+    "oracleUrl": "https://www.oracle.com/cloud/storage/object-storage/",
+    "cloudflare": "R2",
+    "cloudflareUrl": "https://developers.cloudflare.com/r2/",
+    "description": {
+      "en": "Object storage service",
+      "es": "Servicio de almacenamiento de objetos"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "EBS",
+    "awsUrl": "https://aws.amazon.com/ebs/",
+    "azure": "Managed Disks",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/storage/disks/",
+    "gcp": "Persistent Disk",
+    "gcpUrl": "https://cloud.google.com/persistent-disk",
+    "oracle": "Block Volumes",
+    "oracleUrl": "https://www.oracle.com/cloud/storage/block-volumes/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Block storage for virtual machines",
+      "es": "Almacenamiento en bloques para máquinas virtuales"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "EFS",
+    "awsUrl": "https://aws.amazon.com/efs/",
+    "azure": "Files",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/storage/files/",
+    "gcp": "Filestore",
+    "gcpUrl": "https://cloud.google.com/filestore",
+    "oracle": "File Storage",
+    "oracleUrl": "https://www.oracle.com/cloud/storage/file-storage/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Managed file storage service",
+      "es": "Servicio de almacenamiento de archivos administrado"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "Glacier",
+    "awsUrl": "https://aws.amazon.com/s3/storage-classes/glacier/",
+    "azure": "Archive Storage",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview",
+    "gcp": "Cloud Storage Archive",
+    "gcpUrl": "https://cloud.google.com/storage/docs/storage-classes#archive",
+    "oracle": "Archive Storage",
+    "oracleUrl": "https://www.oracle.com/cloud/storage/archive-storage/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Long-term archive storage",
+      "es": "Almacenamiento de archivo a largo plazo"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "EBS io2 Block Express",
+    "awsUrl": "https://aws.amazon.com/ebs/provisioned-iops/",
+    "azure": "Elastic SAN",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/storage/elastic-san/elastic-san-introduction",
+    "gcp": "Hyperdisk",
+    "gcpUrl": "https://cloud.google.com/compute/docs/disks/hyperdisks",
+    "oracle": "Ultra High Performance",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Block/Concepts/blockvolumeperformance.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "High-performance block storage",
+      "es": "Almacenamiento en bloques de alto rendimiento"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "FSX for Windows File Server",
+    "awsUrl": "https://aws.amazon.com/fsx/windows/",
+    "azure": "Azure Files",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/storage/files/",
+    "gcp": "Filestore",
+    "gcpUrl": "https://cloud.google.com/filestore",
+    "oracle": "File Storage",
+    "oracleUrl": "https://www.oracle.com/cloud/storage/file-storage/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Managed SMB file share",
+      "es": "Recurso compartido de archivos SMB administrado"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "FSX for Lustre",
+    "awsUrl": "https://aws.amazon.com/fsx/lustre/",
+    "azure": "Azure Managed Lustre",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/managed-lustre/",
+    "gcp": "Parallelstore",
+    "gcpUrl": "https://cloud.google.com/parallelstore",
+    "oracle": "File Storage (NFS)",
+    "oracleUrl": "https://www.oracle.com/cloud/storage/file-storage/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Managed Lustre file system for HPC",
+      "es": "Sistema de archivos Lustre administrado para HPC"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "FSX for NetApp ONTAP",
+    "awsUrl": "https://aws.amazon.com/fsx/netapp-ontap/",
+    "azure": "Azure NetApp Files",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/netapp/",
+    "gcp": "NetApp Volumes",
+    "gcpUrl": "https://cloud.google.com/netapp/volumes/docs",
+    "oracle": "File Storage",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/File/Concepts/filestorageoverview.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Managed NetApp capabilities",
+      "es": "Capacidades de NetApp administradas"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "S3 Infrequent Access",
+    "awsUrl": "https://aws.amazon.com/s3/storage-classes/",
+    "azure": "Cool Blob Storage",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/storage/blobs/",
+    "gcp": "Cloud Storage Nearline",
+    "gcpUrl": "https://cloud.google.com/storage/docs/storage-classes#nearline",
+    "oracle": "Infrequent Access",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Object/Concepts/objectstorageoverview.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Lower-cost tier for infrequent data",
+      "es": "Nivel de menor costo para datos poco frecuentes"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "S3 Glacier Deep Archive",
+    "awsUrl": "https://aws.amazon.com/s3/storage-classes/glacier/",
+    "azure": "Archive Access Tier",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview",
+    "gcp": "Cloud Storage Archive",
+    "gcpUrl": "https://cloud.google.com/storage/docs/storage-classes#archive",
+    "oracle": "Archive Storage",
+    "oracleUrl": "https://www.oracle.com/cloud/storage/archive-storage/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Lowest storage cost with extended recovery",
+      "es": "Costo de almacenamiento más bajo con recuperación extendida"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "AWS Backup",
+    "awsUrl": "https://aws.amazon.com/backup/",
+    "azure": "Azure Backup",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/backup/",
+    "gcp": "Backup and DR Service",
+    "gcpUrl": "https://cloud.google.com/backup-disaster-recovery",
+    "oracle": "Cloud Backup",
+    "oracleUrl": "https://www.oracle.com/cloud/backup-and-disaster-recovery/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Backup and recovery service",
+      "es": "Servicio de copia de seguridad y recuperación"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "DataSync",
+    "awsUrl": "https://aws.amazon.com/datasync/",
+    "azure": "File Sync",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/storage/file-sync/file-sync-introduction",
+    "gcp": "Storage Transfer Service",
+    "gcpUrl": "https://cloud.google.com/storage-transfer-service",
+    "oracle": "Data Transfer",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/DataTransfer/Concepts/overview.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Data synchronization service",
+      "es": "Servicio de sincronización de datos"
+    }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "Snowball Edge",
+    "awsUrl": "https://aws.amazon.com/snowball/",
+    "azure": "Data Box",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/databox/",
+    "gcp": "Transfer Appliance",
+    "gcpUrl": "https://cloud.google.com/transfer-appliance",
+    "oracle": "Data Transfer Appliance",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/DataTransfer/Concepts/overview.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Petabyte-scale data transport",
+      "es": "Transporte de datos a escala de petabytes"
+    }
+  }
+]

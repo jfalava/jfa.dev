@@ -1,0 +1,21 @@
+[
+  {
+    "category": "iot",
+    "categoryName": {
+      "en": "IoT",
+      "es": "IoT"
+    },
+    "aws": "IoT Core",
+    "awsUrl": "https://aws.amazon.com/iot-core/",
+    "azure": "IoT Hub",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/iot-hub/",
+    "gcp": "—",
+    "oracle": "OCI IoT Platform",
+    "oracleUrl": "https://www.oracle.com/cloud/cloud-native/iot-platform/",
+    "cloudflare": "—",
+    "description": {
+      "en": "IoT device connectivity and data ingestion",
+      "es": "Conectividad de dispositivos IoT e ingesta de datos"
+    }
+  }
+]

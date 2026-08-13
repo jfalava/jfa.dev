@@ -1,0 +1,41 @@
+[
+  {
+    "category": "data-lake",
+    "categoryName": {
+      "en": "Data Lakes",
+      "es": "Lagos de Datos"
+    },
+    "aws": "Lake Formation",
+    "awsUrl": "https://aws.amazon.com/lake-formation/",
+    "azure": "OneLake",
+    "azureUrl": "https://learn.microsoft.com/en-us/fabric/onelake/",
+    "gcp": "Dataplex",
+    "gcpUrl": "https://cloud.google.com/dataplex",
+    "oracle": "Data Lake",
+    "oracleUrl": "https://www.oracle.com/big-data/data-lake/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Data lake platform and governance capabilities",
+      "es": "Capacidades de plataforma y gobernanza de lagos de datos"
+    }
+  },
+  {
+    "category": "data-lake",
+    "categoryName": {
+      "en": "Data Lakes",
+      "es": "Lagos de Datos"
+    },
+    "aws": "Athena",
+    "awsUrl": "https://aws.amazon.com/athena/",
+    "azure": "Serverless SQL pool (Synapse)",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/on-demand-workspace-overview",
+    "gcp": "BigQuery",
+    "gcpUrl": "https://cloud.google.com/bigquery",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": {
+      "en": "Serverless query engine",
+      "es": "Motor de consulta sin servidor"
+    }
+  }
+]
