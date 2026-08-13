@@ -7,17 +7,17 @@
     "build": "vp build",
     "cf-typegen": "wrangler types",
     "check": "vp check --fix",
-    "deploy": "vp run check && wrangler deploy",
+    "deploy": "vp check && vp lint --type-check && vp build && wrangler deploy",
     "dev": "wrangler dev",
     "format": "vp fmt",
     "lint": "vp lint",
+    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "hono": "catalog:backend"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "catalog:cloudflare",
     "@types/bun": "catalog:types",
     "@types/node": "catalog:types",
     "typescript": "catalog:build",

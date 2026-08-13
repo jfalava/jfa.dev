@@ -1,3 +1,4 @@
+import { env } from "node:process";
 import path from "path";
 
 import { cloudflare } from "@cloudflare/vite-plugin";
@@ -5,6 +6,20 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
+
+function normalizeBasePath(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "/") {
+    return "/";
+  }
+
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.replace(/\/+$/, "");
+}
+
+const basePath = normalizeBasePath(
+  env.VITE_BASE_PATH ?? "/hyperscaler-services",
+);
 
 /**
  * Vite configuration for the hyperscaler services application.
@@ -14,6 +29,7 @@ import { defineConfig } from "vite-plus";
  */
 
 export default defineConfig({
+  base: basePath === "/" ? "/" : `${basePath}/`,
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tailwindcss(),

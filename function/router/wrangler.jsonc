@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "jfa-dev-router",
   "main": "src/router.ts",
-  "compatibility_date": "2026-01-01",
+  "compatibility_date": "2026-08-13",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "preview_urls": false,
@@ -24,8 +24,13 @@
       "binding": "OG_IMG_GEN",
       "service": "jfa-dev-og-img-gen",
     },
+    {
+      "binding": "HYPERSCALER_SERVICES",
+      "service": "hyperscaler-services",
+    },
   ],
   "vars": {
-    "ROUTES": "{\"smoothTransitions\":true,\"routes\":[{\"binding\":\"LANDING\",\"path\":\"/\",\"preload\":true},{\"binding\":\"OG_IMG_GEN\",\"path\":\"/og-img-gen\",\"preload\":true}]}",
+    "ROUTES": "{\"smoothTransitions\":true,\"routes\":[{\"binding\":\"LANDING\",\"path\":\"/\",\"preload\":true},{\"binding\":\"OG_IMG_GEN\",\"path\":\"/og-img-gen\",\"preload\":true},{\"binding\":\"HYPERSCALER_SERVICES\",\"path\":\"/hyperscaler-services\",\"preload\":true}]}",
+    "ASSET_PREFIXES": "[\"/icons/\",\"/manifest.json\",\"/theme-init.js\",\"/android-chrome-192x192.png\",\"/android-chrome-512x512.png\",\"/apple-touch-icon.png\",\"/favicon.ico\"]",
   },
 }

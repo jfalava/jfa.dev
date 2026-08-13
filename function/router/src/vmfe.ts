@@ -27,7 +27,17 @@ function normalizePath(path: string): string {
 }
 
 function hasAssetPrefix(path: string, prefixes: string[]): boolean {
-  return prefixes.some((p) => path.startsWith(p));
+  return prefixes.some((prefix) => {
+    if (prefix.endsWith("/")) {
+      return path.startsWith(prefix);
+    }
+
+    return path === prefix || path.startsWith(`${prefix}?`) || path.startsWith(`${prefix}#`);
+  });
+}
+
+function isRootRelativeUrl(value: string): boolean {
+  return value.startsWith("/") && !value.startsWith("//");
 }
 
 /* ---------------------- HTML rewriting ---------------------- */
@@ -91,7 +101,7 @@ class AssetAttributeRewriter {
     const rel = el.getAttribute("rel")?.toLowerCase();
     const href = el.getAttribute("href");
     if (rel && (rel.includes("icon") || rel.includes("shortcut")) && href) {
-      if (href.startsWith("/") && !this.isScoped(href)) {
+      if (isRootRelativeUrl(href) && !this.isScoped(href)) {
         el.setAttribute("href", this.prepend(href));
       }
     }
@@ -133,7 +143,7 @@ class AssetAttributeRewriter {
       .map((candidate) => {
         const parts = candidate.split(/\s+/);
         const url = parts[0];
-        if (url.startsWith("/") && !this.isScoped(url) && hasAssetPrefix(url, this.assetPrefixes)) {
+        if (isRootRelativeUrl(url) && !this.isScoped(url) && hasAssetPrefix(url, this.assetPrefixes)) {
           return this.prepend(url) + (parts[1] ? " " + parts[1] : "");
         }
         return candidate;
@@ -155,7 +165,7 @@ class AssetAttributeRewriter {
       return;
     }
 
-    if (!val.startsWith("/")) {
+    if (!isRootRelativeUrl(val)) {
       return;
     }
     if (this.isScoped(val)) {
@@ -275,11 +285,7 @@ function rewriteLocation(location: string, mount: string, forwardUrl: URL): stri
 
 function rewriteSetCookie(headers: Headers, mount: string): void {
   const normalizedMount = normalizePath(mount);
-  const getSetCookie = (headers as unknown as { getSetCookie?: () => string[] }).getSetCookie;
-  if (!getSetCookie) {
-    return;
-  }
-  const cookies = getSetCookie.call(headers);
+  const cookies = headers.getSetCookie();
   if (!cookies || cookies.length === 0) {
     return;
   }
@@ -373,7 +379,7 @@ interface HtmlResponseContext {
   preloadStaticMounts?: string[];
 }
 
-async function handleHtmlResponse(ctx: HtmlResponseContext): Promise<Response> {
+function handleHtmlResponse(ctx: HtmlResponseContext): Response {
   const {
     upstreamResp,
     headers,
@@ -383,7 +389,6 @@ async function handleHtmlResponse(ctx: HtmlResponseContext): Promise<Response> {
     smoothTransitions,
     preloadStaticMounts,
   } = ctx;
-  const html = await upstreamResp.text();
   const headersOut = cloneHeadersForTransform(headers);
   rewriteSetCookie(headersOut, mount);
 
@@ -405,7 +410,7 @@ async function handleHtmlResponse(ctx: HtmlResponseContext): Promise<Response> {
   }
 
   return rewriter.transform(
-    new Response(html, {
+    new Response(upstreamResp.body, {
       status: upstreamResp.status,
       statusText: upstreamResp.statusText,
       headers: headersOut,
@@ -413,25 +418,88 @@ async function handleHtmlResponse(ctx: HtmlResponseContext): Promise<Response> {
   );
 }
 
-async function handleCssResponse(
+function rewriteCssText(
+  css: string,
+  mount: string,
+  assetPrefixes: string[],
+): string {
+  const directoryPrefixes = assetPrefixes.filter(
+    (prefix) => prefix.endsWith("/") && prefix !== "/",
+  );
+
+  if (!directoryPrefixes.length || mount === "/") {
+    return css;
+  }
+
+  const prefixPattern = directoryPrefixes
+    .map((prefix) => prefix.slice(1, -1).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("|");
+  const urlPattern = new RegExp(
+    `url\\(\\s*(['"]?)(/(?:${prefixPattern})/[^'"\\s)]+)`,
+    "gi",
+  );
+
+  return css.replace(urlPattern, (_match, quote: string, url: string) => {
+    return `url(${quote}${mount}${url}`;
+  });
+}
+
+function rewriteCssStream(
+  body: ReadableStream<Uint8Array> | null,
+  mount: string,
+  assetPrefixes: string[],
+): ReadableStream<Uint8Array> | null {
+  if (!body || mount === "/") {
+    return body;
+  }
+
+  const directoryPrefixLength = assetPrefixes
+    .filter((prefix) => prefix.endsWith("/") && prefix !== "/")
+    .reduce((longest, prefix) => Math.max(longest, prefix.length), 0);
+
+  if (!directoryPrefixLength) {
+    return body;
+  }
+
+  const carryLength = Math.max(256, directoryPrefixLength + mount.length + 64);
+  let carry = "";
+
+  return body
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(
+      new TransformStream<string, string>({
+        transform(chunk, controller) {
+          const value = carry + chunk;
+          if (value.length <= carryLength) {
+            carry = value;
+            return;
+          }
+
+          const splitAt = value.length - carryLength;
+          controller.enqueue(rewriteCssText(value.slice(0, splitAt), mount, assetPrefixes));
+          carry = value.slice(splitAt);
+        },
+        flush(controller) {
+          if (carry) {
+            controller.enqueue(rewriteCssText(carry, mount, assetPrefixes));
+          }
+        },
+      }),
+    )
+    .pipeThrough(new TextEncoderStream());
+}
+
+function handleCssResponse(
   upstreamResp: Response,
   headers: Headers,
   mount: string,
   assetPrefixes: string[],
-): Promise<Response> {
-  const css = await upstreamResp.text();
+): Response {
   const headersOut = cloneHeadersForTransform(headers);
   rewriteSetCookie(headersOut, mount);
+  const body = rewriteCssStream(upstreamResp.body, mount, assetPrefixes);
 
-  const prefix = mount === "/" ? "" : mount;
-  const pattern = assetPrefixes
-    .map((p) => p.slice(1, -1))
-    .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    .join("|");
-  const regex = new RegExp(`url\\(\\s*(['"]?)(/(?:${pattern})/)`, "g");
-  const rewritten = css.replace(regex, `url($1${prefix}$2`);
-
-  return new Response(rewritten, {
+  return new Response(body, {
     status: upstreamResp.status,
     statusText: upstreamResp.statusText,
     headers: headersOut,
@@ -456,7 +524,14 @@ export async function handleMountedApp(
     return preloadScriptResponse(options.preloadStaticMounts);
   }
 
-  const upstreamResp = await upstream.fetch(new Request(forwardUrl.toString(), request));
+  const upstreamRequest = new Request(forwardUrl.toString(), request);
+  const normalizedMount = normalizePath(mount);
+  if (normalizedMount === "/") {
+    upstreamRequest.headers.delete("x-forwarded-prefix");
+  } else {
+    upstreamRequest.headers.set("x-forwarded-prefix", normalizedMount);
+  }
+  const upstreamResp = await upstream.fetch(upstreamRequest);
   const headers = new Headers(upstreamResp.headers);
   const contentType = headers.get("content-type") || "";
 

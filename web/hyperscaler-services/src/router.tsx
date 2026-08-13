@@ -1,5 +1,7 @@
 import { createRouter } from "@tanstack/react-router";
 
+import { appBasePath } from "@/lib/site-paths";
+
 import { routeTree } from "./routeTree.gen";
 
 /**
@@ -10,6 +12,7 @@ import { routeTree } from "./routeTree.gen";
 export function getRouter() {
   const router = createRouter({
     routeTree,
+    basepath: appBasePath,
     scrollRestoration: true,
   });
 

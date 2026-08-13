@@ -16,10 +16,10 @@
         "oxlint": "1.57.0",
         "oxlint-tsgolint": "7.0.2001",
         "typescript": "7.0.2",
-        "vite": "npm:@voidzero-dev/vite-plus-core@0.2.5",
-        "vite-plus": "0.2.5",
+        "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9",
+        "vite-plus": "0.2.9",
         "vitest": "4.1.2",
-        "wrangler": "4.113.0"
+        "wrangler": "4.122.0"
       },
       "cloudflare": {
         "@cloudflare/vite-plugin": "1.46.0",
@@ -53,6 +53,9 @@
         "@types/react-dom": "19.2.3"
       }
     }
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9"
   },
   "type": "module",
   "scripts": {},

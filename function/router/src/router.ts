@@ -2,16 +2,19 @@ import { handleMountedApp, type RouteConfig, type RoutesConfig } from "./vmfe";
 
 import { Hono } from "hono";
 
-type Bindings = {
-  LANDING: Fetcher;
-  OG_IMG_GEN: Fetcher;
-  ROUTES: string;
+type Bindings = Pick<
+  Env,
+  "LANDING" | "OG_IMG_GEN" | "HYPERSCALER_SERVICES" | "ROUTES"
+> & {
   ASSET_PREFIXES?: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-function segmentsMatch(routeSegments: string[], pathnameSegments: string[]): boolean {
+export function segmentsMatch(
+  routeSegments: string[],
+  pathnameSegments: string[],
+): boolean {
   if (routeSegments.length > pathnameSegments.length) {
     return false;
   }
@@ -28,7 +31,7 @@ function segmentsMatch(routeSegments: string[], pathnameSegments: string[]): boo
   return true;
 }
 
-function findMatchingRoute(
+export function findMatchingRoute(
   pathname: string,
   routeDefs: RouteConfig[],
 ): { route: RouteConfig; mount: string } | null {
@@ -52,7 +55,10 @@ function findMatchingRoute(
       continue;
     }
 
-    const score = routeSegments.length;
+    const score = routeSegments.reduce(
+      (total, segment) => total + (segment.startsWith(":") ? 1 : 2),
+      0,
+    );
     if (score > matchedScore) {
       const mountSegments = pathnameSegments.slice(0, routeSegments.length);
       const mount = "/" + mountSegments.join("/");
@@ -70,13 +76,113 @@ function getPreloadMounts(routeDefs: RouteConfig[], currentMount: string): strin
     .map((r) => r.path);
 }
 
-function parseRoutesConfig(routesJson: string): RoutesConfig {
-  const parsed = JSON.parse(routesJson) as unknown;
-  return parsed as RoutesConfig;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function normalizeRoutePath(path: string): string {
+  const trimmed = path.trim();
+  const withLeadingSlash = trimmed.startsWith("/")
+    ? trimmed
+    : `/${trimmed}`;
+  return withLeadingSlash.length > 1
+    ? withLeadingSlash.replace(/\/+$/, "")
+    : withLeadingSlash;
+}
+
+function parseRoute(value: unknown): RouteConfig | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const binding = typeof value.binding === "string" ? value.binding.trim() : "";
+  const path = typeof value.path === "string" ? value.path.trim() : "";
+  const preload = value.preload;
+
+  if (
+    !binding ||
+    !path ||
+    (preload !== undefined && typeof preload !== "boolean")
+  ) {
+    return null;
+  }
+
+  return {
+    binding,
+    path: normalizeRoutePath(path),
+    ...(preload === undefined ? {} : { preload }),
+  };
+}
+
+export function parseRoutesConfig(routesJson: string): RoutesConfig {
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(routesJson) as unknown;
+  } catch {
+    throw new Error("ROUTES must contain valid JSON");
+  }
+
+  if (Array.isArray(parsed)) {
+    const routes = parsed.map(parseRoute);
+    if (!routes.length || !routes.every((route): route is RouteConfig => route !== null)) {
+      throw new Error("ROUTES contains an invalid route definition");
+    }
+
+    return routes;
+  }
+
+  if (!isRecord(parsed) || !Array.isArray(parsed.routes)) {
+    throw new Error("ROUTES must be an array or an object with a routes array");
+  }
+
+  const routes = parsed.routes.map(parseRoute);
+  if (!routes.length || !routes.every((route): route is RouteConfig => route !== null)) {
+    throw new Error("ROUTES contains an invalid route definition");
+  }
+
+  if (
+    parsed.smoothTransitions !== undefined &&
+    typeof parsed.smoothTransitions !== "boolean"
+  ) {
+    throw new Error("ROUTES smoothTransitions must be a boolean");
+  }
+
+  return {
+    routes,
+    ...(parsed.smoothTransitions === undefined
+      ? {}
+      : { smoothTransitions: parsed.smoothTransitions }),
+  };
+}
+
+function isFetcher(value: unknown): value is Fetcher {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "fetch" in value &&
+    typeof value.fetch === "function"
+  );
+}
+
+function getServiceBinding(env: Bindings, bindingName: string): Fetcher | null {
+  if (!(bindingName in env)) {
+    return null;
+  }
+
+  const value = env[bindingName as keyof Bindings];
+  return isFetcher(value) ? value : null;
 }
 
 app.all("*", async (c) => {
-  const config = parseRoutesConfig(c.env.ROUTES);
+  let config: RoutesConfig;
+  try {
+    config = parseRoutesConfig(c.env.ROUTES);
+  } catch (error) {
+    console.error("Invalid router configuration", error);
+    return c.json({ error: "Invalid router configuration" }, 500);
+  }
+
   const routeDefs: RouteConfig[] = Array.isArray(config) ? config : config.routes;
 
   const pathname = new URL(c.req.url).pathname;
@@ -86,7 +192,7 @@ app.all("*", async (c) => {
     return c.text("Not found", 404);
   }
 
-  const binding = (c.env as Record<string, unknown>)[matched.route.binding] as Fetcher;
+  const binding = getServiceBinding(c.env, matched.route.binding);
   if (!binding || typeof binding.fetch !== "function") {
     return c.text(`Service binding "${matched.route.binding}" not found`, 502);
   }
@@ -100,7 +206,7 @@ app.all("*", async (c) => {
   });
 });
 
-function buildAssetPrefixes(envVar?: string): string[] {
+export function buildAssetPrefixes(envVar?: string): string[] {
   const defaults = ["/assets/", "/static/", "/build/", "/_astro/", "/_next/", "/fonts/"];
 
   if (!envVar) {
@@ -117,9 +223,6 @@ function buildAssetPrefixes(envVar?: string): string[] {
           if (!n.startsWith("/")) {
             n = "/" + n;
           }
-          if (!n.endsWith("/")) {
-            n = n + "/";
-          }
           return n;
         });
       return [...new Set([...defaults, ...normalized])];
@@ -130,5 +233,10 @@ function buildAssetPrefixes(envVar?: string): string[] {
 
   return defaults;
 }
+
+app.onError((error, c) => {
+  console.error("Router request failed", error);
+  return c.json({ error: "Internal server error" }, 500);
+});
 
 export default app;

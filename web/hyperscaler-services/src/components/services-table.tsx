@@ -8,6 +8,7 @@ import {
   searchServiceIndex,
   type ServiceSearchIndex,
 } from "@/lib/service-search";
+import { appPath } from "@/lib/site-paths";
 import { cn } from "@/lib/utils";
 
 const serviceTableFeatures = tableFeatures({});
@@ -43,12 +44,12 @@ interface ProviderHeaderProps {
 }
 
 const providerHeaderIcons = {
-  aws: "/icons/aws.svg",
-  awsDark: "/icons/aws-dark.svg",
-  azure: "/icons/azure.svg",
-  gcp: "/icons/gcp.svg",
-  oracle: "/icons/ocl.svg",
-  cloudflare: "/icons/cloudflare.svg",
+  aws: appPath("/icons/aws.svg"),
+  awsDark: appPath("/icons/aws-dark.svg"),
+  azure: appPath("/icons/azure.svg"),
+  gcp: appPath("/icons/gcp.svg"),
+  oracle: appPath("/icons/ocl.svg"),
+  cloudflare: appPath("/icons/cloudflare.svg"),
 } as const;
 
 /** Renders a compact provider label with its lightly colored brand icon. */

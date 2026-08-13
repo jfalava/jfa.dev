@@ -4,6 +4,7 @@ import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-r
 import type { ReactNode } from "react";
 
 import { ThemeProvider } from "@/hooks/use-theme";
+import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 
 /**
@@ -43,16 +44,16 @@ export const Route = createRootRoute({
       },
       {
         rel: "manifest",
-        href: "/manifest.json",
+        href: appPath("/manifest.json"),
       },
       {
         rel: "icon",
-        href: "/favicon.ico",
+        href: appPath("/favicon.ico"),
         type: "image/x-icon",
       },
       {
         rel: "apple-touch-icon",
-        href: "/apple-touch-icon.png",
+        href: appPath("/apple-touch-icon.png"),
       },
     ],
   }),
@@ -62,7 +63,7 @@ export const Route = createRootRoute({
         <h1 className="mb-4 text-4xl font-bold text-foreground">404 - Page Not Found</h1>
         <p className="mb-8 text-muted-foreground">The page you're looking for doesn't exist.</p>
         <a
-          href="/"
+          href={appPath("/")}
           className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Go Home
@@ -97,7 +98,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script src="/theme-init.js"></script>
+        <script src={appPath("/theme-init.js")}></script>
         <HeadContent />
       </head>
       <body className="flex min-h-screen flex-col bg-background font-sans text-base text-foreground transition-colors duration-200">
