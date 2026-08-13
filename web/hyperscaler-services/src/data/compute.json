@@ -1,0 +1,203 @@
+[
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "EC2",
+    "awsUrl": "https://aws.amazon.com/ec2/",
+    "azure": "Virtual Machines",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/virtual-machines/",
+    "gcp": "Compute Engine",
+    "gcpUrl": "https://cloud.google.com/compute",
+    "oracle": "OCI Compute",
+    "oracleUrl": "https://www.oracle.com/cloud/compute/",
+    "cloudflare": "—",
+    "description": {
+      "en": "On-demand pay-as-you-go virtual machines",
+      "es": "Máquinas virtuales a petición de pago por uso"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "VMware Cloud on AWS",
+    "awsUrl": "https://aws.amazon.com/vmware/",
+    "azure": "Azure VMware Solution",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/azure-vmware/",
+    "gcp": "Google Cloud VMware Engine",
+    "gcpUrl": "https://cloud.google.com/vmware-engine",
+    "oracle": "Oracle Cloud VMware Solution",
+    "oracleUrl": "https://www.oracle.com/cloud/compute/vmware/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Enables migration of VMware vSphere environments",
+      "es": "Permite la migración de entornos VMware vSphere"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "AWS ParallelCluster",
+    "awsUrl": "https://aws.amazon.com/hpc/parallelcluster/",
+    "azure": "Azure CycleCloud",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/cyclecloud/",
+    "gcp": "Cluster Toolkit",
+    "gcpUrl": "https://cloud.google.com/cluster-toolkit/docs/overview",
+    "oracle": "OCI HPC",
+    "oracleUrl": "https://www.oracle.com/cloud/hpc/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Facilitates creation and management of HPC clusters",
+      "es": "Facilita la creación y gestión de clústeres de HPC"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "AWS Auto Scaling",
+    "awsUrl": "https://aws.amazon.com/autoscaling/",
+    "azure": "Virtual Machine Scale Sets",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/virtual-machine-scale-sets/",
+    "gcp": "Managed Instance Groups",
+    "gcpUrl": "https://cloud.google.com/compute/docs/instance-groups",
+    "oracle": "Autoscaling",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/autoscalinginstancepools.htm",
+    "cloudflare": "Workers (auto-scale)",
+    "cloudflareUrl": "https://developers.cloudflare.com/workers/",
+    "description": {
+      "en": "Automatic scaling of compute resources",
+      "es": "Escalado automático de recursos de cómputo"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "AWS Batch",
+    "awsUrl": "https://aws.amazon.com/batch/",
+    "azure": "Azure Batch",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/batch/",
+    "gcp": "Batch",
+    "gcpUrl": "https://cloud.google.com/batch",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": {
+      "en": "Managed batch processing service",
+      "es": "Servicio de procesamiento por lotes administrado"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "Lambda",
+    "awsUrl": "https://aws.amazon.com/lambda/",
+    "azure": "Azure Functions",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/functions/",
+    "gcp": "Cloud Run functions",
+    "gcpUrl": "https://cloud.google.com/functions",
+    "oracle": "OCI Functions",
+    "oracleUrl": "https://www.oracle.com/cloud/cloud-native/functions/",
+    "cloudflare": "Workers",
+    "cloudflareUrl": "https://developers.cloudflare.com/workers/",
+    "description": {
+      "en": "Serverless compute service",
+      "es": "Servicio de cómputo sin servidor"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "Elastic Beanstalk",
+    "awsUrl": "https://aws.amazon.com/elasticbeanstalk/",
+    "azure": "App Service",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/app-service/",
+    "gcp": "App Engine",
+    "gcpUrl": "https://cloud.google.com/appengine",
+    "oracle": "—",
+    "cloudflare": "Pages",
+    "cloudflareUrl": "https://developers.cloudflare.com/pages/",
+    "description": {
+      "en": "Platform as a Service for web apps",
+      "es": "Plataforma como servicio para aplicaciones web"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "EC2 Bare Metal Instances",
+    "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-bare-metal-instances.html",
+    "azure": "BareMetal Infrastructure",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/baremetal-infrastructure/",
+    "gcp": "Bare Metal Solution",
+    "gcpUrl": "https://cloud.google.com/bare-metal",
+    "oracle": "OCI Bare Metal",
+    "oracleUrl": "https://www.oracle.com/cloud/compute/bare-metal/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Bare metal servers for non-virtualized workloads",
+      "es": "Servidores de metal desnudo para cargas de trabajo no virtualizadas"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "EC2 GPU Instances",
+    "awsUrl": "https://aws.amazon.com/ec2/instance-types/accelerated-computing/",
+    "azure": "GPU VMs (N-series)",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes-gpu",
+    "gcp": "GPU Compute",
+    "gcpUrl": "https://cloud.google.com/compute/docs/gpus",
+    "oracle": "OCI GPU Instances",
+    "oracleUrl": "https://www.oracle.com/cloud/compute/gpu/",
+    "cloudflare": "—",
+    "description": {
+      "en": "GPU-accelerated compute instances",
+      "es": "Instancias de cómputo aceleradas por GPU"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "EC2 Spot Instances",
+    "awsUrl": "https://aws.amazon.com/ec2/spot/",
+    "azure": "Spot VMs",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/virtual-machines/spot",
+    "gcp": "Spot VMs",
+    "gcpUrl": "https://cloud.google.com/compute/docs/instances/spot",
+    "oracle": "Preemptible Instances",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Concepts/preemptible.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Interruptible capacity at discounted prices",
+      "es": "Capacidad interrumpible a precios con descuento"
+    }
+  }
+]

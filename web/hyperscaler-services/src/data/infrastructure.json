@@ -1,0 +1,65 @@
+[
+  {
+    "category": "infrastructure",
+    "categoryName": {
+      "en": "Infrastructure",
+      "es": "Infraestructura"
+    },
+    "aws": "CloudFormation",
+    "awsUrl": "https://aws.amazon.com/cloudformation/",
+    "azure": "ARM Templates",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/",
+    "gcp": "Infrastructure Manager",
+    "gcpUrl": "https://cloud.google.com/infrastructure-manager/docs/overview",
+    "oracle": "Resource Manager",
+    "oracleUrl": "https://www.oracle.com/devops/resource-manager/",
+    "cloudflare": "Terraform",
+    "cloudflareUrl": "https://developers.cloudflare.com/terraform/",
+    "description": {
+      "en": "Infrastructure as code templates",
+      "es": "Plantillas de infraestructura como código"
+    }
+  },
+  {
+    "category": "infrastructure",
+    "categoryName": {
+      "en": "Infrastructure",
+      "es": "Infraestructura"
+    },
+    "aws": "Management Console",
+    "awsUrl": "https://aws.amazon.com/console/",
+    "azure": "Portal",
+    "azureUrl": "https://azure.microsoft.com/en-us/get-started/azure-portal/",
+    "gcp": "Cloud Console",
+    "gcpUrl": "https://cloud.google.com/cloud-console",
+    "oracle": "Console",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/GSG/Concepts/console.htm",
+    "cloudflare": "Dashboard",
+    "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/concepts/accounts-and-zones/",
+    "description": {
+      "en": "Web-based management interface",
+      "es": "Interfaz de gestión basada en web"
+    }
+  },
+  {
+    "category": "infrastructure",
+    "categoryName": {
+      "en": "Infrastructure",
+      "es": "Infraestructura"
+    },
+    "aws": "CLI",
+    "awsUrl": "https://aws.amazon.com/cli/",
+    "azure": "CLI",
+    "azureUrl": "https://learn.microsoft.com/en-us/cli/azure/",
+    "gcp": "gcloud CLI",
+    "gcpUrl": "https://cloud.google.com/cli",
+    "oracle": "OCI CLI",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cliconcepts.htm",
+    "cloudflare": "Wrangler CLI",
+    "cloudflareUrl": "https://developers.cloudflare.com/workers/wrangler/",
+    "description": {
+      "en": "Command-line interface",
+      "es": "Interfaz de línea de comandos"
+    }
+  }
+]

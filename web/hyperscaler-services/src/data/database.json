@@ -1,0 +1,206 @@
+[
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "RDS",
+    "awsUrl": "https://aws.amazon.com/rds/",
+    "azure": "Azure SQL Database",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/azure-sql/database/",
+    "gcp": "Cloud SQL",
+    "gcpUrl": "https://cloud.google.com/sql",
+    "oracle": "Base Database Service",
+    "oracleUrl": "https://www.oracle.com/database/",
+    "cloudflare": "D1",
+    "cloudflareUrl": "https://developers.cloudflare.com/d1/",
+    "description": {
+      "en": "Managed relational database service",
+      "es": "Servicio de base de datos relacional administrado"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "RDS for MySQL",
+    "awsUrl": "https://aws.amazon.com/rds/mysql/",
+    "azure": "Database for MySQL",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/mysql/",
+    "gcp": "Cloud SQL for MySQL",
+    "gcpUrl": "https://cloud.google.com/sql/mysql",
+    "oracle": "MySQL Database Service",
+    "oracleUrl": "https://www.oracle.com/mysql/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Managed MySQL database",
+      "es": "Base de datos MySQL administrada"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "RDS for PostgreSQL",
+    "awsUrl": "https://aws.amazon.com/rds/postgresql/",
+    "azure": "Database for PostgreSQL",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/postgresql/",
+    "gcp": "Cloud SQL for PostgreSQL",
+    "gcpUrl": "https://cloud.google.com/sql/postgresql",
+    "oracle": "PostgreSQL Service",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/postgresql/home.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Managed PostgreSQL database",
+      "es": "Base de datos PostgreSQL administrada"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "Aurora Serverless",
+    "awsUrl": "https://aws.amazon.com/rds/aurora/serverless/",
+    "azure": "SQL Database Serverless",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/azure-sql/database/",
+    "gcp": "AlloyDB",
+    "gcpUrl": "https://cloud.google.com/alloydb",
+    "oracle": "Autonomous Database",
+    "oracleUrl": "https://www.oracle.com/autonomous-database/",
+    "cloudflare": "D1",
+    "cloudflareUrl": "https://developers.cloudflare.com/d1/",
+    "description": {
+      "en": "Auto-scales compute based on demand",
+      "es": "Escala automáticamente el proceso según la demanda"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "DynamoDB",
+    "awsUrl": "https://aws.amazon.com/dynamodb/",
+    "azure": "Cosmos DB",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cosmos-db/",
+    "gcp": "Firestore",
+    "gcpUrl": "https://cloud.google.com/firestore",
+    "oracle": "NoSQL Database",
+    "oracleUrl": "https://www.oracle.com/database/nosql/",
+    "cloudflare": "Workers KV",
+    "cloudflareUrl": "https://developers.cloudflare.com/kv/",
+    "description": {
+      "en": "Managed NoSQL data store",
+      "es": "Almacén de datos NoSQL administrado"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "DocumentDB",
+    "awsUrl": "https://aws.amazon.com/documentdb/",
+    "azure": "Cosmos DB",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cosmos-db/",
+    "gcp": "Firestore",
+    "gcpUrl": "https://cloud.google.com/firestore",
+    "oracle": "NoSQL Database",
+    "oracleUrl": "https://www.oracle.com/database/nosql/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Document database service",
+      "es": "Servicio de base de datos de documentos"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "Neptune",
+    "awsUrl": "https://aws.amazon.com/neptune/",
+    "azure": "Cosmos DB",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cosmos-db/",
+    "gcp": "Neo4j (on GCP)",
+    "gcpUrl": "https://neo4j.com/product/auradb/",
+    "oracle": "Graph Studio",
+    "oracleUrl": "https://docs.oracle.com/en/database/oracle/property-graph/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Graph database service",
+      "es": "Servicio de base de datos de grafos"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "ElastiCache",
+    "awsUrl": "https://aws.amazon.com/elasticache/",
+    "azure": "Cache for Redis",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cache/",
+    "gcp": "Memorystore",
+    "gcpUrl": "https://cloud.google.com/memorystore",
+    "oracle": "OCI Cache",
+    "oracleUrl": "https://www.oracle.com/cloud/cache/",
+    "cloudflare": "Workers KV",
+    "cloudflareUrl": "https://developers.cloudflare.com/kv/",
+    "description": {
+      "en": "In-memory caching service",
+      "es": "Servicio de caché en memoria"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "MemoryDB for Redis",
+    "awsUrl": "https://aws.amazon.com/memorydb/",
+    "azure": "Cache for Redis",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cache/",
+    "gcp": "Memorystore for Redis",
+    "gcpUrl": "https://cloud.google.com/memorystore/docs/redis",
+    "oracle": "OCI Cache with Redis",
+    "oracleUrl": "https://www.oracle.com/cloud/cache/",
+    "cloudflare": "—",
+    "description": {
+      "en": "High-performance Redis-compatible store",
+      "es": "Almacén compatible con Redis de alto rendimiento"
+    }
+  },
+  {
+    "category": "database",
+    "categoryName": {
+      "en": "Database",
+      "es": "Base de Datos"
+    },
+    "aws": "RDS Proxy",
+    "awsUrl": "https://aws.amazon.com/rds/proxy/",
+    "azure": "—",
+    "gcp": "Cloud SQL Proxy",
+    "gcpUrl": "https://cloud.google.com/sql/docs/mysql/sql-proxy",
+    "oracle": "Connection Pooling",
+    "oracleUrl": "https://www.oracle.com/database/",
+    "cloudflare": "Hyperdrive",
+    "cloudflareUrl": "https://developers.cloudflare.com/hyperdrive/",
+    "description": {
+      "en": "Database connection proxy and pooling",
+      "es": "Proxy y agrupación de conexiones de bases de datos"
+    }
+  }
+]

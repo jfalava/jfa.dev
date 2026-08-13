@@ -1,0 +1,62 @@
+[
+  {
+    "category": "data-governance",
+    "categoryName": {
+      "en": "Data Governance",
+      "es": "Gobernanza de Datos"
+    },
+    "aws": "Glue Data Catalog",
+    "awsUrl": "https://aws.amazon.com/glue/",
+    "azure": "Microsoft Purview",
+    "azureUrl": "https://learn.microsoft.com/en-us/purview/purview",
+    "gcp": "Dataplex",
+    "gcpUrl": "https://cloud.google.com/dataplex",
+    "oracle": "Data Catalog",
+    "oracleUrl": "https://www.oracle.com/big-data/data-catalog/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Unified data governance solution",
+      "es": "Solución unificada de gobernanza de datos"
+    }
+  },
+  {
+    "category": "data-governance",
+    "categoryName": {
+      "en": "Data Governance",
+      "es": "Gobernanza de Datos"
+    },
+    "aws": "Lake Formation",
+    "awsUrl": "https://aws.amazon.com/lake-formation/",
+    "azure": "Microsoft Purview",
+    "azureUrl": "https://learn.microsoft.com/en-us/purview/purview",
+    "gcp": "Dataplex",
+    "gcpUrl": "https://cloud.google.com/dataplex",
+    "oracle": "Data Catalog",
+    "oracleUrl": "https://www.oracle.com/big-data/data-catalog/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Data lake access control and security",
+      "es": "Control de acceso y seguridad de lagos de datos"
+    }
+  },
+  {
+    "category": "data-governance",
+    "categoryName": {
+      "en": "Data Governance",
+      "es": "Gobernanza de Datos"
+    },
+    "aws": "Macie",
+    "awsUrl": "https://aws.amazon.com/macie/",
+    "azure": "Microsoft Purview",
+    "azureUrl": "https://learn.microsoft.com/en-us/purview/purview",
+    "gcp": "Sensitive Data Protection",
+    "gcpUrl": "https://cloud.google.com/sensitive-data-protection",
+    "oracle": "Data Safe",
+    "oracleUrl": "https://www.oracle.com/security/database-security/data-safe/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Sensitive data discovery and classification",
+      "es": "Descubrimiento y clasificación de datos sensibles"
+    }
+  }
+]

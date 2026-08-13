@@ -1,0 +1,64 @@
+[
+  {
+    "category": "monitoring",
+    "categoryName": {
+      "en": "Monitoring",
+      "es": "Monitoreo"
+    },
+    "aws": "CloudWatch",
+    "awsUrl": "https://aws.amazon.com/cloudwatch/",
+    "azure": "Azure Monitor",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/monitor/",
+    "gcp": "Cloud Monitoring",
+    "gcpUrl": "https://cloud.google.com/monitoring",
+    "oracle": "Monitoring",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Monitoring/Concepts/monitoringoverview.htm",
+    "cloudflare": "Analytics",
+    "cloudflareUrl": "https://developers.cloudflare.com/analytics/",
+    "description": {
+      "en": "Monitoring and observability service",
+      "es": "Servicio de monitoreo y observabilidad"
+    }
+  },
+  {
+    "category": "monitoring",
+    "categoryName": {
+      "en": "Monitoring",
+      "es": "Monitoreo"
+    },
+    "aws": "CloudTrail",
+    "awsUrl": "https://aws.amazon.com/cloudtrail/",
+    "azure": "Activity Log",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/activity-log",
+    "gcp": "Cloud Logging",
+    "gcpUrl": "https://cloud.google.com/logging",
+    "oracle": "Audit",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Audit/Concepts/auditoverview.htm",
+    "cloudflare": "Audit Logs",
+    "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/account/account-security/audit-logs/",
+    "description": {
+      "en": "Audit and compliance logging",
+      "es": "Registro de auditoría y cumplimiento"
+    }
+  },
+  {
+    "category": "monitoring",
+    "categoryName": {
+      "en": "Monitoring",
+      "es": "Monitoreo"
+    },
+    "aws": "Systems Manager",
+    "awsUrl": "https://aws.amazon.com/systems-manager/",
+    "azure": "Automation",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/automation/",
+    "gcp": "Cloud Operations",
+    "gcpUrl": "https://cloud.google.com/products/operations",
+    "oracle": "OS Management",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/os-management/home.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Operations management service",
+      "es": "Servicio de gestión de operaciones"
+    }
+  }
+]

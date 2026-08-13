@@ -1,0 +1,182 @@
+[
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "Rekognition",
+    "awsUrl": "https://aws.amazon.com/rekognition/",
+    "azure": "Azure AI Vision",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-vision",
+    "gcp": "Vision AI",
+    "gcpUrl": "https://cloud.google.com/vision",
+    "oracle": "OCI Vision",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/vision/",
+    "cloudflare": "Workers AI (Inference)",
+    "cloudflareUrl": "https://developers.cloudflare.com/workers-ai/",
+    "description": {
+      "en": "Image and video analysis",
+      "es": "Análisis de imágenes y video"
+    }
+  },
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "Polly",
+    "awsUrl": "https://aws.amazon.com/polly/",
+    "azure": "Azure AI Speech (Text-to-Speech)",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-speech",
+    "gcp": "Text-to-Speech",
+    "gcpUrl": "https://cloud.google.com/text-to-speech",
+    "oracle": "OCI Speech (Text-to-Speech)",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/speech/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Text-to-speech synthesis",
+      "es": "Síntesis de voz a partir de texto"
+    }
+  },
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "Transcribe",
+    "awsUrl": "https://aws.amazon.com/transcribe/",
+    "azure": "Azure AI Speech (Speech-to-Text)",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-speech",
+    "gcp": "Speech-to-Text",
+    "gcpUrl": "https://cloud.google.com/speech-to-text",
+    "oracle": "OCI Speech (Speech-to-Text)",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/speech/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Automatic speech recognition and transcription",
+      "es": "Reconocimiento automático del habla y transcripción"
+    }
+  },
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "Translate",
+    "awsUrl": "https://aws.amazon.com/translate/",
+    "azure": "Azure Translator",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-translator",
+    "gcp": "Cloud Translation",
+    "gcpUrl": "https://cloud.google.com/translate",
+    "oracle": "OCI Language",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/language/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Neural machine translation",
+      "es": "Traducción automática neuronal"
+    }
+  },
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "Comprehend",
+    "awsUrl": "https://aws.amazon.com/comprehend/",
+    "azure": "Azure AI Language",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-language",
+    "gcp": "Natural Language AI",
+    "gcpUrl": "https://cloud.google.com/natural-language",
+    "oracle": "OCI Language",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/language/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Natural language processing and text analytics",
+      "es": "Procesamiento de lenguaje natural y análisis de texto"
+    }
+  },
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "Lex",
+    "awsUrl": "https://aws.amazon.com/lex/",
+    "azure": "Azure AI Language (Conversational)",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-language",
+    "gcp": "Dialogflow",
+    "gcpUrl": "https://cloud.google.com/dialogflow",
+    "oracle": "Oracle Digital Assistant",
+    "oracleUrl": "https://www.oracle.com/chatbots/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Conversational interfaces and chatbots",
+      "es": "Interfaces conversacionales y chatbots"
+    }
+  },
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "Textract",
+    "awsUrl": "https://aws.amazon.com/textract/",
+    "azure": "Azure AI Document Intelligence",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-document-intelligence",
+    "gcp": "Document AI",
+    "gcpUrl": "https://cloud.google.com/document-ai",
+    "oracle": "OCI Document Understanding",
+    "oracleUrl": "https://www.oracle.com/artificial-intelligence/document-understanding/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Document data extraction (OCR)",
+      "es": "Extracción de datos de documentos (OCR)"
+    }
+  },
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "OpenSearch Service",
+    "awsUrl": "https://aws.amazon.com/opensearch-service/",
+    "azure": "Azure AI Search",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-search",
+    "gcp": "Vertex AI Search",
+    "gcpUrl": "https://cloud.google.com/generative-ai-app-builder/docs/enterprise-search-introduction",
+    "oracle": "Search with OpenSearch",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/search-opensearch/home.htm",
+    "cloudflare": "Vectorize",
+    "cloudflareUrl": "https://developers.cloudflare.com/vectorize/",
+    "description": {
+      "en": "Managed search and vector retrieval service",
+      "es": "Servicio administrado de búsqueda y recuperación vectorial"
+    }
+  },
+  {
+    "category": "ai-services",
+    "categoryName": {
+      "en": "AI Services",
+      "es": "Servicios de IA"
+    },
+    "aws": "Rekognition Content Moderation",
+    "awsUrl": "https://aws.amazon.com/rekognition/content-moderation/",
+    "azure": "Azure AI Content Safety",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-content-safety",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": {
+      "en": "Detect and moderate harmful content",
+      "es": "Detección y moderación de contenido dañino"
+    }
+  }
+]

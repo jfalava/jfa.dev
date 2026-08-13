@@ -1,0 +1,83 @@
+[
+  {
+    "category": "messaging",
+    "categoryName": {
+      "en": "Messaging",
+      "es": "Mensajería"
+    },
+    "aws": "SQS",
+    "awsUrl": "https://aws.amazon.com/sqs/",
+    "azure": "Queue Storage / Service Bus",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/storage/queues/",
+    "gcp": "Pub/Sub",
+    "gcpUrl": "https://cloud.google.com/pubsub",
+    "oracle": "Queue",
+    "oracleUrl": "https://www.oracle.com/cloud/queue/",
+    "cloudflare": "Queues",
+    "cloudflareUrl": "https://developers.cloudflare.com/queues/",
+    "description": {
+      "en": "Message queue service",
+      "es": "Servicio de cola de mensajes"
+    }
+  },
+  {
+    "category": "messaging",
+    "categoryName": {
+      "en": "Messaging",
+      "es": "Mensajería"
+    },
+    "aws": "SNS",
+    "awsUrl": "https://aws.amazon.com/sns/",
+    "azure": "Service Bus / Event Grid",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/service-bus/",
+    "gcp": "Pub/Sub",
+    "gcpUrl": "https://cloud.google.com/pubsub",
+    "oracle": "Notifications",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Notification/Concepts/notificationoverview.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Pub/sub messaging service",
+      "es": "Servicio de mensajería pub/sub"
+    }
+  },
+  {
+    "category": "messaging",
+    "categoryName": {
+      "en": "Messaging",
+      "es": "Mensajería"
+    },
+    "aws": "EventBridge",
+    "awsUrl": "https://aws.amazon.com/eventbridge/",
+    "azure": "Event Grid",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/event-grid/",
+    "gcp": "Eventarc",
+    "gcpUrl": "https://cloud.google.com/eventarc",
+    "oracle": "Events",
+    "oracleUrl": "https://www.oracle.com/cloud/events/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Event routing service",
+      "es": "Servicio de enrutamiento de eventos"
+    }
+  },
+  {
+    "category": "messaging",
+    "categoryName": {
+      "en": "Messaging",
+      "es": "Mensajería"
+    },
+    "aws": "MQ",
+    "awsUrl": "https://aws.amazon.com/amazon-mq/",
+    "azure": "Service Bus",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/service-bus/",
+    "gcp": "Cloud Tasks",
+    "gcpUrl": "https://cloud.google.com/tasks",
+    "oracle": "Advanced Queuing",
+    "oracleUrl": "https://docs.oracle.com/en/database/oracle/oracle-database/19/adque/",
+    "cloudflare": "—",
+    "description": {
+      "en": "JMS 2.0 API compatible messaging",
+      "es": "Mensajería compatible con API JMS 2.0"
+    }
+  }
+]

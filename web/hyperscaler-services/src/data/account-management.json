@@ -1,0 +1,166 @@
+[
+  {
+    "category": "account-management",
+    "categoryName": {
+      "en": "Account Management",
+      "es": "Gestión de Cuentas"
+    },
+    "aws": "AWS Organizations (Root)",
+    "awsUrl": "https://aws.amazon.com/organizations/",
+    "azure": "Azure Tenant (Microsoft Entra ID)",
+    "azureUrl": "https://learn.microsoft.com/en-us/entra/fundamentals/whatis",
+    "gcp": "Google Cloud Organization",
+    "gcpUrl": "https://cloud.google.com/resource-manager/docs/creating-managing-organization",
+    "oracle": "OCI Tenancy",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/tenancy/managingtenancy.htm",
+    "cloudflare": "Cloudflare Account",
+    "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/setup/account/",
+    "description": {
+      "en": "Top-level organizational structure for managing users, groups, and applications",
+      "es": "Estructura organizacional de nivel superior para administrar usuarios, grupos y aplicaciones"
+    }
+  },
+  {
+    "category": "account-management",
+    "categoryName": {
+      "en": "Account Management",
+      "es": "Gestión de Cuentas"
+    },
+    "aws": "AWS Account",
+    "awsUrl": "https://aws.amazon.com/account/",
+    "azure": "Azure Subscription",
+    "azureUrl": "https://learn.microsoft.com/en-us/microsoft-365/enterprise/subscriptions-licenses-accounts-and-tenants-for-microsoft-cloud-offerings",
+    "gcp": "Google Cloud Project",
+    "gcpUrl": "https://cloud.google.com/resource-manager/docs/creating-managing-projects",
+    "oracle": "OCI Compartment",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/compartments/managingcompartments.htm",
+    "cloudflare": "Cloudflare Zone",
+    "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/setup/manage-domains/",
+    "description": {
+      "en": "Logical unit for services linked to billing and resource management boundaries",
+      "es": "Unidad lógica para servicios vinculados a límites de facturación y administración de recursos"
+    }
+  },
+  {
+    "category": "account-management",
+    "categoryName": {
+      "en": "Account Management",
+      "es": "Gestión de Cuentas"
+    },
+    "aws": "Organizational Units (OUs)",
+    "awsUrl": "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_ous.html",
+    "azure": "Management Groups",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/governance/management-groups/",
+    "gcp": "Folders",
+    "gcpUrl": "https://cloud.google.com/resource-manager/docs/creating-managing-folders",
+    "oracle": "Compartment Hierarchy",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/compartments/managingcompartments.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Hierarchical structures for organizing and managing resources across multiple accounts/subscriptions",
+      "es": "Estructuras jerárquicas para organizar y administrar recursos en múltiples cuentas/suscripciones"
+    }
+  },
+  {
+    "category": "account-management",
+    "categoryName": {
+      "en": "Account Management",
+      "es": "Gestión de Cuentas"
+    },
+    "aws": "IAM Roles for Workloads",
+    "awsUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
+    "azure": "Managed Identities",
+    "azureUrl": "https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview",
+    "gcp": "Service Accounts",
+    "gcpUrl": "https://cloud.google.com/iam/docs/service-account-overview",
+    "oracle": "Dynamic Groups",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/Tasks/managingdynamicgroups.htm",
+    "cloudflare": "Access Service Tokens",
+    "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/access-controls/service-credentials/service-tokens/",
+    "description": {
+      "en": "Workload identities for applications and automated services",
+      "es": "Identidades de cargas de trabajo para aplicaciones y servicios automatizados"
+    }
+  },
+  {
+    "category": "account-management",
+    "categoryName": {
+      "en": "Account Management",
+      "es": "Gestión de Cuentas"
+    },
+    "aws": "Cost Management",
+    "awsUrl": "https://aws.amazon.com/aws-cost-management/",
+    "azure": "Cost Management + Billing",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cost-management/",
+    "gcp": "Cloud Billing",
+    "gcpUrl": "https://docs.cloud.google.com/billing/docs",
+    "oracle": "Billing & Cost Management",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Billing/home.htm",
+    "cloudflare": "Billing",
+    "cloudflareUrl": "https://developers.cloudflare.com/billing/",
+    "description": {
+      "en": "Billing, budgets, and cost tracking",
+      "es": "Facturación, presupuestos y seguimiento de costos"
+    }
+  },
+  {
+    "category": "account-management",
+    "categoryName": {
+      "en": "Account Management",
+      "es": "Gestión de Cuentas"
+    },
+    "aws": "Service Quotas",
+    "awsUrl": "https://docs.aws.amazon.com/servicequotas/",
+    "azure": "Service Quotas",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/quotas/",
+    "gcp": "Cloud Quotas",
+    "gcpUrl": "https://cloud.google.com/docs/quota",
+    "oracle": "Service Limits",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/General/Concepts/servicelimits.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Service quotas and usage limits",
+      "es": "Cuotas de servicio y límites de uso"
+    }
+  },
+  {
+    "category": "account-management",
+    "categoryName": {
+      "en": "Account Management",
+      "es": "Gestión de Cuentas"
+    },
+    "aws": "Resource Groups & Tags",
+    "awsUrl": "https://docs.aws.amazon.com/ARG/latest/userguide/welcome.html",
+    "azure": "Resource Groups & Tags",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources",
+    "gcp": "Tags & Labels",
+    "gcpUrl": "https://cloud.google.com/resource-manager/docs/tags/tags-overview",
+    "oracle": "Tags",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Tagging/Concepts/taggingoverview.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Tagging and grouping resources for organization and cost allocation",
+      "es": "Etiquetado y agrupación de recursos para organización y asignación de costos"
+    }
+  },
+  {
+    "category": "account-management",
+    "categoryName": {
+      "en": "Account Management",
+      "es": "Gestión de Cuentas"
+    },
+    "aws": "Control Tower",
+    "awsUrl": "https://aws.amazon.com/controltower/",
+    "azure": "Azure Landing Zones",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/",
+    "gcp": "Landing Zones",
+    "gcpUrl": "https://cloud.google.com/architecture/landing-zones",
+    "oracle": "OCI Landing Zones",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/cloud-adoption-framework/oci-landing-zones-overview.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Reference architecture for secure multi-account setup",
+      "es": "Arquitectura de referencia para una configuración multicuenta segura"
+    }
+  }
+]

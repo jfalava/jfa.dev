@@ -1,0 +1,41 @@
+[
+  {
+    "category": "data-migration",
+    "categoryName": {
+      "en": "Data Migration",
+      "es": "Migración de Datos"
+    },
+    "aws": "DMS",
+    "awsUrl": "https://aws.amazon.com/dms/",
+    "azure": "Database Migration Service",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/database-migration/",
+    "gcp": "Database Migration Service",
+    "gcpUrl": "https://cloud.google.com/database-migration",
+    "oracle": "Zero Downtime Migration",
+    "oracleUrl": "https://www.oracle.com/database/zero-downtime-migration/",
+    "cloudflare": "—",
+    "description": {
+      "en": "Cloud migration service",
+      "es": "Servicio de migración en la nube"
+    }
+  },
+  {
+    "category": "data-migration",
+    "categoryName": {
+      "en": "Data Migration",
+      "es": "Migración de Datos"
+    },
+    "aws": "DataSync",
+    "awsUrl": "https://aws.amazon.com/datasync/",
+    "azure": "Data Box",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/databox/",
+    "gcp": "Storage Transfer Service",
+    "gcpUrl": "https://cloud.google.com/storage-transfer-service",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": {
+      "en": "Offline and online bulk data transfer",
+      "es": "Transferencia de datos masiva en línea y fuera de línea"
+    }
+  }
+]
