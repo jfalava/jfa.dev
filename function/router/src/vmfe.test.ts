@@ -35,6 +35,29 @@ describe("mounted app forwarding", () => {
     );
   });
 
+  test("preserves the mount for apps built with a public base path", async () => {
+    let forwardedRequest: Request | undefined;
+    const upstream = createUpstream(async (request) => {
+      forwardedRequest = request;
+      return new Response("ok");
+    });
+
+    await handleMountedApp(
+      new Request("https://jfa.dev/hyperscaler-services/search?q=cloud"),
+      upstream,
+      "/hyperscaler-services",
+      ["/assets/"],
+      { preserveMount: true },
+    );
+
+    expect(forwardedRequest?.url).toBe(
+      "https://jfa.dev/hyperscaler-services/search?q=cloud",
+    );
+    expect(forwardedRequest?.headers.get("x-forwarded-prefix")).toBe(
+      "/hyperscaler-services",
+    );
+  });
+
   test("rewrites redirects and cookie paths", async () => {
     const upstream = createUpstream(
       async () =>

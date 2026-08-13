@@ -1,11 +1,17 @@
-import { handleMountedApp, type RouteConfig, type RoutesConfig } from "./vmfe";
+import {
+  handleMountedApp,
+  type RouteConfig,
+  type RoutesConfig,
+  type WorkerFetcher,
+} from "./vmfe";
 
 import { Hono } from "hono";
 
-type Bindings = Pick<
-  Env,
-  "LANDING" | "OG_IMG_GEN" | "HYPERSCALER_SERVICES" | "ROUTES"
-> & {
+export type Bindings = {
+  LANDING: WorkerFetcher;
+  OG_IMG_GEN: WorkerFetcher;
+  HYPERSCALER_SERVICES: WorkerFetcher;
+  ROUTES: string;
   ASSET_PREFIXES?: string;
 };
 
@@ -98,11 +104,13 @@ function parseRoute(value: unknown): RouteConfig | null {
   const binding = typeof value.binding === "string" ? value.binding.trim() : "";
   const path = typeof value.path === "string" ? value.path.trim() : "";
   const preload = value.preload;
+  const preserveMount = value.preserveMount;
 
   if (
     !binding ||
     !path ||
-    (preload !== undefined && typeof preload !== "boolean")
+    (preload !== undefined && typeof preload !== "boolean") ||
+    (preserveMount !== undefined && typeof preserveMount !== "boolean")
   ) {
     return null;
   }
@@ -111,6 +119,7 @@ function parseRoute(value: unknown): RouteConfig | null {
     binding,
     path: normalizeRoutePath(path),
     ...(preload === undefined ? {} : { preload }),
+    ...(preserveMount === undefined ? {} : { preserveMount }),
   };
 }
 
@@ -156,7 +165,7 @@ export function parseRoutesConfig(routesJson: string): RoutesConfig {
   };
 }
 
-function isFetcher(value: unknown): value is Fetcher {
+function isFetcher(value: unknown): value is WorkerFetcher {
   return (
     typeof value === "object" &&
     value !== null &&
@@ -165,7 +174,7 @@ function isFetcher(value: unknown): value is Fetcher {
   );
 }
 
-function getServiceBinding(env: Bindings, bindingName: string): Fetcher | null {
+function getServiceBinding(env: Bindings, bindingName: string): WorkerFetcher | null {
   if (!(bindingName in env)) {
     return null;
   }
@@ -203,6 +212,7 @@ app.all("*", async (c) => {
   return handleMountedApp(c.req.raw, binding, matched.mount, assetPrefixes, {
     smoothTransitions: !Array.isArray(config) ? config.smoothTransitions : undefined,
     preloadStaticMounts: preloadMounts.length ? preloadMounts : undefined,
+    preserveMount: matched.route.preserveMount,
   });
 });
 

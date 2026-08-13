@@ -5,10 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vp build",
-    "cf-typegen": "wrangler types",
     "check": "vp check --fix",
-    "deploy": "vp run typecheck && vp lint && vp build && wrangler deploy",
-    "dev": "vp dev --port 3000 --host",
+    "dev": "vp dev --port 3101 --host",
     "format": "vp fmt",
     "lint": "vp lint",
     "preview": "vp preview",
@@ -34,7 +32,7 @@
     "zustand": "5.0.14"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "catalog:cloudflare",
+    "@cloudflare/workers-types": "catalog:cloudflare",
     "@tailwindcss/vite": "catalog:styling",
     "@tanstack/router-plugin": "catalog:tanstack",
     "@types/node": "catalog:types",
@@ -46,7 +44,6 @@
     "tailwindcss": "catalog:styling",
     "typescript": "catalog:build",
     "vite": "catalog:build",
-    "vite-plus": "catalog:build",
-    "wrangler": "catalog:build"
+    "vite-plus": "catalog:build"
   }
 }

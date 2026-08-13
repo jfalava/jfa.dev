@@ -10,9 +10,11 @@ import { routeTree } from "./routeTree.gen";
  * @returns Configured router instance with route tree and scroll restoration
  */
 export function getRouter() {
+  const serverBasePath = import.meta.env.SSR ? "/" : appBasePath;
+
   const router = createRouter({
     routeTree,
-    basepath: appBasePath,
+    basepath: serverBasePath,
     scrollRestoration: true,
   });
 

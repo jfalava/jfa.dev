@@ -5,12 +5,12 @@ A visual editor for creating Open Graph (OG) images for social media sharing. Bu
 ## Quick Start
 
 ```bash
-cd web/og-generator
+cd web/og-img-gen
 bun install
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3101](http://localhost:3101) in your browser.
 
 ## Features
 

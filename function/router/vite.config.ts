@@ -20,7 +20,7 @@ export default defineConfig({
       sortSideEffects: false,
       groups: ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"],
     },
-    ignorePatterns: ["*.d.ts", ".wrangler/**", "node_modules/**"],
+    ignorePatterns: ["*.d.ts", "node_modules/**"],
   },
   lint: {
     plugins: ["eslint", "typescript", "unicorn", "oxc", "import", "promise"],
@@ -33,9 +33,10 @@ export default defineConfig({
       es2022: true,
     },
     globals: {
+      Bun: "readonly",
       HTMLRewriter: "readonly",
     },
-    ignorePatterns: ["worker-configuration.d.ts", "**/*.d.ts"],
+    ignorePatterns: ["**/*.d.ts"],
     options: {
       typeAware: true,
       typeCheck: true,

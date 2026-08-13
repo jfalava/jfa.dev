@@ -3,6 +3,7 @@
   "private": true,
   "workspaces": {
     "packages": [
+      "iac",
       "web/*",
       "function/*"
     ],
@@ -18,12 +19,16 @@
         "typescript": "7.0.2",
         "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9",
         "vite-plus": "0.2.9",
-        "vitest": "4.1.2",
-        "wrangler": "4.122.0"
+        "vitest": "4.1.2"
       },
       "cloudflare": {
-        "@cloudflare/vite-plugin": "1.46.0",
         "@cloudflare/workers-types": "5.20260721.1"
+      },
+      "iac": {
+        "alchemy": "2.0.0-beta.72",
+        "effect": "4.0.0-rc.108",
+        "@effect/platform-bun": "4.0.0-rc.108",
+        "@effect/platform-node": "4.0.0-rc.108"
       },
       "react-ui": {
         "@base-ui/react": "1.6.0",
@@ -58,7 +63,11 @@
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9"
   },
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "dev": "bun run --filter @jfa.dev/iac dev",
+    "deploy": "bun run --filter @jfa.dev/iac deploy",
+    "iac:plan": "bun run --filter @jfa.dev/iac plan"
+  },
   "dependencies": {
     "jsdom": "30.0.1"
   },

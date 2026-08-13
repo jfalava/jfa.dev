@@ -1,11 +1,11 @@
-import { env } from "node:process";
 import path from "path";
+import { env as processEnv } from "node:process";
 
-import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
+import type { Plugin, UserConfig } from "vite";
 
 function normalizeBasePath(value: string): string {
   const trimmed = value.trim();
@@ -17,9 +17,23 @@ function normalizeBasePath(value: string): string {
   return withLeadingSlash.replace(/\/+$/, "");
 }
 
-const basePath = normalizeBasePath(
-  env.VITE_BASE_PATH ?? "/hyperscaler-services",
-);
+function alchemyBasePath(): Plugin {
+  return {
+    name: "jfa-dev-alchemy-base-path",
+    config(config: UserConfig) {
+      const injected = config.define?.["import.meta.env.VITE_ASSET_BASE_PATH"] as
+        | string
+        | undefined;
+      const configured = injected
+        ? normalizeBasePath(JSON.parse(injected) as string)
+        : normalizeBasePath(processEnv.VITE_ASSET_BASE_PATH ?? processEnv.VITE_BASE_PATH ?? "/");
+
+      return {
+        base: configured === "/" ? "/" : `${configured}/`,
+      };
+    },
+  };
+}
 
 /**
  * Vite configuration for the hyperscaler services application.
@@ -29,9 +43,9 @@ const basePath = normalizeBasePath(
  */
 
 export default defineConfig({
-  base: basePath === "/" ? "/" : `${basePath}/`,
+  base: normalizeBasePath(processEnv.VITE_ASSET_BASE_PATH ?? processEnv.VITE_BASE_PATH ?? "/"),
   plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    alchemyBasePath(),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
@@ -77,10 +91,7 @@ export default defineConfig({
       preserveWhitespace: false,
     },
     ignorePatterns: [
-      "cloudflare-env.d.ts",
-      "worker-configuration.d.ts",
       "src/routeTree.gen.ts",
-      ".wrangler/**",
       "node_modules/**",
       "bun.lock",
     ],

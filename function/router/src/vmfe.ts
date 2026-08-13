@@ -9,7 +9,10 @@ export type RouteConfig = {
   binding: string;
   path: string;
   preload?: boolean;
+  preserveMount?: boolean;
 };
+
+export type WorkerFetcher = Pick<Fetcher, "fetch">;
 
 export type RoutesConfig = RouteConfig[] | { smoothTransitions?: boolean; routes: RouteConfig[] };
 
@@ -338,11 +341,11 @@ function isChromium(ua: string): boolean {
 
 /* ----------------------- URL handling ----------------------- */
 
-function buildForwardUrl(requestUrl: string, mount: string): URL {
+function buildForwardUrl(requestUrl: string, mount: string, preserveMount: boolean): URL {
   const normalizedMount = normalizePath(mount);
   const forwardUrl = new URL(requestUrl);
 
-  if (normalizedMount !== "/") {
+  if (!preserveMount && normalizedMount !== "/") {
     if (forwardUrl.pathname === normalizedMount) {
       forwardUrl.pathname = "/";
     } else if (forwardUrl.pathname.startsWith(`${normalizedMount}/`)) {
@@ -510,15 +513,16 @@ function handleCssResponse(
 
 export async function handleMountedApp(
   request: Request,
-  upstream: Fetcher,
+  upstream: WorkerFetcher,
   mount: string,
   assetPrefixes: string[],
   options?: {
     smoothTransitions?: boolean;
     preloadStaticMounts?: string[];
+    preserveMount?: boolean;
   },
 ): Promise<Response> {
-  const forwardUrl = buildForwardUrl(request.url, mount);
+  const forwardUrl = buildForwardUrl(request.url, mount, options?.preserveMount ?? false);
 
   if (options?.preloadStaticMounts?.length && forwardUrl.pathname === "/__mf-preload.js") {
     return preloadScriptResponse(options.preloadStaticMounts);

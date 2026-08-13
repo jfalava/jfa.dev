@@ -3,10 +3,8 @@
   "version": "0.7.1",
   "private": true,
   "scripts": {
-    "cf-typegen": "wrangler types",
     "check": "vp check --fix",
-    "deploy": "vp run check && wrangler deploy",
-    "dev": "wrangler dev",
+    "dev": "bun --watch src/dev.ts",
     "format": "vp fmt",
     "lint": "vp lint",
     "typecheck": "tsc --noEmit"
@@ -19,7 +17,6 @@
     "@types/bun": "catalog:types",
     "@types/node": "catalog:types",
     "typescript": "catalog:build",
-    "vite-plus": "catalog:build",
-    "wrangler": "catalog:build"
+    "vite-plus": "catalog:build"
   }
 }
