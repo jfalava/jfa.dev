@@ -7,15 +7,79 @@ import {
 
 import { Hono } from "hono";
 
+type CountryBlocklistBinding = {
+  get(key: string, type: "text"): Promise<string | null>;
+};
+
 export type Bindings = {
   LANDING: WorkerFetcher;
   OG_IMG_GEN: WorkerFetcher;
   HYPERSCALER_SERVICES: WorkerFetcher;
   ROUTES: string;
   ASSET_PREFIXES?: string;
+  COUNTRY_BLOCKLIST?: CountryBlocklistBinding;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
+
+export const COUNTRY_BLOCKLIST_KEY = "blocked-countries";
+const COUNTRY_BLOCKED_MESSAGE = "Access denied";
+const COUNTRY_POLICY_UNAVAILABLE_MESSAGE = "Country access policy unavailable";
+const COUNTRY_CODE_PATTERN = /^(?:[A-Z]{2}|T1)$/;
+
+function parseCountryCode(value: unknown): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const country = value.trim().toUpperCase();
+  return COUNTRY_CODE_PATTERN.test(country) ? country : undefined;
+}
+
+function parseBlockedCountries(value: string | null): ReadonlySet<string> {
+  if (value === null) {
+    return new Set();
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value) as unknown;
+  } catch (error) {
+    throw new Error(
+      `The ${COUNTRY_BLOCKLIST_KEY} KV value must be a JSON array of country codes: ${String(error)}`,
+      { cause: error },
+    );
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error(`The ${COUNTRY_BLOCKLIST_KEY} KV value must be a JSON array of country codes`);
+  }
+
+  const countries = parsed.map((entry) => {
+    const country = parseCountryCode(entry);
+    if (!country) {
+      throw new Error(`The ${COUNTRY_BLOCKLIST_KEY} KV value contains an invalid country code`);
+    }
+    return country;
+  });
+
+  return new Set(countries);
+}
+
+export async function isCountryBlocked(
+  request: Request,
+  blocklist?: CountryBlocklistBinding,
+): Promise<boolean> {
+  const country = parseCountryCode(request.cf?.country);
+  if (!country || !blocklist) {
+    return false;
+  }
+
+  const blockedCountries = parseBlockedCountries(
+    await blocklist.get(COUNTRY_BLOCKLIST_KEY, "text"),
+  );
+  return blockedCountries.has(country);
+}
 
 export function segmentsMatch(
   routeSegments: string[],
@@ -193,6 +257,15 @@ function getServiceBinding(env: Bindings, bindingName: string): WorkerFetcher | 
 }
 
 app.all("*", async (c) => {
+  try {
+    if (await isCountryBlocked(c.req.raw, c.env.COUNTRY_BLOCKLIST)) {
+      return c.text(COUNTRY_BLOCKED_MESSAGE, 403);
+    }
+  } catch (error) {
+    console.error("Unable to evaluate country blocklist", error);
+    return c.text(COUNTRY_POLICY_UNAVAILABLE_MESSAGE, 503);
+  }
+
   let config: RoutesConfig;
   try {
     config = parseRoutesConfig(c.env.ROUTES);

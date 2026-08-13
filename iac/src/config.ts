@@ -20,6 +20,7 @@ export type StageConfig = {
   router: {
     routesJson: string;
     assetPrefixesJson: string;
+    countryBlocklistName?: string;
   };
   workers: {
     router: WorkerConfig;
@@ -128,6 +129,9 @@ export function getStageConfig(stage: string | undefined): StageConfig {
     router: {
       routesJson: JSON.stringify(routeDefinitions),
       assetPrefixesJson: JSON.stringify(assetPrefixes),
+      ...(normalizedStage === "production"
+        ? { countryBlocklistName: "jfa-router-country-blocklist-prod" }
+        : {}),
     },
     workers: {
       router: worker("jfa-dev-router", normalizedStage, {

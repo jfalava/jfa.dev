@@ -7,7 +7,12 @@ export const infrastructureInventory = {
     worker: "jfa-dev-router",
     domains: ["jfa.dev"],
     publicRoutes: ["/", "/og-img-gen", "/hyperscaler-services"],
-    bindings: ["LANDING", "OG_IMG_GEN", "HYPERSCALER_SERVICES"],
+    bindings: [
+      "LANDING",
+      "OG_IMG_GEN",
+      "HYPERSCALER_SERVICES",
+      "COUNTRY_BLOCKLIST",
+    ],
   },
   landing: {
     worker: "jfa-dev-landing",

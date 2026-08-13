@@ -88,6 +88,13 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     },
   ).pipe(adopt(true));
 
+  const countryBlocklist =
+    config.stage === "production" && config.router.countryBlocklistName
+      ? yield* Cloudflare.KV.Namespace(config.router.countryBlocklistName, {
+          title: config.router.countryBlocklistName,
+        }).pipe(adopt(true))
+      : undefined;
+
   const router = yield* Cloudflare.Worker("RouterWorker", {
     ...workerDefaults(config.workers.router),
     name: config.workers.router.name,
@@ -98,6 +105,9 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
       LANDING: landing,
       OG_IMG_GEN: ogImgGen,
       HYPERSCALER_SERVICES: hyperscalerMounted,
+      ...(countryBlocklist === undefined
+        ? {}
+        : { COUNTRY_BLOCKLIST: countryBlocklist }),
     },
     ...(config.workers.router.domain === undefined
       ? {}

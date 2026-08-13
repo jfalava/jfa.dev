@@ -1,10 +1,23 @@
 import { describe, expect, test } from "bun:test";
 
 import router, {
+  COUNTRY_BLOCKLIST_KEY,
   buildAssetPrefixes,
   findMatchingRoute,
   parseRoutesConfig,
 } from "./router";
+
+const makeCountryBlocklist = (value: string | null) => ({
+  get: async (key: string, _type: "text") => (key === COUNTRY_BLOCKLIST_KEY ? value : null),
+});
+
+const makeRequest = (url: string, country?: string): Request => {
+  const request = new Request(url);
+  if (country) {
+    Object.defineProperty(request, "cf", { value: { country } });
+  }
+  return request;
+};
 
 describe("router configuration", () => {
   test("normalizes object route configuration", () => {
@@ -74,6 +87,57 @@ describe("router configuration", () => {
 
     expect(response.status).toBe(418);
     expect(await response.text()).toBe("I'm a teapot");
+  });
+
+  test("rejects a country present in the KV blocklist before forwarding", async () => {
+    const response = await router.fetch(makeRequest("https://jfa.dev/", "cn"), {
+      ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
+      LANDING: { fetch: async () => new Response("forwarded") },
+      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
+      COUNTRY_BLOCKLIST: makeCountryBlocklist(JSON.stringify(["CN", "RU"])),
+    });
+
+    expect(response.status).toBe(403);
+    expect(await response.text()).toBe("Access denied");
+  });
+
+  test("forwards a country that is not present in the KV blocklist", async () => {
+    const response = await router.fetch(makeRequest("https://jfa.dev/", "ES"), {
+      ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
+      LANDING: { fetch: async () => new Response("forwarded") },
+      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
+      COUNTRY_BLOCKLIST: makeCountryBlocklist(JSON.stringify(["CN", "RU"])),
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("forwarded");
+  });
+
+  test("allows requests without a country blocklist binding", async () => {
+    const response = await router.fetch(makeRequest("https://jfa.dev/", "CN"), {
+      ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
+      LANDING: { fetch: async () => new Response("forwarded") },
+      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("forwarded");
+  });
+
+  test("returns 503 for a malformed KV blocklist", async () => {
+    const response = await router.fetch(makeRequest("https://jfa.dev/", "ES"), {
+      ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
+      LANDING: { fetch: async () => new Response("forwarded") },
+      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
+      COUNTRY_BLOCKLIST: makeCountryBlocklist('{"CN":true}'),
+    });
+
+    expect(response.status).toBe(503);
+    expect(await response.text()).toBe("Country access policy unavailable");
   });
 
   test("supports exact-file and directory asset prefixes", () => {
