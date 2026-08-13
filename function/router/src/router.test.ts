@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import {
+import router, {
   buildAssetPrefixes,
   findMatchingRoute,
   parseRoutesConfig,
@@ -38,6 +38,42 @@ describe("router configuration", () => {
       route: { binding: "OG_IMG_GEN", path: "/og-img-gen/status" },
       mount: "/og-img-gen/status",
     });
+  });
+
+  test("does not use the root route as a catch-all", () => {
+    const routes = [
+      { binding: "LANDING", path: "/" },
+      { binding: "OG_IMG_GEN", path: "/og-img-gen" },
+      { binding: "HYPERSCALER_SERVICES", path: "/hyperscaler-services" },
+    ];
+
+    expect(findMatchingRoute("/", routes)).toEqual({
+      route: routes[0],
+      mount: "/",
+    });
+    expect(findMatchingRoute("/assets/index.js", routes, ["/assets/"])).toEqual({
+      route: routes[0],
+      mount: "/",
+    });
+    expect(findMatchingRoute("/wp-admin.php", routes, ["/assets/"])).toBeNull();
+  });
+
+  test("returns 418 for requests outside the configured route mounts", async () => {
+    const response = await router.fetch(
+      new Request("https://jfa.dev/wp-admin.php"),
+      {
+        ROUTES: JSON.stringify({
+          routes: [
+            { binding: "LANDING", path: "/" },
+            { binding: "OG_IMG_GEN", path: "/og-img-gen" },
+            { binding: "HYPERSCALER_SERVICES", path: "/hyperscaler-services" },
+          ],
+        }),
+      },
+    );
+
+    expect(response.status).toBe(418);
+    expect(await response.text()).toBe("I'm a teapot");
   });
 
   test("supports exact-file and directory asset prefixes", () => {

@@ -40,6 +40,7 @@ export function segmentsMatch(
 export function findMatchingRoute(
   pathname: string,
   routeDefs: RouteConfig[],
+  rootAssetPrefixes: string[] = [],
 ): { route: RouteConfig; mount: string } | null {
   let matched: { route: RouteConfig; mount: string } | null = null;
   let matchedScore = 0;
@@ -48,6 +49,14 @@ export function findMatchingRoute(
 
   for (const route of routeDefs) {
     if (route.path === "/") {
+      const isRootDocument = pathname === "/";
+      const isRootAsset = rootAssetPrefixes.some((prefix) =>
+        prefix.endsWith("/") ? pathname.startsWith(prefix) : pathname === prefix,
+      );
+      if (!isRootDocument && !isRootAsset) {
+        continue;
+      }
+
       if (!matched) {
         matched = { route, mount: "/" };
         matchedScore = 0;
@@ -195,10 +204,11 @@ app.all("*", async (c) => {
   const routeDefs: RouteConfig[] = Array.isArray(config) ? config : config.routes;
 
   const pathname = new URL(c.req.url).pathname;
-  const matched = findMatchingRoute(pathname, routeDefs);
+  const assetPrefixes = buildAssetPrefixes(c.env.ASSET_PREFIXES);
+  const matched = findMatchingRoute(pathname, routeDefs, assetPrefixes);
 
   if (!matched) {
-    return c.text("Not found", 404);
+    return c.text("I'm a teapot", 418);
   }
 
   const binding = getServiceBinding(c.env, matched.route.binding);
@@ -206,7 +216,6 @@ app.all("*", async (c) => {
     return c.text(`Service binding "${matched.route.binding}" not found`, 502);
   }
 
-  const assetPrefixes = buildAssetPrefixes(c.env.ASSET_PREFIXES);
   const preloadMounts = getPreloadMounts(routeDefs, matched.mount);
 
   return handleMountedApp(c.req.raw, binding, matched.mount, assetPrefixes, {
