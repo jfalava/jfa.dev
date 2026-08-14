@@ -39,6 +39,15 @@ describe("local list store", () => {
     expect(summaries.every((summary) => summary.backend === "local")).toBe(true);
   });
 
+  test("deletes a local list from the catalog", async () => {
+    const snapshot = await createLocalList();
+
+    await deleteLocalList(snapshot.id);
+
+    expect(await getLocalListRecord(snapshot.id)).toBeUndefined();
+    expect(await listLocalLists()).toEqual([]);
+  });
+
   test("applies commands against the stored revision", async () => {
     await saveLocalList(createStarterListSnapshot(LIST_ID, { now: NOW }));
     const record = await getLocalListRecord(LIST_ID);

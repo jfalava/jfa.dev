@@ -127,7 +127,7 @@ export function createListSnapshot(
     schemaVersion: LIST_SCHEMA_VERSION,
     id: listIdSchema.parse(id),
     alias: null,
-    title: options.title ?? "Weekend groceries",
+    title: options.title ?? "New list",
     items: [],
     deletedItems: [],
     revision: 0,

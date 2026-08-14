@@ -1,15 +1,24 @@
 import type { ListSummary } from "@jfa.dev/common/lists";
+import { Button } from "@jfa.dev/common/ui";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
-import { listLocalLists, subscribeToLocalLists } from "@/lib/local-list-store";
+import {
+  deleteLocalList,
+  listLocalLists,
+  subscribeToLocalLists,
+} from "@/lib/local-list-store";
 
 export const Route = createFileRoute("/")({ component: EmptyState });
 
 function EmptyState() {
   const [lists, setLists] = useState<ListSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [confirmingListId, setConfirmingListId] = useState<string>();
+  const [deletingListId, setDeletingListId] = useState<string>();
+  const [error, setError] = useState<string>();
 
   const refreshLists = useCallback(() => {
     void listLocalLists().then((nextLists) => {
@@ -23,6 +32,23 @@ function EmptyState() {
     refreshLists();
     return subscribeToLocalLists(refreshLists);
   }, [refreshLists]);
+
+  const removeList = useCallback(async (list: ListSummary): Promise<void> => {
+    if (list.backend !== "local") {
+      return;
+    }
+
+    setDeletingListId(list.id);
+    try {
+      await deleteLocalList(list.id);
+      setConfirmingListId(undefined);
+      setError(undefined);
+    } catch {
+      setError("Could not delete that local list.");
+    } finally {
+      setDeletingListId(undefined);
+    }
+  }, []);
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
@@ -51,25 +77,65 @@ function EmptyState() {
             ) : lists.length > 0 ? (
               <div className="divide-y divide-border">
                 {lists.map((list) => (
-                  <Link
-                    key={list.id}
-                    params={{ listId: list.alias ?? list.id }}
-                    to="/$listId"
-                    className="group flex items-center justify-between gap-4 py-4"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-lg font-semibold tracking-tight group-hover:text-primary">
-                        {list.title}
-                      </p>
-                      <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                        {list.backend} · {list.itemCount} lines · {list.completedCount} done
-                        {list.alias ? ` · ${list.alias}` : ""}
-                      </p>
+                  <div className="flex items-center justify-between gap-4 py-4" key={list.id}>
+                    <Link
+                      params={{ listId: list.alias ?? list.id }}
+                      to="/$listId"
+                      className="group min-w-0 flex-1"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-lg font-semibold tracking-tight group-hover:text-primary">
+                          {list.title}
+                        </p>
+                        <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                          {list.backend} · {list.itemCount} lines · {list.completedCount} done
+                          {list.alias ? ` · ${list.alias}` : ""}
+                        </p>
+                      </div>
+                    </Link>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      {list.backend === "local" ? (
+                        confirmingListId === list.id ? (
+                          <>
+                            <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
+                              delete?
+                            </span>
+                            <Button
+                              aria-label={`Confirm delete ${list.title}`}
+                              isDisabled={deletingListId === list.id}
+                              onPress={() => void removeList(list)}
+                              size="sm"
+                              variant="destructive"
+                            >
+                              yes
+                            </Button>
+                            <Button
+                              aria-label={`Keep ${list.title}`}
+                              isDisabled={deletingListId === list.id}
+                              onPress={() => setConfirmingListId(undefined)}
+                              size="sm"
+                              variant="ghost"
+                            >
+                              keep
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            aria-label={`Delete ${list.title}`}
+                            onPress={() => setConfirmingListId(list.id)}
+                            size="sm"
+                            variant="ghost"
+                          >
+                            <Trash2 className="size-3.5" />
+                            <span className="hidden sm:inline">delete</span>
+                          </Button>
+                        )
+                      ) : null}
+                      <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                        open →
+                      </span>
                     </div>
-                    <span className="shrink-0 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                      open →
-                    </span>
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -77,6 +143,11 @@ function EmptyState() {
                 No local lists yet. Use “new” in the header to start one.
               </p>
             )}
+            {error ? (
+              <p className="mt-4 border-t border-destructive/40 pt-3 font-mono text-[10px] tracking-wide text-destructive uppercase">
+                {error}
+              </p>
+            ) : null}
           </div>
         </section>
       </main>
