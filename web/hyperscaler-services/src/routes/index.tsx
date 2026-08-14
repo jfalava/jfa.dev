@@ -157,9 +157,8 @@ function CatalogHeader({
           aria-label={t.title}
           className="flex min-w-0 cursor-default items-baseline gap-3 truncate lg:pr-4"
         >
-          <span className="shrink-0 text-sm font-bold tracking-wide text-foreground">
-            <span className="sm:hidden">HS</span>
-            <span className="hidden sm:inline">{t.title}</span>
+          <span className="shrink-0 text-sm font-bold tracking-wide text-primary">
+            <span className="inline">{t.title}</span>
             <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
           </span>
           <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
@@ -215,7 +214,7 @@ function CatalogHeader({
               onClick={onClearQuery}
               aria-label={t.clearSearch}
               title={t.clearSearch}
-              className="inline-flex h-7 max-w-44 shrink-0 items-center gap-1 rounded-md border border-border px-2 text-[11px] text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="inline-flex h-7 max-w-44 shrink-0 items-center gap-1 rounded-md border border-primary/30 px-2 text-[11px] text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
             >
               <span className="truncate">{activeQuery}</span>
               <X className="size-3.5 shrink-0" />
@@ -227,10 +226,10 @@ function CatalogHeader({
             href="https://github.com/jfalava/hyperscaler-services"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden items-center gap-1 rounded-md bg-foreground px-2.5 py-1.5 text-[11px] font-medium text-background transition-opacity hover:opacity-80 lg:inline-flex"
+            className="hidden items-center gap-1 rounded-md bg-action px-2.5 py-1.5 text-[11px] font-medium text-action-foreground transition-opacity hover:bg-action/80 lg:inline-flex"
           >
             <svg
-              className="text-background"
+              className="text-action-foreground"
               fill="currentColor"
               viewBox="0 -0.5 25 25"
               height="16"

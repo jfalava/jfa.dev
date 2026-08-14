@@ -21,6 +21,6 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#4f46e5",
-  "background_color": "#4f46e5"
+  "theme_color": "oklch(0.511 0.262 276.966)",
+  "background_color": "oklch(0.511 0.262 276.966)"
 }

@@ -39,7 +39,14 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant="outline" size="icon" aria-label="Toggle theme" />}
+        render={
+          <Button
+            variant="outline"
+            size="icon"
+            className="text-primary hover:bg-primary/10 hover:text-primary"
+            aria-label="Toggle theme"
+          />
+        }
       >
         <span className="flex items-center justify-center">{getThemeIcon()}</span>
       </DropdownMenuTrigger>

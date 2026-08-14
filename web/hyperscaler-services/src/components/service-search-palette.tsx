@@ -281,7 +281,7 @@ export function ServiceSearchPalette({
         <button
           type="button"
           className={cn(
-            "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-[11px] font-medium text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30",
+            "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-[11px] font-medium text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30",
             presetQuery ? "border border-transparent" : "border border-border bg-background",
             hideOnMobile && "hidden sm:inline-flex",
           )}
