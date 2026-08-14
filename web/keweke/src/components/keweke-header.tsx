@@ -50,8 +50,8 @@ export function KewekeHeader({ listId }: KewekeHeaderProps) {
             aria-label="keweke"
             className="flex min-w-0 cursor-default items-baseline gap-3 truncate lg:pr-4"
           >
-            <span className="shrink-0 text-sm font-bold tracking-wide text-primary">
-              <span className="inline">keweke</span>
+            <span className="shrink-0 text-sm font-bold text-primary">
+              <span className="inline tracking-wide">KEWEKE</span>
               <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
             </span>
             <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
