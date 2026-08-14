@@ -8,9 +8,11 @@ import { createStarterListSnapshot } from "@jfa.dev/common/lists";
 
 import {
   applyLocalMutation,
+  assignLocalListAlias,
   clearLocalListDatabase,
   createLocalList,
   deleteLocalList,
+  getLocalListByAlias,
   getLocalListRecord,
   listLocalLists,
   markListRemote,
@@ -65,6 +67,15 @@ describe("local list store", () => {
     expect((await getLocalListRecord(LIST_ID))?.backend).toBe("remote");
     await deleteLocalList(LIST_ID);
     expect(await getLocalListRecord(LIST_ID)).toBeUndefined();
+  });
+
+  test("assigns and resolves a readable alias for a local list", async () => {
+    const snapshot = await createLocalList();
+    const assigned = await assignLocalListAlias(snapshot.id, "Weekend groceries");
+
+    expect(assigned?.alias).toMatch(/^weekend-groceries-[a-z]{5}$/);
+    const resolved = await getLocalListByAlias(assigned?.alias ?? "");
+    expect(resolved?.snapshot.id).toBe(snapshot.id);
   });
 
   test("serializes concurrent mutations for one local list", async () => {

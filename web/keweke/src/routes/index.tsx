@@ -53,7 +53,7 @@ function EmptyState() {
                 {lists.map((list) => (
                   <Link
                     key={list.id}
-                    params={{ listId: list.id }}
+                    params={{ listId: list.alias ?? list.id }}
                     to="/$listId"
                     className="group flex items-center justify-between gap-4 py-4"
                   >
@@ -63,6 +63,7 @@ function EmptyState() {
                       </p>
                       <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
                         {list.backend} · {list.itemCount} lines · {list.completedCount} done
+                        {list.alias ? ` · ${list.alias}` : ""}
                       </p>
                     </div>
                     <span className="shrink-0 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">

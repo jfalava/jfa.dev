@@ -5,7 +5,7 @@ import { Check, CircleHelp, CloudUpload, Copy, Plus } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
-import { isUuidV7, normalizeListId } from "@/lib/list-id";
+import { isListAddress, normalizeListAddress } from "@/lib/list-id";
 import { createLocalList } from "@/lib/local-list-store";
 
 interface KewekeHeaderProps {
@@ -24,14 +24,15 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
 
   const openList = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    const nextListId = normalizeListId(targetId);
-    if (!isUuidV7(nextListId)) {
-      setError("Enter a valid UUID7 list id.");
+    const normalizedTarget = targetId.trim().toLowerCase();
+    if (!isListAddress(normalizedTarget)) {
+      setError("Enter a valid list alias or UUID7.");
       return;
     }
 
     setError(undefined);
-    await navigate({ to: "/$listId", params: { listId: nextListId } });
+    const nextListAddress = normalizeListAddress(normalizedTarget);
+    await navigate({ to: "/$listId", params: { listId: nextListAddress } });
   };
 
   const createList = async (): Promise<void> => {
@@ -75,14 +76,14 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
             onSubmit={(event) => void openList(event)}
           >
             <label className="sr-only" htmlFor="list-id-input">
-              Open list by UUID7
+              Open list by alias or UUID7
             </label>
             <Input
               id="list-id-input"
-              aria-label="Open list by UUID7"
+              aria-label="Open list by alias or UUID7"
               className="w-24 font-mono text-[11px] sm:w-56"
               onChange={(event) => setTargetId(event.target.value)}
-              placeholder="paste list UUID7"
+              placeholder="paste alias or UUID7"
               value={targetId}
             />
             <Button type="submit" variant="outline">

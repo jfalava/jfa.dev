@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./aliases": "./src/aliases.ts",
     "./styles.css": "./src/styles.css",
     "./ui": "./src/components/ui/index.ts",
     "./lists": "./src/lists.ts"

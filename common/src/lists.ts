@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { listAliasSchema } from "./aliases";
+
 const UUID_V7_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -28,6 +30,7 @@ export const listItemSchema = z.object({
 export const listSnapshotSchema = z.object({
   schemaVersion: z.literal(LIST_SCHEMA_VERSION),
   id: listIdSchema,
+  alias: listAliasSchema.nullable().default(null),
   title: z.string().trim().min(1).max(160),
   items: z.array(listItemSchema).max(10_000),
   revision: z.number().int().min(0),
@@ -79,6 +82,7 @@ export type ListBackend = "local" | "remote";
 
 export interface ListSummary {
   id: string;
+  alias: string | null;
   title: string;
   itemCount: number;
   completedCount: number;
@@ -94,7 +98,8 @@ export type ApplyMutationResult =
 export type ImportSnapshotResult =
   | { status: "imported"; snapshot: ListSnapshot }
   | { status: "already-imported"; snapshot: ListSnapshot }
-  | { status: "conflict"; snapshot: ListSnapshot };
+  | { status: "conflict"; snapshot: ListSnapshot }
+  | { status: "alias-conflict"; snapshot: ListSnapshot };
 
 export function createListSnapshot(
   id: string,
@@ -104,6 +109,7 @@ export function createListSnapshot(
   return {
     schemaVersion: LIST_SCHEMA_VERSION,
     id: listIdSchema.parse(id),
+    alias: null,
     title: options.title ?? "Weekend groceries",
     items: [],
     revision: 0,
@@ -165,6 +171,7 @@ export function summarizeList(
 ): ListSummary {
   return {
     id: snapshot.id,
+    alias: snapshot.alias,
     title: snapshot.title,
     itemCount: snapshot.items.length,
     completedCount: snapshot.items.filter((item) => item.checked).length,

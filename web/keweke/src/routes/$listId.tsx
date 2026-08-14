@@ -1,14 +1,20 @@
 import type { ListCommand, ListItem, ListSnapshot } from "@jfa.dev/common/lists";
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
 import { Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { v7 as uuidv7 } from "uuid";
 
 import { KewekeHeader } from "@/components/keweke-header";
-import { isUuidV7 } from "@/lib/list-id";
-import { applyMutation, createMutation, loadList, migrateList } from "@/lib/list-repository";
+import { isListAddress } from "@/lib/list-id";
+import {
+  applyMutation,
+  assignListAlias,
+  createMutation,
+  loadList,
+  migrateList,
+} from "@/lib/list-repository";
 
 const shoppingTableFeatures = tableFeatures({});
 const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ListItem>();
@@ -16,7 +22,7 @@ const EMPTY_ITEMS: ListItem[] = [];
 
 export const Route = createFileRoute("/$listId")({
   beforeLoad: ({ params }) => {
-    if (!isUuidV7(params.listId)) {
+    if (!isListAddress(params.listId)) {
       throw notFound();
     }
   },
@@ -25,11 +31,13 @@ export const Route = createFileRoute("/$listId")({
 
 function ListPage() {
   const { listId } = Route.useParams();
+  const navigate = useNavigate();
   const [loadedList, setLoadedList] = useState<
     { backend: "local" | "remote"; snapshot: ListSnapshot } | undefined
   >();
   const [isLoading, setIsLoading] = useState(true);
   const [isMigrating, setIsMigrating] = useState(false);
+  const [isAssigningAlias, setIsAssigningAlias] = useState(false);
   const [error, setError] = useState<string>();
   const [filter, setFilter] = useState("");
   const [draftItem, setDraftItem] = useState("");
@@ -67,7 +75,7 @@ function ListPage() {
       }
 
       const result = await applyMutation(
-        listId,
+        loadedList.snapshot.id,
         loadedList.backend,
         createMutation(loadedList.snapshot, command),
       );
@@ -85,7 +93,7 @@ function ListPage() {
       setError(undefined);
       return true;
     },
-    [listId, loadedList],
+    [loadedList],
   );
 
   const migrate = useCallback(async (): Promise<void> => {
@@ -95,9 +103,13 @@ function ListPage() {
 
     setIsMigrating(true);
     try {
-      const result = await migrateList(listId, loadedList.snapshot);
+      const result = await migrateList(loadedList.snapshot);
       if (result.status === "conflict") {
         setError("A remote list already exists for this identifier.");
+        return;
+      }
+      if (result.status === "alias-conflict") {
+        setError("That friendly address is already in use. Choose another one.");
         return;
       }
 
@@ -108,7 +120,34 @@ function ListPage() {
     } finally {
       setIsMigrating(false);
     }
-  }, [listId, loadedList]);
+  }, [loadedList]);
+
+  const assignAlias = useCallback(
+    async (aliasBase: string): Promise<void> => {
+      if (!loadedList) {
+        return;
+      }
+
+      setIsAssigningAlias(true);
+      try {
+        const result = await assignListAlias(loadedList.backend, loadedList.snapshot, aliasBase);
+        setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
+        setError(undefined);
+        if (result.snapshot.alias) {
+          await navigate({
+            to: "/$listId",
+            params: { listId: result.snapshot.alias },
+            replace: true,
+          });
+        }
+      } catch {
+        setError("Could not create that friendly address. Try a few letters or numbers.");
+      } finally {
+        setIsAssigningAlias(false);
+      }
+    },
+    [loadedList, navigate],
+  );
 
   const addItem = useCallback(
     (event: FormEvent<HTMLFormElement>): void => {
@@ -224,6 +263,11 @@ function ListPage() {
             <h1 className="mt-1 text-xl leading-none font-semibold tracking-tight uppercase sm:text-2xl">
               {snapshot.title}
             </h1>
+            <ListAliasEditor
+              alias={snapshot.alias ?? null}
+              isSaving={isAssigningAlias}
+              onSave={assignAlias}
+            />
           </div>
           <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
             {String(activeCount).padStart(2, "0")} open · {String(completedCount).padStart(2, "0")}{" "}
@@ -279,6 +323,54 @@ function ListPage() {
         <ShoppingTable items={visibleItems} onRemove={removeItem} onToggle={toggleItem} />
       </main>
     </div>
+  );
+}
+
+function ListAliasEditor({
+  alias,
+  isSaving,
+  onSave,
+}: {
+  alias: string | null;
+  isSaving: boolean;
+  onSave: (aliasBase: string) => void;
+}) {
+  const [value, setValue] = useState("");
+
+  if (alias !== null) {
+    return (
+      <p className="mt-2 font-mono text-[10px] tracking-[0.08em] text-primary uppercase">
+        friendly address / {alias}
+      </p>
+    );
+  }
+
+  return (
+    <form
+      className="mt-3 flex max-w-md flex-wrap items-center gap-1.5"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const aliasBase = value.trim();
+        if (aliasBase) {
+          onSave(aliasBase);
+        }
+      }}
+    >
+      <label className="sr-only" htmlFor="list-alias">
+        Friendly list address
+      </label>
+      <Input
+        id="list-alias"
+        aria-label="Friendly list address"
+        className="min-w-44 flex-1 font-mono text-[11px]"
+        onChange={(event) => setValue(event.target.value)}
+        placeholder="name this list for sharing"
+        value={value}
+      />
+      <Button isDisabled={isSaving} type="submit" variant="outline">
+        {isSaving ? "saving" : "make address"}
+      </Button>
+    </form>
   );
 }
 

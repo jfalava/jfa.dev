@@ -1,3 +1,4 @@
+import { listAliasSchema } from "@jfa.dev/common/aliases";
 import {
   applyListMutation,
   listIdSchema,
@@ -11,8 +12,9 @@ import {
 import { DurableObject } from "cloudflare:workers";
 
 interface ListMetadataRow {
-  [key: string]: string | number;
+  [key: string]: string | number | null;
   list_id: string;
+  alias: string | null;
   title: string;
   revision: number;
   created_at: string;
@@ -45,6 +47,19 @@ export class KewekeList extends DurableObject {
       return null;
     }
     return snapshot;
+  }
+
+  async setAlias(listId: string, alias: string): Promise<ListSnapshot | null> {
+    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedAlias = listAliasSchema.parse(alias);
+    const current = this.readSnapshot();
+    if (!current || current.id !== normalizedListId) {
+      return null;
+    }
+
+    const next = { ...current, alias: normalizedAlias };
+    this.ctx.storage.transactionSync(() => this.writeSnapshot(next));
+    return next;
   }
 
   async applyMutation(listId: string, mutation: ListMutation): Promise<ApplyMutationResult> {
@@ -158,12 +173,17 @@ export class KewekeList extends DurableObject {
         INSERT INTO _sql_schema_migrations (id) VALUES (1);
       `);
     }
+
+    if (currentVersion < 2) {
+      this.ctx.storage.sql.exec("ALTER TABLE metadata ADD COLUMN alias TEXT");
+      this.ctx.storage.sql.exec("INSERT INTO _sql_schema_migrations (id) VALUES (2)");
+    }
   }
 
   private readSnapshot(): ListSnapshot | null {
     const metadata = this.ctx.storage.sql
       .exec<ListMetadataRow>(
-        "SELECT list_id, title, revision, created_at, updated_at FROM metadata LIMIT 1",
+        "SELECT list_id, alias, title, revision, created_at, updated_at FROM metadata LIMIT 1",
       )
       .toArray()[0];
     if (!metadata) {
@@ -192,6 +212,7 @@ export class KewekeList extends DurableObject {
     return parseListSnapshot({
       schemaVersion: 1,
       id: metadata.list_id,
+      alias: metadata.alias,
       title: metadata.title,
       items,
       revision: metadata.revision,
@@ -202,14 +223,16 @@ export class KewekeList extends DurableObject {
 
   private writeSnapshot(snapshot: ListSnapshot): void {
     this.ctx.storage.sql.exec(
-      `INSERT INTO metadata (list_id, title, revision, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?)
+      `INSERT INTO metadata (list_id, alias, title, revision, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?)
        ON CONFLICT(list_id) DO UPDATE SET
+         alias = excluded.alias,
          title = excluded.title,
          revision = excluded.revision,
          created_at = excluded.created_at,
          updated_at = excluded.updated_at`,
       snapshot.id,
+      snapshot.alias,
       snapshot.title,
       snapshot.revision,
       snapshot.createdAt,

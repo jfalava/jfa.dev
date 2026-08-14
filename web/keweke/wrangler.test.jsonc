@@ -9,12 +9,16 @@
         "name": "KEWEKE_LISTS",
         "class_name": "KewekeList",
       },
+      {
+        "name": "KEWEKE_ALIASES",
+        "class_name": "KewekeAliasDirectory",
+      },
     ],
   },
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": ["KewekeList"],
+      "new_sqlite_classes": ["KewekeList", "KewekeAliasDirectory"],
     },
   ],
 }

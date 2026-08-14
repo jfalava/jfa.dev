@@ -19,6 +19,9 @@ describe("KewekeList Durable Object", () => {
     );
     expect(imported.status).toBe("imported");
 
+    const aliased = await stub.setAlias(LIST_ID, "weekend-groceries-abcde");
+    expect(aliased?.alias).toBe("weekend-groceries-abcde");
+
     const mutation: ListMutation = {
       id: "mutation-001",
       baseRevision: 0,

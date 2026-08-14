@@ -1,4 +1,5 @@
 export { KewekeList } from "../src/server/keweke-list";
+export { KewekeAliasDirectory } from "../src/server/keweke-aliases";
 
 export default {
   fetch() {

@@ -1,7 +1,9 @@
+import { createListAlias, listAliasSchema } from "@jfa.dev/common/aliases";
 import {
   applyListMutation,
   createStarterListSnapshot,
   parseListMutation,
+  parseListSnapshot,
   summarizeList,
   type ApplyMutationResult,
   type ListBackend,
@@ -63,7 +65,17 @@ async function putRecord(record: LocalListRecord): Promise<void> {
 
 export async function getLocalListRecord(listId: string): Promise<LocalListRecord | undefined> {
   const database = await getDatabase();
-  return database.get("lists", listId.toLowerCase());
+  const record = await database.get("lists", listId.toLowerCase());
+  return record ? normalizeLocalListRecord(record) : undefined;
+}
+
+export async function getLocalListByAlias(alias: string): Promise<LocalListRecord | undefined> {
+  const normalizedAlias = listAliasSchema.parse(alias.trim().toLowerCase());
+  const database = await getDatabase();
+  const records = await database.getAll("lists");
+  return records
+    .map(normalizeLocalListRecord)
+    .find((record) => record.snapshot.alias === normalizedAlias);
 }
 
 export async function listLocalLists(): Promise<ListSummary[]> {
@@ -77,7 +89,13 @@ export async function listLocalLists(): Promise<ListSummary[]> {
     return sorted;
   }, []);
 
-  return sortedRecords.map((record) => summarizeList(record.snapshot, record.backend));
+  return sortedRecords
+    .map(normalizeLocalListRecord)
+    .map((record) => summarizeList(record.snapshot, record.backend));
+}
+
+function normalizeLocalListRecord(record: LocalListRecord): LocalListRecord {
+  return { ...record, snapshot: parseListSnapshot(record.snapshot) };
 }
 
 export async function saveLocalList(
@@ -96,6 +114,36 @@ export async function createLocalList(): Promise<ListSnapshot> {
   const snapshot = createStarterListSnapshot(uuidv7());
   await saveLocalList(snapshot);
   return snapshot;
+}
+
+export async function assignLocalListAlias(
+  listId: string,
+  aliasBase: string,
+): Promise<ListSnapshot | null> {
+  const record = await getLocalListRecord(listId.toLowerCase());
+  if (!record || record.backend !== "local") {
+    return null;
+  }
+  if (record.snapshot.alias !== null) {
+    return record.snapshot;
+  }
+
+  const database = await getDatabase();
+  const records = await database.getAll("lists");
+  let alias: string | undefined;
+  for (let attempt = 0; attempt < 32 && alias === undefined; attempt += 1) {
+    const candidate = createListAlias(aliasBase);
+    if (!records.some((candidateRecord) => candidateRecord.snapshot.alias === candidate)) {
+      alias = candidate;
+    }
+  }
+  if (alias === undefined) {
+    throw new Error("Could not create a unique list alias");
+  }
+
+  const nextSnapshot = { ...record.snapshot, alias };
+  await saveLocalList(nextSnapshot);
+  return nextSnapshot;
 }
 
 export async function applyLocalMutation(

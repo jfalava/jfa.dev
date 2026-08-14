@@ -18,6 +18,7 @@ describe("list contract", () => {
     expect(snapshot.id).toBe(LIST_ID);
     expect(snapshot.schemaVersion).toBe(1);
     expect(snapshot.revision).toBe(0);
+    expect(snapshot.alias).toBeNull();
     expect(snapshot.items).toHaveLength(3);
     expect(snapshot.items[2]?.checked).toBe(true);
     expect(parseListSnapshot(snapshot)).toEqual(snapshot);
