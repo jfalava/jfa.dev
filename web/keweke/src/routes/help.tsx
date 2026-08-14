@@ -8,7 +8,7 @@ function HelpPage() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
       <KewekeHeader />
-      <main className="min-h-0 flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8">
+      <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
         <article className="invoice-paper invoice-rule mx-auto max-w-5xl border border-t-4 border-t-primary">
           <div className="px-4 py-8 sm:px-8 sm:py-12">
             <header className="max-w-2xl border-b border-border pb-8">

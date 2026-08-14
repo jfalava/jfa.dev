@@ -9,7 +9,10 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover",
+      },
       {
         name: "description",
         content: "Simple collaborative shopping lists for friends.",
@@ -50,7 +53,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <script src={appPath("/theme-init.js")}></script>
         <HeadContent />
       </head>
-      <body className="flex h-dvh min-h-0 flex-col overflow-hidden bg-background font-sans text-base text-foreground transition-colors duration-200">
+      <body className="flex h-dvh min-h-0 flex-col overflow-hidden overscroll-none bg-background font-sans text-base text-foreground transition-colors duration-200">
         <ThemeProvider>{children}</ThemeProvider>
         <Scripts />
       </body>

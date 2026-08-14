@@ -5,11 +5,7 @@ import { Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
-import {
-  deleteLocalList,
-  listLocalLists,
-  subscribeToLocalLists,
-} from "@/lib/local-list-store";
+import { deleteLocalList, listLocalLists, subscribeToLocalLists } from "@/lib/local-list-store";
 
 export const Route = createFileRoute("/")({ component: EmptyState });
 
@@ -53,7 +49,7 @@ function EmptyState() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
       <KewekeHeader />
-      <main className="min-h-0 flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8">
+      <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
         <section className="invoice-paper invoice-rule border border-t-4 border-t-primary">
           <div className="px-4 py-10 sm:px-8 sm:py-16">
             <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">

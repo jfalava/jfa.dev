@@ -10,4 +10,28 @@
   .invoice-paper {
     box-shadow: none;
   }
+
+  .catalog-header {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+html,
+body {
+  overscroll-behavior: none;
+}
+
+@media (max-width: 767px) {
+  input[data-slot="input"],
+  textarea,
+  select {
+    min-height: 2.75rem;
+    font-size: 16px !important;
+  }
+
+  [data-slot="button"] {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    touch-action: manipulation;
+  }
 }

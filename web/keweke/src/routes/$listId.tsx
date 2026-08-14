@@ -179,13 +179,7 @@ function ListPage() {
       const quantity = Number(draft.quantity);
       const unit = draft.unit.trim();
       const category = draft.category.trim();
-      if (
-        !name ||
-        !Number.isInteger(quantity) ||
-        quantity < 1 ||
-        !unit ||
-        !category
-      ) {
+      if (!name || !Number.isInteger(quantity) || quantity < 1 || !unit || !category) {
         setError("Enter a name, whole quantity, unit, and category.");
         return false;
       }
@@ -283,7 +277,7 @@ function ListPage() {
     return (
       <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
         <KewekeHeader listId={listId} />
-        <main className="min-h-0 flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8">
+        <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
           <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
             loading list…
           </p>
@@ -296,7 +290,7 @@ function ListPage() {
     return (
       <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
         <KewekeHeader listId={listId} />
-        <main className="min-h-0 flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8">
+        <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
           <section className="invoice-paper invoice-rule border border-t-4 border-t-destructive">
             <div className="px-4 py-10 sm:px-8 sm:py-16">
               <p className="font-mono text-[11px] tracking-[0.12em] text-destructive uppercase">
@@ -323,7 +317,7 @@ function ListPage() {
         listId={listId}
         onMigrate={migrate}
       />
-      <main className="min-h-0 flex-1 overflow-auto">
+      <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5 sm:px-6 lg:px-8">
           <div>
             <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
@@ -620,58 +614,228 @@ function ShoppingTable({
   });
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full min-w-[760px] border-collapse">
-        <colgroup>
-          <col className="w-24" />
-          <col className="w-10" />
-          <col />
-          <col className="w-20" />
-          <col className="w-20" />
-          <col className="w-32" />
-          <col className="w-24" />
-          <col className="w-12" />
-        </colgroup>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="invoice-rule border-b-2">
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="h-10 bg-muted/50 px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase first:pl-4"
-                >
-                  {header.isPlaceholder ? null : <table.FlexRender header={header} />}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.length > 0 ? (
-            table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="group border-b border-border/80 transition-colors hover:bg-muted/40"
-              >
-                {row.getAllCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    <table.FlexRender cell={cell} />
-                  </TableCell>
+    <>
+      <MobileShoppingList
+        editDraft={editDraft}
+        editingItemId={editingItemId}
+        isSaving={isSaving}
+        items={items}
+        onCancelEditing={cancelEditing}
+        onEditDraftChange={updateDraft}
+        onRemove={onRemove}
+        onSaveEditing={saveEditing}
+        onStartEditing={startEditing}
+        onToggle={onToggle}
+      />
+      <div className="hidden w-full overflow-x-auto md:block">
+        <table className="w-full min-w-[760px] border-collapse">
+          <colgroup>
+            <col className="w-24" />
+            <col className="w-10" />
+            <col />
+            <col className="w-20" />
+            <col className="w-20" />
+            <col className="w-32" />
+            <col className="w-24" />
+            <col className="w-12" />
+          </colgroup>
+          <thead className="sticky top-0 z-10">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="invoice-rule border-b-2">
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className="h-10 bg-muted/50 px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase first:pl-4"
+                  >
+                    {header.isPlaceholder ? null : <table.FlexRender header={header} />}
+                  </th>
                 ))}
               </tr>
-            ))
-          ) : (
-            <tr>
-              <TableCell
-                className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
-                colSpan={columns.length}
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  className="group border-b border-border/80 transition-colors hover:bg-muted/40"
+                >
+                  {row.getAllCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      <table.FlexRender cell={cell} />
+                    </TableCell>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <TableCell
+                  className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
+                  colSpan={columns.length}
+                >
+                  no matching lines
+                </TableCell>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+function MobileShoppingList({
+  editDraft,
+  editingItemId,
+  isSaving,
+  items,
+  onCancelEditing,
+  onEditDraftChange,
+  onRemove,
+  onSaveEditing,
+  onStartEditing,
+  onToggle,
+}: {
+  editDraft?: ItemEditDraft;
+  editingItemId?: string;
+  isSaving: boolean;
+  items: ListItem[];
+  onCancelEditing: () => void;
+  onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
+  onRemove: (id: string) => void;
+  onSaveEditing: () => void;
+  onStartEditing: (item: ListItem) => void;
+  onToggle: (id: string, checked: boolean) => void;
+}) {
+  if (items.length === 0) {
+    return (
+      <p className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase md:hidden">
+        no matching lines
+      </p>
+    );
+  }
+
+  return (
+    <div className="divide-y divide-border md:hidden">
+      {items.map((item) => {
+        if (editingItemId === item.id) {
+          return (
+            <form
+              className="grid grid-cols-2 gap-2 px-4 py-3"
+              key={item.id}
+              onSubmit={(event) => {
+                event.preventDefault();
+                onSaveEditing();
+              }}
+            >
+              <label className="sr-only" htmlFor={`mobile-edit-name-${item.id}`}>
+                Edit {item.name} name
+              </label>
+              <Input
+                id={`mobile-edit-name-${item.id}`}
+                aria-label={`Edit ${item.name} name`}
+                className="col-span-2 min-w-0"
+                maxLength={200}
+                onChange={(event) => onEditDraftChange("name", event.target.value)}
+                value={editDraft?.name ?? item.name}
+              />
+              <label className="sr-only" htmlFor={`mobile-edit-quantity-${item.id}`}>
+                Edit {item.name} quantity
+              </label>
+              <Input
+                id={`mobile-edit-quantity-${item.id}`}
+                aria-label={`Edit ${item.name} quantity`}
+                className="min-w-0 font-mono"
+                inputMode="numeric"
+                maxLength={6}
+                onChange={(event) => onEditDraftChange("quantity", event.target.value)}
+                value={editDraft?.quantity ?? String(item.quantity)}
+              />
+              <label className="sr-only" htmlFor={`mobile-edit-unit-${item.id}`}>
+                Edit {item.name} unit
+              </label>
+              <Input
+                id={`mobile-edit-unit-${item.id}`}
+                aria-label={`Edit ${item.name} unit`}
+                className="min-w-0 font-mono"
+                maxLength={32}
+                onChange={(event) => onEditDraftChange("unit", event.target.value)}
+                value={editDraft?.unit ?? item.unit}
+              />
+              <label className="sr-only" htmlFor={`mobile-edit-category-${item.id}`}>
+                Edit {item.name} category
+              </label>
+              <Input
+                id={`mobile-edit-category-${item.id}`}
+                aria-label={`Edit ${item.name} category`}
+                className="col-span-2 min-w-0 font-mono tracking-[0.08em]"
+                maxLength={64}
+                onChange={(event) => onEditDraftChange("category", event.target.value)}
+                value={editDraft?.category ?? item.category}
+              />
+              <div className="col-span-2 flex justify-end gap-2">
+                <Button className="min-w-20" isDisabled={isSaving} type="submit">
+                  {isSaving ? "saving" : "save"}
+                </Button>
+                <Button
+                  className="min-w-20"
+                  isDisabled={isSaving}
+                  onPress={onCancelEditing}
+                  type="button"
+                  variant="ghost"
+                >
+                  cancel
+                </Button>
+              </div>
+            </form>
+          );
+        }
+
+        return (
+          <div className="flex items-center gap-2 px-4 py-2" key={item.id}>
+            <Checkbox
+              aria-label={`Mark ${item.name} as ${item.checked ? "open" : "done"}`}
+              className="size-11 shrink-0 justify-center rounded-md"
+              isSelected={item.checked}
+              onChange={(checked) => onToggle(item.id, checked)}
+            />
+            <div className="min-w-0 flex-1 py-1">
+              <p
+                className={
+                  item.checked
+                    ? "truncate font-medium text-muted-foreground line-through"
+                    : "truncate font-medium"
+                }
               >
-                no matching lines
-              </TableCell>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                {item.name}
+              </p>
+              <p className="mt-1 truncate font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                {item.quantity} {item.unit} · {item.category} · {item.checked ? "done" : "open"}
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-0.5">
+              <Button
+                aria-label={`Edit ${item.name}`}
+                className="size-11 p-0"
+                isDisabled={isSaving}
+                onPress={() => onStartEditing(item)}
+                variant="ghost"
+              >
+                <Pencil className="size-4" />
+              </Button>
+              <Button
+                aria-label={`Remove ${item.name}`}
+                className="size-11 p-0"
+                isDisabled={isSaving}
+                onPress={() => onRemove(item.id)}
+                variant="ghost"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
