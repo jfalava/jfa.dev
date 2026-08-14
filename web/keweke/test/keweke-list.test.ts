@@ -7,6 +7,7 @@ import { KewekeList } from "../src/server/keweke-list";
 
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000020";
 const SECOND_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000021";
+const THIRD_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000022";
 const NOW = "2026-08-14T10:00:00.000Z";
 
 describe("KewekeList Durable Object", () => {
@@ -66,5 +67,31 @@ describe("KewekeList Durable Object", () => {
 
     expect(retry.status).toBe("already-imported");
     expect(conflictingImport.status).toBe("conflict");
+  });
+
+  it("persists deleted history and supports recovery and permanent deletion", async () => {
+    const snapshot = createStarterListSnapshot(THIRD_LIST_ID, { now: NOW });
+    const stub = env.KEWEKE_LISTS.getByName(THIRD_LIST_ID);
+    await stub.importSnapshot(THIRD_LIST_ID, snapshot, "migration-003");
+
+    const removed = await stub.applyMutation(THIRD_LIST_ID, {
+      id: "mutation-delete-003",
+      baseRevision: 0,
+      command: { type: "remove-item", itemId: "starter-bread" },
+    });
+    expect(removed.status).toBe("ok");
+    if (removed.status !== "ok") {
+      return;
+    }
+
+    expect((await stub.getSnapshot(THIRD_LIST_ID))?.deletedItems[0]?.name).toBe("Bread");
+    const archiveId = removed.snapshot.deletedItems[0]?.archiveId ?? "";
+    const restored = await stub.applyMutation(THIRD_LIST_ID, {
+      id: "mutation-restore-003",
+      baseRevision: 1,
+      command: { type: "restore-item", archiveId },
+    });
+    expect(restored.status).toBe("ok");
+    expect((await stub.getSnapshot(THIRD_LIST_ID))?.deletedItems).toEqual([]);
   });
 });

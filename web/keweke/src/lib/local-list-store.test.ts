@@ -110,4 +110,52 @@ describe("local list store", () => {
     expect([first.status, second.status].includes("conflict")).toBe(true);
     expect(finalRecord?.snapshot.revision).toBe(1);
   });
+
+  test("keeps deleted items recoverable until they are purged", async () => {
+    await saveLocalList(createStarterListSnapshot(LIST_ID, { now: NOW }));
+
+    const removed = await applyLocalMutation(LIST_ID, {
+      id: "local-remove-001",
+      baseRevision: 0,
+      command: { type: "remove-item", itemId: "starter-bread" },
+    });
+    expect(removed.status).toBe("ok");
+    if (removed.status !== "ok") {
+      return;
+    }
+
+    expect(removed.snapshot.deletedItems[0]?.name).toBe("Bread");
+    const archiveId = removed.snapshot.deletedItems[0]?.archiveId ?? "";
+
+    const restored = await applyLocalMutation(LIST_ID, {
+      id: "local-restore-001",
+      baseRevision: 1,
+      command: { type: "restore-item", archiveId },
+    });
+    expect(restored.status).toBe("ok");
+    if (restored.status !== "ok") {
+      return;
+    }
+
+    const purged = await applyLocalMutation(LIST_ID, {
+      id: "local-remove-002",
+      baseRevision: 2,
+      command: { type: "remove-item", itemId: "starter-bread" },
+    });
+    expect(purged.status).toBe("ok");
+    if (purged.status !== "ok") {
+      return;
+    }
+
+    const deletedAgain = purged.snapshot.deletedItems[0]?.archiveId ?? "";
+    const forever = await applyLocalMutation(LIST_ID, {
+      id: "local-purge-001",
+      baseRevision: 3,
+      command: { type: "purge-deleted-item", archiveId: deletedAgain },
+    });
+    expect(forever.status).toBe("ok");
+    if (forever.status === "ok") {
+      expect(forever.snapshot.deletedItems).toEqual([]);
+    }
+  });
 });

@@ -34,6 +34,21 @@ interface ListItemRow {
   updated_at: string;
 }
 
+interface DeletedListItemRow {
+  [key: string]: string | number;
+  archive_id: string;
+  item_id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  category: string;
+  checked: number;
+  position: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+}
+
 export class KewekeList extends DurableObject {
   constructor(ctx: DurableObjectState, env: Cloudflare.Env) {
     super(ctx, env);
@@ -181,6 +196,28 @@ export class KewekeList extends DurableObject {
       this.ctx.storage.sql.exec("ALTER TABLE metadata ADD COLUMN alias TEXT");
       this.ctx.storage.sql.exec("INSERT INTO _sql_schema_migrations (id) VALUES (2)");
     }
+
+    if (currentVersion < 3) {
+      this.ctx.storage.sql.exec(`
+        CREATE TABLE IF NOT EXISTS deleted_items (
+          archive_id TEXT PRIMARY KEY,
+          list_id TEXT NOT NULL,
+          item_id TEXT NOT NULL,
+          name TEXT NOT NULL,
+          quantity INTEGER NOT NULL,
+          unit TEXT NOT NULL,
+          category TEXT NOT NULL,
+          checked INTEGER NOT NULL,
+          position INTEGER NOT NULL,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL,
+          deleted_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS deleted_items_by_list_deleted_at
+          ON deleted_items(list_id, deleted_at);
+        INSERT INTO _sql_schema_migrations (id) VALUES (3);
+      `);
+    }
   }
 
   private readSnapshot(): ListSnapshot | null {
@@ -212,12 +249,35 @@ export class KewekeList extends DurableObject {
         updatedAt: item.updated_at,
       }));
 
+    const deletedItems = this.ctx.storage.sql
+      .exec<DeletedListItemRow>(
+        `SELECT archive_id, item_id, name, quantity, unit, category, checked, position,
+                created_at, updated_at, deleted_at
+         FROM deleted_items WHERE list_id = ? ORDER BY deleted_at ASC, archive_id ASC`,
+        metadata.list_id,
+      )
+      .toArray()
+      .map((item) => ({
+        archiveId: item.archive_id,
+        id: item.item_id,
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit,
+        category: item.category,
+        checked: item.checked === 1,
+        position: item.position,
+        createdAt: item.created_at,
+        updatedAt: item.updated_at,
+        deletedAt: item.deleted_at,
+      }));
+
     return parseListSnapshot({
       schemaVersion: 1,
       id: metadata.list_id,
       alias: metadata.alias,
       title: metadata.title,
       items,
+      deletedItems,
       revision: metadata.revision,
       createdAt: metadata.created_at,
       updatedAt: metadata.updated_at,
@@ -258,6 +318,28 @@ export class KewekeList extends DurableObject {
         item.position,
         item.createdAt,
         item.updatedAt,
+      );
+    }
+
+    this.ctx.storage.sql.exec("DELETE FROM deleted_items WHERE list_id = ?", snapshot.id);
+    for (const item of snapshot.deletedItems) {
+      this.ctx.storage.sql.exec(
+        `INSERT INTO deleted_items
+          (archive_id, list_id, item_id, name, quantity, unit, category, checked, position,
+           created_at, updated_at, deleted_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        item.archiveId,
+        snapshot.id,
+        item.id,
+        item.name,
+        item.quantity,
+        item.unit,
+        item.category,
+        item.checked ? 1 : 0,
+        item.position,
+        item.createdAt,
+        item.updatedAt,
+        item.deletedAt,
       );
     }
   }

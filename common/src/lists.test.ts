@@ -19,6 +19,7 @@ describe("list contract", () => {
     expect(snapshot.schemaVersion).toBe(1);
     expect(snapshot.revision).toBe(0);
     expect(snapshot.alias).toBeNull();
+    expect(snapshot.deletedItems).toEqual([]);
     expect(snapshot.items).toHaveLength(3);
     expect(snapshot.items[2]?.checked).toBe(true);
     expect(parseListSnapshot(snapshot)).toEqual(snapshot);
@@ -68,5 +69,72 @@ describe("list contract", () => {
       "Bread",
       "Coffee",
     ]);
+    expect(nextSnapshot?.deletedItems[0]?.name).toBe("Tomatoes");
+    expect(nextSnapshot?.deletedItems[0]?.archiveId).toBe("starter-tomatoes:1");
+  });
+
+  test("renames lists, restores deleted items, and permanently purges history", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const renamed = applyListMutation(
+      snapshot,
+      {
+        id: "019c5f7e-7b7b-7000-8000-000000000004",
+        baseRevision: 0,
+        command: { type: "rename-list", title: "Saturday market" },
+      },
+      NOW,
+    );
+    const removed = applyListMutation(
+      renamed!,
+      {
+        id: "019c5f7e-7b7b-7000-8000-000000000005",
+        baseRevision: 1,
+        command: { type: "remove-item", itemId: "starter-bread" },
+      },
+      NOW,
+    );
+
+    expect(removed?.title).toBe("Saturday market");
+    expect(removed?.deletedItems).toHaveLength(1);
+
+    const archiveId = removed?.deletedItems[0]?.archiveId ?? "";
+    const restored = applyListMutation(
+      removed!,
+      {
+        id: "019c5f7e-7b7b-7000-0000-000000000006",
+        baseRevision: 2,
+        command: { type: "restore-item", archiveId },
+      },
+      NOW,
+    );
+    expect(restored?.items.map((item) => item.name)).toEqual([
+      "Tomatoes",
+      "Coffee",
+      "Bread",
+    ]);
+    expect(restored?.deletedItems).toEqual([]);
+
+    const removedAgain = applyListMutation(
+      restored!,
+      {
+        id: "019c5f7e-7b7b-7000-0000-000000000007",
+        baseRevision: 3,
+        command: { type: "remove-item", itemId: "starter-bread" },
+      },
+      NOW,
+    );
+    const purged = applyListMutation(
+      removedAgain!,
+      {
+        id: "019c5f7e-7b7b-7000-0000-000000000008",
+        baseRevision: 4,
+        command: {
+          type: "purge-deleted-item",
+          archiveId: removedAgain?.deletedItems[0]?.archiveId ?? "",
+        },
+      },
+      NOW,
+    );
+    expect(purged?.deletedItems).toEqual([]);
   });
 });

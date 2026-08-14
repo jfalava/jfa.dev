@@ -13,6 +13,7 @@ export const listIdSchema = z
   .transform((value) => value.toLowerCase());
 
 const itemIdSchema = z.string().min(1).max(128);
+const archiveIdSchema = z.string().min(1).max(160);
 const timestampSchema = z.string().datetime({ offset: true });
 
 export const listItemSchema = z.object({
@@ -27,12 +28,18 @@ export const listItemSchema = z.object({
   updatedAt: timestampSchema,
 });
 
+export const deletedListItemSchema = listItemSchema.extend({
+  archiveId: archiveIdSchema,
+  deletedAt: timestampSchema,
+});
+
 export const listSnapshotSchema = z.object({
   schemaVersion: z.literal(LIST_SCHEMA_VERSION),
   id: listIdSchema,
   alias: listAliasSchema.nullable().default(null),
   title: z.string().trim().min(1).max(160),
   items: z.array(listItemSchema).max(10_000),
+  deletedItems: z.array(deletedListItemSchema).default([]),
   revision: z.number().int().min(0),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
@@ -62,6 +69,14 @@ export const listCommandSchema = z.discriminatedUnion("type", [
   }),
   z.object({ type: z.literal("remove-item"), itemId: itemIdSchema }),
   z.object({
+    type: z.literal("restore-item"),
+    archiveId: archiveIdSchema,
+  }),
+  z.object({
+    type: z.literal("purge-deleted-item"),
+    archiveId: archiveIdSchema,
+  }),
+  z.object({
     type: z.literal("rename-list"),
     title: z.string().trim().min(1).max(160),
   }),
@@ -74,6 +89,7 @@ export const listMutationSchema = z.object({
 });
 
 export type ListItem = z.infer<typeof listItemSchema>;
+export type DeletedListItem = z.infer<typeof deletedListItemSchema>;
 export type ListSnapshot = z.infer<typeof listSnapshotSchema>;
 export type ListCommand = z.infer<typeof listCommandSchema>;
 export type ListMutation = z.infer<typeof listMutationSchema>;
@@ -86,6 +102,7 @@ export interface ListSummary {
   title: string;
   itemCount: number;
   completedCount: number;
+  deletedItemCount: number;
   updatedAt: string;
   backend: ListBackend;
 }
@@ -112,6 +129,7 @@ export function createListSnapshot(
     alias: null,
     title: options.title ?? "Weekend groceries",
     items: [],
+    deletedItems: [],
     revision: 0,
     createdAt: now,
     updatedAt: now,
@@ -175,6 +193,7 @@ export function summarizeList(
     title: snapshot.title,
     itemCount: snapshot.items.length,
     completedCount: snapshot.items.filter((item) => item.checked).length,
+    deletedItemCount: snapshot.deletedItems.length,
     updatedAt: snapshot.updatedAt,
     backend,
   };
@@ -191,6 +210,7 @@ export function applyListMutation(
 
   const command = listCommandSchema.parse(mutation.command);
   let nextItems = snapshot.items;
+  let nextDeletedItems = snapshot.deletedItems;
   let nextTitle = snapshot.title;
 
   switch (command.type) {
@@ -221,9 +241,53 @@ export function applyListMutation(
       );
       break;
     case "remove-item":
-      nextItems = snapshot.items
-        .filter((item) => item.id !== command.itemId)
-        .map((item, index) => ({ ...item, position: index }));
+      {
+        const removedItem = snapshot.items.find((item) => item.id === command.itemId);
+        nextItems = snapshot.items
+          .filter((item) => item.id !== command.itemId)
+          .map((item, index) => ({ ...item, position: index }));
+        if (removedItem) {
+          nextDeletedItems = [
+            ...snapshot.deletedItems,
+            {
+              ...removedItem,
+              archiveId: `${removedItem.id}:${snapshot.revision + 1}`,
+              deletedAt: now,
+            },
+          ];
+        }
+      }
+      break;
+    case "restore-item":
+      {
+        const deletedItem = snapshot.deletedItems.find(
+          (item) => item.archiveId === command.archiveId,
+        );
+        if (deletedItem && !snapshot.items.some((item) => item.id === deletedItem.id)) {
+          nextItems = [
+            ...snapshot.items,
+            {
+              id: deletedItem.id,
+              name: deletedItem.name,
+              quantity: deletedItem.quantity,
+              unit: deletedItem.unit,
+              category: deletedItem.category,
+              checked: deletedItem.checked,
+              position: snapshot.items.length,
+              createdAt: deletedItem.createdAt,
+              updatedAt: now,
+            },
+          ];
+          nextDeletedItems = snapshot.deletedItems.filter(
+            (item) => item.archiveId !== command.archiveId,
+          );
+        }
+      }
+      break;
+    case "purge-deleted-item":
+      nextDeletedItems = snapshot.deletedItems.filter(
+        (item) => item.archiveId !== command.archiveId,
+      );
       break;
     case "rename-list":
       nextTitle = command.title;
@@ -234,6 +298,7 @@ export function applyListMutation(
     ...snapshot,
     title: nextTitle,
     items: nextItems,
+    deletedItems: nextDeletedItems,
     revision: snapshot.revision + 1,
     updatedAt: now,
   };

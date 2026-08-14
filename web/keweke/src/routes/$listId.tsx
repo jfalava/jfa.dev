@@ -1,8 +1,8 @@
-import type { ListCommand, ListItem, ListSnapshot } from "@jfa.dev/common/lists";
+import type { DeletedListItem, ListCommand, ListItem, ListSnapshot } from "@jfa.dev/common/lists";
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { v7 as uuidv7 } from "uuid";
 
@@ -38,6 +38,8 @@ function ListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isMigrating, setIsMigrating] = useState(false);
   const [isAssigningAlias, setIsAssigningAlias] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [error, setError] = useState<string>();
   const [filter, setFilter] = useState("");
   const [draftItem, setDraftItem] = useState("");
@@ -147,6 +149,35 @@ function ListPage() {
       }
     },
     [loadedList, navigate],
+  );
+
+  const renameList = useCallback(
+    async (title: string): Promise<boolean> => {
+      setIsRenaming(true);
+      try {
+        return await commit({ type: "rename-list", title });
+      } catch {
+        setError("Could not save the list title right now.");
+        return false;
+      } finally {
+        setIsRenaming(false);
+      }
+    },
+    [commit],
+  );
+
+  const updateDeletedItem = useCallback(
+    async (command: ListCommand, archiveId: string): Promise<void> => {
+      setBusyArchiveId(archiveId);
+      try {
+        await commit(command);
+      } catch {
+        setError("Could not update deleted-item history right now.");
+      } finally {
+        setBusyArchiveId(undefined);
+      }
+    },
+    [commit],
   );
 
   const addItem = useCallback(
@@ -260,9 +291,7 @@ function ListPage() {
             <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
               {loadedList.backend} list
             </p>
-            <h1 className="mt-1 text-xl leading-none font-semibold tracking-tight uppercase sm:text-2xl">
-              {snapshot.title}
-            </h1>
+            <ListTitleEditor isSaving={isRenaming} onSave={renameList} title={snapshot.title} />
             <ListAliasEditor
               alias={snapshot.alias ?? null}
               isSaving={isAssigningAlias}
@@ -321,8 +350,100 @@ function ListPage() {
         </div>
 
         <ShoppingTable items={visibleItems} onRemove={removeItem} onToggle={toggleItem} />
+        <DeletedItemsHistory
+          busyArchiveId={busyArchiveId}
+          items={snapshot.deletedItems}
+          onPurge={(archiveId) => {
+            void updateDeletedItem({ type: "purge-deleted-item", archiveId }, archiveId);
+          }}
+          onRestore={(archiveId) => {
+            void updateDeletedItem({ type: "restore-item", archiveId }, archiveId);
+          }}
+        />
       </main>
     </div>
+  );
+}
+
+function ListTitleEditor({
+  isSaving,
+  onSave,
+  title,
+}: {
+  isSaving: boolean;
+  onSave: (title: string) => Promise<boolean>;
+  title: string;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(title);
+
+  useEffect(() => {
+    if (!isEditing) {
+      setValue(title);
+    }
+  }, [isEditing, title]);
+
+  if (!isEditing) {
+    return (
+      <div className="mt-1 flex items-center gap-1">
+        <h1 className="text-xl leading-none font-semibold tracking-tight uppercase sm:text-2xl">
+          {title}
+        </h1>
+        <Button
+          aria-label="Edit list title"
+          onPress={() => setIsEditing(true)}
+          size="icon-xs"
+          variant="ghost"
+        >
+          <Pencil />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      className="mt-1 flex max-w-md items-center gap-1.5"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const nextTitle = value.trim();
+        if (!nextTitle || nextTitle === title) {
+          setIsEditing(false);
+          return;
+        }
+        void onSave(nextTitle).then((saved) => {
+          if (saved) {
+            setIsEditing(false);
+          }
+          return saved;
+        });
+      }}
+    >
+      <label className="sr-only" htmlFor="list-title">
+        List title
+      </label>
+      <Input
+        id="list-title"
+        aria-label="List title"
+        className="min-w-44 flex-1 font-serif text-lg font-semibold uppercase"
+        disabled={isSaving}
+        maxLength={160}
+        onChange={(event) => setValue(event.target.value)}
+        value={value}
+      />
+      <Button isDisabled={isSaving} size="sm" type="submit">
+        {isSaving ? "saving" : "save"}
+      </Button>
+      <Button
+        isDisabled={isSaving}
+        onPress={() => setIsEditing(false)}
+        size="sm"
+        type="button"
+        variant="ghost"
+      >
+        cancel
+      </Button>
+    </form>
   );
 }
 
@@ -445,6 +566,113 @@ function ShoppingTable({
         </tbody>
       </table>
     </div>
+  );
+}
+
+function DeletedItemsHistory({
+  busyArchiveId,
+  items,
+  onPurge,
+  onRestore,
+}: {
+  busyArchiveId?: string;
+  items: DeletedListItem[];
+  onPurge: (archiveId: string) => void;
+  onRestore: (archiveId: string) => void;
+}) {
+  const [confirmingArchiveId, setConfirmingArchiveId] = useState<string>();
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  const historyItems = items.reduceRight<DeletedListItem[]>((reversed, item) => {
+    reversed.push(item);
+    return reversed;
+  }, []);
+
+  return (
+    <section className="invoice-rule border-t px-4 py-6 sm:px-6 lg:px-8">
+      <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border pb-3">
+        <div>
+          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+            item history
+          </p>
+          <h2 className="mt-1 text-xl leading-none font-semibold tracking-tight uppercase">
+            Deleted lines
+          </h2>
+        </div>
+        <p className="max-w-xs text-right font-mono text-[10px] tracking-wide text-muted-foreground uppercase">
+          kept forever until you delete forever
+        </p>
+      </div>
+      <div className="divide-y divide-border">
+        {historyItems.map((item) => {
+          const isBusy = busyArchiveId === item.archiveId;
+          return (
+            <div
+              className="flex flex-wrap items-center justify-between gap-3 py-3"
+              key={item.archiveId}
+            >
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium">{item.name}</p>
+                <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                  {item.quantity} {item.unit} · {item.category} · deleted{" "}
+                  {item.deletedAt.slice(0, 10)}
+                </p>
+              </div>
+              {confirmingArchiveId === item.archiveId ? (
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    aria-label={`Confirm delete ${item.name} forever`}
+                    isDisabled={isBusy}
+                    onPress={() => {
+                      setConfirmingArchiveId(undefined);
+                      onPurge(item.archiveId);
+                    }}
+                    size="sm"
+                    variant="destructive"
+                  >
+                    delete forever
+                  </Button>
+                  <Button
+                    isDisabled={isBusy}
+                    onPress={() => setConfirmingArchiveId(undefined)}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    keep it
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    aria-label={`Restore ${item.name}`}
+                    isDisabled={isBusy}
+                    onPress={() => onRestore(item.archiveId)}
+                    size="sm"
+                    variant="outline"
+                  >
+                    <RotateCcw />
+                    restore
+                  </Button>
+                  <Button
+                    aria-label={`Delete ${item.name} forever`}
+                    isDisabled={isBusy}
+                    onPress={() => setConfirmingArchiveId(item.archiveId)}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    <Trash2 />
+                    delete forever
+                  </Button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
