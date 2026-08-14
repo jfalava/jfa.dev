@@ -6,11 +6,12 @@ export const infrastructureInventory = {
   router: {
     worker: "jfa-dev-router",
     domains: ["jfa.dev"],
-    publicRoutes: ["/", "/og-img-gen", "/hyperscaler-services"],
+    publicRoutes: ["/", "/og-img-gen", "/hyperscaler-services", "/keweke"],
     bindings: [
       "LANDING",
       "OG_IMG_GEN",
       "HYPERSCALER_SERVICES",
+      "KEWEKE",
       "COUNTRY_BLOCKLIST",
     ],
   },
@@ -29,6 +30,12 @@ export const infrastructureInventory = {
     domains: [],
     publicRoutes: ["/hyperscaler-services/*"],
     basePath: "/hyperscaler-services",
+  },
+  kewekeMounted: {
+    worker: "keweke-mounted",
+    domains: [],
+    publicRoutes: ["/keweke/*"],
+    basePath: "/keweke",
   },
   redirects: {
     worker: "jfa-redirects",

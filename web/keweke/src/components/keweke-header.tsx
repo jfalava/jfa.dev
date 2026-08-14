@@ -1,16 +1,20 @@
+import type { ListBackend } from "@jfa.dev/common/lists";
 import { Button, Input } from "@jfa.dev/common/ui";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Check, Copy, Plus } from "lucide-react";
+import { Check, CloudUpload, Copy, Plus } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { isUuidV7, normalizeListId } from "@/lib/list-id";
-import { createListId } from "@/server/lists";
+import { createLocalList } from "@/lib/local-list-store";
 
 interface KewekeHeaderProps {
   listId?: string;
+  backend?: ListBackend;
+  isMigrating?: boolean;
+  onMigrate?: () => void;
 }
 
-export function KewekeHeader({ listId }: KewekeHeaderProps) {
+export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: KewekeHeaderProps) {
   const navigate = useNavigate();
   const [targetId, setTargetId] = useState("");
   const [error, setError] = useState<string>();
@@ -31,8 +35,12 @@ export function KewekeHeader({ listId }: KewekeHeaderProps) {
 
   const createList = async (): Promise<void> => {
     setIsCreating(true);
-    const result = await createListId();
-    await navigate({ to: "/$listId", params: { listId: result.listId } });
+    try {
+      const result = await createLocalList();
+      await navigate({ to: "/$listId", params: { listId: result.id } });
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const copyShareLink = async (): Promise<void> => {
@@ -80,7 +88,18 @@ export function KewekeHeader({ listId }: KewekeHeaderProps) {
               open
             </Button>
           </form>
-          {listId ? (
+          {backend === "local" && onMigrate ? (
+            <Button
+              aria-label="Migrate list to a remote list"
+              isDisabled={isMigrating}
+              onPress={onMigrate}
+              variant="outline"
+            >
+              <CloudUpload className="size-3.5" />
+              <span className="hidden sm:inline">{isMigrating ? "migrating" : "migrate"}</span>
+            </Button>
+          ) : null}
+          {listId && backend === "remote" ? (
             <Button
               aria-label="Copy share link"
               onPress={() => void copyShareLink()}

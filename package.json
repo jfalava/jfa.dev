@@ -72,7 +72,7 @@
     "dev": "bun run --filter @jfa.dev/iac dev",
     "format:global": "bun run --filter @jfa.dev/landing format && bun run --filter @jfa.dev/landing format && bun run --filter @jfa.dev/og-img-gen format && bun run --filter @jfa.dev/og-img-gen format && bun run --filter @jfa.dev/hyperscaler-services format && bun run --filter @jfa.dev/hyperscaler-services format",
     "iac:plan": "bun run --filter @jfa.dev/iac plan",
-    "predeploy": "bun run --filter @jfa.dev/landing typecheck && bun run --filter @jfa.dev/landing lint && bun run --filter @jfa.dev/og-img-gen typecheck && bun run --filter @jfa.dev/og-img-gen lint && bun run --filter @jfa.dev/hyperscaler-services typecheck && bun run --filter @jfa.dev/hyperscaler-services lint"
+    "predeploy": "bun run --filter @jfa.dev/common typecheck && bun run --filter @jfa.dev/common test && bun run --filter @jfa.dev/landing typecheck && bun run --filter @jfa.dev/landing lint && bun run --filter @jfa.dev/og-img-gen typecheck && bun run --filter @jfa.dev/og-img-gen lint && bun run --filter @jfa.dev/hyperscaler-services typecheck && bun run --filter @jfa.dev/hyperscaler-services lint && bun run --filter @jfa.dev/keweke typecheck && bun run --filter @jfa.dev/keweke typecheck:workers && bun run --filter @jfa.dev/keweke lint && bun run --filter @jfa.dev/keweke test && bun run --filter @jfa.dev/keweke test:workers"
   },
   "dependencies": {
     "jsdom": "30.0.1"

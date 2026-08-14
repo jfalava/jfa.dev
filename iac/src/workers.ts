@@ -88,6 +88,38 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     },
   ).pipe(adopt(true));
 
+  const kewekeLists = Cloudflare.DurableObject("KewekeList", {
+    className: "KewekeList",
+  });
+
+  const kewekeMounted = yield* Cloudflare.Website.Vite("KewekeMountedWorker", {
+    ...workerDefaults(config.workers.kewekeMounted),
+    name: config.workers.kewekeMounted.name,
+    rootDir: resolve(repositoryRoot, "web/keweke"),
+    main: resolve(repositoryRoot, "web/keweke/src/server-entry.ts"),
+    assets: {
+      runWorkerFirst: false,
+    },
+    env: {
+      KEWEKE_LISTS: kewekeLists,
+      ...(config.workers.kewekeMounted.basePath === undefined
+        ? {}
+        : {
+            VITE_BASE_PATH: config.workers.kewekeMounted.basePath,
+            ...(config.workers.kewekeMounted.assetBasePath === undefined
+              ? {}
+              : {
+                  VITE_ASSET_BASE_PATH:
+                    config.workers.kewekeMounted.assetBasePath,
+                }),
+          }),
+    },
+    ...(config.workers.kewekeMounted.domain === undefined
+      ? {}
+      : { domain: config.workers.kewekeMounted.domain }),
+    ...(isLocal ? { dev: localDev(3103) } : {}),
+  }).pipe(adopt(true));
+
   const countryBlocklist =
     config.stage === "production" && config.router.countryBlocklistName
       ? yield* Cloudflare.KV.Namespace(config.router.countryBlocklistName, {
@@ -105,6 +137,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
       LANDING: landing,
       OG_IMG_GEN: ogImgGen,
       HYPERSCALER_SERVICES: hyperscalerMounted,
+      KEWEKE: kewekeMounted,
       ...(countryBlocklist === undefined
         ? {}
         : { COUNTRY_BLOCKLIST: countryBlocklist }),
@@ -129,6 +162,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     landing,
     ogImgGen,
     hyperscalerMounted,
+    kewekeMounted,
     router,
     redirects,
   };

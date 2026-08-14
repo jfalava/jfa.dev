@@ -6,9 +6,11 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles.css",
-    "./ui": "./src/components/ui/index.ts"
+    "./ui": "./src/components/ui/index.ts",
+    "./lists": "./src/lists.ts"
   },
   "scripts": {
+    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -21,7 +23,8 @@
     "react": "catalog:react-ui",
     "react-aria-components": "catalog:react-ui",
     "react-dom": "catalog:react-ui",
-    "tailwind-merge": "catalog:styling"
+    "tailwind-merge": "catalog:styling",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/react": "catalog:types",

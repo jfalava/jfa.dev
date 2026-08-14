@@ -27,6 +27,7 @@ export type StageConfig = {
     landing: WorkerConfig;
     ogImgGen: WorkerConfig;
     hyperscalerMounted: WorkerConfig;
+    kewekeMounted: WorkerConfig;
     redirects: WorkerConfig;
   };
 };
@@ -39,6 +40,12 @@ const routeDefinitions = {
     {
       binding: "HYPERSCALER_SERVICES",
       path: "/hyperscaler-services",
+      preload: true,
+      preserveMount: true,
+    },
+    {
+      binding: "KEWEKE",
+      path: "/keweke",
       preload: true,
       preserveMount: true,
     },
@@ -161,6 +168,13 @@ export function getStageConfig(stage: string | undefined): StageConfig {
           assetBasePath: "/hyperscaler-services",
         },
       ),
+      kewekeMounted: worker("keweke-mounted", normalizedStage, {
+        compatibilityDate: compatibilityDate(normalizedStage, "2026-08-13"),
+        observability: false,
+        workersDev: normalizedStage !== "production",
+        basePath: "/keweke",
+        assetBasePath: "/keweke",
+      }),
       redirects: worker("jfa-redirects", normalizedStage, {
         compatibilityDate: "2026-01-01",
         observability: true,

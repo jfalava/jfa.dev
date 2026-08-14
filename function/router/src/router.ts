@@ -15,6 +15,7 @@ export type Bindings = {
   LANDING: WorkerFetcher;
   OG_IMG_GEN: WorkerFetcher;
   HYPERSCALER_SERVICES: WorkerFetcher;
+  KEWEKE: WorkerFetcher;
   ROUTES: string;
   ASSET_PREFIXES?: string;
   COUNTRY_BLOCKLIST?: CountryBlocklistBinding;

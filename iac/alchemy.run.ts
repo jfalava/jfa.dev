@@ -23,6 +23,7 @@ export default Alchemy.Stack(
         landing: workers.landing.workerName,
         ogImgGen: workers.ogImgGen.workerName,
         hyperscalerMounted: workers.hyperscalerMounted.workerName,
+        kewekeMounted: workers.kewekeMounted.workerName,
         redirects: workers.redirects.workerName,
       },
     };

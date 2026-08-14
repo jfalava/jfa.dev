@@ -10,6 +10,11 @@ const MOUNT_PATH = "/keweke/";
 export default defineConfig({
   base: MOUNT_PATH,
   plugins: [tailwindcss(), tanstackStart(), viteReact()],
+  build: {
+    rolldownOptions: {
+      external: ["cloudflare:workers"],
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

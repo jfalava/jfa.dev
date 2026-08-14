@@ -18,8 +18,14 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vite/client", "node", "bun", "@cloudflare/workers-types"]
+    "types": [
+      "vite/client",
+      "node",
+      "bun",
+      "@cloudflare/workers-types",
+      "@cloudflare/vitest-pool-workers/types"
+    ]
   },
-  "include": ["src"],
+  "include": ["src", "test/**/*.ts"],
   "exclude": ["dist", "node_modules"]
 }

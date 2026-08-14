@@ -1,50 +1,18 @@
+import type { ListCommand, ListItem, ListSnapshot } from "@jfa.dev/common/lists";
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
 import { Plus, Trash2 } from "lucide-react";
-import { useCallback, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { v7 as uuidv7 } from "uuid";
 
 import { KewekeHeader } from "@/components/keweke-header";
 import { isUuidV7 } from "@/lib/list-id";
-
-interface ShoppingItem {
-  id: string;
-  name: string;
-  quantity: number;
-  unit: string;
-  category: string;
-  checked: boolean;
-}
-
-const starterItems: ShoppingItem[] = [
-  {
-    id: "starter-bread",
-    name: "Bread",
-    quantity: 1,
-    unit: "EA",
-    category: "BAKERY",
-    checked: false,
-  },
-  {
-    id: "starter-tomatoes",
-    name: "Tomatoes",
-    quantity: 6,
-    unit: "EA",
-    category: "PRODUCE",
-    checked: false,
-  },
-  {
-    id: "starter-coffee",
-    name: "Coffee",
-    quantity: 1,
-    unit: "BAG",
-    category: "PANTRY",
-    checked: true,
-  },
-];
+import { applyMutation, createMutation, loadList, migrateList } from "@/lib/list-repository";
 
 const shoppingTableFeatures = tableFeatures({});
-const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ShoppingItem>();
+const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ListItem>();
+const EMPTY_ITEMS: ListItem[] = [];
 
 export const Route = createFileRoute("/$listId")({
   beforeLoad: ({ params }) => {
@@ -57,12 +25,90 @@ export const Route = createFileRoute("/$listId")({
 
 function ListPage() {
   const { listId } = Route.useParams();
-  const [items, setItems] = useState<ShoppingItem[]>(() => starterItems);
+  const [loadedList, setLoadedList] = useState<
+    { backend: "local" | "remote"; snapshot: ListSnapshot } | undefined
+  >();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [error, setError] = useState<string>();
   const [filter, setFilter] = useState("");
   const [draftItem, setDraftItem] = useState("");
   const [draftQuantity, setDraftQuantity] = useState("1");
-  const activeCount = items.filter((item) => !item.checked).length;
-  const completedCount = items.length - activeCount;
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    setError(undefined);
+    void loadList(listId)
+      .then((nextList) => {
+        if (!cancelled) {
+          setLoadedList(nextList ?? undefined);
+          setIsLoading(false);
+        }
+        return nextList;
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoadedList(undefined);
+          setError("This list could not be opened.");
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [listId]);
+
+  const commit = useCallback(
+    async (command: ListCommand): Promise<boolean> => {
+      if (!loadedList) {
+        return false;
+      }
+
+      const result = await applyMutation(
+        listId,
+        loadedList.backend,
+        createMutation(loadedList.snapshot, command),
+      );
+      if (result.status === "missing") {
+        setError("This list no longer exists.");
+        return false;
+      }
+      if (result.status === "conflict") {
+        setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
+        setError("This list changed elsewhere. Your view was refreshed.");
+        return false;
+      }
+
+      setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
+      setError(undefined);
+      return true;
+    },
+    [listId, loadedList],
+  );
+
+  const migrate = useCallback(async (): Promise<void> => {
+    if (!loadedList || loadedList.backend !== "local") {
+      return;
+    }
+
+    setIsMigrating(true);
+    try {
+      const result = await migrateList(listId, loadedList.snapshot);
+      if (result.status === "conflict") {
+        setError("A remote list already exists for this identifier.");
+        return;
+      }
+
+      setLoadedList({ backend: "remote", snapshot: result.snapshot });
+      setError(undefined);
+    } catch {
+      setError("Remote migration is not available right now.");
+    } finally {
+      setIsMigrating(false);
+    }
+  }, [listId, loadedList]);
 
   const addItem = useCallback(
     (event: FormEvent<HTMLFormElement>): void => {
@@ -73,30 +119,44 @@ function ListPage() {
         return;
       }
 
-      setItems((current) => [
-        ...current,
-        {
-          id: crypto.randomUUID(),
+      void commit({
+        type: "add-item",
+        item: {
+          id: uuidv7(),
           name,
           quantity,
           unit: "EA",
           category: "GENERAL",
-          checked: false,
         },
-      ]);
-      setDraftItem("");
-      setDraftQuantity("1");
+      }).then((committed) => {
+        if (committed) {
+          setDraftItem("");
+          setDraftQuantity("1");
+        }
+        return committed;
+      });
     },
-    [draftItem, draftQuantity],
+    [commit, draftItem, draftQuantity],
   );
 
-  const toggleItem = useCallback((id: string, checked: boolean): void => {
-    setItems((current) => current.map((item) => (item.id === id ? { ...item, checked } : item)));
-  }, []);
+  const toggleItem = useCallback(
+    (id: string, checked: boolean): void => {
+      void commit({ type: "set-item-checked", itemId: id, checked });
+    },
+    [commit],
+  );
 
-  const removeItem = useCallback((id: string): void => {
-    setItems((current) => current.filter((item) => item.id !== id));
-  }, []);
+  const removeItem = useCallback(
+    (id: string): void => {
+      void commit({ type: "remove-item", itemId: id });
+    },
+    [commit],
+  );
+
+  const snapshot = loadedList?.snapshot;
+  const items = snapshot?.items ?? EMPTY_ITEMS;
+  const activeCount = items.filter((item) => !item.checked).length;
+  const completedCount = items.length - activeCount;
 
   const visibleItems = useMemo(() => {
     const normalizedFilter = filter.trim().toLowerCase();
@@ -111,19 +171,71 @@ function ListPage() {
     );
   }, [filter, items]);
 
+  if (isLoading) {
+    return (
+      <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+        <KewekeHeader listId={listId} />
+        <main className="min-h-0 flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8">
+          <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
+            loading list…
+          </p>
+        </main>
+      </div>
+    );
+  }
+
+  if (!snapshot) {
+    return (
+      <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+        <KewekeHeader listId={listId} />
+        <main className="min-h-0 flex-1 overflow-auto px-4 py-6 sm:px-6 lg:px-8">
+          <section className="invoice-paper invoice-rule border border-t-4 border-t-destructive">
+            <div className="px-4 py-10 sm:px-8 sm:py-16">
+              <p className="font-mono text-[11px] tracking-[0.12em] text-destructive uppercase">
+                list unavailable
+              </p>
+              <h1 className="mt-3 text-4xl leading-[0.95] font-semibold tracking-[-0.05em] uppercase sm:text-6xl">
+                Nothing here
+              </h1>
+              <p className="mt-6 max-w-lg text-sm text-muted-foreground">
+                {error ?? "This list is not available in local or remote storage."}
+              </p>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
-      <KewekeHeader listId={listId} />
+      <KewekeHeader
+        backend={loadedList.backend}
+        isMigrating={isMigrating}
+        listId={listId}
+        onMigrate={migrate}
+      />
       <main className="min-h-0 flex-1 overflow-auto">
         <div className="invoice-rule flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5 sm:px-6 lg:px-8">
-          <h1 className="text-xl leading-none font-semibold tracking-tight uppercase sm:text-2xl">
-            Weekend groceries
-          </h1>
+          <div>
+            <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+              {loadedList.backend} list
+            </p>
+            <h1 className="mt-1 text-xl leading-none font-semibold tracking-tight uppercase sm:text-2xl">
+              {snapshot.title}
+            </h1>
+          </div>
           <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
             {String(activeCount).padStart(2, "0")} open · {String(completedCount).padStart(2, "0")}{" "}
             done
           </p>
         </div>
+
+        {error ? (
+          <div className="border-b border-destructive/40 bg-destructive/10 px-4 py-2 font-mono text-[10px] tracking-wide text-destructive uppercase sm:px-6 lg:px-8">
+            {error}
+          </div>
+        ) : null}
 
         <div className="invoice-rule flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3 sm:px-6 lg:px-8">
           <Input
@@ -175,7 +287,7 @@ function ShoppingTable({
   onRemove,
   onToggle,
 }: {
-  items: ShoppingItem[];
+  items: ListItem[];
   onRemove: (id: string) => void;
   onToggle: (id: string, checked: boolean) => void;
 }) {
