@@ -1,7 +1,7 @@
 import { createListAlias, listAliasSchema } from "@jfa.dev/common/aliases";
 import {
   applyListMutation,
-  createStarterListSnapshot,
+  createListSnapshot,
   parseListMutation,
   parseListSnapshot,
   summarizeList,
@@ -111,7 +111,7 @@ export async function saveLocalList(
 }
 
 export async function createLocalList(): Promise<ListSnapshot> {
-  const snapshot = createStarterListSnapshot(uuidv7());
+  const snapshot = createListSnapshot(uuidv7());
   await saveLocalList(snapshot);
   return snapshot;
 }

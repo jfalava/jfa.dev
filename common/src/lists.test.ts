@@ -53,6 +53,38 @@ describe("list contract", () => {
     ).toBeNull();
   });
 
+  test("updates editable item fields", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const nextSnapshot = applyListMutation(
+      snapshot,
+      {
+        id: "019c5f7e-7b7b-7000-0000-000000000009",
+        baseRevision: 0,
+        command: {
+          type: "update-item",
+          itemId: "starter-bread",
+          changes: {
+            name: "Sourdough",
+            quantity: 2,
+            unit: "LOAF",
+            category: "BAKERY",
+          },
+        },
+      },
+      NOW,
+    );
+
+    expect(nextSnapshot?.items[0]).toMatchObject({
+      id: "starter-bread",
+      name: "Sourdough",
+      quantity: 2,
+      unit: "LOAF",
+      category: "BAKERY",
+      updatedAt: NOW,
+    });
+    expect(nextSnapshot?.revision).toBe(1);
+  });
+
   test("keeps positions contiguous when removing an item", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
     const nextSnapshot = applyListMutation(

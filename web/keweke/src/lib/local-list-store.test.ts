@@ -31,6 +31,8 @@ describe("local list store", () => {
     const first = await createLocalList();
     const second = await createLocalList();
 
+    expect(first.title).toBe("New list");
+    expect(first.items).toEqual([]);
     const summaries = await listLocalLists();
 
     expect(summaries).toHaveLength(2);

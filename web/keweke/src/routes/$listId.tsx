@@ -2,7 +2,7 @@ import type { DeletedListItem, ListCommand, ListItem, ListSnapshot } from "@jfa.
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
-import { Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { Check, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { v7 as uuidv7 } from "uuid";
 
@@ -19,6 +19,13 @@ import {
 const shoppingTableFeatures = tableFeatures({});
 const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ListItem>();
 const EMPTY_ITEMS: ListItem[] = [];
+
+type ItemEditDraft = {
+  name: string;
+  quantity: string;
+  unit: string;
+  category: string;
+};
 
 export const Route = createFileRoute("/$listId")({
   beforeLoad: ({ params }) => {
@@ -161,6 +168,37 @@ function ListPage() {
         return false;
       } finally {
         setIsRenaming(false);
+      }
+    },
+    [commit],
+  );
+
+  const updateItem = useCallback(
+    async (itemId: string, draft: ItemEditDraft): Promise<boolean> => {
+      const name = draft.name.trim();
+      const quantity = Number(draft.quantity);
+      const unit = draft.unit.trim();
+      const category = draft.category.trim();
+      if (
+        !name ||
+        !Number.isInteger(quantity) ||
+        quantity < 1 ||
+        !unit ||
+        !category
+      ) {
+        setError("Enter a name, whole quantity, unit, and category.");
+        return false;
+      }
+
+      try {
+        return await commit({
+          type: "update-item",
+          itemId,
+          changes: { name, quantity, unit, category },
+        });
+      } catch {
+        setError("Could not save the item right now.");
+        return false;
       }
     },
     [commit],
@@ -349,7 +387,12 @@ function ListPage() {
           </form>
         </div>
 
-        <ShoppingTable items={visibleItems} onRemove={removeItem} onToggle={toggleItem} />
+        <ShoppingTable
+          items={visibleItems}
+          onRemove={removeItem}
+          onToggle={toggleItem}
+          onUpdate={updateItem}
+        />
         <DeletedItemsHistory
           busyArchiveId={busyArchiveId}
           items={snapshot.deletedItems}
@@ -499,12 +542,76 @@ function ShoppingTable({
   items,
   onRemove,
   onToggle,
+  onUpdate,
 }: {
   items: ListItem[];
   onRemove: (id: string) => void;
   onToggle: (id: string, checked: boolean) => void;
+  onUpdate: (itemId: string, draft: ItemEditDraft) => Promise<boolean>;
 }) {
-  const columns = useMemo(() => createShoppingColumns(onRemove, onToggle), [onRemove, onToggle]);
+  const [editingItemId, setEditingItemId] = useState<string>();
+  const [editDraft, setEditDraft] = useState<ItemEditDraft>();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const startEditing = useCallback((item: ListItem): void => {
+    setEditingItemId(item.id);
+    setEditDraft({
+      name: item.name,
+      quantity: String(item.quantity),
+      unit: item.unit,
+      category: item.category,
+    });
+  }, []);
+
+  const updateDraft = useCallback((field: keyof ItemEditDraft, value: string): void => {
+    setEditDraft((current) => (current ? { ...current, [field]: value } : current));
+  }, []);
+
+  const cancelEditing = useCallback((): void => {
+    setEditingItemId(undefined);
+    setEditDraft(undefined);
+  }, []);
+
+  const saveEditing = useCallback(async (): Promise<void> => {
+    if (!editingItemId || !editDraft || isSaving) {
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      if (await onUpdate(editingItemId, editDraft)) {
+        cancelEditing();
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  }, [cancelEditing, editDraft, editingItemId, isSaving, onUpdate]);
+
+  const columns = useMemo(
+    () =>
+      createShoppingColumns({
+        editDraft,
+        editingItemId,
+        isSaving,
+        onCancelEditing: cancelEditing,
+        onEditDraftChange: updateDraft,
+        onRemove,
+        onSaveEditing: saveEditing,
+        onStartEditing: startEditing,
+        onToggle,
+      }),
+    [
+      cancelEditing,
+      editDraft,
+      editingItemId,
+      isSaving,
+      onRemove,
+      onToggle,
+      saveEditing,
+      startEditing,
+      updateDraft,
+    ],
+  );
   const table = useTable({
     features: shoppingTableFeatures,
     data: items,
@@ -516,7 +623,7 @@ function ShoppingTable({
     <div className="w-full overflow-x-auto">
       <table className="w-full min-w-[760px] border-collapse">
         <colgroup>
-          <col className="w-12" />
+          <col className="w-24" />
           <col className="w-10" />
           <col />
           <col className="w-20" />
@@ -676,10 +783,27 @@ function DeletedItemsHistory({
   );
 }
 
-function createShoppingColumns(
-  onRemove: (id: string) => void,
-  onToggle: (id: string, checked: boolean) => void,
-) {
+function createShoppingColumns({
+  editDraft,
+  editingItemId,
+  isSaving,
+  onCancelEditing,
+  onEditDraftChange,
+  onRemove,
+  onSaveEditing,
+  onStartEditing,
+  onToggle,
+}: {
+  editDraft?: ItemEditDraft;
+  editingItemId?: string;
+  isSaving: boolean;
+  onCancelEditing: () => void;
+  onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
+  onRemove: (id: string) => void;
+  onSaveEditing: () => void;
+  onStartEditing: (item: ListItem) => void;
+  onToggle: (id: string, checked: boolean) => void;
+}) {
   return shoppingColumnHelper.columns([
     shoppingColumnHelper.display({
       id: "line",
@@ -704,29 +828,84 @@ function createShoppingColumns(
     shoppingColumnHelper.accessor("name", {
       id: "item",
       header: "item",
-      cell: ({ getValue, row }) => (
-        <span className={row.original.checked ? "text-muted-foreground line-through" : undefined}>
-          {getValue()}
-        </span>
-      ),
+      cell: ({ getValue, row }) => {
+        if (editingItemId === row.original.id) {
+          return (
+            <Input
+              aria-label={`Edit ${row.original.name} name`}
+              className="min-w-32"
+              maxLength={200}
+              onChange={(event) => onEditDraftChange("name", event.target.value)}
+              value={editDraft?.name ?? getValue()}
+            />
+          );
+        }
+
+        return (
+          <span className={row.original.checked ? "text-muted-foreground line-through" : undefined}>
+            {getValue()}
+          </span>
+        );
+      },
     }),
     shoppingColumnHelper.accessor("quantity", {
       header: "qty",
-      cell: ({ getValue }) => (
-        <span className="block text-right font-mono text-[12px]">{getValue()}</span>
-      ),
+      cell: ({ getValue, row }) => {
+        if (editingItemId === row.original.id) {
+          return (
+            <Input
+              aria-label={`Edit ${row.original.name} quantity`}
+              className="w-16 text-right font-mono"
+              inputMode="numeric"
+              maxLength={6}
+              onChange={(event) => onEditDraftChange("quantity", event.target.value)}
+              value={editDraft?.quantity ?? String(getValue())}
+            />
+          );
+        }
+
+        return <span className="block text-right font-mono text-[12px]">{getValue()}</span>;
+      },
     }),
     shoppingColumnHelper.accessor("unit", {
       header: "unit",
-      cell: ({ getValue }) => <span className="font-mono text-[11px]">{getValue()}</span>,
+      cell: ({ getValue, row }) => {
+        if (editingItemId === row.original.id) {
+          return (
+            <Input
+              aria-label={`Edit ${row.original.name} unit`}
+              className="w-20 font-mono text-[11px]"
+              maxLength={32}
+              onChange={(event) => onEditDraftChange("unit", event.target.value)}
+              value={editDraft?.unit ?? getValue()}
+            />
+          );
+        }
+
+        return <span className="font-mono text-[11px]">{getValue()}</span>;
+      },
     }),
     shoppingColumnHelper.accessor("category", {
       header: "category",
-      cell: ({ getValue }) => (
-        <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
-          {getValue()}
-        </span>
-      ),
+      cell: ({ getValue, row }) => {
+        if (editingItemId === row.original.id) {
+          return (
+            <Input
+              aria-label={`Edit ${row.original.name} category`}
+              className="w-28 font-mono text-[10px] tracking-[0.08em]"
+              maxLength={64}
+              onChange={(event) => onEditDraftChange("category", event.target.value)}
+              value={editDraft?.category ?? getValue()}
+            />
+          );
+        }
+
+        return (
+          <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+            {getValue()}
+          </span>
+        );
+      },
     }),
     shoppingColumnHelper.display({
       id: "status",
@@ -746,16 +925,49 @@ function createShoppingColumns(
     shoppingColumnHelper.display({
       id: "actions",
       header: "",
-      cell: ({ row }) => (
-        <Button
-          aria-label={`Remove ${row.original.name}`}
-          className="size-7 px-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-          onPress={() => onRemove(row.original.id)}
-          variant="ghost"
-        >
-          <Trash2 className="size-3.5" />
-        </Button>
-      ),
+      cell: ({ row }) =>
+        editingItemId === row.original.id ? (
+          <div className="flex items-center gap-1">
+            <Button
+              aria-label={`Save changes to ${row.original.name}`}
+              isDisabled={isSaving}
+              onPress={onSaveEditing}
+              size="icon-sm"
+            >
+              <Check />
+            </Button>
+            <Button
+              aria-label={`Cancel editing ${row.original.name}`}
+              isDisabled={isSaving}
+              onPress={onCancelEditing}
+              size="icon-sm"
+              variant="ghost"
+            >
+              <X />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1">
+            <Button
+              aria-label={`Edit ${row.original.name}`}
+              className="size-7 px-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+              isDisabled={isSaving}
+              onPress={() => onStartEditing(row.original)}
+              variant="ghost"
+            >
+              <Pencil className="size-3.5" />
+            </Button>
+            <Button
+              aria-label={`Remove ${row.original.name}`}
+              className="size-7 px-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+              isDisabled={isSaving}
+              onPress={() => onRemove(row.original.id)}
+              variant="ghost"
+            >
+              <Trash2 className="size-3.5" />
+            </Button>
+          </div>
+        ),
     }),
   ]);
 }
