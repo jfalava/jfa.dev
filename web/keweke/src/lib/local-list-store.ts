@@ -122,10 +122,7 @@ export async function applyLocalMutation(
     await saveLocalList(nextSnapshot);
     return { status: "ok", snapshot: nextSnapshot };
   };
-  const currentMutation = (previousMutation ?? Promise.resolve()).then(
-    runMutation,
-    runMutation,
-  );
+  const currentMutation = (previousMutation ?? Promise.resolve()).then(runMutation, runMutation);
   mutationQueues.set(normalizedListId, currentMutation);
 
   try {

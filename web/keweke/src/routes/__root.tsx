@@ -1,6 +1,8 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
+import { ThemeProvider } from "@/hooks/use-theme";
+import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 
 export const Route = createRootRoute({
@@ -43,12 +45,13 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script src={appPath("/theme-init.js")}></script>
         <HeadContent />
       </head>
-      <body className="flex h-dvh min-h-0 flex-col overflow-hidden bg-background font-sans text-base text-foreground">
-        {children}
+      <body className="flex h-dvh min-h-0 flex-col overflow-hidden bg-background font-sans text-base text-foreground transition-colors duration-200">
+        <ThemeProvider>{children}</ThemeProvider>
         <Scripts />
       </body>
     </html>

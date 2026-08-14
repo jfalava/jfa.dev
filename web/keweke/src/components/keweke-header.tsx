@@ -1,9 +1,10 @@
 import type { ListBackend } from "@jfa.dev/common/lists";
 import { Button, Input } from "@jfa.dev/common/ui";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Check, CloudUpload, Copy, Plus } from "lucide-react";
+import { Check, CircleHelp, CloudUpload, Copy, Plus } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
+import { ThemeToggle } from "@/components/theme-toggle";
 import { isUuidV7, normalizeListId } from "@/lib/list-id";
 import { createLocalList } from "@/lib/local-list-store";
 
@@ -79,7 +80,7 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
             <Input
               id="list-id-input"
               aria-label="Open list by UUID7"
-              className="w-32 font-mono text-[11px] sm:w-56"
+              className="w-24 font-mono text-[11px] sm:w-56"
               onChange={(event) => setTargetId(event.target.value)}
               placeholder="paste list UUID7"
               value={targetId}
@@ -88,6 +89,15 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
               open
             </Button>
           </form>
+          <Link
+            aria-label="Help"
+            className="inline-flex size-7 items-center justify-center rounded-md border border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"
+            title="Help"
+            to="/help"
+          >
+            <CircleHelp className="size-3.5" />
+          </Link>
+          <ThemeToggle />
           {backend === "local" && onMigrate ? (
             <Button
               aria-label="Migrate list to a remote list"
