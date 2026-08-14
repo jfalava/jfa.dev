@@ -56,6 +56,9 @@ export class KewekeList extends DurableObject {
     if (!current || current.id !== normalizedListId) {
       return null;
     }
+    if (current.alias !== null) {
+      return current;
+    }
 
     const next = { ...current, alias: normalizedAlias };
     this.ctx.storage.transactionSync(() => this.writeSnapshot(next));

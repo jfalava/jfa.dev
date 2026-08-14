@@ -72,8 +72,10 @@ describe("local list store", () => {
   test("assigns and resolves a readable alias for a local list", async () => {
     const snapshot = await createLocalList();
     const assigned = await assignLocalListAlias(snapshot.id, "Weekend groceries");
+    const reassigned = await assignLocalListAlias(snapshot.id, "Different label");
 
     expect(assigned?.alias).toMatch(/^weekend-groceries-[a-z]{5}$/);
+    expect(reassigned?.alias).toBe(assigned?.alias);
     const resolved = await getLocalListByAlias(assigned?.alias ?? "");
     expect(resolved?.snapshot.id).toBe(snapshot.id);
   });
