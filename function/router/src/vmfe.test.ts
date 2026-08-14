@@ -105,6 +105,50 @@ describe("mounted app forwarding", () => {
     );
   });
 
+  test("preserves root paths for shared preference cookies", async () => {
+    const upstream = createUpstream(
+      async () =>
+        new Response(null, {
+          headers: {
+            "set-cookie": "jfa-theme=dark; Path=/; SameSite=Lax",
+          },
+        }),
+    );
+
+    const response = await handleMountedApp(
+      new Request("https://jfa.dev/hyperscaler-services"),
+      upstream,
+      "/hyperscaler-services",
+      ["/assets/"],
+    );
+
+    expect(response.headers.get("set-cookie")).toBe(
+      "jfa-theme=dark; Path=/; SameSite=Lax",
+    );
+  });
+
+  test("normalizes shared preference cookies emitted with a mounted path", async () => {
+    const upstream = createUpstream(
+      async () =>
+        new Response(null, {
+          headers: {
+            "set-cookie": "jfa-language=es; Path=/keweke/; SameSite=Lax",
+          },
+        }),
+    );
+
+    const response = await handleMountedApp(
+      new Request("https://jfa.dev/keweke"),
+      upstream,
+      "/keweke",
+      ["/assets/"],
+    );
+
+    expect(response.headers.get("set-cookie")).toBe(
+      "jfa-language=es; Path=/; SameSite=Lax",
+    );
+  });
+
   test("rewrites CSS asset URLs without buffering the response", async () => {
     const upstream = createUpstream(
       async () =>

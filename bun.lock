@@ -25,6 +25,7 @@
         "@fontsource/zilla-slab": "catalog:fonts",
         "class-variance-authority": "catalog:styling",
         "clsx": "catalog:styling",
+        "js-cookie": "3.0.8",
         "lucide-react": "catalog:react-ui",
         "react": "catalog:react-ui",
         "react-aria-components": "catalog:react-ui",
@@ -33,6 +34,7 @@
         "zod": "^4.4.3",
       },
       "devDependencies": {
+        "@types/js-cookie": "3.0.6",
         "@types/react": "catalog:types",
         "@types/react-dom": "catalog:types",
         "typescript": "catalog:build",
@@ -197,6 +199,7 @@
         "@base-ui/react": "catalog:react-ui",
         "@dnd-kit/core": "6.3.1",
         "@dnd-kit/utilities": "3.2.2",
+        "@jfa.dev/common": "workspace:*",
         "@tanstack/react-router": "catalog:tanstack",
         "@tanstack/react-router-ssr-query": "catalog:tanstack",
         "@tanstack/react-start": "catalog:tanstack",
@@ -1093,6 +1096,8 @@
 
     "@types/estree": ["@types/estree@1.0.9", "", {}, "sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg=="],
 
+    "@types/js-cookie": ["@types/js-cookie@3.0.6", "", {}, "sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ=="],
+
     "@types/jsdom": ["@types/jsdom@30.0.0", "", { "dependencies": { "@types/node": "*", "@types/tough-cookie": "*", "parse5": "^8.0.0", "undici-types": "^8.9.0" } }, "sha512-uAHGxujGE0cDaKGdK28zgDotFtNA7MKq5DXl8LrfdxdCI8VHcg15oJz+amHTChPNI5JpgEPQWc2xFdrw3em/nQ=="],
 
     "@types/node": ["@types/node@26.2.0", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-5IviulTZeRNp2vAJ514cc/HUlY5nZ9fCbq9DMyC52BrhFZACo3nI0R7qBxhQmo/d27NFe96ur/b7Wwxklda+kg=="],
@@ -1688,6 +1693,8 @@
     "jose": ["jose@6.2.8", "", {}, "sha512-Bsdjwm3Qsd/P0jR+BHDe3LytDfY7WBq2HmCCLIwuVRHMuEC9ae7/R474GIUdF1NgCyZjzVo/A9DOiOBtXq8ZoQ=="],
 
     "js-base64": ["js-base64@3.9.2", "", {}, "sha512-6zayE8QlUdiweYI6cETD/XBSqFcoCUlufn/29PJR99r82x1yDnIprRca0YvAYpAW+ez0GuQkVBC6xG5QkD7OjA=="],
+
+    "js-cookie": ["js-cookie@3.0.8", "", {}, "sha512-yeJd4aNAdYZQjaon2bpD/Gb0B/omw7HQOsynXXcOiWVCacbBcPlgn8S/d1X6blFSaHao7ozqtW7NZW19xpCtIw=="],
 
     "js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
 

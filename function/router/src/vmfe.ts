@@ -318,13 +318,27 @@ function rewriteSetCookie(headers: Headers, mount: string): void {
   }
   headers.delete("Set-Cookie");
   for (const cookie of cookies) {
-    if (/;\s*Path=\//i.test(cookie)) {
+    if (isSharedPreferenceCookie(cookie)) {
+      headers.append("Set-Cookie", rootScopePreferenceCookie(cookie));
+    } else if (/;\s*Path=\//i.test(cookie)) {
       const newPath = normalizedMount === "/" ? "/" : `${normalizedMount}/`;
       headers.append("Set-Cookie", cookie.replace(/;\s*Path=\//i, `; Path=${newPath}`));
     } else {
       headers.append("Set-Cookie", cookie);
     }
   }
+}
+
+function isSharedPreferenceCookie(cookie: string): boolean {
+  return /^(?:jfa-language|jfa-theme|jfa-wrap-text)=/i.test(cookie.trim());
+}
+
+function rootScopePreferenceCookie(cookie: string): string {
+  if (/;\s*Path=/i.test(cookie)) {
+    return cookie.replace(/;\s*Path=[^;]*/i, "; Path=/");
+  }
+
+  return `${cookie}; Path=/`;
 }
 
 /* ----------------------- preload script ----------------------- */

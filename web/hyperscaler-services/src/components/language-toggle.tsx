@@ -1,3 +1,4 @@
+import { preferenceCookies, writePreference } from "@jfa.dev/common/preferences";
 import { Button } from "@jfa.dev/common/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { Check, ChevronDown } from "lucide-react";
@@ -33,6 +34,7 @@ export function LanguageToggle({ currentLang }: LanguageToggleProps) {
    * @param lang - The language code to switch to
    */
   const handleLanguageChange = (lang: "en" | "es") => {
+    writePreference(preferenceCookies.language, lang);
     void navigate({
       to: "/",
       search: (prev) => ({

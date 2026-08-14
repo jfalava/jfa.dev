@@ -1,7 +1,8 @@
+import { preferenceCookies, readPreference, writePreference } from "@jfa.dev/common/preferences";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { ArrowUpRightIcon, X } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { LanguageToggle } from "@/components/language-toggle";
 import { ServiceSearchPalette } from "@/components/service-search-palette";
@@ -125,7 +126,7 @@ interface SearchParams {
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: SearchParams) => ({
-    lang: isLanguageCode(search.lang) ? search.lang : "en",
+    lang: isLanguageCode(search.lang) ? search.lang : undefined,
     q: search.q ? search.q : undefined,
   }),
   loader: async () => await getServices(),
@@ -252,9 +253,28 @@ function Home() {
   const services = Route.useLoaderData();
   const navigate = Route.useNavigate();
   const { lang, q } = useSearch({ from: "/" });
-  const currentLang = lang;
+  const [cookieLang, setCookieLang] = useState<LanguageCode>("en");
+  const currentLang = lang ?? cookieLang;
   const activeQuery = q ?? "";
   const t = translations[currentLang];
+
+  useEffect(() => {
+    if (lang !== undefined) {
+      writePreference(preferenceCookies.language, lang);
+      setCookieLang(lang);
+      return;
+    }
+
+    const savedLanguage = readPreference(preferenceCookies.language);
+    if (isLanguageCode(savedLanguage)) {
+      setCookieLang(savedLanguage);
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    document.documentElement.lang = currentLang;
+  }, [currentLang]);
+
   const searchIndex = useMemo(
     () =>
       hydrateServiceSearchIndex(services, serviceSearchArtifact as SerializedServiceSearchIndex),

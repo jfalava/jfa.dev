@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./aliases": "./src/aliases.ts",
+    "./preferences": "./src/preferences.ts",
     "./styles.css": "./src/styles.css",
     "./ui": "./src/components/ui/index.ts",
     "./lists": "./src/lists.ts"
@@ -20,6 +21,7 @@
     "@fontsource/zilla-slab": "catalog:fonts",
     "class-variance-authority": "catalog:styling",
     "clsx": "catalog:styling",
+    "js-cookie": "3.0.8",
     "lucide-react": "catalog:react-ui",
     "react": "catalog:react-ui",
     "react-aria-components": "catalog:react-ui",
@@ -28,6 +30,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/js-cookie": "3.0.6",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "typescript": "catalog:build"

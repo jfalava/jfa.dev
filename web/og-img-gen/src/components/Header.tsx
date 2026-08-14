@@ -1,3 +1,4 @@
+import { preferenceCookies, readPreference, writePreference } from "@jfa.dev/common/preferences";
 import { Link } from "@tanstack/react-router";
 import { FileImage, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -5,25 +6,42 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-type Theme = "light" | "dark";
+type Theme = "light" | "dark" | "system";
+
+function isTheme(value: string | undefined): value is Theme {
+  return value === "light" || value === "dark" || value === "system";
+}
 
 function getPreferredTheme(): Theme {
   if (typeof window === "undefined") {
-    return "light";
+    return "system";
   }
 
-  const stored = window.localStorage.getItem("og-theme");
-  if (stored === "light" || stored === "dark") {
+  const stored = readPreference(preferenceCookies.theme);
+  if (isTheme(stored)) {
     return stored;
   }
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "system";
 }
 
-function applyTheme(theme: Theme) {
+function isDarkTheme(theme: Theme): boolean {
+  if (theme === "dark") {
+    return true;
+  }
+
+  return (
+    theme === "system" &&
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  );
+}
+
+function applyTheme(theme: Theme): void {
   const root = document.documentElement;
-  root.classList.toggle("dark", theme === "dark");
-  root.style.colorScheme = theme;
+  const isDark = isDarkTheme(theme);
+  root.classList.toggle("dark", isDark);
+  root.style.colorScheme = isDark ? "dark" : "light";
 }
 
 export default function Header() {
@@ -36,10 +54,10 @@ export default function Header() {
   }, []);
 
   const toggleTheme = () => {
-    const nextTheme: Theme = theme === "dark" ? "light" : "dark";
+    const nextTheme: Theme = isDarkTheme(theme) ? "light" : "dark";
     setTheme(nextTheme);
     applyTheme(nextTheme);
-    window.localStorage.setItem("og-theme", nextTheme);
+    writePreference(preferenceCookies.theme, nextTheme);
   };
 
   return (
@@ -62,10 +80,10 @@ export default function Header() {
           size="icon-sm"
           variant="outline"
           onClick={toggleTheme}
-          title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          title={`Switch to ${isDarkTheme(theme) ? "light" : "dark"} mode`}
+          aria-label={`Switch to ${isDarkTheme(theme) ? "light" : "dark"} mode`}
         >
-          {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          {isDarkTheme(theme) ? <Sun className="size-4" /> : <Moon className="size-4" />}
         </Button>
       </div>
     </header>

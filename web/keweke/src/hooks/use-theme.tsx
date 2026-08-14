@@ -1,3 +1,4 @@
+import { preferenceCookies, readPreference, writePreference } from "@jfa.dev/common/preferences";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 export type ThemeMode = "light" | "dark" | "system";
@@ -5,7 +6,6 @@ export type ThemeMode = "light" | "dark" | "system";
 interface BrowserEnvironment {
   window: Window;
   document: Document;
-  storage: Storage;
 }
 
 function getBrowserEnvironment(): BrowserEnvironment | null {
@@ -20,7 +20,6 @@ function getBrowserEnvironment(): BrowserEnvironment | null {
     return {
       window: browserWindow,
       document: browserDocument,
-      storage: browserWindow.localStorage,
     };
   } catch {
     return null;
@@ -55,7 +54,9 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     const browser = getBrowserEnvironment();
-    return parseThemeMode(browser?.storage.getItem("theme") ?? null) ?? "system";
+    return browser === null
+      ? "system"
+      : (parseThemeMode(readPreference(preferenceCookies.theme) ?? null) ?? "system");
   });
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (nextTheme: ThemeMode): void => {
     setThemeState(nextTheme);
-    getBrowserEnvironment()?.storage.setItem("theme", nextTheme);
+    writePreference(preferenceCookies.theme, nextTheme);
   };
 
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
