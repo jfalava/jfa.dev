@@ -1,0 +1,31 @@
+{
+  "name": "@jfa.dev/common",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css",
+    "./ui": "./src/components/ui/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/google-sans-code": "catalog:fonts",
+    "@fontsource/pretendard": "catalog:fonts",
+    "@fontsource/zilla-slab": "catalog:fonts",
+    "class-variance-authority": "catalog:styling",
+    "clsx": "catalog:styling",
+    "lucide-react": "catalog:react-ui",
+    "react": "catalog:react-ui",
+    "react-aria-components": "catalog:react-ui",
+    "react-dom": "catalog:react-ui",
+    "tailwind-merge": "catalog:styling"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "typescript": "catalog:build"
+  }
+}

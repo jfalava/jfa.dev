@@ -1,8 +1,8 @@
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
+import { Input, buttonVariants } from "@jfa.dev/common/ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
@@ -76,16 +76,21 @@ function InputGroupButton({
   variant = "ghost",
   size = "xs",
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "type"> &
+}: Omit<React.ComponentProps<typeof ButtonPrimitive>, "className" | "type"> &
   VariantProps<typeof inputGroupButtonVariants> & {
+    className?: string;
+    variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
     type?: "button" | "submit" | "reset";
   }) {
   return (
-    <Button
+    <ButtonPrimitive
       type={type}
       data-size={size}
-      variant={variant}
-      className={cn(inputGroupButtonVariants({ size }), className)}
+      className={cn(
+        buttonVariants({ variant, size: size === "xs" ? "xs" : size }),
+        inputGroupButtonVariants({ size }),
+        className,
+      )}
       {...props}
     />
   );

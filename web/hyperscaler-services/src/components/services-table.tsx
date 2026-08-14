@@ -1,7 +1,7 @@
+import { TableCell } from "@jfa.dev/common/ui";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-import { TableCell } from "@/components/ui/table";
 import { serviceProviders, type ServiceMapping, type ServiceProvider } from "@/data/services";
 import {
   getProviderFromSearchQuery,

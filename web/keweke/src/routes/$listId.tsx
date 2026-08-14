@@ -1,13 +1,10 @@
+import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
 import { Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { TableCell } from "@/components/ui/table";
 import { isUuidV7 } from "@/lib/list-id";
 
 interface ShoppingItem {

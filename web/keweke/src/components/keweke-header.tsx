@@ -1,9 +1,8 @@
+import { Button, Input } from "@jfa.dev/common/ui";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Check, Copy, Plus } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { isUuidV7, normalizeListId } from "@/lib/list-id";
 import { createListId } from "@/server/lists";
 

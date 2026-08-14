@@ -1,3 +1,4 @@
+import { Input } from "@jfa.dev/common/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { CornerDownLeft, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -9,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { serviceProviders, type ServiceMapping, type ServiceProvider } from "@/data/services";
 import {
   parseServiceSearchQuery,

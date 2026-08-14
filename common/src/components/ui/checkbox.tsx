@@ -5,14 +5,14 @@ import {
   type CheckboxProps as AriaCheckboxProps,
 } from "react-aria-components";
 
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 type CheckboxProps = Omit<AriaCheckboxProps, "children" | "className"> & {
   children?: ReactNode;
   className?: string;
 };
 
-export function Checkbox({ children, className, ...props }: CheckboxProps) {
+function Checkbox({ children, className, ...props }: CheckboxProps) {
   return (
     <AriaCheckbox
       {...props}
@@ -38,3 +38,5 @@ export function Checkbox({ children, className, ...props }: CheckboxProps) {
     </AriaCheckbox>
   );
 }
+
+export { Checkbox };

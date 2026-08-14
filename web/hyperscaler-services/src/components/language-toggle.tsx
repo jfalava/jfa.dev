@@ -1,7 +1,7 @@
+import { Button } from "@jfa.dev/common/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { Check, ChevronDown } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
