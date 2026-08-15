@@ -1,4 +1,10 @@
 import { listAliasSchema } from "@jfa.dev/common/aliases";
+import {
+  aliasSigningPayload,
+  listMutationSigningPayload,
+  listPublishSigningPayload,
+} from "@jfa.dev/common/crypto";
+import { identityAuthSchema, publishAuthSchema } from "@jfa.dev/common/identities";
 import { listIdSchema, listMutationSchema, listSnapshotSchema } from "@jfa.dev/common/lists";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
@@ -15,10 +21,12 @@ const remoteImportInputSchema = z.object({
   listId: listIdSchema,
   snapshot: listSnapshotSchema,
   migrationId: z.string().min(1).max(128),
+  auth: publishAuthSchema,
 });
 
 const remoteAliasInputSchema = z.object({
   listId: listIdSchema,
+  auth: identityAuthSchema,
 });
 
 export const getRemoteList = createServerFn()
@@ -39,6 +47,20 @@ export const ensureRemoteListAlias = createServerFn({ method: "POST" })
     const snapshot = await listStub.getSnapshot(data.listId);
     if (!snapshot) {
       return { status: "missing" as const };
+    }
+
+    const authorized = await env.KEWEKE_USERS
+      .getByName(data.auth.userId)
+      .authorizeMutation({
+        auth: data.auth,
+        payload: aliasSigningPayload({
+          listId: data.listId,
+          userId: data.auth.userId,
+          deviceId: data.auth.deviceId,
+        }),
+      });
+    if (!authorized) {
+      return { status: "unauthorized" as const };
     }
 
     const reservation = await env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME).reserveAlias(
@@ -66,16 +88,40 @@ export const applyRemoteMutation = createServerFn({ method: "POST" })
     if (result.status === "missing") {
       return { status: "missing" as const };
     }
-    return { status: result.status, snapshot: listSnapshotSchema.parse(result.snapshot) };
+    if (result.status === "unauthorized") {
+      return { status: "unauthorized" as const };
+    }
+    return {
+      status: result.status,
+      snapshot: await resolveActorNames(listSnapshotSchema.parse(result.snapshot)),
+    };
   });
 
 export const importRemoteList = createServerFn({ method: "POST" })
   .validator(remoteImportInputSchema)
   .handler(async ({ data }) => {
+    const payload = listPublishSigningPayload({
+      listId: data.listId,
+      migrationId: data.migrationId,
+      snapshot: data.snapshot,
+      userId: data.auth.userId,
+      deviceId: data.auth.deviceId,
+      username: data.auth.username,
+    });
+    const authorized = await env.KEWEKE_USERS
+      .getByName(data.auth.userId)
+      .authorizePublish({ auth: data.auth, payload });
+    if (authorized.status === "unauthorized") {
+      return { status: "unauthorized" as const };
+    }
+
     const listStub = env.KEWEKE_LISTS.getByName(data.listId);
     const current = await listStub.getSnapshot(data.listId);
     if (current) {
-      return { status: "conflict" as const, snapshot: listSnapshotSchema.parse(current) };
+      return {
+        status: "conflict" as const,
+        snapshot: await resolveActorNames(listSnapshotSchema.parse(current)),
+      };
     }
 
     if (data.snapshot.alias) {
@@ -88,10 +134,19 @@ export const importRemoteList = createServerFn({ method: "POST" })
       }
     }
 
-    const result = await listStub.importSnapshot(data.listId, data.snapshot, data.migrationId);
+    const result = await listStub.importSnapshot(
+      data.listId,
+      data.snapshot,
+      data.migrationId,
+      data.auth,
+      payload,
+    );
+    if (result.status === "unauthorized") {
+      return { status: "unauthorized" as const };
+    }
     return {
       status: result.status,
-      snapshot: listSnapshotSchema.parse(result.snapshot),
+      snapshot: await resolveActorNames(listSnapshotSchema.parse(result.snapshot)),
     };
   });
 
@@ -102,5 +157,47 @@ async function readRemoteList(listId: string) {
   }
 
   const alias = await env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME).getAlias(listId);
-  return listSnapshotSchema.parse({ ...snapshot, alias: alias ?? snapshot.alias });
+  return resolveActorNames(listSnapshotSchema.parse({ ...snapshot, alias: alias ?? snapshot.alias }));
+}
+
+async function resolveActorNames(snapshot: ReturnType<typeof listSnapshotSchema.parse>) {
+  const userIds = new Set<string>();
+  for (const item of snapshot.items) {
+    if (item.createdBy) userIds.add(item.createdBy.id);
+    if (item.updatedBy) userIds.add(item.updatedBy.id);
+  }
+  for (const item of snapshot.deletedItems) {
+    if (item.createdBy) userIds.add(item.createdBy.id);
+    if (item.updatedBy) userIds.add(item.updatedBy.id);
+    if (item.deletedBy) userIds.add(item.deletedBy.id);
+  }
+
+  const profiles = await Promise.all(
+    [...userIds].map(async (userId) => [
+      userId,
+      await env.KEWEKE_USERS.getByName(userId).getProfile(userId),
+    ] as const),
+  );
+  const usernames = new Map(
+    profiles
+      .filter(([, profile]) => profile !== null)
+      .map(([userId, profile]) => [userId, profile.username]),
+  );
+  const currentIdentity = (identity: { id: string; username: string } | null) =>
+    identity ? { ...identity, username: usernames.get(identity.id) ?? identity.username } : null;
+
+  return listSnapshotSchema.parse({
+    ...snapshot,
+    items: snapshot.items.map((item) => ({
+      ...item,
+      createdBy: currentIdentity(item.createdBy),
+      updatedBy: currentIdentity(item.updatedBy),
+    })),
+    deletedItems: snapshot.deletedItems.map((item) => ({
+      ...item,
+      createdBy: currentIdentity(item.createdBy),
+      updatedBy: currentIdentity(item.updatedBy),
+      deletedBy: currentIdentity(item.deletedBy),
+    })),
+  });
 }

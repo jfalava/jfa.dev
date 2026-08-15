@@ -1,15 +1,15 @@
-import { Input } from "@jfa.dev/common/ui";
+import {
+  Button,
+  Dialog,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+  Input,
+} from "@jfa.dev/common/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { CornerDownLeft, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { serviceProviders, type ServiceMapping, type ServiceProvider } from "@/data/services";
 import {
   parseServiceSearchQuery,
@@ -276,31 +276,31 @@ export function ServiceSearchPalette({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-[11px] font-medium text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30",
-            presetQuery ? "border border-transparent" : "border border-border bg-background",
-            hideOnMobile && "hidden sm:inline-flex",
-          )}
-          aria-label={triggerLabel ?? translations.search}
-        >
-          {presetQuery ? (
-            <span>{triggerLabel}</span>
-          ) : (
-            <>
-              <Search className="size-3.5" />
-              <span className="hidden sm:inline">{translations.search}</span>
-              <kbd className="hidden rounded-sm border border-border/70 px-1 text-[10px] font-normal text-muted-foreground md:inline-flex">
-                ⌘K
-              </kbd>
-            </>
-          )}
-        </button>
-      </DialogTrigger>
-      <DialogContent
+    <DialogTrigger isOpen={open} onOpenChange={setOpen}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="default"
+        className={cn(
+          "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-[11px] font-medium text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30",
+          presetQuery ? "border border-transparent" : "border border-border bg-background",
+          hideOnMobile && "hidden sm:inline-flex",
+        )}
+        aria-label={triggerLabel ?? translations.search}
+      >
+        {presetQuery ? (
+          <span>{triggerLabel}</span>
+        ) : (
+          <>
+            <Search className="size-3.5" />
+            <span className="hidden sm:inline">{translations.search}</span>
+            <kbd className="hidden rounded-sm border border-border/70 px-1 text-[10px] font-normal text-muted-foreground md:inline-flex">
+              ⌘K
+            </kbd>
+          </>
+        )}
+      </Button>
+      <Dialog
         className="max-w-[calc(100%-1.5rem)] gap-0 overflow-hidden p-0 sm:max-w-2xl"
         showCloseButton={false}
       >
@@ -338,7 +338,7 @@ export function ServiceSearchPalette({
           onSelectSuggestion={selectSuggestion}
           translations={translations}
         />
-      </DialogContent>
-    </Dialog>
+      </Dialog>
+    </DialogTrigger>
   );
 }

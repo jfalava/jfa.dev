@@ -2,6 +2,8 @@ import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
 
 export { KewekeList } from "./server/keweke-list";
 export { KewekeAliasDirectory } from "./server/keweke-aliases";
+export { KewekePairingSession } from "./server/keweke-pairing";
+export { KewekeUserDirectory } from "./server/keweke-users";
 
 export default createServerEntry({
   fetch: (request, options) => handler.fetch(request, options),

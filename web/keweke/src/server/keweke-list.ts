@@ -1,6 +1,8 @@
 import { listAliasSchema } from "@jfa.dev/common/aliases";
+import { listMutationSigningPayload, listPublishSigningPayload } from "@jfa.dev/common/crypto";
 import { listIdentitySchema, type ListIdentity } from "@jfa.dev/common/identities";
 import {
+  LIST_SCHEMA_VERSION,
   applyListMutation,
   listIdSchema,
   parseListMutation,
@@ -102,6 +104,23 @@ export class KewekeList extends DurableObject {
       return { status: "missing" };
     }
 
+    if (!parsedMutation.auth) {
+      return { status: "unauthorized" };
+    }
+    const authorization = await this.env.KEWEKE_USERS
+      .getByName(parsedMutation.auth.userId)
+      .authorizeMutation({
+        auth: parsedMutation.auth,
+        payload: listMutationSigningPayload(parsedMutation),
+      });
+    if (!authorization) {
+      return { status: "unauthorized" };
+    }
+    const authorizedMutation: ListMutation = {
+      ...parsedMutation,
+      actor: { id: authorization.userId, username: authorization.username },
+    };
+
     const alreadyApplied = this.ctx.storage.sql
       .exec<{ revision: number }>(
         "SELECT revision FROM applied_mutations WHERE id = ?",
@@ -112,7 +131,7 @@ export class KewekeList extends DurableObject {
       return { status: "ok", snapshot: current };
     }
 
-    const next = applyListMutation(current, parsedMutation);
+    const next = applyListMutation(current, authorizedMutation);
     if (!next) {
       return { status: "conflict", snapshot: current };
     }
@@ -132,11 +151,24 @@ export class KewekeList extends DurableObject {
     listId: string,
     value: ListSnapshot,
     migrationId: string,
+    auth: unknown,
+    payload: string,
   ): Promise<ImportSnapshotResult> {
     const normalizedListId = listIdSchema.parse(listId);
     const snapshot = parseListSnapshot(value);
     if (snapshot.id !== normalizedListId) {
       throw new Error("Snapshot list identifier does not match the requested list");
+    }
+
+    const authorization = await this.env.KEWEKE_USERS
+      .getByName(
+        typeof auth === "object" && auth !== null && "userId" in auth && typeof auth.userId === "string"
+          ? auth.userId
+          : "invalid",
+      )
+      .authorizePublish({ auth, payload });
+    if (authorization.status === "unauthorized") {
+      return { status: "unauthorized" };
     }
 
     const current = this.readSnapshot();
@@ -312,7 +344,7 @@ export class KewekeList extends DurableObject {
       }));
 
     return parseListSnapshot({
-      schemaVersion: 2,
+      schemaVersion: LIST_SCHEMA_VERSION,
       id: metadata.list_id,
       alias: metadata.alias,
       title: metadata.title,

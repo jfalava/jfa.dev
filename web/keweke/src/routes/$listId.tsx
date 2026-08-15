@@ -34,7 +34,6 @@ import {
 import {
   ensureLocalIdentity,
   LOCAL_IDENTITY_PLACEHOLDER,
-  saveLocalIdentity,
   subscribeToLocalIdentity,
   type LocalIdentity,
 } from "@/lib/local-identity";
@@ -85,10 +84,17 @@ function ListPage() {
     category: "GENERAL",
   });
   const [identity, setIdentity] = useState<LocalIdentity>();
-  const [isSavingIdentity, setIsSavingIdentity] = useState(false);
 
   useEffect(() => {
-    const refreshIdentity = (): void => setIdentity(ensureLocalIdentity());
+    let cancelled = false;
+    const refreshIdentity = (): void => {
+      void ensureLocalIdentity().then((nextIdentity) => {
+        if (!cancelled) {
+          setIdentity(nextIdentity);
+        }
+        return nextIdentity;
+      });
+    };
     refreshIdentity();
     return subscribeToLocalIdentity(refreshIdentity);
   }, []);
@@ -118,6 +124,29 @@ function ListPage() {
     };
   }, [listId]);
 
+  useEffect(() => {
+    if (loadedList?.backend !== "remote") {
+      return;
+    }
+
+    let cancelled = false;
+    const refreshRemoteList = (): void => {
+      void loadList(listId)
+        .then((nextList) => {
+          if (!cancelled && nextList?.backend === "remote") {
+            setLoadedList(nextList);
+          }
+          return nextList;
+        })
+        .catch(() => undefined);
+    };
+    const interval = window.setInterval(refreshRemoteList, 60_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [listId, loadedList?.backend]);
+
   const commit = useCallback(
     async (command: ListCommand): Promise<ListSnapshot | null> => {
       if (!loadedList) {
@@ -131,7 +160,7 @@ function ListPage() {
       const result = await applyMutation(
         loadedList.snapshot.id,
         loadedList.backend,
-        createMutation(loadedList.snapshot, command, identity),
+        await createMutation(loadedList.snapshot, command, identity, loadedList.backend),
       );
       if (result.status === "missing") {
         setError("This list no longer exists.");
@@ -142,6 +171,10 @@ function ListPage() {
         setError("This list changed elsewhere. Your view was refreshed.");
         return null;
       }
+      if (result.status === "unauthorized") {
+        setError("This user is not allowed to change the remote list.");
+        return null;
+      }
 
       setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
       setError(undefined);
@@ -149,21 +182,6 @@ function ListPage() {
     },
     [identity, loadedList],
   );
-
-  const updateIdentity = useCallback((username: string): boolean => {
-    setIsSavingIdentity(true);
-    try {
-      const nextIdentity = saveLocalIdentity(username);
-      setIdentity(nextIdentity);
-      setError(undefined);
-      return true;
-    } catch {
-      setError("Use a username between 1 and 48 characters.");
-      return false;
-    } finally {
-      setIsSavingIdentity(false);
-    }
-  }, []);
 
   const migrate = useCallback(async (): Promise<void> => {
     if (!loadedList || loadedList.backend !== "local") {
@@ -411,11 +429,6 @@ function ListPage() {
             </p>
             <ListTitleEditor isSaving={isRenaming} onSave={renameList} title={snapshot.title} />
             <ListAlias alias={snapshot.alias} listId={snapshot.id} />
-            <LocalIdentityEditor
-              identity={identity}
-              isSaving={isSavingIdentity}
-              onSave={updateIdentity}
-            />
           </div>
           <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
             {String(activeCount).padStart(2, "0")} open · {String(completedCount).padStart(2, "0")}{" "}
@@ -615,92 +628,6 @@ function ListAlias({ alias, listId }: { alias: string | null; listId: string }) 
   );
 }
 
-function LocalIdentityEditor({
-  identity,
-  isSaving,
-  onSave,
-}: {
-  identity?: LocalIdentity;
-  isSaving: boolean;
-  onSave: (username: string) => boolean;
-}) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState("");
-
-  useEffect(() => {
-    if (!isEditing) {
-      setValue(identity?.username ?? "");
-    }
-  }, [identity, isEditing]);
-
-  if (!identity) {
-    return (
-      <p className="mt-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-        local identity / preparing…
-      </p>
-    );
-  }
-
-  if (!isEditing) {
-    return (
-      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-2">
-        <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">by</p>
-        <span className="text-sm font-medium">
-          {identity.username ?? LOCAL_IDENTITY_PLACEHOLDER}
-        </span>
-        <Button
-          aria-label="Change local username"
-          className="size-7 p-0"
-          onPress={() => setIsEditing(true)}
-          size="icon-sm"
-          variant="ghost"
-        >
-          <Pencil className="size-3.5" />
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <form
-      className="mt-3 flex max-w-lg flex-wrap items-center gap-1.5 border-t border-border pt-2"
-      onSubmit={(event) => {
-        event.preventDefault();
-        const username = value.trim();
-        if (username && onSave(username)) {
-          setIsEditing(false);
-        }
-      }}
-    >
-      <label className="sr-only" htmlFor="local-username">
-        Local username
-      </label>
-      <Input
-        id="local-username"
-        aria-label="Local username"
-        className="min-w-40 flex-1 font-mono text-base sm:text-[11px]"
-        disabled={isSaving}
-        maxLength={48}
-        onChange={(event) => setValue(event.target.value)}
-        placeholder={LOCAL_IDENTITY_PLACEHOLDER}
-        value={value}
-      />
-      <Button isDisabled={isSaving} size="sm" type="submit">
-        {isSaving ? "saving" : "save"}
-      </Button>
-      <Button
-        isDisabled={isSaving}
-        onPress={() => setIsEditing(false)}
-        size="sm"
-        type="button"
-        variant="ghost"
-      >
-        cancel
-      </Button>
-    </form>
-  );
-}
-
 const IDENTITY_COLORS = [
   "bg-primary",
   "bg-emerald-500",
@@ -719,7 +646,7 @@ function identityColor(identityId: string): (typeof IDENTITY_COLORS)[number] {
 }
 
 function identityDisplayName(actor: ListIdentity, currentIdentity?: LocalIdentity): string {
-  if (currentIdentity?.id === actor.id && currentIdentity.username) {
+  if (currentIdentity?.userId === actor.id && currentIdentity.username) {
     return currentIdentity.username;
   }
 

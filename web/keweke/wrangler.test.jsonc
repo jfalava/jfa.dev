@@ -13,12 +13,24 @@
         "name": "KEWEKE_ALIASES",
         "class_name": "KewekeAliasDirectory",
       },
+      {
+        "name": "KEWEKE_PAIRING",
+        "class_name": "KewekePairingSession",
+      },
+      {
+        "name": "KEWEKE_USERS",
+        "class_name": "KewekeUserDirectory",
+      },
     ],
   },
   "migrations": [
     {
       "tag": "v1",
       "new_sqlite_classes": ["KewekeList", "KewekeAliasDirectory"],
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["KewekePairingSession", "KewekeUserDirectory"],
     },
   ],
 }

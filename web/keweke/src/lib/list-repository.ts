@@ -1,3 +1,8 @@
+import {
+  aliasSigningPayload,
+  listMutationSigningPayload,
+  listPublishSigningPayload,
+} from "@jfa.dev/common/crypto";
 import type { ListIdentity } from "@jfa.dev/common/identities";
 import type {
   ApplyMutationResult,
@@ -20,6 +25,12 @@ import {
   type LocalListRecord,
 } from "@/lib/local-list-store";
 import {
+  confirmRemoteUsername,
+  ensureLocalIdentity,
+  signLocalPayload,
+  type LocalIdentity,
+} from "@/lib/local-identity";
+import {
   applyRemoteMutation,
   ensureRemoteListAlias,
   getRemoteList,
@@ -32,16 +43,44 @@ export interface LoadedList {
   snapshot: ListSnapshot;
 }
 
-export function createMutation(
+export async function createMutation(
   snapshot: ListSnapshot,
   command: ListCommand,
-  actor?: ListIdentity,
-): ListMutation {
-  return {
+  identity?: LocalIdentity,
+  backend: ListBackend = "local",
+): Promise<ListMutation> {
+  const localActor: ListIdentity | null =
+    identity?.username
+      ? { id: identity.userId, username: identity.username }
+      : null;
+  const base = {
     id: uuidv7(),
     baseRevision: snapshot.revision,
-    ...(actor ? { actor } : {}),
+    actor: localActor,
+    auth: null,
     command,
+  };
+
+  if (backend === "local") {
+    return base;
+  }
+  if (!identity?.remoteUsername) {
+    throw new Error("Set up a named user before changing a remote list");
+  }
+
+  const unsignedMutation: ListMutation = {
+    ...base,
+    actor: { id: identity.userId, username: identity.remoteUsername },
+    auth: {
+      userId: identity.userId,
+      deviceId: identity.deviceId,
+      signature: "unsigned-signature-placeholder",
+    },
+  };
+  const signature = await signLocalPayload(listMutationSigningPayload(unsignedMutation));
+  return {
+    ...unsignedMutation,
+    auth: { ...unsignedMutation.auth, signature },
   };
 }
 
@@ -117,16 +156,44 @@ export async function applyMutation(
 }
 
 export async function migrateList(snapshot: ListSnapshot): Promise<ImportSnapshotResult> {
+  const identity = await ensureLocalIdentity();
+  if (!identity?.username) {
+    throw new Error("Set up a username before publishing a list");
+  }
+  const migrationId = migrationIdForList(snapshot.id);
+  const unsignedAuth = {
+    userId: identity.userId,
+    deviceId: identity.deviceId,
+    userPublicKey: identity.userPublicKey,
+    devicePublicKey: identity.devicePublicKey,
+    username: identity.remoteUsername ?? identity.username,
+    signature: "unsigned-signature-placeholder",
+  };
+  const signature = await signLocalPayload(
+    listPublishSigningPayload({
+      listId: snapshot.id,
+      migrationId,
+      snapshot,
+      userId: unsignedAuth.userId,
+      deviceId: unsignedAuth.deviceId,
+      username: unsignedAuth.username,
+    }),
+  );
   const result = await importRemoteList({
     data: {
       listId: snapshot.id,
-      migrationId: migrationIdForList(snapshot.id),
+      migrationId,
       snapshot,
+      auth: { ...unsignedAuth, signature },
     },
   });
 
+  if (result.status === "unauthorized") {
+    throw new Error("The remote user could not authorize this publish");
+  }
   if (result.status !== "conflict" && result.status !== "alias-conflict") {
     await saveLocalList(result.snapshot, "remote");
+    await confirmRemoteUsername(unsignedAuth.username);
   }
 
   return result;
@@ -151,9 +218,30 @@ export async function ensureListAlias(
     };
   }
 
-  const result = await ensureRemoteListAlias({ data: { listId: snapshot.id } });
+  const identity = await ensureLocalIdentity();
+  if (!identity?.remoteUsername) {
+    throw new Error("Set up a named user before changing a remote list");
+  }
+  const authWithoutSignature = {
+    userId: identity.userId,
+    deviceId: identity.deviceId,
+    signature: "unsigned-signature-placeholder",
+  };
+  const signature = await signLocalPayload(
+    aliasSigningPayload({
+      listId: snapshot.id,
+      userId: authWithoutSignature.userId,
+      deviceId: authWithoutSignature.deviceId,
+    }),
+  );
+  const result = await ensureRemoteListAlias({
+    data: { listId: snapshot.id, auth: { ...authWithoutSignature, signature } },
+  });
   if (result.status === "missing") {
     throw new Error("This list no longer exists");
+  }
+  if (result.status === "unauthorized") {
+    throw new Error("The remote user could not authorize this change");
   }
   await saveLocalList(result.snapshot, "remote");
   return result;

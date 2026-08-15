@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./aliases": "./src/aliases.ts",
+    "./crypto": "./src/crypto.ts",
     "./identities": "./src/identities.ts",
     "./preferences": "./src/preferences.ts",
     "./styles.css": "./src/styles.css",

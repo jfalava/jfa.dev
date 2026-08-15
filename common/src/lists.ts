@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 import { listAliasSchema } from "./aliases";
-import { listIdentitySchema } from "./identities";
+import { identityAuthSchema, listIdentitySchema } from "./identities";
 
 const UUID_V7_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export const LIST_SCHEMA_VERSION = 2 as const;
+export const LIST_SCHEMA_VERSION = 3 as const;
 
 export const listIdSchema = z
   .string()
@@ -91,7 +91,8 @@ export const listCommandSchema = z.discriminatedUnion("type", [
 export const listMutationSchema = z.object({
   id: z.string().min(1).max(128),
   baseRevision: z.number().int().min(0),
-  actor: listIdentitySchema.nullable().optional(),
+  actor: listIdentitySchema.nullable().default(null),
+  auth: identityAuthSchema.nullable().default(null),
   command: listCommandSchema,
 });
 
@@ -117,13 +118,15 @@ export interface ListSummary {
 export type ApplyMutationResult =
   | { status: "ok"; snapshot: ListSnapshot }
   | { status: "conflict"; snapshot: ListSnapshot }
-  | { status: "missing" };
+  | { status: "missing" }
+  | { status: "unauthorized" };
 
 export type ImportSnapshotResult =
   | { status: "imported"; snapshot: ListSnapshot }
   | { status: "already-imported"; snapshot: ListSnapshot }
   | { status: "conflict"; snapshot: ListSnapshot }
-  | { status: "alias-conflict"; snapshot: ListSnapshot };
+  | { status: "alias-conflict"; snapshot: ListSnapshot }
+  | { status: "unauthorized" };
 
 export function createListSnapshot(
   id: string,

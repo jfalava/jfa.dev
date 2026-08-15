@@ -1,12 +1,6 @@
-import { Button } from "@jfa.dev/common/ui";
+import { Button, DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@jfa.dev/common/ui";
 import { Sun, Moon, Monitor, Check } from "lucide-react";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useTheme } from "@/hooks/use-theme";
 
 /**
@@ -37,36 +31,32 @@ export function ThemeToggle() {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="outline"
-            size="icon"
-            className="text-primary hover:bg-primary/10 hover:text-primary"
-            aria-label="Toggle theme"
-          />
-        }
+    <DropdownMenuTrigger>
+      <Button
+        variant="outline"
+        size="icon"
+        className="text-primary hover:bg-primary/10 hover:text-primary"
+        aria-label="Toggle theme"
       >
         <span className="flex items-center justify-center">{getThemeIcon()}</span>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+      </Button>
+      <DropdownMenu placement="bottom end">
+        <DropdownMenuItem onAction={() => setTheme("light")}>
           <Sun className="mr-2 h-4 w-4" />
           <span>Light</span>
           {theme === "light" && <Check className="ml-auto h-4 w-4" />}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem onAction={() => setTheme("dark")}>
           <Moon className="mr-2 h-4 w-4" />
           <span>Dark</span>
           {theme === "dark" && <Check className="ml-auto h-4 w-4" />}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
+        <DropdownMenuItem onAction={() => setTheme("system")}>
           <Monitor className="mr-2 h-4 w-4" />
           <span>System</span>
           {theme === "system" && <Check className="ml-auto h-4 w-4" />}
         </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenu>
+    </DropdownMenuTrigger>
   );
 }

@@ -1,5 +1,6 @@
 export { cn } from "./lib/utils";
 export * from "./aliases";
+export * from "./crypto";
 export * from "./identities";
 export * from "./lists";
 export * from "./preferences";

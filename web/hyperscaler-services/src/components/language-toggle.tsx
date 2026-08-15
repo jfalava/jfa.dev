@@ -1,14 +1,7 @@
 import { preferenceCookies, writePreference } from "@jfa.dev/common/preferences";
-import { Button } from "@jfa.dev/common/ui";
+import { Button, DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@jfa.dev/common/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { Check, ChevronDown } from "lucide-react";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 /**
  * Props for the LanguageToggle component.
@@ -47,29 +40,25 @@ export function LanguageToggle({ currentLang }: LanguageToggleProps) {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="outline"
-            size="default"
-            className="min-w-17 justify-between px-2.5 text-primary hover:bg-primary/10 hover:text-primary"
-          />
-        }
+    <DropdownMenuTrigger>
+      <Button
+        variant="outline"
+        size="default"
+        className="min-w-17 justify-between px-2.5 text-primary hover:bg-primary/10 hover:text-primary"
       >
         <span>{currentLang.toUpperCase()}</span>
         <ChevronDown className="size-3.5" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleLanguageChange("en")}>
+      </Button>
+      <DropdownMenu placement="bottom end">
+        <DropdownMenuItem onAction={() => handleLanguageChange("en")}>
           <span>English (EN)</span>
           {currentLang === "en" && <Check className="ml-auto size-3.5" />}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLanguageChange("es")}>
+        <DropdownMenuItem onAction={() => handleLanguageChange("es")}>
           <span>Español (ES)</span>
           {currentLang === "es" && <Check className="ml-auto size-3.5" />}
         </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenu>
+    </DropdownMenuTrigger>
   );
 }

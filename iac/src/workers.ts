@@ -94,6 +94,12 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   const kewekeAliases = Cloudflare.DurableObject("KewekeAliasDirectory", {
     className: "KewekeAliasDirectory",
   });
+  const kewekePairing = Cloudflare.DurableObject("KewekePairingSession", {
+    className: "KewekePairingSession",
+  });
+  const kewekeUsers = Cloudflare.DurableObject("KewekeUserDirectory", {
+    className: "KewekeUserDirectory",
+  });
 
   const kewekeMounted = yield* Cloudflare.Website.Vite("KewekeMountedWorker", {
     ...workerDefaults(config.workers.kewekeMounted),
@@ -106,6 +112,8 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     env: {
       KEWEKE_LISTS: kewekeLists,
       KEWEKE_ALIASES: kewekeAliases,
+      KEWEKE_PAIRING: kewekePairing,
+      KEWEKE_USERS: kewekeUsers,
       ...(config.workers.kewekeMounted.basePath === undefined
         ? {}
         : {
