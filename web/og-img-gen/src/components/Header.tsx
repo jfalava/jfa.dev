@@ -13,7 +13,7 @@ function isTheme(value: string | undefined): value is Theme {
 }
 
 function getPreferredTheme(): Theme {
-  if (typeof window === "undefined") {
+  if (globalThis.window === undefined) {
     return "system";
   }
 
@@ -32,8 +32,8 @@ function isDarkTheme(theme: Theme): boolean {
 
   return (
     theme === "system" &&
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
+    globalThis.window !== undefined &&
+    globalThis.window.matchMedia("(prefers-color-scheme: dark)").matches
   );
 }
 

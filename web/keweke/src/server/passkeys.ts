@@ -84,7 +84,17 @@ type PasskeyAdoptionStatus =
   | { status: "expired" | "invalid" | "unauthorized" }
   | { status: "adopted"; profile: UserProfile };
 
-function relyingParty(): { origin: string; domain: string } {
+type RelyingParty = { origin: string; domain: string };
+
+type AuthenticationVerificationOptions = {
+  challenge: string;
+  origin: string;
+  domain: string;
+  userVerified: true;
+  counter?: number;
+};
+
+function relyingParty(): RelyingParty {
   const url = new URL(getRequestUrl({ xForwardedHost: true }));
   return { origin: url.origin, domain: url.hostname };
 }
@@ -319,18 +329,19 @@ export const completePasskeyAdoption = createServerFn({ method: "POST" })
     let authenticationInfo;
     try {
       const party = relyingParty();
+      const verificationOptions: AuthenticationVerificationOptions = {
+        challenge: session.challenge,
+        origin: party.origin,
+        domain: party.domain,
+        userVerified: true,
+      };
+      if (!credential.synced && credential.counter > 0) {
+        verificationOptions.counter = credential.counter;
+      }
       authenticationInfo = await server.verifyAuthentication(
         toAuthenticationJSON(data.authentication),
         credentialInfo(credential),
-        {
-          challenge: session.challenge,
-          origin: party.origin,
-          domain: party.domain,
-          userVerified: true,
-          ...(!credential.synced && credential.counter > 0
-            ? { counter: credential.counter }
-            : {}),
-        },
+        verificationOptions,
       );
     } catch {
       return { status: "invalid" };
@@ -376,7 +387,11 @@ export const listPasskeys = createServerFn()
         payload,
       });
       return passkeys
-        ? { status: "ok", passkeys: JSON.parse(JSON.stringify(passkeys)) as PasskeyProfile[] }
+        ? {
+            status: "ok",
+            // SAFETY: The server response is serialized and contains the passkey profile contract.
+            passkeys: JSON.parse(JSON.stringify(passkeys)) as PasskeyProfile[],
+          }
         : { status: "unauthorized" };
     },
   );
@@ -398,7 +413,11 @@ export const deletePasskey = createServerFn({ method: "POST" })
         payload,
       });
       return passkeys
-        ? { status: "deleted", passkeys: JSON.parse(JSON.stringify(passkeys)) as PasskeyProfile[] }
+        ? {
+            status: "deleted",
+            // SAFETY: The server response is serialized and contains the passkey profile contract.
+            passkeys: JSON.parse(JSON.stringify(passkeys)) as PasskeyProfile[],
+          }
         : { status: "unauthorized" };
     },
   );

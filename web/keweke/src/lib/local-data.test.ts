@@ -19,13 +19,19 @@ import {
 
 const originalWindow = globalThis.window;
 
-function createWindowStub(localStorage: Storage): Window {
-  return {
+type WindowStub = Pick<
+  Window,
+  "addEventListener" | "dispatchEvent" | "removeEventListener"
+> & { localStorage: Pick<Storage, "clear"> };
+
+function createWindowStub(localStorage: Pick<Storage, "clear">): WindowStub {
+  const windowStub = {
     addEventListener: () => undefined,
     dispatchEvent: () => true,
     localStorage,
     removeEventListener: () => undefined,
-  } as unknown as Window;
+  };
+  return windowStub;
 }
 
 afterEach(async () => {
@@ -43,11 +49,12 @@ afterEach(async () => {
 describe("local Keweke data", () => {
   test("clears localStorage, identity, and list databases", async () => {
     let clearCalls = 0;
-    const localStorage = {
+    const localStorageStub = {
       clear: () => {
         clearCalls += 1;
       },
-    } as unknown as Storage;
+    };
+    const localStorage = localStorageStub satisfies Pick<Storage, "clear">;
     Object.defineProperty(globalThis, "window", {
       configurable: true,
       value: createWindowStub(localStorage),

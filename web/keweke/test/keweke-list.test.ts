@@ -157,13 +157,22 @@ async function signedUserListsAuth(identity: TestIdentity) {
   return { ...auth, signature };
 }
 
-function nextLiveMessage(socket: WebSocket): Promise<unknown> {
+type JsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | readonly JsonValue[]
+  | { readonly [key: string]: JsonValue };
+
+function nextLiveMessage(socket: WebSocket): Promise<JsonValue> {
   return new Promise((resolve) => {
     socket.addEventListener(
       "message",
       (event) => {
-        if (typeof event.data === "string") {
-          resolve(JSON.parse(event.data) as unknown);
+        if (Object.prototype.toString.call(event.data) === "[object String]") {
+          // SAFETY: The test caller validates the received message with the list schema before use.
+          resolve(JSON.parse(event.data) as JsonValue);
         }
       },
       { once: true },

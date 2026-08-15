@@ -48,7 +48,7 @@ export type LocalIdentity = {
 let databasePromise: Promise<IDBPDatabase<KewekeIdentityDatabase>> | undefined;
 
 function canUseIdentityStorage(): boolean {
-  return typeof window !== "undefined" && typeof indexedDB !== "undefined";
+  return globalThis.window !== undefined && globalThis.indexedDB !== undefined;
 }
 
 function getDatabase(): Promise<IDBPDatabase<KewekeIdentityDatabase>> {
@@ -61,7 +61,7 @@ function getDatabase(): Promise<IDBPDatabase<KewekeIdentityDatabase>> {
 }
 
 function emitChange(): void {
-  if (typeof window !== "undefined") {
+  if (globalThis.window !== undefined) {
     window.dispatchEvent(new Event(IDENTITY_CHANGE_EVENT));
   }
 }
@@ -205,7 +205,7 @@ export async function signLocalPayload(payload: string): Promise<string> {
 }
 
 export async function clearLocalIdentityDatabase(emitIdentityChange = true): Promise<void> {
-  if (typeof indexedDB === "undefined") {
+  if (globalThis.indexedDB === undefined) {
     return;
   }
   if (databasePromise) {
@@ -220,7 +220,7 @@ export async function clearLocalIdentityDatabase(emitIdentityChange = true): Pro
 }
 
 export function subscribeToLocalIdentity(listener: () => void): () => void {
-  if (typeof window === "undefined") {
+  if (globalThis.window === undefined) {
     return () => undefined;
   }
 

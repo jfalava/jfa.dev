@@ -30,7 +30,7 @@ function requireRemoteIdentity(identity: Awaited<ReturnType<typeof ensureLocalId
 }
 
 export function isPasskeyAvailable(): boolean {
-  return typeof window !== "undefined" && client.isAvailable();
+  return globalThis.window !== undefined && client.isAvailable();
 }
 
 export async function registerLocalPasskey() {

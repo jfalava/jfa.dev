@@ -5,6 +5,7 @@ import {
   listIdentitySchema,
   publishAuthSchema,
   type ListIdentity,
+  type PublishAuth,
 } from "@jfa.dev/common/identities";
 import {
   LIST_SCHEMA_VERSION,
@@ -218,7 +219,7 @@ export class KewekeList extends DurableObject {
     listId: string,
     value: ListSnapshot,
     migrationId: string,
-    auth: unknown,
+    auth: PublishAuth,
     payload: string,
   ): Promise<ImportSnapshotResult> {
     const normalizedListId = listIdSchema.parse(listId);

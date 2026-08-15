@@ -2,7 +2,7 @@ import { clearLocalIdentityDatabase } from "./local-identity";
 import { clearLocalListDatabase, clearRemoteListDatabase } from "./local-list-store";
 
 export async function clearLocalData(): Promise<void> {
-  if (typeof window !== "undefined") {
+  if (globalThis.window !== undefined) {
     window.localStorage.clear();
   }
 

@@ -28,8 +28,27 @@ const COUNTRY_BLOCKED_MESSAGE = "Access denied";
 const COUNTRY_POLICY_UNAVAILABLE_MESSAGE = "Country access policy unavailable";
 const COUNTRY_CODE_PATTERN = /^(?:[A-Z]{2}|T1)$/;
 
-function parseCountryCode(value: unknown): string | undefined {
-  if (typeof value !== "string") {
+type JsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | readonly JsonValue[]
+  | { readonly [key: string]: JsonValue };
+type JsonObject = { readonly [key: string]: JsonValue };
+
+type CountryCodeInput = JsonValue | undefined;
+
+function isString(value: CountryCodeInput): value is string {
+  return Object.prototype.toString.call(value) === "[object String]";
+}
+
+function isBoolean(value: JsonValue): value is boolean {
+  return value === true || value === false;
+}
+
+function parseCountryCode(value: CountryCodeInput): string | undefined {
+  if (!isString(value)) {
     return undefined;
   }
 
@@ -42,9 +61,10 @@ function parseBlockedCountries(value: string | null): ReadonlySet<string> {
     return new Set();
   }
 
-  let parsed: unknown;
+  let parsed: JsonValue;
   try {
-    parsed = JSON.parse(value) as unknown;
+    // SAFETY: The parsed JSON is checked as an array and each country code is validated below.
+    parsed = JSON.parse(value) as JsonValue;
   } catch (error) {
     throw new Error(
       `The ${COUNTRY_BLOCKLIST_KEY} KV value must be a JSON array of country codes: ${String(error)}`,
@@ -57,7 +77,7 @@ function parseBlockedCountries(value: string | null): ReadonlySet<string> {
   }
 
   const countries = parsed.map((entry) => {
-    const country = parseCountryCode(entry);
+    const country = isString(entry) ? parseCountryCode(entry) : undefined;
     if (!country) {
       throw new Error(`The ${COUNTRY_BLOCKLIST_KEY} KV value contains an invalid country code`);
     }
@@ -71,7 +91,11 @@ export async function isCountryBlocked(
   request: Request,
   blocklist?: CountryBlocklistBinding,
 ): Promise<boolean> {
-  const country = parseCountryCode(request.cf?.country);
+  const rawCountry = request.cf?.country;
+  const country =
+    Object.prototype.toString.call(rawCountry) === "[object String]"
+      ? parseCountryCode(String(rawCountry))
+      : undefined;
   if (!country || !blocklist) {
     return false;
   }
@@ -156,8 +180,10 @@ function getPreloadMounts(routeDefs: RouteConfig[], currentMount: string): strin
     .map((r) => r.path);
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+function isRecord(
+  value: JsonValue,
+): value is JsonObject {
+  return Object.prototype.toString.call(value) === "[object Object]";
 }
 
 function normalizeRoutePath(path: string): string {
@@ -170,38 +196,44 @@ function normalizeRoutePath(path: string): string {
     : withLeadingSlash;
 }
 
-function parseRoute(value: unknown): RouteConfig | null {
+function parseRoute(value: JsonValue): RouteConfig | null {
   if (!isRecord(value)) {
     return null;
   }
 
-  const binding = typeof value.binding === "string" ? value.binding.trim() : "";
-  const path = typeof value.path === "string" ? value.path.trim() : "";
+  const binding = isString(value.binding) ? value.binding.trim() : "";
+  const path = isString(value.path) ? value.path.trim() : "";
   const preload = value.preload;
   const preserveMount = value.preserveMount;
 
   if (
     !binding ||
     !path ||
-    (preload !== undefined && typeof preload !== "boolean") ||
-    (preserveMount !== undefined && typeof preserveMount !== "boolean")
+    (preload !== undefined && !isBoolean(preload)) ||
+    (preserveMount !== undefined && !isBoolean(preserveMount))
   ) {
     return null;
   }
 
-  return {
+  const route: RouteConfig = {
     binding,
     path: normalizeRoutePath(path),
-    ...(preload === undefined ? {} : { preload }),
-    ...(preserveMount === undefined ? {} : { preserveMount }),
   };
+  if (preload !== undefined) {
+    route.preload = preload;
+  }
+  if (preserveMount !== undefined) {
+    route.preserveMount = preserveMount;
+  }
+  return route;
 }
 
 export function parseRoutesConfig(routesJson: string): RoutesConfig {
-  let parsed: unknown;
+  let parsed: JsonValue;
 
   try {
-    parsed = JSON.parse(routesJson) as unknown;
+    // SAFETY: The parsed JSON is narrowed through the route and field validators below.
+    parsed = JSON.parse(routesJson) as JsonValue;
   } catch {
     throw new Error("ROUTES must contain valid JSON");
   }
@@ -226,26 +258,29 @@ export function parseRoutesConfig(routesJson: string): RoutesConfig {
 
   if (
     parsed.smoothTransitions !== undefined &&
-    typeof parsed.smoothTransitions !== "boolean"
+    !isBoolean(parsed.smoothTransitions)
   ) {
     throw new Error("ROUTES smoothTransitions must be a boolean");
   }
 
-  return {
+  type RoutesObjectConfig = { smoothTransitions?: boolean; routes: RouteConfig[] };
+  const config: RoutesObjectConfig = {
     routes,
-    ...(parsed.smoothTransitions === undefined
-      ? {}
-      : { smoothTransitions: parsed.smoothTransitions }),
   };
+  if (parsed.smoothTransitions !== undefined) {
+    config.smoothTransitions = parsed.smoothTransitions;
+  }
+  return config;
 }
 
-function isFetcher(value: unknown): value is WorkerFetcher {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "fetch" in value &&
-    typeof value.fetch === "function"
-  );
+type FetcherCandidate = JsonValue | WorkerFetcher | CountryBlocklistBinding | undefined;
+
+function isObject(value: FetcherCandidate): value is WorkerFetcher | CountryBlocklistBinding {
+  return Object.prototype.toString.call(value) === "[object Object]";
+}
+
+function isFetcher(value: FetcherCandidate): value is WorkerFetcher {
+  return isObject(value) && "fetch" in value;
 }
 
 function getServiceBinding(env: Bindings, bindingName: string): WorkerFetcher | null {
@@ -253,6 +288,7 @@ function getServiceBinding(env: Bindings, bindingName: string): WorkerFetcher | 
     return null;
   }
 
+  // SAFETY: bindingName comes from the validated route configuration and is checked against env before indexing.
   const value = env[bindingName as keyof Bindings];
   return isFetcher(value) ? value : null;
 }
@@ -286,7 +322,7 @@ app.all("*", async (c) => {
   }
 
   const binding = getServiceBinding(c.env, matched.route.binding);
-  if (!binding || typeof binding.fetch !== "function") {
+  if (!binding) {
     return c.text(`Service binding "${matched.route.binding}" not found`, 502);
   }
 
@@ -307,10 +343,11 @@ export function buildAssetPrefixes(envVar?: string): string[] {
   }
 
   try {
-    const custom = JSON.parse(envVar) as unknown;
+    // SAFETY: The parsed value is checked as an array and filtered to non-empty strings below.
+    const custom = JSON.parse(envVar) as JsonValue;
     if (Array.isArray(custom)) {
       const normalized = custom
-        .filter((p): p is string => typeof p === "string" && p.trim() !== "")
+        .filter((p): p is string => isString(p) && p.trim() !== "")
         .map((p) => {
           let n = p.trim();
           if (!n.startsWith("/")) {

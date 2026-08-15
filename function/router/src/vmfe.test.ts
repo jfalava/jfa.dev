@@ -59,6 +59,7 @@ describe("mounted app forwarding", () => {
   });
 
   test("passes WebSocket upgrade responses through without rebuilding them", async () => {
+    // SAFETY: This test double only needs the Response status inspected by the forwarding path.
     const upgradeResponse = { status: 101 } as Response;
     const upstream = createUpstream(async () => upgradeResponse);
 

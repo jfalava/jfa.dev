@@ -8,6 +8,11 @@ import type { StageConfig, WorkerConfig } from "./config";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
 
+type HyperscalerEnvironment = {
+  VITE_BASE_PATH: string;
+  VITE_ASSET_BASE_PATH?: string;
+};
+
 function workerDefaults(config: WorkerConfig) {
   return {
     compatibility: {
@@ -33,59 +38,70 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
 ) {
   const isLocal = config.stage === "local";
 
-  const landing = yield* Cloudflare.Website.Vite("LandingWorker", {
+  const landingOptions = {
     ...workerDefaults(config.workers.landing),
     name: config.workers.landing.name,
     rootDir: resolve(repositoryRoot, "web/landing"),
     assets: {
       runWorkerFirst: false,
     },
-    ...(config.workers.landing.domain === undefined
-      ? {}
-      : { domain: config.workers.landing.domain }),
-    ...(isLocal ? { dev: localDev(3100) } : {}),
-  }).pipe(adopt(true));
+  };
+  if (config.workers.landing.domain !== undefined) {
+    Object.assign(landingOptions, { domain: config.workers.landing.domain });
+  }
+  if (isLocal) {
+    Object.assign(landingOptions, { dev: localDev(3100) });
+  }
+  const landing = yield* Cloudflare.Website.Vite("LandingWorker", landingOptions).pipe(
+    adopt(true),
+  );
 
-  const ogImgGen = yield* Cloudflare.Website.Vite("OgImgGenWorker", {
+  const ogImgGenOptions = {
     ...workerDefaults(config.workers.ogImgGen),
     name: config.workers.ogImgGen.name,
     rootDir: resolve(repositoryRoot, "web/og-img-gen"),
     assets: {
       runWorkerFirst: false,
     },
-    ...(config.workers.ogImgGen.domain === undefined
-      ? {}
-      : { domain: config.workers.ogImgGen.domain }),
-    ...(isLocal ? { dev: localDev(3101) } : {}),
-  }).pipe(adopt(true));
+  };
+  if (config.workers.ogImgGen.domain !== undefined) {
+    Object.assign(ogImgGenOptions, { domain: config.workers.ogImgGen.domain });
+  }
+  if (isLocal) {
+    Object.assign(ogImgGenOptions, { dev: localDev(3101) });
+  }
+  const ogImgGen = yield* Cloudflare.Website.Vite("OgImgGenWorker", ogImgGenOptions).pipe(
+    adopt(true),
+  );
 
+  const hyperscalerOptions = {
+    ...workerDefaults(config.workers.hyperscalerMounted),
+    name: config.workers.hyperscalerMounted.name,
+    rootDir: resolve(repositoryRoot, "web/hyperscaler-services"),
+    assets: {
+      runWorkerFirst: false,
+    },
+  };
+  if (config.workers.hyperscalerMounted.basePath !== undefined) {
+    const env: HyperscalerEnvironment = {
+      VITE_BASE_PATH: config.workers.hyperscalerMounted.basePath,
+    };
+    if (config.workers.hyperscalerMounted.assetBasePath !== undefined) {
+      env.VITE_ASSET_BASE_PATH = config.workers.hyperscalerMounted.assetBasePath;
+    }
+    Object.assign(hyperscalerOptions, { env });
+  }
+  if (config.workers.hyperscalerMounted.domain !== undefined) {
+    Object.assign(hyperscalerOptions, {
+      domain: config.workers.hyperscalerMounted.domain,
+    });
+  }
+  if (isLocal) {
+    Object.assign(hyperscalerOptions, { dev: localDev(3102) });
+  }
   const hyperscalerMounted = yield* Cloudflare.Website.Vite(
     "HyperscalerMountedWorker",
-    {
-      ...workerDefaults(config.workers.hyperscalerMounted),
-      name: config.workers.hyperscalerMounted.name,
-      rootDir: resolve(repositoryRoot, "web/hyperscaler-services"),
-      assets: {
-        runWorkerFirst: false,
-      },
-      ...(config.workers.hyperscalerMounted.basePath === undefined
-        ? {}
-        : {
-            env: {
-              VITE_BASE_PATH: config.workers.hyperscalerMounted.basePath,
-              ...(config.workers.hyperscalerMounted.assetBasePath === undefined
-                ? {}
-                : {
-                    VITE_ASSET_BASE_PATH:
-                      config.workers.hyperscalerMounted.assetBasePath,
-                  }),
-            },
-          }),
-      ...(config.workers.hyperscalerMounted.domain === undefined
-        ? {}
-        : { domain: config.workers.hyperscalerMounted.domain }),
-      ...(isLocal ? { dev: localDev(3102) } : {}),
-    },
+    hyperscalerOptions,
   ).pipe(adopt(true));
 
   const kewekeLists = Cloudflare.DurableObject("KewekeList", {
@@ -104,7 +120,30 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     className: "KewekeUserDirectory",
   });
 
-  const kewekeMounted = yield* Cloudflare.Website.Vite("KewekeMountedWorker", {
+  type KewekeEnvironment = {
+    KEWEKE_LISTS: typeof kewekeLists;
+    KEWEKE_ALIASES: typeof kewekeAliases;
+    KEWEKE_PAIRING: typeof kewekePairing;
+    KEWEKE_PASSKEY_SESSIONS: typeof kewekePasskeySessions;
+    KEWEKE_USERS: typeof kewekeUsers;
+    VITE_BASE_PATH?: string;
+    VITE_ASSET_BASE_PATH?: string;
+  };
+
+  const kewekeEnv: KewekeEnvironment = {
+    KEWEKE_LISTS: kewekeLists,
+    KEWEKE_ALIASES: kewekeAliases,
+    KEWEKE_PAIRING: kewekePairing,
+    KEWEKE_PASSKEY_SESSIONS: kewekePasskeySessions,
+    KEWEKE_USERS: kewekeUsers,
+  };
+  if (config.workers.kewekeMounted.basePath !== undefined) {
+    kewekeEnv.VITE_BASE_PATH = config.workers.kewekeMounted.basePath;
+    if (config.workers.kewekeMounted.assetBasePath !== undefined) {
+      kewekeEnv.VITE_ASSET_BASE_PATH = config.workers.kewekeMounted.assetBasePath;
+    }
+  }
+  const kewekeOptions = {
     ...workerDefaults(config.workers.kewekeMounted),
     name: config.workers.kewekeMounted.name,
     rootDir: resolve(repositoryRoot, "web/keweke"),
@@ -112,29 +151,20 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     assets: {
       runWorkerFirst: false,
     },
-    env: {
-      KEWEKE_LISTS: kewekeLists,
-      KEWEKE_ALIASES: kewekeAliases,
-      KEWEKE_PAIRING: kewekePairing,
-      KEWEKE_PASSKEY_SESSIONS: kewekePasskeySessions,
-      KEWEKE_USERS: kewekeUsers,
-      ...(config.workers.kewekeMounted.basePath === undefined
-        ? {}
-        : {
-            VITE_BASE_PATH: config.workers.kewekeMounted.basePath,
-            ...(config.workers.kewekeMounted.assetBasePath === undefined
-              ? {}
-              : {
-                  VITE_ASSET_BASE_PATH:
-                    config.workers.kewekeMounted.assetBasePath,
-                }),
-          }),
-    },
-    ...(config.workers.kewekeMounted.domain === undefined
-      ? {}
-      : { domain: config.workers.kewekeMounted.domain }),
-    ...(isLocal ? { dev: localDev(3103) } : {}),
-  }).pipe(adopt(true));
+    env: kewekeEnv,
+  };
+  if (config.workers.kewekeMounted.domain !== undefined) {
+    Object.assign(kewekeOptions, {
+      domain: config.workers.kewekeMounted.domain,
+    });
+  }
+  if (isLocal) {
+    Object.assign(kewekeOptions, { dev: localDev(3103) });
+  }
+  const kewekeMounted = yield* Cloudflare.Website.Vite(
+    "KewekeMountedWorker",
+    kewekeOptions,
+  ).pipe(adopt(true));
 
   const countryBlocklist =
     config.stage === "production" && config.router.countryBlocklistName
@@ -143,36 +173,56 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
         }).pipe(adopt(true))
       : undefined;
 
-  const router = yield* Cloudflare.Worker("RouterWorker", {
+  type RouterEnvironment = {
+    ROUTES: string;
+    ASSET_PREFIXES: string;
+    LANDING: typeof landing;
+    OG_IMG_GEN: typeof ogImgGen;
+    HYPERSCALER_SERVICES: typeof hyperscalerMounted;
+    KEWEKE: typeof kewekeMounted;
+    COUNTRY_BLOCKLIST?: typeof countryBlocklist;
+  };
+  const routerEnv: RouterEnvironment = {
+    ROUTES: config.router.routesJson,
+    ASSET_PREFIXES: config.router.assetPrefixesJson,
+    LANDING: landing,
+    OG_IMG_GEN: ogImgGen,
+    HYPERSCALER_SERVICES: hyperscalerMounted,
+    KEWEKE: kewekeMounted,
+  };
+  if (countryBlocklist !== undefined) {
+    routerEnv.COUNTRY_BLOCKLIST = countryBlocklist;
+  }
+  const routerOptions = {
     ...workerDefaults(config.workers.router),
     name: config.workers.router.name,
     main: resolve(repositoryRoot, "function/router/src/router.ts"),
-    env: {
-      ROUTES: config.router.routesJson,
-      ASSET_PREFIXES: config.router.assetPrefixesJson,
-      LANDING: landing,
-      OG_IMG_GEN: ogImgGen,
-      HYPERSCALER_SERVICES: hyperscalerMounted,
-      KEWEKE: kewekeMounted,
-      ...(countryBlocklist === undefined
-        ? {}
-        : { COUNTRY_BLOCKLIST: countryBlocklist }),
-    },
-    ...(config.workers.router.domain === undefined
-      ? {}
-      : { domain: config.workers.router.domain }),
-    ...(isLocal ? { dev: localDev(8795) } : {}),
-  }).pipe(adopt(true));
+    env: routerEnv,
+  };
+  if (config.workers.router.domain !== undefined) {
+    Object.assign(routerOptions, { domain: config.workers.router.domain });
+  }
+  if (isLocal) {
+    Object.assign(routerOptions, { dev: localDev(8795) });
+  }
+  const router = yield* Cloudflare.Worker("RouterWorker", routerOptions).pipe(adopt(true));
 
-  const redirects = yield* Cloudflare.Worker("RedirectsWorker", {
+  const redirectsOptions = {
     ...workerDefaults(config.workers.redirects),
     name: config.workers.redirects.name,
     main: resolve(repositoryRoot, "function/redirects/src/redirects.ts"),
-    ...(config.workers.redirects.domain === undefined
-      ? {}
-      : { domain: config.workers.redirects.domain }),
-    ...(isLocal ? { dev: localDev(8781) } : {}),
-  }).pipe(adopt(true));
+  };
+  if (config.workers.redirects.domain !== undefined) {
+    Object.assign(redirectsOptions, {
+      domain: config.workers.redirects.domain,
+    });
+  }
+  if (isLocal) {
+    Object.assign(redirectsOptions, { dev: localDev(8781) });
+  }
+  const redirects = yield* Cloudflare.Worker("RedirectsWorker", redirectsOptions).pipe(
+    adopt(true),
+  );
 
   return {
     landing,

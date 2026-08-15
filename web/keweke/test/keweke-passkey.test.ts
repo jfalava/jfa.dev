@@ -164,7 +164,7 @@ describe("passkey adoption persistence", () => {
     }
     expect(list).toHaveLength(1);
     expect(list[0]).toMatchObject({ id: credential.id, synced: true });
-    expect(typeof list[0]?.lastUsedAt).toBe("string");
+    expect(list[0]?.lastUsedAt).toEqual(expect.any(String));
 
     const deletePayload = passkeyDeleteSigningPayload({
       userId: identity.userId,

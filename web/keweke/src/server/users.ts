@@ -102,6 +102,7 @@ export const deleteRemoteUser = createServerFn({ method: "POST" })
       auth: data.auth,
       payload,
     });
+    // SAFETY: The Durable Object returns the AccountDeletionResult contract across the server boundary.
     return JSON.parse(JSON.stringify(result)) as AccountDeletionResult;
   });
 
@@ -127,6 +128,7 @@ export const startDevicePairing = createServerFn({ method: "POST" })
   .validator(pairingStartInputSchema)
   .handler(async ({ data }) => {
     const result = await env.KEWEKE_PAIRING.getByName(data.code).start(data);
+    // SAFETY: The Durable Object returns the PairingStatus contract across the server boundary.
     return JSON.parse(JSON.stringify(result)) as PairingStatus;
   });
 
@@ -134,6 +136,7 @@ export const getDevicePairingStatus = createServerFn()
   .validator(pairingStatusInputSchema)
   .handler(async ({ data }) => {
     const result = await env.KEWEKE_PAIRING.getByName(data).getStatus(data);
+    // SAFETY: The Durable Object returns the PairingStatus contract across the server boundary.
     return JSON.parse(JSON.stringify(result)) as PairingStatus;
   });
 
@@ -156,6 +159,7 @@ export const approveDevicePairing = createServerFn({ method: "POST" })
       signature: data.auth.signature,
       payload,
     });
+    // SAFETY: The Durable Object returns the PairingApprovalStatus contract across the server boundary.
     return JSON.parse(JSON.stringify(result)) as PairingApprovalStatus;
   });
 

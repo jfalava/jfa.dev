@@ -92,32 +92,35 @@ const colorToRgb = (color: string): [number, number, number] => {
     return hexToRgb(color);
   }
 
-  if (typeof document === "undefined") {
+  const documentRef = globalThis.document;
+  if (documentRef === undefined) {
     return [1, 1, 1];
   }
 
-  const el = document.createElement("span");
+  const el = documentRef.createElement("span");
   el.style.color = color;
   el.style.display = "none";
-  document.body.appendChild(el);
-  const computed = window.getComputedStyle(el).color;
-  document.body.removeChild(el);
+  documentRef.body.appendChild(el);
+  const computed = documentRef.defaultView?.getComputedStyle(el).color ?? "";
+  documentRef.body.removeChild(el);
 
   return parseRgbColor(computed) ?? parseOklchColor(computed) ?? [1, 1, 1];
 };
 
 const shouldUseStaticFallback = (): boolean => {
-  if (typeof window === "undefined") {
+  const windowRef = globalThis.window;
+  if (windowRef === undefined) {
     return true;
   }
 
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return windowRef.matchMedia("(prefers-reduced-motion: reduce)").matches;
 };
 
 const isWebgl2Context = (
   gl: WebGLRenderingContext | WebGL2RenderingContext,
 ): gl is WebGL2RenderingContext => {
-  return typeof WebGL2RenderingContext !== "undefined" && gl instanceof WebGL2RenderingContext;
+  const webgl2Constructor = globalThis.WebGL2RenderingContext;
+  return webgl2Constructor !== undefined && gl instanceof webgl2Constructor;
 };
 
 const vertexWebgl2 = `#version 300 es

@@ -108,19 +108,24 @@ function worker(
     baseName?: string;
   },
 ): WorkerConfig {
-  return {
+  const result: WorkerConfig = {
     name: stageName(options.baseName ?? baseName, stage),
     compatibilityDate: options.compatibilityDate,
     workersDev: options.workersDev ?? stage !== "production",
     observability: options.observability,
-    ...(options.domain === undefined
-      ? {}
-      : { domain: domainFor(stage, options.domain) }),
-    ...(options.basePath === undefined ? {} : { basePath: options.basePath }),
-    ...(options.assetBasePath === undefined
-      ? {}
-      : { assetBasePath: options.assetBasePath }),
   };
+
+  if (options.domain !== undefined) {
+    result.domain = domainFor(stage, options.domain);
+  }
+  if (options.basePath !== undefined) {
+    result.basePath = options.basePath;
+  }
+  if (options.assetBasePath !== undefined) {
+    result.assetBasePath = options.assetBasePath;
+  }
+
+  return result;
 }
 
 export function getStageConfig(stage: string | undefined): StageConfig {
@@ -132,15 +137,17 @@ export function getStageConfig(stage: string | undefined): StageConfig {
     aliases: redirectAliases,
   };
 
+  const router: StageConfig["router"] = {
+    routesJson: JSON.stringify(routeDefinitions),
+    assetPrefixesJson: JSON.stringify(assetPrefixes),
+  };
+  if (normalizedStage === "production") {
+    router.countryBlocklistName = "jfa-router-country-blocklist-prod";
+  }
+
   return {
     stage: normalizedStage,
-    router: {
-      routesJson: JSON.stringify(routeDefinitions),
-      assetPrefixesJson: JSON.stringify(assetPrefixes),
-      ...(normalizedStage === "production"
-        ? { countryBlocklistName: "jfa-router-country-blocklist-prod" }
-        : {}),
-    },
+    router,
     workers: {
       router: worker("jfa-dev-router", normalizedStage, {
         compatibilityDate: compatibilityDate(normalizedStage, "2026-08-13"),

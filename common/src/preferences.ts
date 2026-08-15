@@ -12,7 +12,7 @@ export type PreferenceCookieName =
 const COOKIE_LIFETIME_DAYS = 365;
 
 function canUseCookies(): boolean {
-  return typeof document !== "undefined";
+  return globalThis.document !== undefined;
 }
 
 function cookieAttributes() {
@@ -23,7 +23,7 @@ function cookieAttributes() {
   };
 
   if (
-    typeof globalThis.location !== "undefined" &&
+    globalThis.location !== undefined &&
     globalThis.location.protocol === "https:"
   ) {
     return { ...attributes, secure: true };

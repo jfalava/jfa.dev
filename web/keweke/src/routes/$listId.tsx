@@ -65,6 +65,7 @@ type ShoppingTableMeta = {
 };
 
 const shoppingTableFeatures = tableFeatures({
+  // SAFETY: TanStack consumes this metadata through the declared table feature contract.
   tableMeta: {} as ShoppingTableMeta,
 });
 const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ListItem>();

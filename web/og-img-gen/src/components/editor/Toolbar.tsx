@@ -27,24 +27,37 @@ import { Separator } from "@/components/ui/separator";
 import { useEditorStore } from "@/stores/editor-store";
 import type { ElementType, Template } from "@/types/editor";
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+type JsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | readonly JsonValue[]
+  | { readonly [key: string]: JsonValue };
+type JsonObject = { readonly [key: string]: JsonValue };
+
+function isString<T>(value: T): value is T & string {
+  return Object.prototype.toString.call(value) === "[object String]";
 }
 
-function isTemplate(value: unknown): value is Template {
+function isRecord<T>(value: T): value is T & JsonObject {
+  return Object.prototype.toString.call(value) === "[object Object]";
+}
+
+function isTemplate<T>(value: T): value is T & Template {
   if (!isRecord(value)) {
     return false;
   }
 
   const template = value;
   return (
-    typeof template["id"] === "string" &&
-    typeof template["name"] === "string" &&
-    typeof template["description"] === "string" &&
-    typeof template["createdAt"] === "string" &&
-    typeof template["updatedAt"] === "string" &&
+    isString(template["id"]) &&
+    isString(template["name"]) &&
+    isString(template["description"]) &&
+    isString(template["createdAt"]) &&
+    isString(template["updatedAt"]) &&
     Array.isArray(template["elements"]) &&
-    typeof template["canvasBackground"] === "string" &&
+    isString(template["canvasBackground"]) &&
     Array.isArray(template["variables"])
   );
 }
@@ -126,8 +139,7 @@ export function Toolbar() {
         return;
       }
 
-      const data: Template = parsed;
-      importTemplate(data);
+      importTemplate(parsed);
     });
     input.click();
   };

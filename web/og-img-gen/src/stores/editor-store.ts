@@ -26,6 +26,30 @@ interface PersistedEditorState {
   showGrid?: boolean;
 }
 
+type JsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | readonly JsonValue[]
+  | { readonly [key: string]: JsonValue };
+
+type PersistedJsonValue = JsonValue | undefined;
+
+type JsonObject = { readonly [key: string]: JsonValue };
+
+function isString(value: PersistedJsonValue): value is string {
+  return Object.prototype.toString.call(value) === "[object String]";
+}
+
+function isBoolean(value: PersistedJsonValue): value is boolean {
+  return value === true || value === false;
+}
+
+function isRecord<T>(value: T): value is T & JsonObject {
+  return Object.prototype.toString.call(value) === "[object Object]";
+}
+
 function normalizeFonts(fonts: PersistedEditorState["fonts"] | undefined): Font[] {
   if (!Array.isArray(fonts)) {
     return [];
@@ -42,19 +66,17 @@ function normalizeFonts(fonts: PersistedEditorState["fonts"] | undefined): Font[
         loaded: boolean;
         stylesheetUrl?: string;
       } =>
-        typeof font === "object" &&
-        font !== null &&
-        typeof font.family === "string" &&
+        isString(font.family) &&
         Array.isArray(font.weights) &&
-        typeof font.loaded === "boolean" &&
+        isBoolean(font.loaded) &&
         (font.source === "google" || font.source === "external"),
     )
     .map((font) => ({
       family: font.family,
       source: font.source === "external" ? "external" : "google",
-      weights: font.weights.filter((weight): weight is number => typeof weight === "number"),
+      weights: font.weights.filter((weight) => Number.isFinite(weight)),
       loaded: font.loaded,
-      stylesheetUrl: typeof font.stylesheetUrl === "string" ? font.stylesheetUrl : undefined,
+      stylesheetUrl: isString(font.stylesheetUrl) ? font.stylesheetUrl : undefined,
     }));
 }
 
@@ -195,7 +217,7 @@ function createDefaultElement(type: ElementType): EditorElement {
         content: createDefaultContainerContent(),
       };
     default:
-      throw new Error(`Unknown element type: ${type as string}`);
+      throw new Error(`Unknown element type: ${String(type)}`);
   }
 }
 
@@ -523,11 +545,11 @@ export const useEditorStore = create<EditorState>()(
     {
       name: "og-generator-storage",
       version: 2,
-      migrate: (persistedState: unknown): PersistedEditorState => {
-        const state =
-          typeof persistedState === "object" && persistedState !== null
-            ? (persistedState as PersistedEditorState)
-            : {};
+      migrate: (persistedState): PersistedEditorState => {
+        // SAFETY: Zustand persisted state is versioned by this store and optional fields are normalized below.
+        const state = isRecord(persistedState)
+          ? (persistedState as PersistedEditorState)
+          : {};
 
         return {
           templates: Array.isArray(state.templates) ? state.templates : [],

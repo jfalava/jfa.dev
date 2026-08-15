@@ -4,7 +4,22 @@ const textEncoder = new TextEncoder();
 const PAIRING_ALPHABET =
   "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
 
+type CanonicalValue =
+  | null
+  | boolean
+  | number
+  | string
+  | readonly CanonicalValue[]
+  | { readonly [key: string]: CanonicalValue };
+
+type CanonicalPayload = Record<string, CanonicalValue>;
+
+function isCanonicalObject(value: CanonicalValue): value is CanonicalPayload {
+  return Object.prototype.toString.call(value) === "[object Object]";
+}
+
 function arrayBuffer(value: Uint8Array): ArrayBuffer {
+  // SAFETY: Uint8Array.from creates a new ordinary ArrayBuffer, never a SharedArrayBuffer.
   return Uint8Array.from(value).buffer as ArrayBuffer;
 }
 
@@ -26,7 +41,7 @@ export function base64UrlDecode(value: string): Uint8Array {
 }
 
 export async function sha256(value: string | Uint8Array): Promise<Uint8Array> {
-  const bytes = typeof value === "string" ? textEncoder.encode(value) : value;
+  const bytes = value instanceof Uint8Array ? value : textEncoder.encode(value);
   const input = new Uint8Array(bytes);
   return new Uint8Array(await crypto.subtle.digest("SHA-256", input.buffer));
 }
@@ -91,13 +106,13 @@ export async function verifyPayload(
   }
 }
 
-function canonicalize(value: unknown): unknown {
+function canonicalize(value: CanonicalValue): CanonicalValue {
   if (Array.isArray(value)) {
     return value.map(canonicalize);
   }
-  if (value !== null && typeof value === "object") {
+  if (isCanonicalObject(value)) {
     return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>)
+      Object.entries(value)
         .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
         .map(([key, entry]) => [key, canonicalize(entry)]),
     );
@@ -105,7 +120,7 @@ function canonicalize(value: unknown): unknown {
   return value;
 }
 
-function canonicalPayload(context: string, value: unknown): string {
+function canonicalPayload(context: string, value: CanonicalPayload): string {
   return `${context}:${JSON.stringify(canonicalize(value))}`;
 }
 

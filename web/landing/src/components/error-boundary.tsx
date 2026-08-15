@@ -35,8 +35,6 @@ export function NotFoundPage() {
 }
 
 export function RouteErrorBoundary({ error, reset }: ErrorComponentProps) {
-  const safeReset = typeof reset === "function" ? reset : undefined;
-
   useEffect(() => {
     console.error("Route Error:", error);
   }, [error]);
@@ -59,7 +57,7 @@ export function RouteErrorBoundary({ error, reset }: ErrorComponentProps) {
         )}
 
         <div className="flex flex-col justify-center gap-3 sm:flex-row">
-          <Button onClick={() => safeReset?.()}>
+          <Button onClick={reset}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Try Again
           </Button>

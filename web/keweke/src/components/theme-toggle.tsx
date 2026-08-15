@@ -4,17 +4,17 @@ import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 
 import { useTheme, type ThemeMode } from "@/hooks/use-theme";
 
-const themeLabels: Record<ThemeMode, string> = {
+const themeLabels = {
   dark: "Dark",
   light: "Light",
   system: "System",
-};
+} satisfies Record<ThemeMode, string>;
 
-const themeByKey: Record<string, ThemeMode> = {
-  dark: "dark",
-  light: "light",
-  system: "system",
-};
+const themeByKey = new Map<string, ThemeMode>([
+  ["dark", "dark"],
+  ["light", "light"],
+  ["system", "system"],
+]);
 
 function ThemeIcon({ theme }: { theme: ThemeMode }) {
   if (theme === "dark") {
@@ -45,7 +45,7 @@ export function ThemeToggle() {
           aria-label="Choose a theme"
           className="outline-none"
           onAction={(key) => {
-            const nextTheme = themeByKey[String(key)];
+            const nextTheme = themeByKey.get(String(key));
             if (nextTheme !== undefined) {
               setTheme(nextTheme);
             }

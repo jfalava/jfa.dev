@@ -14,15 +14,18 @@ import {
 const originalWindow = globalThis.window;
 let dispatchCount = 0;
 
-function createWindowStub(): Window {
-  return {
+type WindowStub = Pick<Window, "addEventListener" | "removeEventListener" | "dispatchEvent">;
+
+function createWindowStub(): WindowStub {
+  const windowStub = {
     addEventListener: () => undefined,
     removeEventListener: () => undefined,
     dispatchEvent: () => {
       dispatchCount += 1;
       return true;
     },
-  } as unknown as Window;
+  };
+  return windowStub;
 }
 
 beforeEach(() => {

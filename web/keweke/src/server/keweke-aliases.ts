@@ -49,7 +49,7 @@ export class KewekeAliasDirectory extends DurableObject {
         );
         return { status: "created", alias };
       } catch (error) {
-        if (!isUniqueConstraintError(error)) {
+        if (!(error instanceof Error) || !isUniqueConstraintError(error)) {
           throw error;
         }
       }
@@ -114,6 +114,6 @@ export class KewekeAliasDirectory extends DurableObject {
   }
 }
 
-function isUniqueConstraintError(error: unknown): boolean {
-  return error instanceof Error && /unique constraint/i.test(error.message);
+function isUniqueConstraintError(error: Error): boolean {
+  return /unique constraint/i.test(error.message);
 }

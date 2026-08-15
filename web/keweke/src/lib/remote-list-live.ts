@@ -23,12 +23,13 @@ export function openRemoteListLiveSession(
   webSocket.addEventListener("open", () => handlers.onOpen?.());
   webSocket.addEventListener("close", () => handlers.onClose?.());
   webSocket.addEventListener("message", (event) => {
-    if (typeof event.data !== "string") {
+    if (Object.prototype.toString.call(event.data) !== "[object String]") {
       return;
     }
 
     let value: unknown;
     try {
+      // SAFETY: The parsed WebSocket payload is validated by listLiveMessageSchema below.
       value = JSON.parse(event.data) as unknown;
     } catch {
       return;

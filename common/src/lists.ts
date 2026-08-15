@@ -353,10 +353,14 @@ export function applyListMutation(
   };
 }
 
-export function parseListSnapshot(value: unknown): ListSnapshot {
+export function parseListSnapshot(
+  value: z.input<typeof listSnapshotSchema>,
+): ListSnapshot {
   return listSnapshotSchema.parse(value);
 }
 
-export function parseListMutation(value: unknown): ListMutation {
+export function parseListMutation(
+  value: z.input<typeof listMutationSchema>,
+): ListMutation {
   return listMutationSchema.parse(value);
 }
