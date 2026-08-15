@@ -713,15 +713,15 @@ export function UserDialog({
         <span className="hidden sm:inline">User</span>
       </Button>
       <ModalOverlay
-        className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 pt-6 pb-6 sm:pt-16 sm:pb-0"
+        className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-6 pb-6 sm:pt-16 sm:pb-6"
         isDismissable
       >
-        <Modal className="max-h-[calc(100svh-6rem)] w-full max-w-lg overflow-y-auto overscroll-contain outline-none sm:max-h-[calc(100vh-5rem)]">
+        <Modal className="flex h-[calc(100svh-3rem)] w-full max-w-lg flex-col outline-none sm:h-[560px] sm:max-h-[calc(100vh-5.5rem)]">
           <Dialog
             aria-label="Set your username"
-            className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
+            className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
           >
-            <div className="border-b border-border px-4 py-4">
+            <div className="shrink-0 border-b border-border px-4 py-4">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
                   device identity
@@ -735,7 +735,7 @@ export function UserDialog({
               </div>
             </div>
 
-            <div className="space-y-5 p-4">
+            <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-4">
               <form className="space-y-3" onSubmit={(event) => void save(event)}>
                 <div className="flex items-end gap-2">
                   <div className="min-w-0 flex-1">

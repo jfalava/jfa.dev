@@ -193,7 +193,7 @@ function EmptyState() {
                       ) : null}
                       <Link
                         aria-label={`Open ${list.title}`}
-                        className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary group-hover:text-primary"
+                        className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground transition-colors group-hover:text-primary hover:text-primary"
                         params={{ listId: list.alias ?? list.id }}
                         to="/$listId"
                       >
