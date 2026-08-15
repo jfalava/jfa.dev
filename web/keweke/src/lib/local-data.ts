@@ -12,3 +12,7 @@ export async function clearLocalData(): Promise<void> {
 export async function clearRemoteUserData(): Promise<void> {
   await Promise.all([clearLocalIdentityDatabase(false), clearRemoteListDatabase()]);
 }
+
+export async function clearLocalIdentityData(): Promise<void> {
+  await clearLocalIdentityDatabase();
+}

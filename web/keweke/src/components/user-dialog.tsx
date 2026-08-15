@@ -13,7 +13,7 @@ import { KeyRound, UserRound } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Dialog, DialogTrigger, Modal, ModalOverlay } from "react-aria-components";
 
-import { clearLocalData, clearRemoteUserData } from "@/lib/local-data";
+import { clearLocalData, clearLocalIdentityData, clearRemoteUserData } from "@/lib/local-data";
 import {
   adoptLocalIdentity,
   confirmRemoteUsername,
@@ -70,6 +70,7 @@ type FeedbackSection =
   | "devices"
   | "passkeys"
   | "account"
+  | "logout"
   | "data";
 
 type DialogFeedback = {
@@ -133,6 +134,8 @@ export function UserDialog({
   const [isRegisteringPasskey, setIsRegisteringPasskey] = useState(false);
   const [isAdoptingPasskey, setIsAdoptingPasskey] = useState(false);
   const [isAdopting, setIsAdopting] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isConfirmingLogOut, setIsConfirmingLogOut] = useState(false);
   const [isClearingData, setIsClearingData] = useState(false);
   const [isConfirmingClearData, setIsConfirmingClearData] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
@@ -593,6 +596,26 @@ export function UserDialog({
     }
   };
 
+  const logOut = async (): Promise<void> => {
+    setIsLoggingOut(true);
+    resetFeedback();
+    try {
+      await clearLocalIdentityData();
+      setIsLoggingOut(false);
+      setIsConfirmingLogOut(false);
+      setProfile(undefined);
+      setPairingCode("");
+      setApprovalCode("");
+      setPasskeys([]);
+      setValue("");
+      setMessage("username", "Logged out.");
+    } catch {
+      setIsLoggingOut(false);
+      setIsConfirmingLogOut(false);
+      setError("logout", "Could not log out right now.");
+    }
+  };
+
   const clearData = async (): Promise<void> => {
     setIsClearingData(true);
     resetFeedback();
@@ -659,6 +682,7 @@ export function UserDialog({
           resetFeedback();
           setIsConfirmingClearData(false);
           setIsConfirmingDeleteAccount(false);
+          setIsConfirmingLogOut(false);
           setDeleteConfirmation("");
           setValue(identity?.username ?? "");
           if (identity) {
@@ -673,6 +697,7 @@ export function UserDialog({
           resetFeedback();
           setIsConfirmingClearData(false);
           setIsConfirmingDeleteAccount(false);
+          setIsConfirmingLogOut(false);
           setDeleteConfirmation("");
           setConfirmingDeviceId(undefined);
         }
@@ -1014,8 +1039,7 @@ export function UserDialog({
                   </div>
                   <div className="flex items-start justify-between gap-3">
                     <p className="min-w-0 text-sm text-muted-foreground">
-                      Add as many passkeys as your password manager supports. Each one can adopt a
-                      new browser without a pairing code.
+                      Add more passkeys. Each one can adopt a new browser without a pairing code.
                     </p>
                     {passkeyAvailable ? (
                       <Button
@@ -1059,6 +1083,63 @@ export function UserDialog({
                   ) : (
                     <p className="text-sm text-muted-foreground">No passkeys added yet.</p>
                   )}
+                </section>
+              ) : null}
+
+              {identity?.remoteUsername || identity?.username ? (
+                <section
+                  className="space-y-3 border-t border-border pt-4"
+                  aria-labelledby="logout-heading"
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
+                      session
+                    </p>
+                    <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                      /
+                    </span>
+                    <h3
+                      className="text-[11px] font-normal text-muted-foreground/75"
+                      id="logout-heading"
+                    >
+                      Log out
+                    </h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Disconnect this user identity from this browser. Lists and local data are kept.
+                  </p>
+                  {isConfirmingLogOut ? (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
+                        log out of this browser?
+                      </span>
+                      <Button
+                        className="h-8 px-4 text-sm"
+                        isDisabled={isLoggingOut}
+                        onPress={() => void logOut()}
+                        variant="destructive"
+                      >
+                        {isLoggingOut ? "Logging out…" : "Yes, log out"}
+                      </Button>
+                      <Button
+                        className="h-8 px-4 text-sm"
+                        isDisabled={isLoggingOut}
+                        onPress={() => setIsConfirmingLogOut(false)}
+                        variant="ghost"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      className="h-10 min-w-24 px-5 text-sm"
+                      onPress={() => setIsConfirmingLogOut(true)}
+                      variant="outline"
+                    >
+                      Log out
+                    </Button>
+                  )}
+                  <FeedbackMessage feedback={feedback} section="logout" />
                 </section>
               ) : null}
 
