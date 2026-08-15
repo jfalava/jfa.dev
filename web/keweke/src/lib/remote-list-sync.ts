@@ -1,10 +1,6 @@
 import { userListsSigningPayload } from "@jfa.dev/common/crypto";
 
-import {
-  ensureLocalIdentity,
-  signLocalPayload,
-  type LocalIdentity,
-} from "@/lib/local-identity";
+import { ensureLocalIdentity, signLocalPayload, type LocalIdentity } from "@/lib/local-identity";
 import { saveRemoteLists } from "@/lib/local-list-store";
 import { getUserLists } from "@/server/users";
 

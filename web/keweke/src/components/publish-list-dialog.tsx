@@ -74,11 +74,7 @@ export function PublishListDialog({
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
             <div className="flex justify-end gap-2">
-              <Button
-                isDisabled={isPublishing}
-                onPress={() => onOpenChange(false)}
-                variant="ghost"
-              >
+              <Button isDisabled={isPublishing} onPress={() => onOpenChange(false)} variant="ghost">
                 Cancel
               </Button>
               <Button isDisabled={isPublishing} onPress={onConfirm}>

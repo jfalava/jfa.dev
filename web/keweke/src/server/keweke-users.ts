@@ -186,10 +186,7 @@ export class KewekeUserDirectory extends DurableObject {
     return { status: deletion.status };
   }
 
-  async deleteAccount(input: {
-    auth: unknown;
-    payload: string;
-  }): Promise<AccountDeletionResult> {
+  async deleteAccount(input: { auth: unknown; payload: string }): Promise<AccountDeletionResult> {
     const auth = identityAuthSchema.safeParse(input.auth);
     if (!auth.success) {
       return { status: "unauthorized" };
@@ -325,10 +322,7 @@ export class KewekeUserDirectory extends DurableObject {
     return authorization ? { status: "authorized", authorization } : { status: "unauthorized" };
   }
 
-  async createUser(input: {
-    auth: unknown;
-    payload: string;
-  }): Promise<RemoteUserCreationResult> {
+  async createUser(input: { auth: unknown; payload: string }): Promise<RemoteUserCreationResult> {
     const auth = publishAuthSchema.safeParse(input.auth);
     if (!auth.success) {
       return { status: "unauthorized" };
@@ -356,10 +350,7 @@ export class KewekeUserDirectory extends DurableObject {
           candidate.publicKey === auth.data.devicePublicKey &&
           candidate.revokedAt === null,
       );
-      if (
-        !device ||
-        !(await verifyPayload(device.publicKey, auth.data.signature, input.payload))
-      ) {
+      if (!device || !(await verifyPayload(device.publicKey, auth.data.signature, input.payload))) {
         return { status: "unauthorized" };
       }
       return { status: "existing", profile: current };
@@ -699,10 +690,7 @@ export class KewekeUserDirectory extends DurableObject {
     allowDeleting?: boolean;
   }): Promise<AuthorizedDevice | null> {
     const accountState = this.readAccountState();
-    if (
-      accountState &&
-      !(input.allowDeleting && accountState.status === "deleting")
-    ) {
+    if (accountState && !(input.allowDeleting && accountState.status === "deleting")) {
       return null;
     }
 

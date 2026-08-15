@@ -432,9 +432,10 @@ describe("public-key list authorization", () => {
     await env.KEWEKE_USERS.getByName(owner.userId).recordListTouched(SEVENTH_LIST_ID);
     expect(await keptListStub.getSnapshot(SEVENTH_LIST_ID)).toEqual(keptSnapshot);
     expect(await aliases.getListId("deleted-list-abcde")).toBe(EIGHTH_LIST_ID);
-    expect(
-      await deletedListStub.deleteOwnedList(otherUser.userId),
-    ).toEqual({ status: "unauthorized", alias: null });
+    expect(await deletedListStub.deleteOwnedList(otherUser.userId)).toEqual({
+      status: "unauthorized",
+      alias: null,
+    });
 
     const payload = userDeleteSigningPayload({
       userId: owner.userId,

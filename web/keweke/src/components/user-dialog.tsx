@@ -6,11 +6,7 @@ import {
   userDeleteSigningPayload,
   userRenameSigningPayload,
 } from "@jfa.dev/common/crypto";
-import {
-  type PasskeyProfile,
-  type UserProfile,
-  usernameSchema,
-} from "@jfa.dev/common/identities";
+import { type PasskeyProfile, type UserProfile, usernameSchema } from "@jfa.dev/common/identities";
 import { Button, Input } from "@jfa.dev/common/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { KeyRound, UserRound } from "lucide-react";
@@ -230,9 +226,9 @@ export function UserDialog({
 
   const canManagePasskeys = Boolean(
     identity?.remoteUsername &&
-      profile?.devices.some(
-        (device) => device.deviceId === identity.deviceId && device.revokedAt === null,
-      ),
+    profile?.devices.some(
+      (device) => device.deviceId === identity.deviceId && device.revokedAt === null,
+    ),
   );
   const passkeyAvailable = isPasskeyAvailable();
 
@@ -404,12 +400,7 @@ export function UserDialog({
       setIdentity(currentIdentity);
       setPairingCode(code);
       setPairingStatus(result);
-      setMessage(
-        "pairing",
-        currentIdentity.remoteUsername
-          ? "Pairing code created below. Enter it on an approved device."
-          : "Pairing code created below. Publish a list before another device can approve it.",
-      );
+      setMessage("pairing", "Pairing code created below. Enter it on an approved device.");
     } catch {
       setError("pairing", "Could not create a pairing code.");
     } finally {
@@ -484,7 +475,7 @@ export function UserDialog({
       setIdentity(nextIdentity);
       setProfile(pairingStatus.profile);
       setValue(nextIdentity.username ?? "");
-      setMessage("pairing", "Username added.");
+      setMessage("username", "This browser is connected.");
       setPairingCode("");
     } catch {
       setError("pairing", "This browser could not adopt that user.");
@@ -819,110 +810,118 @@ export function UserDialog({
                 </section>
               ) : null}
 
-              <section
-                className="space-y-3 border-t border-border pt-4"
-                aria-labelledby="pairing-heading"
-              >
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
-                    pair a browser
-                  </p>
-                  <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                    /
-                  </span>
-                  <h3
-                    className="text-[11px] font-normal text-muted-foreground/75"
-                    id="pairing-heading"
-                  >
-                    Use on another device
-                  </h3>
-                </div>
-                <Button
-                  className="h-10 min-w-24 px-5 text-sm"
-                  isDisabled={!identity || isStartingPairing}
-                  onPress={() => void startPairing()}
+              {identity && !identity.remoteUsername ? (
+                <section
+                  className="space-y-3 border-t border-border pt-4"
+                  aria-labelledby="pairing-heading"
                 >
-                  {isStartingPairing ? "Creating…" : "Show code"}
-                </Button>
-                <FeedbackMessage feedback={feedback} section="pairing" />
-                {pairingCode ? (
-                  <div className="border border-border bg-muted/40 p-3">
-                    <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                      pairing code
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
+                      pair a browser
                     </p>
-                    <p className="mt-1 font-mono text-xl tracking-[0.18em] break-all text-primary">
-                      {pairingCode}
-                    </p>
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      {pairingStatus?.status === "pending"
-                        ? "Waiting…"
-                        : pairingStatus?.status === "approved"
-                          ? "Ready."
-                          : pairingStatus?.status === "expired"
-                            ? "Expired."
-                            : pairingStatus?.status === "missing"
-                              ? "Unavailable."
-                              : "Checking status…"}
-                    </p>
-                    {pairingStatus?.status === "approved" ? (
-                      <Button className="mt-3" isDisabled={isAdopting} onPress={() => void adopt()}>
-                        {isAdopting ? "Saving…" : "Use this username"}
-                      </Button>
-                    ) : null}
+                    <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                      /
+                    </span>
+                    <h3
+                      className="text-[11px] font-normal text-muted-foreground/75"
+                      id="pairing-heading"
+                    >
+                      Use on another device
+                    </h3>
                   </div>
-                ) : null}
-              </section>
-
-              <section
-                className="space-y-3 border-t border-border pt-4"
-                aria-labelledby="approve-heading"
-              >
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
-                    approve a browser
-                  </p>
-                  <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                    /
-                  </span>
-                  <h3
-                    className="text-[11px] font-normal text-muted-foreground/75"
-                    id="approve-heading"
-                  >
-                    Add another device
-                  </h3>
-                </div>
-                <form className="flex gap-2" onSubmit={(event) => void findDevice(event)}>
-                  <Input
-                    aria-label="Pairing code"
-                    className="h-10 font-mono tracking-widest"
-                    maxLength={10}
-                    onChange={(event) => setApprovalCode(event.target.value)}
-                    placeholder="CODE"
-                    spellCheck={false}
-                    value={approvalCode}
-                  />
                   <Button
                     className="h-10 min-w-24 px-5 text-sm"
-                    isDisabled={isFindingDevice || !identity}
-                    type="submit"
+                    isDisabled={!identity || isStartingPairing}
+                    onPress={() => void startPairing()}
                   >
-                    {isFindingDevice ? "Finding…" : "Find"}
+                    {isStartingPairing ? "Creating…" : "Show code"}
                   </Button>
-                </form>
-                <FeedbackMessage feedback={feedback} section="approval" />
-                {pairingStatus?.status === "pending" && pairingStatus.code === approvalCode ? (
-                  <div className="border border-border p-3">
-                    <p className="text-sm">A new device is waiting.</p>
-                    <Button
-                      className="mt-3"
-                      isDisabled={isApproving}
-                      onPress={() => void approve()}
+                  <FeedbackMessage feedback={feedback} section="pairing" />
+                  {pairingCode ? (
+                    <div className="border border-border bg-muted/40 p-3">
+                      <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+                        pairing code
+                      </p>
+                      <p className="mt-1 font-mono text-xl tracking-[0.18em] break-all text-primary">
+                        {pairingCode}
+                      </p>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        {pairingStatus?.status === "pending"
+                          ? "Waiting…"
+                          : pairingStatus?.status === "approved"
+                            ? "Ready."
+                            : pairingStatus?.status === "expired"
+                              ? "Expired."
+                              : pairingStatus?.status === "missing"
+                                ? "Unavailable."
+                                : "Checking status…"}
+                      </p>
+                      {pairingStatus?.status === "approved" ? (
+                        <Button
+                          className="mt-3"
+                          isDisabled={isAdopting}
+                          onPress={() => void adopt()}
+                        >
+                          {isAdopting ? "Saving…" : "Use this username"}
+                        </Button>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </section>
+              ) : null}
+
+              {identity?.remoteUsername ? (
+                <section
+                  className="space-y-3 border-t border-border pt-4"
+                  aria-labelledby="approve-heading"
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
+                      approve a browser
+                    </p>
+                    <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                      /
+                    </span>
+                    <h3
+                      className="text-[11px] font-normal text-muted-foreground/75"
+                      id="approve-heading"
                     >
-                      {isApproving ? "Approving…" : "Approve device"}
-                    </Button>
+                      Add another device
+                    </h3>
                   </div>
-                ) : null}
-              </section>
+                  <form className="flex gap-2" onSubmit={(event) => void findDevice(event)}>
+                    <Input
+                      aria-label="Pairing code"
+                      className="h-10 font-mono tracking-widest"
+                      maxLength={10}
+                      onChange={(event) => setApprovalCode(event.target.value)}
+                      placeholder="CODE"
+                      spellCheck={false}
+                      value={approvalCode}
+                    />
+                    <Button
+                      className="h-10 min-w-24 px-5 text-sm"
+                      isDisabled={isFindingDevice || !identity}
+                      type="submit"
+                    >
+                      {isFindingDevice ? "Finding…" : "Find"}
+                    </Button>
+                  </form>
+                  <FeedbackMessage feedback={feedback} section="approval" />
+                  {pairingStatus?.status === "pending" && pairingStatus.code === approvalCode ? (
+                    <div className="border border-border p-3">
+                      <p className="text-sm">A new device is waiting.</p>
+                      <Button
+                        className="mt-3"
+                        isDisabled={isApproving}
+                        onPress={() => void approve()}
+                      >
+                        {isApproving ? "Approving…" : "Approve device"}
+                      </Button>
+                    </div>
+                  ) : null}
+                </section>
+              ) : null}
 
               {profile ? (
                 <section

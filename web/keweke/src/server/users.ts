@@ -115,9 +115,7 @@ export const getUserLists = createServerFn()
     const results = await Promise.all(listIds.map((listId) => readRemoteList(listId)));
     return {
       status: "ok" as const,
-      snapshots: results.filter(
-        (snapshot): snapshot is ListSnapshot => snapshot !== null,
-      ),
+      snapshots: results.filter((snapshot): snapshot is ListSnapshot => snapshot !== null),
       missingListIds: listIds.filter((_, index) => results[index] === null),
       ownedListIds: listIndex
         .filter((entry) => entry.role === "owner")

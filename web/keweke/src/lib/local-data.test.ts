@@ -19,10 +19,9 @@ import {
 
 const originalWindow = globalThis.window;
 
-type WindowStub = Pick<
-  Window,
-  "addEventListener" | "dispatchEvent" | "removeEventListener"
-> & { localStorage: Pick<Storage, "clear"> };
+type WindowStub = Pick<Window, "addEventListener" | "dispatchEvent" | "removeEventListener"> & {
+  localStorage: Pick<Storage, "clear">;
+};
 
 function createWindowStub(localStorage: Pick<Storage, "clear">): WindowStub {
   const windowStub = {
