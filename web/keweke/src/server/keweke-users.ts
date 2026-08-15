@@ -67,6 +67,10 @@ export type PublishAuthorization =
   | { status: "authorized"; authorization: AuthorizedDevice }
   | { status: "unauthorized" };
 
+export type RemoteUserCreationResult =
+  | { status: "created" | "existing"; profile: UserProfile }
+  | { status: "conflict" | "unauthorized" };
+
 export type DeviceApprovalResult =
   | { status: "approved"; profile: UserProfile }
   | { status: "unauthorized" };
@@ -210,45 +214,26 @@ export class KewekeUserDirectory extends DurableObject {
 
     const current = await this.readProfile(auth.data.userId);
     if (!current) {
-      if (this.readAccountState()) {
+      const creation = await this.createUser(input);
+      if (!("profile" in creation)) {
         return { status: "unauthorized" };
       }
 
-      const signatureValid = await verifyPayload(
-        auth.data.devicePublicKey,
-        auth.data.signature,
-        input.payload,
+      const device = creation.profile.devices.find(
+        (candidate) => candidate.deviceId === auth.data.deviceId,
       );
-      if (!signatureValid) {
+      if (!device) {
         return { status: "unauthorized" };
       }
-
-      const now = new Date().toISOString();
-      this.ctx.storage.transactionSync(() => {
-        this.ctx.storage.sql.exec(
-          `INSERT INTO user_profile (id, user_id, user_public_key, username)
-           VALUES (1, ?, ?, ?)`,
-          auth.data.userId,
-          auth.data.userPublicKey,
-          auth.data.username,
-        );
-        this.ctx.storage.sql.exec(
-          `INSERT INTO devices (device_id, public_key, approved_at, approved_by, revoked_at)
-           VALUES (?, ?, ?, NULL, NULL)`,
-          auth.data.deviceId,
-          auth.data.devicePublicKey,
-          now,
-        );
-      });
 
       return {
         status: "authorized",
         authorization: {
-          userId: auth.data.userId,
-          userPublicKey: auth.data.userPublicKey,
-          username: auth.data.username,
-          deviceId: auth.data.deviceId,
-          devicePublicKey: auth.data.devicePublicKey,
+          userId: creation.profile.userId,
+          userPublicKey: creation.profile.userPublicKey,
+          username: creation.profile.username,
+          deviceId: device.deviceId,
+          devicePublicKey: device.publicKey,
         },
       };
     }
@@ -269,6 +254,77 @@ export class KewekeUserDirectory extends DurableObject {
       payload: input.payload,
     });
     return authorization ? { status: "authorized", authorization } : { status: "unauthorized" };
+  }
+
+  async createUser(input: {
+    auth: unknown;
+    payload: string;
+  }): Promise<RemoteUserCreationResult> {
+    const auth = publishAuthSchema.safeParse(input.auth);
+    if (!auth.success) {
+      return { status: "unauthorized" };
+    }
+
+    const identityMatches =
+      (await publicKeyFingerprint(auth.data.userPublicKey)) === auth.data.userId &&
+      (await publicKeyFingerprint(auth.data.devicePublicKey)) === auth.data.deviceId;
+    if (!identityMatches || this.readAccountState()) {
+      return { status: "unauthorized" };
+    }
+
+    const current = await this.readProfile(auth.data.userId);
+    if (current) {
+      if (
+        current.userPublicKey !== auth.data.userPublicKey ||
+        current.username !== auth.data.username
+      ) {
+        return { status: "conflict" };
+      }
+
+      const device = current.devices.find(
+        (candidate) =>
+          candidate.deviceId === auth.data.deviceId &&
+          candidate.publicKey === auth.data.devicePublicKey &&
+          candidate.revokedAt === null,
+      );
+      if (
+        !device ||
+        !(await verifyPayload(device.publicKey, auth.data.signature, input.payload))
+      ) {
+        return { status: "unauthorized" };
+      }
+      return { status: "existing", profile: current };
+    }
+
+    const signatureValid = await verifyPayload(
+      auth.data.devicePublicKey,
+      auth.data.signature,
+      input.payload,
+    );
+    if (!signatureValid) {
+      return { status: "unauthorized" };
+    }
+
+    const now = new Date().toISOString();
+    this.ctx.storage.transactionSync(() => {
+      this.ctx.storage.sql.exec(
+        `INSERT INTO user_profile (id, user_id, user_public_key, username)
+         VALUES (1, ?, ?, ?)`,
+        auth.data.userId,
+        auth.data.userPublicKey,
+        auth.data.username,
+      );
+      this.ctx.storage.sql.exec(
+        `INSERT INTO devices (device_id, public_key, approved_at, approved_by, revoked_at)
+         VALUES (?, ?, ?, NULL, NULL)`,
+        auth.data.deviceId,
+        auth.data.devicePublicKey,
+        now,
+      );
+    });
+
+    const profile = await this.readProfile(auth.data.userId);
+    return profile ? { status: "created", profile } : { status: "unauthorized" };
   }
 
   async authorizeMutation(input: {

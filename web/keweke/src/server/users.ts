@@ -1,6 +1,7 @@
 import {
   deviceRevocationSigningPayload,
   pairingApprovalSigningPayload,
+  userCreateSigningPayload,
   userDeleteSigningPayload,
   userListsSigningPayload,
   userRenameSigningPayload,
@@ -10,6 +11,7 @@ import {
   identityIdSchema,
   pairingCodeSchema,
   publicKeySchema,
+  publishAuthSchema,
   userProfileSchema,
   usernameSchema,
 } from "@jfa.dev/common/identities";
@@ -19,7 +21,7 @@ import { env } from "cloudflare:workers";
 import { z } from "zod";
 
 import type { PairingApprovalStatus, PairingStatus } from "./keweke-pairing";
-import type { AccountDeletionResult } from "./keweke-users";
+import type { AccountDeletionResult, RemoteUserCreationResult } from "./keweke-users";
 import { readRemoteList } from "./remote-list";
 
 export {
@@ -58,12 +60,31 @@ const revokeInputSchema = z.object({
 
 const userListsInputSchema = z.object({ auth: identityAuthSchema });
 const deleteRemoteUserInputSchema = z.object({ auth: identityAuthSchema });
+const createRemoteUserInputSchema = z.object({ auth: publishAuthSchema });
 
 export const getUserProfile = createServerFn()
   .validator(identityIdSchema)
   .handler(async ({ data }) => {
     const profile = await env.KEWEKE_USERS.getByName(data).getProfile(data);
     return profile ? userProfileSchema.parse(profile) : null;
+  });
+
+export const createRemoteUser = createServerFn({ method: "POST" })
+  .validator(createRemoteUserInputSchema)
+  .handler(async ({ data }): Promise<RemoteUserCreationResult> => {
+    const payload = userCreateSigningPayload({
+      userId: data.auth.userId,
+      deviceId: data.auth.deviceId,
+      userPublicKey: data.auth.userPublicKey,
+      devicePublicKey: data.auth.devicePublicKey,
+      username: data.auth.username,
+    });
+    const result = await env.KEWEKE_USERS.getByName(data.auth.userId).createUser({
+      auth: data.auth,
+      payload,
+    });
+    // SAFETY: The Durable Object returns the RemoteUserCreationResult contract across the server boundary.
+    return JSON.parse(JSON.stringify(result)) as RemoteUserCreationResult;
   });
 
 export const getUserLists = createServerFn()

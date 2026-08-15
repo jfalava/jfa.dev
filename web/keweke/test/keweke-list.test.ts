@@ -8,6 +8,7 @@ import {
   publicKeyFingerprint,
   signPayload,
   userDeleteSigningPayload,
+  userCreateSigningPayload,
   userListsSigningPayload,
 } from "@jfa.dev/common/crypto";
 import type { PublishAuth } from "@jfa.dev/common/identities";
@@ -181,6 +182,46 @@ function nextLiveMessage(socket: WebSocket): Promise<JsonValue> {
 }
 
 describe("public-key list authorization", () => {
+  it("creates a remote user without publishing a list", async () => {
+    const identity = await createIdentity("Remote-only user");
+    const payload = userCreateSigningPayload({
+      userId: identity.userId,
+      deviceId: identity.deviceId,
+      userPublicKey: identity.userPublicKey,
+      devicePublicKey: identity.devicePublicKey,
+      username: identity.username,
+    });
+    const auth = {
+      userId: identity.userId,
+      deviceId: identity.deviceId,
+      userPublicKey: identity.userPublicKey,
+      devicePublicKey: identity.devicePublicKey,
+      username: identity.username,
+      signature: await signPayload(identity.devicePrivateKey, payload),
+    } satisfies PublishAuth;
+    const user = env.KEWEKE_USERS.getByName(identity.userId);
+
+    const created = await user.createUser({ auth, payload });
+    expect(created.status).toBe("created");
+    if (created.status !== "created") {
+      return;
+    }
+    expect(created.profile).toMatchObject({
+      userId: identity.userId,
+      username: identity.username,
+      devices: [
+        expect.objectContaining({
+          deviceId: identity.deviceId,
+          publicKey: identity.devicePublicKey,
+          revokedAt: null,
+        }),
+      ],
+    });
+
+    const retry = await user.createUser({ auth, payload });
+    expect(retry.status).toBe("existing");
+  });
+
   it("registers a named user, imports a list, and applies signed mutations idempotently", async () => {
     const identity = await createIdentity("Alex");
     const { listStub, snapshot } = await publish(identity, LIST_ID);

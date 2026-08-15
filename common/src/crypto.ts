@@ -158,6 +158,16 @@ export function userRenameSigningPayload(input: {
   return canonicalPayload("keweke:user-rename:v1", input);
 }
 
+export function userCreateSigningPayload(input: {
+  userId: string;
+  deviceId: string;
+  userPublicKey: string;
+  devicePublicKey: string;
+  username: string;
+}): string {
+  return canonicalPayload("keweke:user-create:v1", input);
+}
+
 export function userListsSigningPayload(input: {
   userId: string;
   deviceId: string;

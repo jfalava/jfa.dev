@@ -2,6 +2,7 @@ import {
   deviceRevocationSigningPayload,
   generatePairingCode,
   pairingApprovalSigningPayload,
+  userCreateSigningPayload,
   userDeleteSigningPayload,
   userRenameSigningPayload,
 } from "@jfa.dev/common/crypto";
@@ -36,6 +37,7 @@ import {
 import { syncRemoteLists } from "@/lib/remote-list-sync";
 import {
   approveDevicePairing,
+  createRemoteUser,
   deleteRemoteUser,
   getDevicePairingStatus,
   getUserProfile,
@@ -126,6 +128,7 @@ export function UserDialog({
   const [pairingStatus, setPairingStatus] = useState<PairingStatusView>();
   const [feedback, setFeedback] = useState<DialogFeedback>();
   const [isSaving, setIsSaving] = useState(false);
+  const [isCreatingRemoteUser, setIsCreatingRemoteUser] = useState(false);
   const [isStartingPairing, setIsStartingPairing] = useState(false);
   const [isFindingDevice, setIsFindingDevice] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
@@ -313,6 +316,72 @@ export function UserDialog({
       setError("username", "Could not save this user right now.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const createRemoteAccount = async (): Promise<void> => {
+    if (!identity) {
+      return;
+    }
+
+    resetFeedback();
+    const username = value.trim();
+    const parsedUsername = usernameSchema.safeParse(username);
+    if (!parsedUsername.success) {
+      setError("account", "Enter a username between 1 and 48 characters.");
+      return;
+    }
+
+    setIsCreatingRemoteUser(true);
+    try {
+      const nextIdentity = await saveLocalIdentity(parsedUsername.data);
+      const unsignedAuth = {
+        userId: nextIdentity.userId,
+        deviceId: nextIdentity.deviceId,
+        userPublicKey: nextIdentity.userPublicKey,
+        devicePublicKey: nextIdentity.devicePublicKey,
+        username: parsedUsername.data,
+        signature: UNSIGNED_SIGNATURE,
+      };
+      const signature = await signLocalPayload(
+        userCreateSigningPayload({
+          userId: unsignedAuth.userId,
+          deviceId: unsignedAuth.deviceId,
+          userPublicKey: unsignedAuth.userPublicKey,
+          devicePublicKey: unsignedAuth.devicePublicKey,
+          username: unsignedAuth.username,
+        }),
+      );
+      const result = await createRemoteUser({
+        data: { auth: { ...unsignedAuth, signature } },
+      });
+      if (result.status === "unauthorized") {
+        setError("account", "This browser could not create the remote user.");
+        return;
+      }
+      if (result.status === "conflict") {
+        setError("account", "This identity is already linked to a different remote username.");
+        return;
+      }
+      if (!("profile" in result)) {
+        return;
+      }
+
+      const confirmed = await confirmRemoteUsername(result.profile.username);
+      setIdentity(confirmed);
+      setProfile(result.profile);
+      setValue(confirmed.username ?? "");
+      setMessage(
+        "account",
+        result.status === "created"
+          ? "Remote user created."
+          : "Remote user already exists; this browser is connected.",
+      );
+      onSaved?.();
+    } catch {
+      setError("account", "Could not create the remote user right now.");
+    } finally {
+      setIsCreatingRemoteUser(false);
     }
   };
 
@@ -660,7 +729,7 @@ export function UserDialog({
                     <Input
                       autoComplete="nickname"
                       className="mt-1.5 h-10 font-serif text-base sm:text-sm"
-                      disabled={!identity || isSaving}
+                      disabled={!identity || isSaving || isCreatingRemoteUser}
                       id="user-username"
                       maxLength={48}
                       onChange={(event) => {
@@ -673,7 +742,7 @@ export function UserDialog({
                   </div>
                   <Button
                     className="h-10 min-w-24 px-5 text-sm"
-                    isDisabled={!identity || isSaving}
+                    isDisabled={!identity || isSaving || isCreatingRemoteUser}
                     type="submit"
                   >
                     {isSaving ? "Saving…" : "Save"}
@@ -681,6 +750,40 @@ export function UserDialog({
                 </div>
                 <FeedbackMessage feedback={feedback} section="username" />
               </form>
+
+              {identity && !identity.remoteUsername ? (
+                <section
+                  className="space-y-3 border-t border-border pt-4"
+                  aria-labelledby="create-account-heading"
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
+                      remote account
+                    </p>
+                    <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                      /
+                    </span>
+                    <h3
+                      className="text-[11px] font-normal text-muted-foreground/75"
+                      id="create-account-heading"
+                    >
+                      Use this user across browsers
+                    </h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Create a remote user with this username so you can pair other browsers and
+                    publish lists without creating a list first.
+                  </p>
+                  <Button
+                    className="h-10 min-w-24 px-5 text-sm"
+                    isDisabled={isCreatingRemoteUser || isSaving}
+                    onPress={() => void createRemoteAccount()}
+                  >
+                    {isCreatingRemoteUser ? "Creating…" : "Create remote user"}
+                  </Button>
+                  <FeedbackMessage feedback={feedback} section="account" />
+                </section>
+              ) : null}
 
               {identity && !identity.remoteUsername && passkeyAvailable ? (
                 <section
