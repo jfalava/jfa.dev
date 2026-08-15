@@ -109,6 +109,7 @@ export type ListCommand = z.infer<typeof listCommandSchema>;
 export type ListMutation = z.infer<typeof listMutationSchema>;
 
 export type ListBackend = "local" | "remote";
+export type RemoteListRole = "owner" | "collaborator";
 
 export interface ListSummary {
   id: string;
@@ -119,6 +120,7 @@ export interface ListSummary {
   deletedItemCount: number;
   updatedAt: string;
   backend: ListBackend;
+  remoteRole?: RemoteListRole;
 }
 
 export type ApplyMutationResult =
@@ -211,8 +213,9 @@ export function createStarterListSnapshot(
 export function summarizeList(
   snapshot: ListSnapshot,
   backend: ListBackend,
+  remoteRole?: RemoteListRole,
 ): ListSummary {
-  return {
+  const summary: ListSummary = {
     id: snapshot.id,
     alias: snapshot.alias,
     title: snapshot.title,
@@ -222,6 +225,10 @@ export function summarizeList(
     updatedAt: snapshot.updatedAt,
     backend,
   };
+  if (backend === "remote" && remoteRole) {
+    summary.remoteRole = remoteRole;
+  }
+  return summary;
 }
 
 export function applyListMutation(

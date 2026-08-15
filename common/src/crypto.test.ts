@@ -5,6 +5,7 @@ import { describe, expect, test } from "bun:test";
 import {
   exportPublicKey,
   generateEd25519KeyPair,
+  listDeletionSigningPayload,
   listMutationSigningPayload,
   publicKeyFingerprint,
   signPayload,
@@ -70,5 +71,23 @@ describe("identity cryptography", () => {
         userDeleteSigningPayload({ userId, deviceId: "B".repeat(43) }),
       ),
     ).toBe(false);
+  });
+
+  test("binds remote list deletion payloads to the list and device", () => {
+    const payload = listDeletionSigningPayload({
+      listId: "019c5f7e-7b7b-7000-8000-000000000010",
+      userId: "A".repeat(43),
+      deviceId: "B".repeat(43),
+    });
+
+    expect(payload).toContain("keweke:list-deletion:v1");
+    expect(payload).toContain("019c5f7e-7b7b-7000-8000-000000000010");
+    expect(payload).not.toBe(
+      listDeletionSigningPayload({
+        listId: "019c5f7e-7b7b-7000-8000-000000000011",
+        userId: "A".repeat(43),
+        deviceId: "B".repeat(43),
+      }),
+    );
   });
 });

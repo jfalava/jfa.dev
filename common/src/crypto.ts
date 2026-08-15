@@ -175,6 +175,14 @@ export function userListsSigningPayload(input: {
   return canonicalPayload("keweke:user-lists:v1", input);
 }
 
+export function listDeletionSigningPayload(input: {
+  listId: string;
+  userId: string;
+  deviceId: string;
+}): string {
+  return canonicalPayload("keweke:list-deletion:v1", input);
+}
+
 export function userDeleteSigningPayload(input: {
   userId: string;
   deviceId: string;

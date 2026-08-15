@@ -10,6 +10,7 @@ import {
   type ListMutation,
   type ListSnapshot,
   type ListSummary,
+  type RemoteListRole,
 } from "@jfa.dev/common/lists";
 import { deleteDB, openDB, type DBSchema, type IDBPDatabase } from "idb";
 import { v7 as uuidv7 } from "uuid";
@@ -22,6 +23,7 @@ export interface LocalListRecord {
   backend: ListBackend;
   snapshot: ListSnapshot;
   updatedAt: string;
+  remoteRole?: RemoteListRole;
 }
 
 interface KewekeDatabase extends DBSchema {
@@ -91,7 +93,7 @@ export async function listLocalLists(): Promise<ListSummary[]> {
 
   return sortedRecords
     .map(normalizeLocalListRecord)
-    .map((record) => summarizeList(record.snapshot, record.backend));
+    .map((record) => summarizeList(record.snapshot, record.backend, record.remoteRole));
 }
 
 function normalizeLocalListRecord(record: LocalListRecord): LocalListRecord {
@@ -101,18 +103,22 @@ function normalizeLocalListRecord(record: LocalListRecord): LocalListRecord {
 export async function saveLocalList(
   snapshot: ListSnapshot,
   backend: ListBackend = "local",
+  remoteRole?: RemoteListRole,
 ): Promise<void> {
+  const existing = backend === "remote" ? await getLocalListRecord(snapshot.id) : undefined;
   await putRecord({
     id: snapshot.id,
     backend,
     snapshot,
     updatedAt: snapshot.updatedAt,
+    remoteRole: backend === "remote" ? (remoteRole ?? existing?.remoteRole) : undefined,
   });
 }
 
 export async function saveRemoteLists(
   snapshots: ListSnapshot[],
   missingListIds: string[] = [],
+  ownedListIds: string[] = [],
 ): Promise<void> {
   const database = await getDatabase();
   const transaction = database.transaction("lists", "readwrite");
@@ -132,6 +138,7 @@ export async function saveRemoteLists(
       backend: "remote",
       snapshot,
       updatedAt: snapshot.updatedAt,
+      remoteRole: ownedListIds.includes(snapshot.id) ? "owner" : "collaborator",
     });
   }
   await transaction.done;

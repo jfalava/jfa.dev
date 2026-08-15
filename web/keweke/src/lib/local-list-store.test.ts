@@ -99,6 +99,15 @@ describe("local list store", () => {
     expect((await getLocalListRecord(local.id))?.snapshot.title).toBe("New list");
   });
 
+  test("keeps remote ownership in the local catalog", async () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+
+    await saveRemoteLists([snapshot], [], [LIST_ID]);
+
+    expect((await getLocalListRecord(LIST_ID))?.remoteRole).toBe("owner");
+    expect((await listLocalLists())[0]?.remoteRole).toBe("owner");
+  });
+
   test("removes missing remote snapshots without touching local lists", async () => {
     const local = await createLocalList();
     const remote = createStarterListSnapshot(LIST_ID, { now: NOW });

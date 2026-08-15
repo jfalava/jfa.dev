@@ -30,7 +30,7 @@ export async function syncRemoteLists(identity?: LocalIdentity): Promise<boolean
       return false;
     }
 
-    await saveRemoteLists(result.snapshots, result.missingListIds);
+    await saveRemoteLists(result.snapshots, result.missingListIds, result.ownedListIds);
     return true;
   } catch {
     return false;

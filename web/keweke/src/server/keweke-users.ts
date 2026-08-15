@@ -48,7 +48,13 @@ interface PasskeyRow {
 interface UserListRow {
   [key: string]: string | number | null;
   list_id: string;
+  created_at: string | null;
 }
+
+export type UserListIndexEntry = {
+  listId: string;
+  role: "owner" | "collaborator";
+};
 
 interface AccountStateRow {
   [key: string]: string | number | null;
@@ -80,6 +86,12 @@ export type AccountDeletionResult =
   | { status: "failed" }
   | { status: "unauthorized" };
 
+export type RemoteListRemovalResult =
+  | { status: "deleted" }
+  | { status: "forgotten" }
+  | { status: "missing" }
+  | { status: "unauthorized" };
+
 export type PasskeyRegistrationResult =
   | { status: "registered" | "existing" }
   | { status: "unauthorized" };
@@ -96,6 +108,14 @@ export class KewekeUserDirectory extends DurableObject {
   }
 
   async getListIds(input: { auth: unknown; payload: string }): Promise<string[] | null> {
+    const index = await this.getListIndex(input);
+    return index?.map((entry) => entry.listId) ?? null;
+  }
+
+  async getListIndex(input: {
+    auth: unknown;
+    payload: string;
+  }): Promise<UserListIndexEntry[] | null> {
     const auth = identityAuthSchema.safeParse(input.auth);
     if (!auth.success) {
       return null;
@@ -111,10 +131,59 @@ export class KewekeUserDirectory extends DurableObject {
 
     return this.ctx.storage.sql
       .exec<UserListRow>(
-        "SELECT list_id FROM user_lists ORDER BY touched_at DESC, list_id ASC",
+        "SELECT list_id, created_at FROM user_lists ORDER BY touched_at DESC, list_id ASC",
       )
       .toArray()
-      .map((row) => row.list_id);
+      .map((row) => ({
+        listId: row.list_id,
+        role: row.created_at === null ? "collaborator" : "owner",
+      }));
+  }
+
+  async removeList(input: {
+    auth: unknown;
+    listId: string;
+    payload: string;
+  }): Promise<RemoteListRemovalResult> {
+    const auth = identityAuthSchema.safeParse(input.auth);
+    const listId = listIdSchema.safeParse(input.listId);
+    if (!auth.success || !listId.success) {
+      return { status: "unauthorized" };
+    }
+
+    const authorization = await this.authorizeDevice({
+      auth: auth.data,
+      payload: input.payload,
+    });
+    if (!authorization) {
+      return { status: "unauthorized" };
+    }
+
+    const indexedList = this.ctx.storage.sql
+      .exec<UserListRow>(
+        "SELECT list_id, created_at FROM user_lists WHERE list_id = ?",
+        listId.data,
+      )
+      .toArray()[0];
+    if (!indexedList) {
+      return { status: "missing" };
+    }
+
+    if (indexedList.created_at === null) {
+      this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", listId.data);
+      return { status: "forgotten" };
+    }
+
+    const deletion = await this.env.KEWEKE_LISTS.getByName(listId.data).deleteOwnedList(
+      authorization.userId,
+    );
+    if (deletion.status === "unauthorized") {
+      return { status: "unauthorized" };
+    }
+
+    await this.env.KEWEKE_ALIASES.getByName("directory").releaseAlias(listId.data);
+    this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", listId.data);
+    return { status: deletion.status };
   }
 
   async deleteAccount(input: {

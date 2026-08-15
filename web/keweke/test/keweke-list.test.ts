@@ -2,6 +2,7 @@ import {
   deviceRevocationSigningPayload,
   exportPublicKey,
   generateEd25519KeyPair,
+  listDeletionSigningPayload,
   listMutationSigningPayload,
   listPublishSigningPayload,
   pairingApprovalSigningPayload,
@@ -33,6 +34,8 @@ const SIXTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000025";
 const SEVENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000026";
 const EIGHTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000027";
 const NINTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000028";
+const TENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000029";
+const ELEVENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000030";
 const NOW = "2026-08-14T10:00:00.000Z";
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
@@ -156,6 +159,22 @@ async function signedUserListsAuth(identity: TestIdentity) {
     userListsSigningPayload({ userId: auth.userId, deviceId: auth.deviceId }),
   );
   return { ...auth, signature };
+}
+
+async function signedListDeletionAuth(identity: TestIdentity, listId: string) {
+  const payload = listDeletionSigningPayload({
+    listId,
+    userId: identity.userId,
+    deviceId: identity.deviceId,
+  });
+  return {
+    auth: {
+      userId: identity.userId,
+      deviceId: identity.deviceId,
+      signature: await signPayload(identity.devicePrivateKey, payload),
+    },
+    payload,
+  };
 }
 
 type JsonValue =
@@ -323,6 +342,20 @@ describe("public-key list authorization", () => {
     });
     expect(listIds).not.toBeNull();
     expect(listIds).toEqual(expect.arrayContaining([FOURTH_LIST_ID, FIFTH_LIST_ID]));
+
+    const listIndex = await env.KEWEKE_USERS.getByName(collaborator.userId).getListIndex({
+      auth,
+      payload: userListsSigningPayload({
+        userId: collaborator.userId,
+        deviceId: collaborator.deviceId,
+      }),
+    });
+    expect(listIndex).toEqual(
+      expect.arrayContaining([
+        { listId: FOURTH_LIST_ID, role: "collaborator" },
+        { listId: FIFTH_LIST_ID, role: "owner" },
+      ]),
+    );
   });
 
   it("rejects an unsigned or unaccepted user-list index read", async () => {
@@ -432,6 +465,52 @@ describe("public-key list authorization", () => {
       payload,
     });
     expect(retry).toEqual({ status: "deleted" });
+  });
+
+  it("lets collaborators forget a list while owners delete it remotely", async () => {
+    const owner = await createIdentity("List owner");
+    const collaborator = await createIdentity("List collaborator");
+    const { listStub, snapshot } = await publish(owner, TENTH_LIST_ID);
+    await publish(collaborator, ELEVENTH_LIST_ID);
+    const aliases = env.KEWEKE_ALIASES.getByName("directory");
+    await aliases.claimAlias(TENTH_LIST_ID, "forgettable-abcde");
+
+    const touched = await listStub.applyMutation(
+      TENTH_LIST_ID,
+      await signedMutation(collaborator, snapshot, {
+        type: "set-item-checked",
+        itemId: "starter-bread",
+        checked: true,
+      }),
+    );
+    expect(touched.status).toBe("ok");
+
+    const collaboratorAuth = await signedListDeletionAuth(collaborator, TENTH_LIST_ID);
+    const forgotten = await env.KEWEKE_USERS.getByName(collaborator.userId).removeList({
+      ...collaboratorAuth,
+      listId: TENTH_LIST_ID,
+    });
+    expect(forgotten).toEqual({ status: "forgotten" });
+    expect(await listStub.getSnapshot(TENTH_LIST_ID)).not.toBeNull();
+
+    const collaboratorListsAuth = await signedUserListsAuth(collaborator);
+    const collaboratorLists = await env.KEWEKE_USERS.getByName(collaborator.userId).getListIds({
+      auth: collaboratorListsAuth,
+      payload: userListsSigningPayload({
+        userId: collaborator.userId,
+        deviceId: collaborator.deviceId,
+      }),
+    });
+    expect(collaboratorLists).not.toContain(TENTH_LIST_ID);
+
+    const ownerAuth = await signedListDeletionAuth(owner, TENTH_LIST_ID);
+    const deleted = await env.KEWEKE_USERS.getByName(owner.userId).removeList({
+      ...ownerAuth,
+      listId: TENTH_LIST_ID,
+    });
+    expect(deleted).toEqual({ status: "deleted" });
+    expect(await listStub.getSnapshot(TENTH_LIST_ID)).toBeNull();
+    expect(await aliases.getListId("forgettable-abcde")).toBeNull();
   });
 
   it("lets an accepted device approve another device, including transitive approval", async () => {

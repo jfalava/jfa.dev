@@ -1,5 +1,6 @@
 import {
   deviceRevocationSigningPayload,
+  listDeletionSigningPayload,
   pairingApprovalSigningPayload,
   userCreateSigningPayload,
   userDeleteSigningPayload,
@@ -15,13 +16,17 @@ import {
   userProfileSchema,
   usernameSchema,
 } from "@jfa.dev/common/identities";
-import type { ListSnapshot } from "@jfa.dev/common/lists";
+import { listIdSchema, type ListSnapshot } from "@jfa.dev/common/lists";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
 import type { PairingApprovalStatus, PairingStatus } from "./keweke-pairing";
-import type { AccountDeletionResult, RemoteUserCreationResult } from "./keweke-users";
+import type {
+  AccountDeletionResult,
+  RemoteListRemovalResult,
+  RemoteUserCreationResult,
+} from "./keweke-users";
 import { readRemoteList } from "./remote-list";
 
 export {
@@ -59,6 +64,10 @@ const revokeInputSchema = z.object({
 });
 
 const userListsInputSchema = z.object({ auth: identityAuthSchema });
+const remoteListRemovalInputSchema = z.object({
+  listId: listIdSchema,
+  auth: identityAuthSchema,
+});
 const deleteRemoteUserInputSchema = z.object({ auth: identityAuthSchema });
 const createRemoteUserInputSchema = z.object({ auth: publishAuthSchema });
 
@@ -94,14 +103,15 @@ export const getUserLists = createServerFn()
       userId: data.auth.userId,
       deviceId: data.auth.deviceId,
     });
-    const listIds = await env.KEWEKE_USERS.getByName(data.auth.userId).getListIds({
+    const listIndex = await env.KEWEKE_USERS.getByName(data.auth.userId).getListIndex({
       auth: data.auth,
       payload,
     });
-    if (!listIds) {
+    if (!listIndex) {
       return { status: "unauthorized" as const };
     }
 
+    const listIds = listIndex.map((entry) => entry.listId);
     const results = await Promise.all(listIds.map((listId) => readRemoteList(listId)));
     return {
       status: "ok" as const,
@@ -109,7 +119,25 @@ export const getUserLists = createServerFn()
         (snapshot): snapshot is ListSnapshot => snapshot !== null,
       ),
       missingListIds: listIds.filter((_, index) => results[index] === null),
+      ownedListIds: listIndex
+        .filter((entry) => entry.role === "owner")
+        .map((entry) => entry.listId),
     };
+  });
+
+export const removeRemoteList = createServerFn({ method: "POST" })
+  .validator(remoteListRemovalInputSchema)
+  .handler(async ({ data }): Promise<RemoteListRemovalResult> => {
+    const payload = listDeletionSigningPayload({
+      listId: data.listId,
+      userId: data.auth.userId,
+      deviceId: data.auth.deviceId,
+    });
+    return env.KEWEKE_USERS.getByName(data.auth.userId).removeList({
+      auth: data.auth,
+      listId: data.listId,
+      payload,
+    });
   });
 
 export const deleteRemoteUser = createServerFn({ method: "POST" })

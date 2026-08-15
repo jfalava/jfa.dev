@@ -1,5 +1,6 @@
 import {
   aliasSigningPayload,
+  listDeletionSigningPayload,
   listMutationSigningPayload,
   listPublishSigningPayload,
 } from "@jfa.dev/common/crypto";
@@ -38,6 +39,7 @@ import {
   getRemoteListByAlias,
   importRemoteList,
 } from "@/server/lists";
+import { removeRemoteList as removeRemoteListRequest } from "@/server/users";
 
 export interface LoadedList {
   backend: ListBackend;
@@ -250,4 +252,34 @@ export async function ensureListAlias(
   }
   await saveLocalList(result.snapshot, "remote");
   return result;
+}
+
+export async function removeRemoteList(
+  listId: string,
+): Promise<"deleted" | "forgotten" | "missing"> {
+  const identity = await ensureLocalIdentity();
+  if (!identity?.remoteUsername) {
+    throw new Error("Set up a named user before removing a remote list");
+  }
+
+  const authWithoutSignature = {
+    userId: identity.userId,
+    deviceId: identity.deviceId,
+    signature: "unsigned-signature-placeholder",
+  };
+  const signature = await signLocalPayload(
+    listDeletionSigningPayload({
+      listId,
+      userId: authWithoutSignature.userId,
+      deviceId: authWithoutSignature.deviceId,
+    }),
+  );
+  const result = await removeRemoteListRequest({
+    data: { listId, auth: { ...authWithoutSignature, signature } },
+  });
+  if (result.status === "unauthorized") {
+    throw new Error("The remote user could not authorize this change");
+  }
+  await deleteLocalList(listId);
+  return result.status;
 }

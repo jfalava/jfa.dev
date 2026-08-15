@@ -5,6 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
+import { removeRemoteList } from "@/lib/list-repository";
 import { ensureLocalIdentity } from "@/lib/local-identity";
 import {
   createLocalList,
@@ -73,17 +74,21 @@ function EmptyState() {
   }, [refreshLists]);
 
   const removeList = useCallback(async (list: ListSummary): Promise<void> => {
-    if (list.backend !== "local") {
-      return;
-    }
-
     setDeletingListId(list.id);
     try {
-      await deleteLocalList(list.id);
+      if (list.backend === "local") {
+        await deleteLocalList(list.id);
+      } else {
+        await removeRemoteList(list.id);
+      }
       setConfirmingListId(undefined);
       setError(undefined);
     } catch {
-      setError("Could not delete that local list.");
+      setError(
+        list.backend === "local"
+          ? "Could not delete that local list."
+          : "Could not remove that remote list.",
+      );
     } finally {
       setDeletingListId(undefined);
     }
@@ -143,14 +148,16 @@ function EmptyState() {
                       </div>
                     </Link>
                     <div className="flex shrink-0 items-center gap-1.5">
-                      {list.backend === "local" ? (
+                      {list.backend === "local" || list.backend === "remote" ? (
                         confirmingListId === list.id ? (
                           <>
                             <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
-                              delete?
+                              {list.backend === "remote" && list.remoteRole !== "owner"
+                                ? "forget?"
+                                : "delete?"}
                             </span>
                             <Button
-                              aria-label={`Confirm delete ${list.title}`}
+                              aria-label={`${list.backend === "remote" && list.remoteRole !== "owner" ? "Confirm forget" : "Confirm delete"} ${list.title}`}
                               isDisabled={deletingListId === list.id}
                               onPress={() => void removeList(list)}
                               size="sm"
@@ -170,13 +177,17 @@ function EmptyState() {
                           </>
                         ) : (
                           <Button
-                            aria-label={`Delete ${list.title}`}
+                            aria-label={`${list.backend === "remote" && list.remoteRole !== "owner" ? "Forget" : "Delete"} ${list.title}`}
                             onPress={() => setConfirmingListId(list.id)}
                             size="sm"
                             variant="ghost"
                           >
                             <Trash2 className="size-3.5" />
-                            <span className="hidden sm:inline">delete</span>
+                            <span className="hidden sm:inline">
+                              {list.backend === "remote" && list.remoteRole !== "owner"
+                                ? "forget"
+                                : "delete"}
+                            </span>
                           </Button>
                         )
                       ) : null}
