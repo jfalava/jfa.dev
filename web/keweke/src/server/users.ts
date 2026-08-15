@@ -15,7 +15,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
-import type { PairingStatus } from "./keweke-pairing";
+import type { PairingApprovalStatus, PairingStatus } from "./keweke-pairing";
 
 const pairingStartInputSchema = z.object({
   code: pairingCodeSchema,
@@ -100,7 +100,7 @@ export const approveDevicePairing = createServerFn({ method: "POST" })
       signature: data.auth.signature,
       payload,
     });
-    return JSON.parse(JSON.stringify(result)) as PairingStatus;
+    return JSON.parse(JSON.stringify(result)) as PairingApprovalStatus;
   });
 
 export const revokeUserDevice = createServerFn({ method: "POST" })

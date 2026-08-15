@@ -224,6 +224,25 @@ describe("public-key list authorization", () => {
       targetDevicePublicKey: target.devicePublicKey,
     });
 
+    const unaccepted = await createIdentity("unused-anonymous");
+    const unauthorizedPayload = pairingApprovalSigningPayload({
+      code,
+      userId: unaccepted.userId,
+      approverDeviceId: unaccepted.deviceId,
+      targetDeviceId: target.deviceId,
+      targetDevicePublicKey: target.devicePublicKey,
+    });
+    const unauthorized = await pairing.approve({
+      code,
+      userId: unaccepted.userId,
+      approverDeviceId: unaccepted.deviceId,
+      targetDeviceId: target.deviceId,
+      targetDevicePublicKey: target.devicePublicKey,
+      signature: await signPayload(unaccepted.devicePrivateKey, unauthorizedPayload),
+      payload: unauthorizedPayload,
+    });
+    expect(unauthorized).toEqual({ status: "unauthorized", code });
+
     const approvalPayload = pairingApprovalSigningPayload({
       code,
       userId: identity.userId,

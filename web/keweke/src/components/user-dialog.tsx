@@ -313,15 +313,31 @@ export function UserDialog() {
           targetDevicePublicKey: pairingStatus.targetDevicePublicKey,
         },
       });
-      setPairingStatus(result);
       if (result.status === "approved") {
+        setPairingStatus(result);
         setProfile(result.profile);
         setMessage("approval", "The device was approved.");
+      } else if (result.status === "unauthorized") {
+        setError(
+          "approval",
+          "This browser is not an accepted device for that user. Use a browser already connected to the user to approve it.",
+        );
+      } else if (result.status === "expired") {
+        setPairingStatus(result);
+        setError("approval", "That pairing code has expired. Create a new code and try again.");
+      } else if (result.status === "missing") {
+        setPairingStatus(result);
+        setError("approval", "That pairing code is no longer active.");
       } else {
-        setError("approval", "This device could not be approved.");
+        setPairingStatus(result);
+        setError(
+          "approval",
+          "The pairing code could not be approved. Check the code and try again.",
+        );
       }
-    } catch {
-      setError("approval", "This device could not be approved.");
+    } catch (error) {
+      console.error("Keweke pairing approval request failed", error);
+      setError("approval", "The approval request failed. Check your connection and try again.");
     } finally {
       setIsApproving(false);
     }

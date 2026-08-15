@@ -39,6 +39,13 @@ export type PairingStatus =
       profile: UserProfile;
     };
 
+export type PairingApprovalStatus =
+  | PairingStatus
+  | {
+      status: "unauthorized";
+      code: string;
+    };
+
 export class KewekePairingSession extends DurableObject {
   constructor(ctx: DurableObjectState, env: Cloudflare.Env) {
     super(ctx, env);
@@ -121,7 +128,7 @@ export class KewekePairingSession extends DurableObject {
     targetDevicePublicKey: string;
     signature: string;
     payload: string;
-  }): Promise<PairingStatus> {
+  }): Promise<PairingApprovalStatus> {
     const code = pairingCodeSchema.parse(input.code);
     const row = this.readRow();
     if (!row || (await sha256Base64Url(code)) !== row.code_hash) {
@@ -150,7 +157,7 @@ export class KewekePairingSession extends DurableObject {
       payload: input.payload,
     });
     if (approval.status === "unauthorized") {
-      return { status: "missing", code };
+      return { status: "unauthorized", code };
     }
 
     this.ctx.storage.sql.exec(
