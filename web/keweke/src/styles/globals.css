@@ -29,7 +29,7 @@ body {
     font-size: 16px !important;
   }
 
-  [data-slot="button"] {
+  main [data-slot="button"] {
     min-width: 2.75rem;
     min-height: 2.75rem;
     touch-action: manipulation;

@@ -18,12 +18,12 @@ const themeByKey: Record<string, ThemeMode> = {
 
 function ThemeIcon({ theme }: { theme: ThemeMode }) {
   if (theme === "dark") {
-    return <Moon className="size-3.5" />;
+    return <Moon className="h-5 w-5" />;
   }
   if (theme === "light") {
-    return <Sun className="size-3.5" />;
+    return <Sun className="h-5 w-5" />;
   }
-  return <Monitor className="size-3.5" />;
+  return <Monitor className="h-5 w-5" />;
 }
 
 export function ThemeToggle() {

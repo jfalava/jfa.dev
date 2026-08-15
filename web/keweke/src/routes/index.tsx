@@ -1,17 +1,24 @@
 import type { ListSummary } from "@jfa.dev/common/lists";
 import { Button } from "@jfa.dev/common/ui";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Trash2 } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
-import { deleteLocalList, listLocalLists, subscribeToLocalLists } from "@/lib/local-list-store";
+import {
+  createLocalList,
+  deleteLocalList,
+  listLocalLists,
+  subscribeToLocalLists,
+} from "@/lib/local-list-store";
 
 export const Route = createFileRoute("/")({ component: EmptyState });
 
 function EmptyState() {
+  const navigate = useNavigate();
   const [lists, setLists] = useState<ListSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
   const [confirmingListId, setConfirmingListId] = useState<string>();
   const [deletingListId, setDeletingListId] = useState<string>();
   const [error, setError] = useState<string>();
@@ -45,6 +52,16 @@ function EmptyState() {
       setDeletingListId(undefined);
     }
   }, []);
+
+  const createList = async (): Promise<void> => {
+    setIsCreating(true);
+    try {
+      const result = await createLocalList();
+      await navigate({ to: "/$listId", params: { listId: result.id } });
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
@@ -135,9 +152,19 @@ function EmptyState() {
                 ))}
               </div>
             ) : (
-              <p className="py-10 text-sm text-muted-foreground">
-                No local lists yet. Use “new” in the header to start one.
-              </p>
+              <div className="py-10">
+                <p className="text-base text-muted-foreground">
+                  No lists yet. Create one to get started.
+                </p>
+                <Button
+                  className="mt-6 h-11 w-full text-base sm:hidden"
+                  isDisabled={isCreating}
+                  onPress={() => void createList()}
+                >
+                  <Plus className="size-4" />
+                  {isCreating ? "Creating…" : "Create a new list"}
+                </Button>
+              </div>
             )}
             {error ? (
               <p className="mt-4 border-t border-destructive/40 pt-3 font-mono text-[10px] tracking-wide text-destructive uppercase">
