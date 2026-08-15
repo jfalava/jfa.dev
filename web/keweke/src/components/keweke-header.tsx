@@ -75,7 +75,7 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
               variant="outline"
             >
               <CloudUpload className="size-3.5" />
-              <span className="hidden sm:inline">{isMigrating ? "migrating" : "migrate"}</span>
+              <span className="hidden sm:inline">{isMigrating ? "Migrating" : "Migrate"}</span>
             </Button>
           ) : null}
           {listId && backend === "remote" ? (
@@ -86,7 +86,7 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
               variant="outline"
             >
               {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-              <span className="hidden sm:inline">{copied ? "copied" : "share"}</span>
+              <span className="hidden sm:inline">{copied ? "Copied" : "Share"}</span>
             </Button>
           ) : null}
           <Button
@@ -96,7 +96,7 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
             onPress={() => void createList()}
           >
             <Plus className="size-3.5" />
-            <span className="hidden sm:inline">new</span>
+            <span className="hidden sm:inline">New</span>
           </Button>
         </nav>
       </div>

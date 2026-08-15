@@ -2,7 +2,7 @@ import type { DeletedListItem, ListCommand, ListItem, ListSnapshot } from "@jfa.
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
-import { Check, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-react";
+import { Check, Pencil, Plus, RotateCcw, Search, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { v7 as uuidv7 } from "uuid";
 
@@ -342,16 +342,28 @@ function ListPage() {
           </div>
         ) : null}
 
-        <div className="invoice-rule flex flex-col items-stretch gap-2 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <Input
-            id="filter-items"
-            aria-label="Filter list items"
-            className="max-w-xs font-mono text-base sm:text-[11px]"
-            onChange={(event) => setFilter(event.target.value)}
-            placeholder="filter items"
-            value={filter}
-          />
-          <form className="flex w-full flex-wrap gap-1.5 sm:w-auto" onSubmit={addItem}>
+        <div className="invoice-rule border-b px-4 py-3 sm:px-6 lg:px-8">
+          <div className="relative w-full">
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              id="filter-items"
+              aria-label="Search items"
+              className="w-full max-w-none pl-10 font-mono text-base sm:text-[11px]"
+              onChange={(event) => setFilter(event.target.value)}
+              placeholder="Search items"
+              value={filter}
+            />
+          </div>
+        </div>
+        <div className="invoice-rule border-b px-4 py-3 sm:px-6 lg:px-8">
+          <form
+            aria-label="Add an item"
+            className="flex w-full flex-wrap gap-1.5 sm:justify-end"
+            onSubmit={addItem}
+          >
             <label className="sr-only" htmlFor="new-item">
               New item
             </label>
@@ -360,7 +372,7 @@ function ListPage() {
               aria-label="New item"
               className="min-w-44 flex-1 text-base sm:w-56 sm:flex-none sm:text-sm"
               onChange={(event) => setDraftItem(event.target.value)}
-              placeholder="new item"
+              placeholder="New item"
               value={draftItem}
             />
             <label className="sr-only" htmlFor="new-quantity">
@@ -374,9 +386,13 @@ function ListPage() {
               onChange={(event) => setDraftQuantity(event.target.value)}
               value={draftQuantity}
             />
-            <Button type="submit">
-              <Plus className="size-3.5" />
-              add
+            <Button
+              aria-label="Add item"
+              className="size-11 p-0 text-base sm:h-7 sm:w-auto sm:min-w-0 sm:px-2 sm:text-xs"
+              type="submit"
+            >
+              <Plus className="h-5 w-5 sm:size-3.5" />
+              <span className="hidden sm:inline">Add</span>
             </Button>
           </form>
         </div>
@@ -469,7 +485,7 @@ function ListTitleEditor({
         value={value}
       />
       <Button isDisabled={isSaving} size="sm" type="submit">
-        {isSaving ? "saving" : "save"}
+        {isSaving ? "Saving" : "Save"}
       </Button>
       <Button
         isDisabled={isSaving}
@@ -478,7 +494,7 @@ function ListTitleEditor({
         type="button"
         variant="ghost"
       >
-        cancel
+        Cancel
       </Button>
     </form>
   );
@@ -522,11 +538,11 @@ function ListAliasEditor({
         aria-label="Friendly list address"
         className="min-w-44 flex-1 font-mono text-base sm:text-[11px]"
         onChange={(event) => setValue(event.target.value)}
-        placeholder="name this list for sharing"
+        placeholder="Name this list for sharing"
         value={value}
       />
       <Button isDisabled={isSaving} type="submit" variant="outline">
-        {isSaving ? "saving" : "make address"}
+        {isSaving ? "Saving" : "Make address"}
       </Button>
     </form>
   );

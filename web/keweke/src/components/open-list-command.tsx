@@ -48,7 +48,7 @@ export function OpenListCommand() {
     >
       <Button aria-label="Open list" className="h-7" variant="outline">
         <Search className="size-3.5" />
-        <span>open list</span>
+        <span>Open list</span>
       </Button>
       <ModalOverlay
         className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-16 sm:pt-20"
