@@ -1,8 +1,12 @@
-import type { ListIdentity } from "@jfa.dev/common/identities";
 import type { DeletedListItem, ListCommand, ListItem, ListSnapshot } from "@jfa.dev/common/lists";
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
-import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
+import {
+  createColumnHelper,
+  tableFeatures,
+  useTable,
+  type ReactTable,
+} from "@tanstack/react-table";
 import {
   ArrowLeftRight,
   Check,
@@ -29,8 +33,10 @@ import {
 } from "@/lib/list-repository";
 import {
   ensureLocalIdentity,
+  LOCAL_IDENTITY_PLACEHOLDER,
   saveLocalIdentity,
   subscribeToLocalIdentity,
+  type LocalIdentity,
 } from "@/lib/local-identity";
 
 const shoppingTableFeatures = tableFeatures({});
@@ -43,6 +49,8 @@ type ItemEditDraft = {
   unit: string;
   category: string;
 };
+
+type ShoppingTableInstance = ReactTable<typeof shoppingTableFeatures, ListItem>;
 
 export const Route = createFileRoute("/$listId")({
   beforeLoad: ({ params }) => {
@@ -67,7 +75,7 @@ function ListPage() {
   const [filter, setFilter] = useState("");
   const [draftItem, setDraftItem] = useState("");
   const [draftQuantity, setDraftQuantity] = useState("1");
-  const [identity, setIdentity] = useState<ListIdentity>();
+  const [identity, setIdentity] = useState<LocalIdentity>();
   const [isSavingIdentity, setIsSavingIdentity] = useState(false);
 
   useEffect(() => {
@@ -114,7 +122,11 @@ function ListPage() {
       const result = await applyMutation(
         loadedList.snapshot.id,
         loadedList.backend,
-        createMutation(loadedList.snapshot, command, identity),
+        createMutation(
+          loadedList.snapshot,
+          command,
+          identity.username ? { id: identity.id, username: identity.username } : undefined,
+        ),
       );
       if (result.status === "missing") {
         setError("This list no longer exists.");
@@ -609,7 +621,7 @@ function LocalIdentityEditor({
   isSaving,
   onSave,
 }: {
-  identity?: ListIdentity;
+  identity?: LocalIdentity;
   isSaving: boolean;
   onSave: (username: string) => boolean;
 }) {
@@ -634,7 +646,9 @@ function LocalIdentityEditor({
     return (
       <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-2">
         <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">by</p>
-        <span className="text-sm font-medium">{identity.username}</span>
+        <span className="text-sm font-medium">
+          {identity.username ?? LOCAL_IDENTITY_PLACEHOLDER}
+        </span>
         <Button
           aria-label="Change local username"
           className="size-7 p-0"
@@ -669,7 +683,7 @@ function LocalIdentityEditor({
         disabled={isSaving}
         maxLength={48}
         onChange={(event) => setValue(event.target.value)}
-        placeholder="Your username"
+        placeholder={LOCAL_IDENTITY_PLACEHOLDER}
         value={value}
       />
       <Button isDisabled={isSaving} size="sm" type="submit">
@@ -818,26 +832,39 @@ function ShoppingTable({
       updateDraft,
     ],
   );
+  const mobileColumns = useMemo(
+    () =>
+      createMobileShoppingColumns({
+        isSaving,
+        onRemove,
+        onStartEditing: startEditing,
+        onToggle,
+      }),
+    [isSaving, onRemove, onToggle, startEditing],
+  );
   const table = useTable({
     features: shoppingTableFeatures,
     data: items,
     columns,
     getRowId: (row) => row.id,
   });
+  const mobileTable = useTable({
+    features: shoppingTableFeatures,
+    data: items,
+    columns: mobileColumns,
+    getRowId: (row) => row.id,
+  });
 
   return (
     <>
-      <MobileShoppingList
+      <MobileShoppingTable
         editDraft={editDraft}
         editingItemId={editingItemId}
         isSaving={isSaving}
-        items={items}
+        table={mobileTable}
         onCancelEditing={cancelEditing}
         onEditDraftChange={updateDraft}
-        onRemove={onRemove}
         onSaveEditing={saveEditing}
-        onStartEditing={startEditing}
-        onToggle={onToggle}
       />
       <div className="hidden w-full overflow-x-auto md:block">
         <table className="w-full min-w-[760px] border-collapse">
@@ -897,30 +924,26 @@ function ShoppingTable({
   );
 }
 
-function MobileShoppingList({
+function MobileShoppingTable({
   editDraft,
   editingItemId,
   isSaving,
-  items,
+  table,
   onCancelEditing,
   onEditDraftChange,
-  onRemove,
   onSaveEditing,
-  onStartEditing,
-  onToggle,
 }: {
   editDraft?: ItemEditDraft;
   editingItemId?: string;
   isSaving: boolean;
-  items: ListItem[];
+  table: ShoppingTableInstance;
   onCancelEditing: () => void;
   onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
-  onRemove: (id: string) => void;
   onSaveEditing: () => void;
-  onStartEditing: (item: ListItem) => void;
-  onToggle: (id: string, checked: boolean) => void;
 }) {
-  if (items.length === 0) {
+  const rows = table.getRowModel().rows;
+
+  if (rows.length === 0) {
     return (
       <p className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase md:hidden">
         no matching lines
@@ -929,129 +952,125 @@ function MobileShoppingList({
   }
 
   return (
-    <div className="divide-y divide-border md:hidden">
-      {items.map((item) => {
-        if (editingItemId === item.id) {
-          return (
-            <form
-              className="grid grid-cols-2 gap-2 px-4 py-3"
-              key={item.id}
-              onSubmit={(event) => {
-                event.preventDefault();
-                onSaveEditing();
-              }}
-            >
-              <label className="sr-only" htmlFor={`mobile-edit-name-${item.id}`}>
-                Edit {item.name} name
-              </label>
-              <Input
-                id={`mobile-edit-name-${item.id}`}
-                aria-label={`Edit ${item.name} name`}
-                className="col-span-2 min-w-0"
-                maxLength={200}
-                onChange={(event) => onEditDraftChange("name", event.target.value)}
-                value={editDraft?.name ?? item.name}
-              />
-              <label className="sr-only" htmlFor={`mobile-edit-quantity-${item.id}`}>
-                Edit {item.name} quantity
-              </label>
-              <Input
-                id={`mobile-edit-quantity-${item.id}`}
-                aria-label={`Edit ${item.name} quantity`}
-                className="min-w-0 font-mono"
-                inputMode="numeric"
-                maxLength={6}
-                onChange={(event) => onEditDraftChange("quantity", event.target.value)}
-                value={editDraft?.quantity ?? String(item.quantity)}
-              />
-              <label className="sr-only" htmlFor={`mobile-edit-unit-${item.id}`}>
-                Edit {item.name} unit
-              </label>
-              <Input
-                id={`mobile-edit-unit-${item.id}`}
-                aria-label={`Edit ${item.name} unit`}
-                className="min-w-0 font-mono"
-                maxLength={32}
-                onChange={(event) => onEditDraftChange("unit", event.target.value)}
-                value={editDraft?.unit ?? item.unit}
-              />
-              <label className="sr-only" htmlFor={`mobile-edit-category-${item.id}`}>
-                Edit {item.name} category
-              </label>
-              <Input
-                id={`mobile-edit-category-${item.id}`}
-                aria-label={`Edit ${item.name} category`}
-                className="col-span-2 min-w-0 font-mono tracking-[0.08em]"
-                maxLength={64}
-                onChange={(event) => onEditDraftChange("category", event.target.value)}
-                value={editDraft?.category ?? item.category}
-              />
-              <div className="col-span-2 flex justify-end gap-2">
-                <Button className="min-w-20" isDisabled={isSaving} type="submit">
-                  {isSaving ? "saving" : "save"}
-                </Button>
-                <Button
-                  className="min-w-20"
-                  isDisabled={isSaving}
-                  onPress={onCancelEditing}
-                  type="button"
-                  variant="ghost"
-                >
-                  cancel
-                </Button>
-              </div>
-            </form>
-          );
-        }
+    <div className="md:hidden">
+      <table className="w-full border-collapse">
+        <caption className="sr-only">Shopping list items</caption>
+        <thead className="sr-only">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} scope="col">
+                  {header.isPlaceholder ? null : <table.FlexRender header={header} />}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody className="divide-y divide-border">
+          {rows.map((row) => {
+            if (editingItemId === row.original.id) {
+              return (
+                <tr key={row.id}>
+                  <TableCell className="px-4 py-3" colSpan={row.getAllCells().length}>
+                    <form
+                      className="grid grid-cols-2 gap-2"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        onSaveEditing();
+                      }}
+                    >
+                      <label className="sr-only" htmlFor={`mobile-edit-name-${row.original.id}`}>
+                        Edit {row.original.name} name
+                      </label>
+                      <Input
+                        id={`mobile-edit-name-${row.original.id}`}
+                        aria-label={`Edit ${row.original.name} name`}
+                        className="col-span-2 min-w-0"
+                        maxLength={200}
+                        onChange={(event) => onEditDraftChange("name", event.target.value)}
+                        value={editDraft?.name ?? row.original.name}
+                      />
+                      <label
+                        className="sr-only"
+                        htmlFor={`mobile-edit-quantity-${row.original.id}`}
+                      >
+                        Edit {row.original.name} quantity
+                      </label>
+                      <Input
+                        id={`mobile-edit-quantity-${row.original.id}`}
+                        aria-label={`Edit ${row.original.name} quantity`}
+                        className="min-w-0 font-mono"
+                        inputMode="numeric"
+                        maxLength={6}
+                        onChange={(event) => onEditDraftChange("quantity", event.target.value)}
+                        value={editDraft?.quantity ?? String(row.original.quantity)}
+                      />
+                      <label className="sr-only" htmlFor={`mobile-edit-unit-${row.original.id}`}>
+                        Edit {row.original.name} unit
+                      </label>
+                      <Input
+                        id={`mobile-edit-unit-${row.original.id}`}
+                        aria-label={`Edit ${row.original.name} unit`}
+                        className="min-w-0 font-mono"
+                        maxLength={32}
+                        onChange={(event) => onEditDraftChange("unit", event.target.value)}
+                        value={editDraft?.unit ?? row.original.unit}
+                      />
+                      <label
+                        className="sr-only"
+                        htmlFor={`mobile-edit-category-${row.original.id}`}
+                      >
+                        Edit {row.original.name} category
+                      </label>
+                      <Input
+                        id={`mobile-edit-category-${row.original.id}`}
+                        aria-label={`Edit ${row.original.name} category`}
+                        className="col-span-2 min-w-0 font-mono tracking-[0.08em]"
+                        maxLength={64}
+                        onChange={(event) => onEditDraftChange("category", event.target.value)}
+                        value={editDraft?.category ?? row.original.category}
+                      />
+                      <div className="col-span-2 flex justify-end gap-2">
+                        <Button className="min-w-20" isDisabled={isSaving} type="submit">
+                          {isSaving ? "saving" : "save"}
+                        </Button>
+                        <Button
+                          className="min-w-20"
+                          isDisabled={isSaving}
+                          onPress={onCancelEditing}
+                          type="button"
+                          variant="ghost"
+                        >
+                          cancel
+                        </Button>
+                      </div>
+                    </form>
+                  </TableCell>
+                </tr>
+              );
+            }
 
-        return (
-          <div className="flex items-center gap-2 px-4 py-2" key={item.id}>
-            <Checkbox
-              aria-label={`Mark ${item.name} as ${item.checked ? "open" : "done"}`}
-              className="size-11 shrink-0 justify-center rounded-md"
-              isSelected={item.checked}
-              onChange={(checked) => onToggle(item.id, checked)}
-            />
-            <div className="min-w-0 flex-1 py-1">
-              <p
-                className={
-                  item.checked
-                    ? "truncate font-medium text-muted-foreground line-through"
-                    : "truncate font-medium"
-                }
-              >
-                {item.name}
-              </p>
-              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                <span>
-                  {item.quantity} {item.unit} · {item.category} · {item.checked ? "done" : "open"}
-                </span>
-                <SignedItemBadge item={item} />
-              </div>
-            </div>
-            <div className="flex shrink-0 items-center gap-0.5">
-              <Button
-                aria-label={`Edit ${item.name}`}
-                className="size-11 p-0"
-                isDisabled={isSaving}
-                onPress={() => onStartEditing(item)}
-                variant="ghost"
-              >
-                <Pencil className="size-4" />
-              </Button>
-              <Button
-                aria-label={`Remove ${item.name}`}
-                className="size-11 p-0"
-                isDisabled={isSaving}
-                onPress={() => onRemove(item.id)}
-                variant="ghost"
-              >
-                <Trash2 className="size-4" />
-              </Button>
-            </div>
-          </div>
-        );
-      })}
+            return (
+              <tr key={row.id}>
+                {row.getAllCells().map((cell) => (
+                  <TableCell
+                    className={
+                      cell.column.id === "done"
+                        ? "w-12 px-1"
+                        : cell.column.id === "actions"
+                          ? "w-24 px-1"
+                          : "min-w-0 px-1"
+                    }
+                    key={cell.id}
+                  >
+                    <table.FlexRender cell={cell} />
+                  </TableCell>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -1079,40 +1098,37 @@ function DeletedItemsHistory({
   }, []);
 
   return (
-    <section className="invoice-rule border-t px-4 py-6 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border pb-3">
+    <section className="invoice-rule border-t border-destructive/30 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="border-b border-border pb-3">
         <div>
           <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-            item history
+            Item history
           </p>
           <h2 className="mt-1 text-xl leading-none font-semibold tracking-tight uppercase">
-            Deleted lines
+            Deleted items
           </h2>
         </div>
-        <p className="max-w-xs text-right font-mono text-[10px] tracking-wide text-muted-foreground uppercase">
-          kept forever until you delete forever
-        </p>
       </div>
       <div className="divide-y divide-border">
         {historyItems.map((item) => {
           const isBusy = busyArchiveId === item.archiveId;
           return (
             <div
-              className="flex flex-wrap items-center justify-between gap-3 py-3"
+              className="flex flex-wrap items-center justify-between gap-3 py-4"
               key={item.archiveId}
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{item.name}</p>
                 <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                  {item.quantity} {item.unit} · {item.category} · deleted{" "}
+                  {item.quantity} {item.unit} · {item.category} · Deleted{" "}
                   {item.deletedAt.slice(0, 10)}
-                  {item.deletedBy ? ` · deleted by ${item.deletedBy.username}` : ""}
+                  {item.deletedBy ? ` · Deleted by ${item.deletedBy.username}` : ""}
                 </p>
               </div>
               {confirmingArchiveId === item.archiveId ? (
                 <div className="flex items-center gap-1.5">
                   <Button
-                    aria-label={`Confirm delete ${item.name} forever`}
+                    aria-label={`Delete ${item.name} forever`}
                     isDisabled={isBusy}
                     onPress={() => {
                       setConfirmingArchiveId(undefined);
@@ -1121,7 +1137,7 @@ function DeletedItemsHistory({
                     size="sm"
                     variant="destructive"
                   >
-                    delete forever
+                    Delete forever
                   </Button>
                   <Button
                     isDisabled={isBusy}
@@ -1129,7 +1145,7 @@ function DeletedItemsHistory({
                     size="sm"
                     variant="ghost"
                   >
-                    keep it
+                    Cancel
                   </Button>
                 </div>
               ) : (
@@ -1142,17 +1158,17 @@ function DeletedItemsHistory({
                     variant="outline"
                   >
                     <RotateCcw />
-                    restore
+                    Restore
                   </Button>
                   <Button
                     aria-label={`Delete ${item.name} forever`}
                     isDisabled={isBusy}
                     onPress={() => setConfirmingArchiveId(item.archiveId)}
                     size="sm"
-                    variant="ghost"
+                    variant="destructive"
                   >
                     <Trash2 />
-                    delete forever
+                    Delete forever
                   </Button>
                 </div>
               )}
@@ -1354,6 +1370,83 @@ function createShoppingColumns({
             </Button>
           </div>
         ),
+    }),
+  ]);
+}
+
+function createMobileShoppingColumns({
+  isSaving,
+  onRemove,
+  onStartEditing,
+  onToggle,
+}: {
+  isSaving: boolean;
+  onRemove: (id: string) => void;
+  onStartEditing: (item: ListItem) => void;
+  onToggle: (id: string, checked: boolean) => void;
+}) {
+  return shoppingColumnHelper.columns([
+    shoppingColumnHelper.display({
+      id: "done",
+      header: "status",
+      cell: ({ row }) => (
+        <Checkbox
+          aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "done"}`}
+          className="size-11 shrink-0 justify-center rounded-md"
+          isSelected={row.original.checked}
+          onChange={(checked) => onToggle(row.original.id, checked)}
+        />
+      ),
+    }),
+    shoppingColumnHelper.display({
+      id: "item",
+      header: "item",
+      cell: ({ row }) => (
+        <div className="min-w-0 py-1">
+          <p
+            className={
+              row.original.checked
+                ? "truncate font-medium text-muted-foreground line-through"
+                : "truncate font-medium"
+            }
+          >
+            {row.original.name}
+          </p>
+          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+            <span>
+              {row.original.quantity} {row.original.unit} · {row.original.category} ·{" "}
+              {row.original.checked ? "done" : "open"}
+            </span>
+            <SignedItemBadge item={row.original} />
+          </div>
+        </div>
+      ),
+    }),
+    shoppingColumnHelper.display({
+      id: "actions",
+      header: "actions",
+      cell: ({ row }) => (
+        <div className="flex shrink-0 items-center gap-0.5">
+          <Button
+            aria-label={`Edit ${row.original.name}`}
+            className="size-11 p-0"
+            isDisabled={isSaving}
+            onPress={() => onStartEditing(row.original)}
+            variant="ghost"
+          >
+            <Pencil className="size-4" />
+          </Button>
+          <Button
+            aria-label={`Remove ${row.original.name}`}
+            className="size-11 p-0"
+            isDisabled={isSaving}
+            onPress={() => onRemove(row.original.id)}
+            variant="ghost"
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
+      ),
     }),
   ]);
 }

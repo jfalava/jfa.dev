@@ -39,12 +39,25 @@ afterEach(() => {
 });
 
 describe("local identity storage", () => {
-  test("keeps the hidden id stable when the username changes", () => {
+  test("keeps anonymous as a placeholder until the username changes", () => {
     const first = ensureLocalIdentity();
+
+    expect(first).toEqual({ id: first.id, username: null });
+    expect(readLocalIdentity()).toEqual(first);
+
     const updated = saveLocalIdentity("  Alex  ");
 
     expect(first.id).toMatch(/^[a-z]{5}$/);
     expect(updated).toEqual({ id: first.id, username: "Alex" });
     expect(readLocalIdentity()).toEqual(updated);
+  });
+
+  test("treats the old persisted anonymous default as an unset username", () => {
+    window.localStorage.setItem(
+      "keweke-local-identity",
+      JSON.stringify({ id: "abcde", username: "Anonymous" }),
+    );
+
+    expect(readLocalIdentity()).toEqual({ id: "abcde", username: null });
   });
 });
