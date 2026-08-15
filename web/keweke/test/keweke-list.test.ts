@@ -14,12 +14,14 @@ const NOW = "2026-08-14T10:00:00.000Z";
 describe("KewekeList Durable Object", () => {
   it("imports, persists, and applies a portable list snapshot", async () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    snapshot.items[0] = { ...snapshot.items[0], amount: "500g" };
     const stub = env.KEWEKE_LISTS.getByName(LIST_ID);
 
     const imported = await runInDurableObject(stub, (instance: KewekeList) =>
       instance.importSnapshot(LIST_ID, snapshot, "migration-001"),
     );
     expect(imported.status).toBe("imported");
+    expect((await stub.getSnapshot(LIST_ID))?.items[0]?.amount).toBe("500g");
 
     const aliased = await stub.setAlias(LIST_ID, "weekend-groceries-abcde");
     expect(aliased?.alias).toBe("weekend-groceries-abcde");

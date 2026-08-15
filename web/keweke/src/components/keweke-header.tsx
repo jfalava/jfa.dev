@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { OpenListCommand } from "@/components/open-list-command";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { UserDialog } from "@/components/user-dialog";
 import { createLocalList } from "@/lib/local-list-store";
 
 interface KewekeHeaderProps {
@@ -64,6 +65,7 @@ export function KewekeHeader({
 
         <nav className="flex shrink-0 items-center gap-1" aria-label="General navigation">
           <OpenListCommand />
+          <UserDialog />
           <Link
             aria-label="Help"
             className="inline-flex size-7 items-center justify-center rounded-md border border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"

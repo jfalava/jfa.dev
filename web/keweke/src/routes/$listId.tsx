@@ -19,12 +19,11 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { v7 as uuidv7 } from "uuid";
 
 import { KewekeHeader } from "@/components/keweke-header";
 import { isListAddress } from "@/lib/list-id";
-import { appPath } from "@/lib/site-paths";
 import {
   applyMutation,
   createMutation,
@@ -39,6 +38,7 @@ import {
   subscribeToLocalIdentity,
   type LocalIdentity,
 } from "@/lib/local-identity";
+import { appPath } from "@/lib/site-paths";
 
 const shoppingTableFeatures = tableFeatures({});
 const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ListItem>();
@@ -48,8 +48,11 @@ type ItemEditDraft = {
   name: string;
   quantity: string;
   unit: string;
+  amount: string;
   category: string;
 };
+
+type NewItemDraft = ItemEditDraft;
 
 type ShoppingTableInstance = ReactTable<typeof shoppingTableFeatures, ListItem>;
 
@@ -74,8 +77,13 @@ function ListPage() {
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [error, setError] = useState<string>();
   const [filter, setFilter] = useState("");
-  const [draftItem, setDraftItem] = useState("");
-  const [draftQuantity, setDraftQuantity] = useState("1");
+  const [newItemDraft, setNewItemDraft] = useState<NewItemDraft>({
+    name: "",
+    quantity: "1",
+    unit: "EA",
+    amount: "",
+    category: "GENERAL",
+  });
   const [identity, setIdentity] = useState<LocalIdentity>();
   const [isSavingIdentity, setIsSavingIdentity] = useState(false);
 
@@ -229,18 +237,28 @@ function ListPage() {
       const name = draft.name.trim();
       const quantity = Number(draft.quantity);
       const unit = draft.unit.trim();
+      const amount = draft.amount.trim();
       const category = draft.category.trim();
-      if (!name || !Number.isInteger(quantity) || quantity < 1 || !unit || !category) {
+      if (
+        !name ||
+        !Number.isInteger(quantity) ||
+        quantity < 1 ||
+        !unit ||
+        amount.length > 64 ||
+        !category
+      ) {
         setError("Enter a name, whole quantity, unit, and category.");
         return false;
       }
 
       try {
-        return (await commit({
-          type: "update-item",
-          itemId,
-          changes: { name, quantity, unit, category },
-        })) !== null;
+        return (
+          (await commit({
+            type: "update-item",
+            itemId,
+            changes: { name, quantity, unit, amount, category },
+          })) !== null
+        );
       } catch {
         setError("Could not save the item right now.");
         return false;
@@ -263,34 +281,51 @@ function ListPage() {
     [commit],
   );
 
-  const addItem = useCallback(
-    (event: FormEvent<HTMLFormElement>): void => {
-      event.preventDefault();
-      const name = draftItem.trim();
-      const quantity = Number.parseInt(draftQuantity, 10);
-      if (!name || !Number.isFinite(quantity) || quantity < 1) {
-        return;
-      }
+  const updateNewItemDraft = useCallback((field: keyof NewItemDraft, value: string): void => {
+    setNewItemDraft((current) => ({ ...current, [field]: value }));
+  }, []);
 
-      void commit({
-        type: "add-item",
-        item: {
-          id: uuidv7(),
-          name,
-          quantity,
+  const addItem = useCallback((): void => {
+    const name = newItemDraft.name.trim();
+    const quantity = Number.parseInt(newItemDraft.quantity, 10);
+    const unit = newItemDraft.unit.trim();
+    const amount = newItemDraft.amount.trim();
+    const category = newItemDraft.category.trim();
+    if (
+      !name ||
+      !Number.isFinite(quantity) ||
+      quantity < 1 ||
+      !unit ||
+      unit.length > 32 ||
+      amount.length > 64 ||
+      !category
+    ) {
+      return;
+    }
+
+    void commit({
+      type: "add-item",
+      item: {
+        id: uuidv7(),
+        name,
+        quantity,
+        unit,
+        amount,
+        category,
+      },
+    }).then((committed) => {
+      if (committed) {
+        setNewItemDraft({
+          name: "",
+          quantity: "1",
           unit: "EA",
+          amount: "",
           category: "GENERAL",
-        },
-      }).then((committed) => {
-        if (committed) {
-          setDraftItem("");
-          setDraftQuantity("1");
-        }
-        return committed;
-      });
-    },
-    [commit, draftItem, draftQuantity],
-  );
+        });
+      }
+      return committed;
+    });
+  }, [commit, newItemDraft]);
 
   const toggleItem = useCallback(
     (id: string, checked: boolean): void => {
@@ -318,7 +353,7 @@ function ListPage() {
     }
 
     return items.filter((item) =>
-      [item.name, item.category, item.unit].some((value) =>
+      [item.name, item.category, item.unit, item.amount].some((value) =>
         value.toLowerCase().includes(normalizedFilter),
       ),
     );
@@ -410,48 +445,13 @@ function ListPage() {
             />
           </div>
         </div>
-        <div className="invoice-rule border-b px-4 py-3 sm:px-6 lg:px-8">
-          <form
-            aria-label="Add an item"
-            className="flex w-full flex-wrap gap-1.5 sm:justify-end"
-            onSubmit={addItem}
-          >
-            <label className="sr-only" htmlFor="new-item">
-              New item
-            </label>
-            <Input
-              id="new-item"
-              aria-label="New item"
-              className="min-w-44 flex-1 text-base sm:w-56 sm:flex-none sm:text-sm"
-              onChange={(event) => setDraftItem(event.target.value)}
-              placeholder="New item"
-              value={draftItem}
-            />
-            <label className="sr-only" htmlFor="new-quantity">
-              Quantity
-            </label>
-            <Input
-              id="new-quantity"
-              aria-label="Quantity"
-              className="w-16 text-right font-mono text-base sm:text-sm"
-              inputMode="numeric"
-              onChange={(event) => setDraftQuantity(event.target.value)}
-              value={draftQuantity}
-            />
-            <Button
-              aria-label="Add item"
-              className="size-11 p-0 text-base sm:h-7 sm:w-auto sm:min-w-0 sm:px-2 sm:text-xs"
-              type="submit"
-            >
-              <Plus className="h-5 w-5 sm:size-3.5" />
-              <span className="hidden sm:inline">Add</span>
-            </Button>
-          </form>
-        </div>
-
         <ShoppingTable
+          emptyMessage={filter.trim() ? "no matching lines" : undefined}
           identity={identity}
           items={visibleItems}
+          newItem={newItemDraft}
+          onAdd={addItem}
+          onNewItemChange={updateNewItemDraft}
           onRemove={removeItem}
           onToggle={toggleItem}
           onUpdate={updateItem}
@@ -578,7 +578,7 @@ function ListAlias({ alias, listId }: { alias: string | null; listId: string }) 
   };
 
   return (
-    <div className="mt-2 flex min-w-0 max-w-full items-center gap-1 overflow-hidden font-mono text-[10px] tracking-[0.08em] uppercase">
+    <div className="mt-2 flex max-w-full min-w-0 items-center gap-1 overflow-hidden font-mono text-[10px] tracking-[0.08em] uppercase">
       {alias ? (
         <Button
           aria-label={`Show ${showListId ? "Alias" : "ID"}`}
@@ -772,15 +772,28 @@ function SignedItemBadge({
   );
 }
 
+function formatItemMeasure(item: Pick<ListItem, "quantity" | "unit" | "amount">): string {
+  const measure = `${item.quantity} ${item.unit}`;
+  return item.amount ? `${measure} (${item.amount} each)` : measure;
+}
+
 function ShoppingTable({
+  emptyMessage,
   identity,
   items,
+  newItem,
+  onAdd,
+  onNewItemChange,
   onRemove,
   onToggle,
   onUpdate,
 }: {
+  emptyMessage?: string;
   identity?: LocalIdentity;
   items: ListItem[];
+  newItem: NewItemDraft;
+  onAdd: () => void;
+  onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
   onRemove: (id: string) => void;
   onToggle: (id: string, checked: boolean) => void;
   onUpdate: (itemId: string, draft: ItemEditDraft) => Promise<boolean>;
@@ -789,12 +802,23 @@ function ShoppingTable({
   const [editDraft, setEditDraft] = useState<ItemEditDraft>();
   const [isSaving, setIsSaving] = useState(false);
 
+  const submitNewItemOnEnter = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>): void => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        onAdd();
+      }
+    },
+    [onAdd],
+  );
+
   const startEditing = useCallback((item: ListItem): void => {
     setEditingItemId(item.id);
     setEditDraft({
       name: item.name,
       quantity: String(item.quantity),
       unit: item.unit,
+      amount: item.amount,
       category: item.category,
     });
   }, []);
@@ -880,10 +904,15 @@ function ShoppingTable({
         editDraft={editDraft}
         editingItemId={editingItemId}
         isSaving={isSaving}
+        newItem={newItem}
+        emptyMessage={emptyMessage}
         table={mobileTable}
         onCancelEditing={cancelEditing}
+        onAdd={onAdd}
         onEditDraftChange={updateDraft}
+        onNewItemChange={onNewItemChange}
         onSaveEditing={saveEditing}
+        onNewItemKeyDown={submitNewItemOnEnter}
       />
       <div className="hidden w-full overflow-x-auto md:block">
         <table className="w-full min-w-[760px] border-collapse">
@@ -893,6 +922,7 @@ function ShoppingTable({
             <col />
             <col className="w-20" />
             <col className="w-20" />
+            <col className="w-28" />
             <col className="w-32" />
             <col className="w-32" />
             <col className="w-24" />
@@ -926,16 +956,22 @@ function ShoppingTable({
                   ))}
                 </tr>
               ))
-            ) : (
+            ) : emptyMessage ? (
               <tr>
                 <TableCell
                   className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
                   colSpan={columns.length}
                 >
-                  no matching lines
+                  {emptyMessage}
                 </TableCell>
               </tr>
-            )}
+            ) : null}
+            <DesktopNewItemRow
+              newItem={newItem}
+              onAdd={onAdd}
+              onKeyDown={submitNewItemOnEnter}
+              onChange={onNewItemChange}
+            />
           </tbody>
         </table>
       </div>
@@ -943,42 +979,139 @@ function ShoppingTable({
   );
 }
 
+function DesktopNewItemRow({
+  newItem,
+  onAdd,
+  onChange,
+  onKeyDown,
+}: {
+  newItem: NewItemDraft;
+  onAdd: () => void;
+  onChange: (field: keyof NewItemDraft, value: string) => void;
+  onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <tr className="border-b-2 border-primary/20 bg-primary/5">
+      <TableCell className="px-4 py-3">
+        <span className="font-mono text-[11px] font-semibold text-primary">+</span>
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+          new
+        </span>
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <Input
+          aria-label="New item name"
+          className="h-9 min-w-32 text-base sm:text-xs"
+          maxLength={200}
+          onChange={(event) => onChange("name", event.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder="Item"
+          value={newItem.name}
+        />
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <Input
+          aria-label="New item quantity"
+          className="h-9 w-16 text-right font-mono text-base sm:text-xs"
+          inputMode="numeric"
+          maxLength={6}
+          onChange={(event) => onChange("quantity", event.target.value)}
+          onKeyDown={onKeyDown}
+          value={newItem.quantity}
+        />
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <Input
+          aria-label="New item unit"
+          className="h-9 w-20 font-mono text-base uppercase sm:text-xs"
+          maxLength={32}
+          onChange={(event) => onChange("unit", event.target.value)}
+          onKeyDown={onKeyDown}
+          value={newItem.unit}
+        />
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <Input
+          aria-label="New item amount each"
+          className="h-9 w-28 text-base sm:text-xs"
+          maxLength={64}
+          onChange={(event) => onChange("amount", event.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder="Each"
+          value={newItem.amount}
+        />
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <Input
+          aria-label="New item category"
+          className="h-9 w-28 font-mono text-base uppercase sm:text-[10px]"
+          maxLength={64}
+          onChange={(event) => onChange("category", event.target.value)}
+          onKeyDown={onKeyDown}
+          value={newItem.category}
+        />
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+          draft
+        </span>
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <span className="font-mono text-[10px] tracking-[0.08em] text-primary uppercase">open</span>
+      </TableCell>
+      <TableCell className="px-3 py-3">
+        <Button aria-label="Add item" onPress={onAdd} size="icon-sm">
+          <Plus />
+        </Button>
+      </TableCell>
+    </tr>
+  );
+}
+
 function MobileShoppingTable({
+  emptyMessage,
   editDraft,
   editingItemId,
   isSaving,
+  newItem,
   table,
   onCancelEditing,
+  onAdd,
   onEditDraftChange,
+  onNewItemChange,
+  onNewItemKeyDown,
   onSaveEditing,
 }: {
+  emptyMessage?: string;
   editDraft?: ItemEditDraft;
   editingItemId?: string;
   isSaving: boolean;
+  newItem: NewItemDraft;
   table: ShoppingTableInstance;
   onCancelEditing: () => void;
+  onAdd: () => void;
   onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
+  onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
+  onNewItemKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
   onSaveEditing: () => void;
 }) {
   const rows = table.getRowModel().rows;
-
-  if (rows.length === 0) {
-    return (
-      <p className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase md:hidden">
-        no matching lines
-      </p>
-    );
-  }
 
   return (
     <div className="md:hidden">
       <table className="w-full border-collapse">
         <caption className="sr-only">Shopping list items</caption>
-        <thead className="sr-only">
+        <thead className="sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} scope="col">
+                <th
+                  key={header.id}
+                  className={`h-8 bg-muted/50 px-2 text-left font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase first:pl-3 last:pr-3 ${header.column.id === "done" ? "w-12" : header.column.id === "actions" ? "w-20 text-right" : ""}`}
+                  scope="col"
+                >
                   {header.isPlaceholder ? null : <table.FlexRender header={header} />}
                 </th>
               ))}
@@ -986,111 +1119,247 @@ function MobileShoppingTable({
           ))}
         </thead>
         <tbody className="divide-y divide-border">
-          {rows.map((row) => {
-            if (editingItemId === row.original.id) {
+          {rows.length > 0 ? (
+            rows.map((row) => {
+              if (editingItemId === row.original.id) {
+                return (
+                  <tr key={row.id}>
+                    <TableCell className="px-4 py-3" colSpan={row.getAllCells().length}>
+                      <form
+                        className="grid grid-cols-2 gap-2"
+                        onSubmit={(event) => {
+                          event.preventDefault();
+                          onSaveEditing();
+                        }}
+                      >
+                        <label className="sr-only" htmlFor={`mobile-edit-name-${row.original.id}`}>
+                          Edit {row.original.name} name
+                        </label>
+                        <Input
+                          id={`mobile-edit-name-${row.original.id}`}
+                          aria-label={`Edit ${row.original.name} name`}
+                          className="col-span-2 min-w-0"
+                          maxLength={200}
+                          onChange={(event) => onEditDraftChange("name", event.target.value)}
+                          value={editDraft?.name ?? row.original.name}
+                        />
+                        <label
+                          className="sr-only"
+                          htmlFor={`mobile-edit-quantity-${row.original.id}`}
+                        >
+                          Edit {row.original.name} quantity
+                        </label>
+                        <Input
+                          id={`mobile-edit-quantity-${row.original.id}`}
+                          aria-label={`Edit ${row.original.name} quantity`}
+                          className="min-w-0 font-mono"
+                          inputMode="numeric"
+                          maxLength={6}
+                          onChange={(event) => onEditDraftChange("quantity", event.target.value)}
+                          value={editDraft?.quantity ?? String(row.original.quantity)}
+                        />
+                        <label className="sr-only" htmlFor={`mobile-edit-unit-${row.original.id}`}>
+                          Edit {row.original.name} unit
+                        </label>
+                        <Input
+                          id={`mobile-edit-unit-${row.original.id}`}
+                          aria-label={`Edit ${row.original.name} unit`}
+                          className="min-w-0 font-mono"
+                          maxLength={32}
+                          onChange={(event) => onEditDraftChange("unit", event.target.value)}
+                          value={editDraft?.unit ?? row.original.unit}
+                        />
+                        <label
+                          className="sr-only"
+                          htmlFor={`mobile-edit-amount-${row.original.id}`}
+                        >
+                          Edit {row.original.name} amount each
+                        </label>
+                        <Input
+                          id={`mobile-edit-amount-${row.original.id}`}
+                          aria-label={`Edit ${row.original.name} amount each`}
+                          className="col-span-2 min-w-0 font-mono"
+                          maxLength={64}
+                          onChange={(event) => onEditDraftChange("amount", event.target.value)}
+                          placeholder="Amount each (optional)"
+                          value={editDraft?.amount ?? row.original.amount}
+                        />
+                        <label
+                          className="sr-only"
+                          htmlFor={`mobile-edit-category-${row.original.id}`}
+                        >
+                          Edit {row.original.name} category
+                        </label>
+                        <Input
+                          id={`mobile-edit-category-${row.original.id}`}
+                          aria-label={`Edit ${row.original.name} category`}
+                          className="col-span-2 min-w-0 font-mono tracking-[0.08em]"
+                          maxLength={64}
+                          onChange={(event) => onEditDraftChange("category", event.target.value)}
+                          value={editDraft?.category ?? row.original.category}
+                        />
+                        <div className="col-span-2 flex justify-end gap-2">
+                          <Button className="min-w-20" isDisabled={isSaving} type="submit">
+                            {isSaving ? "saving" : "save"}
+                          </Button>
+                          <Button
+                            className="min-w-20"
+                            isDisabled={isSaving}
+                            onPress={onCancelEditing}
+                            type="button"
+                            variant="ghost"
+                          >
+                            cancel
+                          </Button>
+                        </div>
+                      </form>
+                    </TableCell>
+                  </tr>
+                );
+              }
+
               return (
                 <tr key={row.id}>
-                  <TableCell className="px-4 py-3" colSpan={row.getAllCells().length}>
-                    <form
-                      className="grid grid-cols-2 gap-2"
-                      onSubmit={(event) => {
-                        event.preventDefault();
-                        onSaveEditing();
-                      }}
+                  {row.getAllCells().map((cell) => (
+                    <TableCell
+                      className={
+                        cell.column.id === "done"
+                          ? "w-12 px-1"
+                          : cell.column.id === "actions"
+                            ? "w-24 px-1"
+                            : "min-w-0 px-1"
+                      }
+                      key={cell.id}
                     >
-                      <label className="sr-only" htmlFor={`mobile-edit-name-${row.original.id}`}>
-                        Edit {row.original.name} name
-                      </label>
-                      <Input
-                        id={`mobile-edit-name-${row.original.id}`}
-                        aria-label={`Edit ${row.original.name} name`}
-                        className="col-span-2 min-w-0"
-                        maxLength={200}
-                        onChange={(event) => onEditDraftChange("name", event.target.value)}
-                        value={editDraft?.name ?? row.original.name}
-                      />
-                      <label
-                        className="sr-only"
-                        htmlFor={`mobile-edit-quantity-${row.original.id}`}
-                      >
-                        Edit {row.original.name} quantity
-                      </label>
-                      <Input
-                        id={`mobile-edit-quantity-${row.original.id}`}
-                        aria-label={`Edit ${row.original.name} quantity`}
-                        className="min-w-0 font-mono"
-                        inputMode="numeric"
-                        maxLength={6}
-                        onChange={(event) => onEditDraftChange("quantity", event.target.value)}
-                        value={editDraft?.quantity ?? String(row.original.quantity)}
-                      />
-                      <label className="sr-only" htmlFor={`mobile-edit-unit-${row.original.id}`}>
-                        Edit {row.original.name} unit
-                      </label>
-                      <Input
-                        id={`mobile-edit-unit-${row.original.id}`}
-                        aria-label={`Edit ${row.original.name} unit`}
-                        className="min-w-0 font-mono"
-                        maxLength={32}
-                        onChange={(event) => onEditDraftChange("unit", event.target.value)}
-                        value={editDraft?.unit ?? row.original.unit}
-                      />
-                      <label
-                        className="sr-only"
-                        htmlFor={`mobile-edit-category-${row.original.id}`}
-                      >
-                        Edit {row.original.name} category
-                      </label>
-                      <Input
-                        id={`mobile-edit-category-${row.original.id}`}
-                        aria-label={`Edit ${row.original.name} category`}
-                        className="col-span-2 min-w-0 font-mono tracking-[0.08em]"
-                        maxLength={64}
-                        onChange={(event) => onEditDraftChange("category", event.target.value)}
-                        value={editDraft?.category ?? row.original.category}
-                      />
-                      <div className="col-span-2 flex justify-end gap-2">
-                        <Button className="min-w-20" isDisabled={isSaving} type="submit">
-                          {isSaving ? "saving" : "save"}
-                        </Button>
-                        <Button
-                          className="min-w-20"
-                          isDisabled={isSaving}
-                          onPress={onCancelEditing}
-                          type="button"
-                          variant="ghost"
-                        >
-                          cancel
-                        </Button>
-                      </div>
-                    </form>
-                  </TableCell>
+                      <table.FlexRender cell={cell} />
+                    </TableCell>
+                  ))}
                 </tr>
               );
-            }
-
-            return (
-              <tr key={row.id}>
-                {row.getAllCells().map((cell) => (
-                  <TableCell
-                    className={
-                      cell.column.id === "done"
-                        ? "w-12 px-1"
-                        : cell.column.id === "actions"
-                          ? "w-24 px-1"
-                          : "min-w-0 px-1"
-                    }
-                    key={cell.id}
-                  >
-                    <table.FlexRender cell={cell} />
-                  </TableCell>
-                ))}
-              </tr>
-            );
-          })}
+            })
+          ) : emptyMessage ? (
+            <tr>
+              <TableCell
+                className="px-4 py-8 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
+                colSpan={3}
+              >
+                {emptyMessage}
+              </TableCell>
+            </tr>
+          ) : null}
+          <MobileNewItemRow
+            newItem={newItem}
+            onAdd={onAdd}
+            onChange={onNewItemChange}
+            onKeyDown={onNewItemKeyDown}
+          />
         </tbody>
       </table>
     </div>
+  );
+}
+
+function MobileNewItemRow({
+  newItem,
+  onAdd,
+  onChange,
+  onKeyDown,
+}: {
+  newItem: NewItemDraft;
+  onAdd: () => void;
+  onChange: (field: keyof NewItemDraft, value: string) => void;
+  onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <tr className="border-b-2 border-primary/20 bg-primary/5 align-top">
+      <TableCell className="w-12 px-1 py-3 text-center">
+        <span className="font-mono text-[10px] font-semibold tracking-[0.08em] text-primary uppercase">
+          new
+        </span>
+      </TableCell>
+      <TableCell className="min-w-0 px-2 py-3">
+        <div className="grid grid-cols-6 gap-x-2 gap-y-2">
+          <label className="col-span-6 flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
+            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+              item
+            </span>
+            <Input
+              id="new-item-mobile"
+              aria-label="New item name"
+              className="h-9 text-base"
+              maxLength={200}
+              onChange={(event) => onChange("name", event.target.value)}
+              onKeyDown={onKeyDown}
+              placeholder="New item"
+              value={newItem.name}
+            />
+          </label>
+          <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-quantity-mobile">
+            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+              qty
+            </span>
+            <Input
+              id="new-quantity-mobile"
+              aria-label="New item quantity"
+              className="h-9 text-right font-mono text-base"
+              inputMode="numeric"
+              maxLength={6}
+              onChange={(event) => onChange("quantity", event.target.value)}
+              onKeyDown={onKeyDown}
+              value={newItem.quantity}
+            />
+          </label>
+          <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-unit-mobile">
+            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+              unit
+            </span>
+            <Input
+              id="new-unit-mobile"
+              aria-label="New item unit"
+              className="h-9 font-mono text-base uppercase"
+              maxLength={32}
+              onChange={(event) => onChange("unit", event.target.value)}
+              onKeyDown={onKeyDown}
+              value={newItem.unit}
+            />
+          </label>
+          <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-amount-mobile">
+            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+              amount each
+            </span>
+            <Input
+              id="new-amount-mobile"
+              aria-label="New item amount each"
+              className="h-9 text-base"
+              maxLength={64}
+              onChange={(event) => onChange("amount", event.target.value)}
+              onKeyDown={onKeyDown}
+              placeholder="Optional"
+              value={newItem.amount}
+            />
+          </label>
+          <label className="col-span-6 flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
+            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+              category
+            </span>
+            <Input
+              id="new-category-mobile"
+              aria-label="New item category"
+              className="h-9 font-mono text-base uppercase"
+              maxLength={64}
+              onChange={(event) => onChange("category", event.target.value)}
+              onKeyDown={onKeyDown}
+              value={newItem.category}
+            />
+          </label>
+        </div>
+      </TableCell>
+      <TableCell className="w-20 px-1 py-3 text-right align-top">
+        <Button aria-label="Add item" className="size-9" onPress={onAdd} size="icon">
+          <Plus />
+        </Button>
+      </TableCell>
+    </tr>
   );
 }
 
@@ -1141,7 +1410,7 @@ function DeletedItemsHistory({
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{item.name}</p>
                 <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                  {item.quantity} {item.unit} · {item.category} · Deleted{" "}
+                  {formatItemMeasure(item)} · {item.category} · Deleted{" "}
                   {item.deletedAt.slice(0, 10)}
                   {item.deletedBy
                     ? ` · Deleted by ${identityDisplayName(item.deletedBy, identity)}`
@@ -1307,6 +1576,25 @@ function createShoppingColumns({
         return <span className="font-mono text-[11px]">{getValue()}</span>;
       },
     }),
+    shoppingColumnHelper.accessor("amount", {
+      header: "amount",
+      cell: ({ getValue, row }) => {
+        if (editingItemId === row.original.id) {
+          return (
+            <Input
+              aria-label={`Edit ${row.original.name} amount each`}
+              className="w-28 font-mono text-[11px]"
+              maxLength={64}
+              onChange={(event) => onEditDraftChange("amount", event.target.value)}
+              placeholder="optional"
+              value={editDraft?.amount ?? getValue()}
+            />
+          );
+        }
+
+        return <span className="font-mono text-[11px]">{getValue() || "—"}</span>;
+      },
+    }),
     shoppingColumnHelper.accessor("category", {
       header: "category",
       cell: ({ getValue, row }) => {
@@ -1415,7 +1703,7 @@ function createMobileShoppingColumns({
   return shoppingColumnHelper.columns([
     shoppingColumnHelper.display({
       id: "done",
-      header: "status",
+      header: "done",
       cell: ({ row }) => (
         <Checkbox
           aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "done"}`}
@@ -1427,7 +1715,7 @@ function createMobileShoppingColumns({
     }),
     shoppingColumnHelper.display({
       id: "item",
-      header: "item",
+      header: "item details",
       cell: ({ row }) => (
         <div className="min-w-0 py-1">
           <p
@@ -1441,7 +1729,7 @@ function createMobileShoppingColumns({
           </p>
           <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
             <span>
-              {row.original.quantity} {row.original.unit} · {row.original.category} ·{" "}
+              {formatItemMeasure(row.original)} · {row.original.category} ·{" "}
               {row.original.checked ? "done" : "open"}
             </span>
             <SignedItemBadge identity={identity} item={row.original} />

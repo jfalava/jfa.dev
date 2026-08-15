@@ -16,7 +16,7 @@ describe("list contract", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
 
     expect(snapshot.id).toBe(LIST_ID);
-    expect(snapshot.schemaVersion).toBe(1);
+    expect(snapshot.schemaVersion).toBe(2);
     expect(snapshot.revision).toBe(0);
     expect(snapshot.alias).toBeNull();
     expect(snapshot.title).toBe("New list");
@@ -38,6 +38,7 @@ describe("list contract", () => {
           name: "Milk",
           quantity: 2,
           unit: "EA",
+          amount: "",
           category: "DAIRY",
         },
       },
@@ -70,6 +71,7 @@ describe("list contract", () => {
             name: "Milk",
             quantity: 1,
             unit: "EA",
+            amount: "",
             category: "DAIRY",
           },
         },
@@ -150,6 +152,7 @@ describe("list contract", () => {
             name: "Milk",
             quantity: 1,
             unit: "EA",
+            amount: "",
             category: "DAIRY",
           },
         },
@@ -177,6 +180,7 @@ describe("list contract", () => {
             name: "Sourdough",
             quantity: 2,
             unit: "LOAF",
+            amount: "500g",
             category: "BAKERY",
           },
         },
@@ -189,6 +193,7 @@ describe("list contract", () => {
       name: "Sourdough",
       quantity: 2,
       unit: "LOAF",
+      amount: "500g",
       category: "BAKERY",
       updatedAt: NOW,
     });

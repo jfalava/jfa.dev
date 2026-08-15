@@ -6,7 +6,7 @@ import { listIdentitySchema } from "./identities";
 const UUID_V7_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export const LIST_SCHEMA_VERSION = 1 as const;
+export const LIST_SCHEMA_VERSION = 2 as const;
 
 export const listIdSchema = z
   .string()
@@ -22,6 +22,7 @@ export const listItemSchema = z.object({
   name: z.string().trim().min(1).max(200),
   quantity: z.number().int().min(1).max(100_000),
   unit: z.string().trim().min(1).max(32),
+  amount: z.string().trim().max(64),
   category: z.string().trim().min(1).max(64),
   checked: z.boolean(),
   position: z.number().int().min(0),
@@ -54,6 +55,7 @@ const itemInputSchema = z.object({
   name: z.string().trim().min(1).max(200),
   quantity: z.number().int().min(1).max(100_000),
   unit: z.string().trim().min(1).max(32),
+  amount: z.string().trim().max(64),
   category: z.string().trim().min(1).max(64),
 });
 
@@ -156,6 +158,7 @@ export function createStarterListSnapshot(
         name: "Bread",
         quantity: 1,
         unit: "EA",
+        amount: "",
         category: "BAKERY",
         checked: false,
         position: 0,
@@ -169,6 +172,7 @@ export function createStarterListSnapshot(
         name: "Tomatoes",
         quantity: 6,
         unit: "EA",
+        amount: "",
         category: "PRODUCE",
         checked: false,
         position: 1,
@@ -182,6 +186,7 @@ export function createStarterListSnapshot(
         name: "Coffee",
         quantity: 1,
         unit: "BAG",
+        amount: "",
         category: "PANTRY",
         checked: true,
         position: 2,
@@ -303,6 +308,7 @@ export function applyListMutation(
               name: deletedItem.name,
               quantity: deletedItem.quantity,
               unit: deletedItem.unit,
+              amount: deletedItem.amount,
               category: deletedItem.category,
               checked: deletedItem.checked,
               position: snapshot.items.length,
