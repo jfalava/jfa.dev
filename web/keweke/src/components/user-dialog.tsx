@@ -28,6 +28,7 @@ import {
   type LocalIdentity,
 } from "@/lib/local-identity";
 import {
+  adoptLocalIdentityWithPasskey,
   isPasskeyAvailable,
   listLocalPasskeys,
   registerLocalPasskey,
@@ -66,6 +67,7 @@ const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 type FeedbackSection =
   | "username"
   | "pairing"
+  | "passkey-adoption"
   | "approval"
   | "devices"
   | "passkeys"
@@ -128,6 +130,7 @@ export function UserDialog({
   const [passkeys, setPasskeys] = useState<PasskeyProfile[]>([]);
   const [isLoadingPasskeys, setIsLoadingPasskeys] = useState(false);
   const [isRegisteringPasskey, setIsRegisteringPasskey] = useState(false);
+  const [isAdoptingPasskey, setIsAdoptingPasskey] = useState(false);
   const [isAdopting, setIsAdopting] = useState(false);
   const [isClearingData, setIsClearingData] = useState(false);
   const [isConfirmingClearData, setIsConfirmingClearData] = useState(false);
@@ -369,6 +372,31 @@ export function UserDialog({
       setError("passkeys", "Passkey creation was cancelled or failed. Try again.");
     } finally {
       setIsRegisteringPasskey(false);
+    }
+  };
+
+  const adoptWithPasskey = async (): Promise<void> => {
+    if (!identity || identity.remoteUsername || !passkeyAvailable) {
+      return;
+    }
+
+    setIsAdoptingPasskey(true);
+    resetFeedback();
+    try {
+      const nextIdentity = await adoptLocalIdentityWithPasskey();
+      const nextProfile = await getUserProfile({ data: nextIdentity.userId });
+      if (!nextProfile) {
+        throw new Error("The adopted user profile is unavailable");
+      }
+      setIdentity(nextIdentity);
+      setProfile(nextProfile);
+      setValue(nextIdentity.username ?? "");
+      await syncRemoteLists(nextIdentity);
+      setMessage("username", "This browser is connected.");
+    } catch {
+      setError("passkey-adoption", "Passkey use was cancelled or failed. Try again.");
+    } finally {
+      setIsAdoptingPasskey(false);
     }
   };
 
@@ -650,6 +678,40 @@ export function UserDialog({
                 </div>
                 <FeedbackMessage feedback={feedback} section="username" />
               </form>
+
+              {identity && !identity.remoteUsername && passkeyAvailable ? (
+                <section
+                  className="space-y-3 border-t border-border pt-4"
+                  aria-labelledby="passkey-adoption-heading"
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                      pair with a passkey
+                    </p>
+                    <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                      /
+                    </span>
+                    <h3
+                      className="text-[11px] font-normal text-muted-foreground/75"
+                      id="passkey-adoption-heading"
+                    >
+                      Connect this browser without a code
+                    </h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Use a saved passkey to connect this browser to your remote user.
+                  </p>
+                  <Button
+                    className="h-10 gap-1.5 px-5 text-sm"
+                    isDisabled={isAdoptingPasskey}
+                    onPress={() => void adoptWithPasskey()}
+                  >
+                    <KeyRound aria-hidden="true" className="size-3.5" />
+                    {isAdoptingPasskey ? "Waiting…" : "Pair with passkey"}
+                  </Button>
+                  <FeedbackMessage feedback={feedback} section="passkey-adoption" />
+                </section>
+              ) : null}
 
               <section
                 className="space-y-3 border-t border-border pt-4"
