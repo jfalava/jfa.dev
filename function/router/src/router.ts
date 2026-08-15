@@ -276,11 +276,18 @@ export function parseRoutesConfig(routesJson: string): RoutesConfig {
 type FetcherCandidate = JsonValue | WorkerFetcher | CountryBlocklistBinding | undefined;
 
 function isObject(value: FetcherCandidate): value is WorkerFetcher | CountryBlocklistBinding {
-  return Object.prototype.toString.call(value) === "[object Object]";
+  return value !== null && value !== undefined && Object(value) === value;
 }
 
 function isFetcher(value: FetcherCandidate): value is WorkerFetcher {
-  return isObject(value) && "fetch" in value;
+  if (!isObject(value)) {
+    return false;
+  }
+
+  // SAFETY: Cloudflare service bindings expose fetch through a host proxy whose
+  // property shape is not guaranteed to support the `in` operator.
+  const fetcher = (value as { fetch?: unknown }).fetch;
+  return Object.prototype.toString.call(fetcher).endsWith("Function]");
 }
 
 function getServiceBinding(env: Bindings, bindingName: string): WorkerFetcher | null {

@@ -151,10 +151,10 @@ function EmptyState() {
                       {list.backend === "local" || list.backend === "remote" ? (
                         confirmingListId === list.id ? (
                           <>
-                            <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
+                            <span className="font-mono text-[10px] tracking-[0.08em] text-destructive">
                               {list.backend === "remote" && list.remoteRole !== "owner"
-                                ? "forget?"
-                                : "delete?"}
+                                ? "Forget?"
+                                : "Delete?"}
                             </span>
                             <Button
                               aria-label={`${list.backend === "remote" && list.remoteRole !== "owner" ? "Confirm forget" : "Confirm delete"} ${list.title}`}
@@ -163,7 +163,7 @@ function EmptyState() {
                               size="sm"
                               variant="destructive"
                             >
-                              yes
+                              Yes
                             </Button>
                             <Button
                               aria-label={`Keep ${list.title}`}
@@ -172,7 +172,7 @@ function EmptyState() {
                               size="sm"
                               variant="ghost"
                             >
-                              keep
+                              Keep
                             </Button>
                           </>
                         ) : (
@@ -185,14 +185,14 @@ function EmptyState() {
                             <Trash2 className="size-3.5" />
                             <span className="hidden sm:inline">
                               {list.backend === "remote" && list.remoteRole !== "owner"
-                                ? "forget"
-                                : "delete"}
+                                ? "Forget"
+                                : "Delete"}
                             </span>
                           </Button>
                         )
                       ) : null}
-                      <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                        open →
+                      <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                        Open →
                       </span>
                     </div>
                   </div>

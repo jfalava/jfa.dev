@@ -127,6 +127,28 @@ describe("router configuration", () => {
     expect(await response.text()).toBe("forwarded");
   });
 
+  test("forwards service bindings with non-plain object tags", async () => {
+    const landing = new Proxy(
+      {
+        fetch: async () => new Response("forwarded"),
+      },
+      {
+        has: () => false,
+      },
+    );
+    Object.defineProperty(landing, Symbol.toStringTag, { value: "Service" });
+    const response = await router.fetch(makeRequest("https://jfa.dev/"), {
+      ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
+      LANDING: landing,
+      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
+      KEWEKE: { fetch: async () => new Response("forwarded") },
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("forwarded");
+  });
+
   test("returns 503 for a malformed KV blocklist", async () => {
     const response = await router.fetch(makeRequest("https://jfa.dev/", "ES"), {
       ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
