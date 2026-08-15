@@ -41,10 +41,6 @@ import {
 import { openRemoteListLiveSession } from "@/lib/remote-list-live";
 import { appPath } from "@/lib/site-paths";
 
-const shoppingTableFeatures = tableFeatures({});
-const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ListItem>();
-const EMPTY_ITEMS: ListItem[] = [];
-
 type ItemEditDraft = {
   name: string;
   quantity: string;
@@ -54,6 +50,25 @@ type ItemEditDraft = {
 };
 
 type NewItemDraft = ItemEditDraft;
+
+type ShoppingTableMeta = {
+  editDraft?: ItemEditDraft;
+  editingItemId?: string;
+  identity?: LocalIdentity;
+  isSaving: boolean;
+  onCancelEditing: () => void;
+  onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
+  onRemove: (id: string) => void;
+  onSaveEditing: () => void;
+  onStartEditing: (item: ListItem) => void;
+  onToggle: (id: string, checked: boolean) => void;
+};
+
+const shoppingTableFeatures = tableFeatures({
+  tableMeta: {} as ShoppingTableMeta,
+});
+const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ListItem>();
+const EMPTY_ITEMS: ListItem[] = [];
 
 type ShoppingTableInstance = ReactTable<typeof shoppingTableFeatures, ListItem>;
 
@@ -249,6 +264,7 @@ function ListPage() {
     }
 
     setIsMigrating(true);
+    setError(undefined);
     try {
       const result = await migrateList(loadedList.snapshot);
       if (result.status === "unauthorized") {
@@ -266,6 +282,7 @@ function ListPage() {
 
       setLoadedList({ backend: "remote", snapshot: result.snapshot });
       setError(undefined);
+      setIsPublishConfirmOpen(false);
     } catch {
       setError("Remote migration is not available right now.");
     } finally {
@@ -290,8 +307,17 @@ function ListPage() {
     }
   }, []);
 
+  const handleUserDialogSaved = useCallback((): void => {
+    if (!userDialogMessage) {
+      return;
+    }
+
+    setIsUserDialogOpen(false);
+    setUserDialogMessage(undefined);
+    setIsPublishConfirmOpen(true);
+  }, [userDialogMessage]);
+
   const confirmMigration = useCallback((): void => {
-    setIsPublishConfirmOpen(false);
     void migrate();
   }, [migrate]);
 
@@ -508,11 +534,14 @@ function ListPage() {
         onMigrate={requestMigration}
         isUserDialogOpen={isUserDialogOpen}
         onUserDialogOpenChange={handleUserDialogOpenChange}
+        onUserDialogSaved={handleUserDialogSaved}
         userDialogMessage={userDialogMessage}
       />
       <PublishListDialog
         alias={snapshot.alias}
+        error={error}
         isOpen={isPublishConfirmOpen}
+        isPublishing={isMigrating}
         listId={snapshot.id}
         onConfirm={confirmMigration}
         onOpenChange={setIsPublishConfirmOpen}
@@ -883,20 +912,34 @@ function ShoppingTable({
     }
   }, [cancelEditing, editDraft, editingItemId, isSaving, onUpdate]);
 
-  const columns = useMemo(
+  // Keep these cell definitions stable. TanStack renders each cell function as
+  // a React component, so recreating them for every draft update remounts the
+  // controlled input and drops the browser's focus after one character.
+  const columns = useMemo(() => createShoppingColumns(), []);
+  const mobileColumns = useMemo(
     () =>
-      createShoppingColumns({
-        editDraft,
-        editingItemId,
+      createMobileShoppingColumns({
         identity,
         isSaving,
-        onCancelEditing: cancelEditing,
-        onEditDraftChange: updateDraft,
         onRemove,
-        onSaveEditing: saveEditing,
         onStartEditing: startEditing,
         onToggle,
       }),
+    [identity, isSaving, onRemove, onToggle, startEditing],
+  );
+  const tableMeta = useMemo<ShoppingTableMeta>(
+    () => ({
+      editDraft,
+      editingItemId,
+      identity,
+      isSaving,
+      onCancelEditing: cancelEditing,
+      onEditDraftChange: updateDraft,
+      onRemove,
+      onSaveEditing: saveEditing,
+      onStartEditing: startEditing,
+      onToggle,
+    }),
     [
       cancelEditing,
       editDraft,
@@ -910,28 +953,19 @@ function ShoppingTable({
       updateDraft,
     ],
   );
-  const mobileColumns = useMemo(
-    () =>
-      createMobileShoppingColumns({
-        identity,
-        isSaving,
-        onRemove,
-        onStartEditing: startEditing,
-        onToggle,
-      }),
-    [identity, isSaving, onRemove, onToggle, startEditing],
-  );
   const table = useTable({
     features: shoppingTableFeatures,
     data: items,
     columns,
     getRowId: (row) => row.id,
+    meta: tableMeta,
   });
   const mobileTable = useTable({
     features: shoppingTableFeatures,
     data: items,
     columns: mobileColumns,
     getRowId: (row) => row.id,
+    meta: tableMeta,
   });
 
   return (
@@ -1518,29 +1552,14 @@ function DeletedItemsHistory({
   );
 }
 
-function createShoppingColumns({
-  editDraft,
-  editingItemId,
-  identity,
-  isSaving,
-  onCancelEditing,
-  onEditDraftChange,
-  onRemove,
-  onSaveEditing,
-  onStartEditing,
-  onToggle,
-}: {
-  editDraft?: ItemEditDraft;
-  editingItemId?: string;
-  identity?: LocalIdentity;
-  isSaving: boolean;
-  onCancelEditing: () => void;
-  onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
-  onRemove: (id: string) => void;
-  onSaveEditing: () => void;
-  onStartEditing: (item: ListItem) => void;
-  onToggle: (id: string, checked: boolean) => void;
-}) {
+function getShoppingTableMeta(table: { options: { meta?: ShoppingTableMeta } }): ShoppingTableMeta {
+  if (!table.options.meta) {
+    throw new Error("Shopping table metadata is missing");
+  }
+  return table.options.meta;
+}
+
+function createShoppingColumns() {
   return shoppingColumnHelper.columns([
     shoppingColumnHelper.display({
       id: "line",
@@ -1554,18 +1573,22 @@ function createShoppingColumns({
     shoppingColumnHelper.display({
       id: "done",
       header: "",
-      cell: ({ row }) => (
-        <Checkbox
-          aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "done"}`}
-          isSelected={row.original.checked}
-          onChange={(checked) => onToggle(row.original.id, checked)}
-        />
-      ),
+      cell: ({ row, table }) => {
+        const { onToggle } = getShoppingTableMeta(table);
+        return (
+          <Checkbox
+            aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "done"}`}
+            isSelected={row.original.checked}
+            onChange={(checked) => onToggle(row.original.id, checked)}
+          />
+        );
+      },
     }),
     shoppingColumnHelper.accessor("name", {
       id: "item",
       header: "item",
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue, row, table }) => {
+        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
             <Input
@@ -1591,7 +1614,8 @@ function createShoppingColumns({
     }),
     shoppingColumnHelper.accessor("quantity", {
       header: "qty",
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue, row, table }) => {
+        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
             <Input
@@ -1610,7 +1634,8 @@ function createShoppingColumns({
     }),
     shoppingColumnHelper.accessor("unit", {
       header: "unit",
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue, row, table }) => {
+        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
             <Input
@@ -1628,7 +1653,8 @@ function createShoppingColumns({
     }),
     shoppingColumnHelper.accessor("amount", {
       header: "amount",
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue, row, table }) => {
+        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
             <Input
@@ -1647,7 +1673,8 @@ function createShoppingColumns({
     }),
     shoppingColumnHelper.accessor("category", {
       header: "category",
-      cell: ({ getValue, row }) => {
+      cell: ({ getValue, row, table }) => {
+        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
             <Input
@@ -1666,7 +1693,10 @@ function createShoppingColumns({
     shoppingColumnHelper.display({
       id: "signed",
       header: "signed",
-      cell: ({ row }) => <SignedItemBadge identity={identity} item={row.original} />,
+      cell: ({ row, table }) => {
+        const { identity } = getShoppingTableMeta(table);
+        return <SignedItemBadge identity={identity} item={row.original} />;
+      },
     }),
     shoppingColumnHelper.display({
       id: "status",
@@ -1686,8 +1716,16 @@ function createShoppingColumns({
     shoppingColumnHelper.display({
       id: "actions",
       header: "",
-      cell: ({ row }) =>
-        editingItemId === row.original.id ? (
+      cell: ({ row, table }) => {
+        const {
+          editingItemId,
+          isSaving,
+          onCancelEditing,
+          onRemove,
+          onSaveEditing,
+          onStartEditing,
+        } = getShoppingTableMeta(table);
+        return editingItemId === row.original.id ? (
           <div className="flex items-center gap-1">
             <Button
               aria-label={`Save changes to ${row.original.name}`}
@@ -1728,7 +1766,8 @@ function createShoppingColumns({
               <Trash2 className="size-3.5" />
             </Button>
           </div>
-        ),
+        );
+      },
     }),
   ]);
 }

@@ -17,6 +17,7 @@ interface KewekeHeaderProps {
   isUserDialogOpen?: boolean;
   userDialogMessage?: string;
   onUserDialogOpenChange?: (isOpen: boolean) => void;
+  onUserDialogSaved?: () => void;
   hideMobileNewListButton?: boolean;
 }
 
@@ -29,6 +30,7 @@ export function KewekeHeader({
   isUserDialogOpen,
   userDialogMessage,
   onUserDialogOpenChange,
+  onUserDialogSaved,
 }: KewekeHeaderProps) {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
@@ -75,6 +77,7 @@ export function KewekeHeader({
             isOpen={isUserDialogOpen}
             message={userDialogMessage}
             onOpenChange={onUserDialogOpenChange}
+            onSaved={onUserDialogSaved}
           />
           <ThemeToggle />
           {backend === "local" && onMigrate ? (

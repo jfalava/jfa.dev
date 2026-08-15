@@ -1,9 +1,12 @@
 import { Button } from "@jfa.dev/common/ui";
+import { RefreshCw } from "lucide-react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 
 interface PublishListDialogProps {
   alias: string | null;
+  error?: string;
   isOpen: boolean;
+  isPublishing: boolean;
   listId: string;
   onConfirm: () => void;
   onOpenChange: (isOpen: boolean) => void;
@@ -11,7 +14,9 @@ interface PublishListDialogProps {
 
 export function PublishListDialog({
   alias,
+  error,
   isOpen,
+  isPublishing,
   listId,
   onConfirm,
   onOpenChange,
@@ -19,9 +24,13 @@ export function PublishListDialog({
   return (
     <ModalOverlay
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
-      isDismissable
+      isDismissable={!isPublishing}
       isOpen={isOpen}
-      onOpenChange={onOpenChange}
+      onOpenChange={(nextIsOpen) => {
+        if (!isPublishing || nextIsOpen) {
+          onOpenChange(nextIsOpen);
+        }
+      }}
     >
       <Modal className="w-full max-w-md outline-none">
         <Dialog
@@ -62,11 +71,22 @@ export function PublishListDialog({
               ) : null}
             </div>
 
+            {error ? <p className="text-sm text-destructive">{error}</p> : null}
+
             <div className="flex justify-end gap-2">
-              <Button onPress={() => onOpenChange(false)} variant="ghost">
+              <Button
+                isDisabled={isPublishing}
+                onPress={() => onOpenChange(false)}
+                variant="ghost"
+              >
                 Cancel
               </Button>
-              <Button onPress={onConfirm}>Publish list</Button>
+              <Button isDisabled={isPublishing} onPress={onConfirm}>
+                {isPublishing ? (
+                  <RefreshCw aria-hidden="true" className="size-3.5 animate-spin" />
+                ) : null}
+                {isPublishing ? "Publishing…" : "Publish list"}
+              </Button>
             </div>
           </div>
         </Dialog>

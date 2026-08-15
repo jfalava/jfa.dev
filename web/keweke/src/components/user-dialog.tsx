@@ -106,12 +106,14 @@ interface UserDialogProps {
   isOpen?: boolean;
   message?: string;
   onOpenChange?: (isOpen: boolean) => void;
+  onSaved?: () => void;
 }
 
 export function UserDialog({
   isOpen: controlledIsOpen,
   message,
   onOpenChange,
+  onSaved,
 }: UserDialogProps = {}) {
   const navigate = useNavigate();
   const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(false);
@@ -219,7 +221,7 @@ export function UserDialog({
 
   useEffect(() => {
     if (isDialogOpen && message) {
-      setMessage("username", message);
+      setError("username", message);
     }
   }, [isDialogOpen, message]);
 
@@ -306,6 +308,7 @@ export function UserDialog({
       } else {
         setMessage("username", "Username saved.");
       }
+      onSaved?.();
     } catch {
       setError("username", "Could not save this user right now.");
     } finally {
