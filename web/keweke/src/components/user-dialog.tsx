@@ -18,11 +18,6 @@ import { Dialog, DialogTrigger, Modal, ModalOverlay } from "react-aria-component
 
 import { clearLocalData, clearRemoteUserData } from "@/lib/local-data";
 import {
-  isPasskeyAvailable,
-  listLocalPasskeys,
-  registerLocalPasskey,
-} from "@/lib/passkeys";
-import {
   adoptLocalIdentity,
   confirmRemoteUsername,
   ensureLocalIdentity,
@@ -32,6 +27,11 @@ import {
   subscribeToLocalIdentity,
   type LocalIdentity,
 } from "@/lib/local-identity";
+import {
+  isPasskeyAvailable,
+  listLocalPasskeys,
+  registerLocalPasskey,
+} from "@/lib/passkeys";
 import { syncRemoteLists } from "@/lib/remote-list-sync";
 import {
   approveDevicePairing,
@@ -100,9 +100,20 @@ function formatPasskeyDate(value: string): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(value));
 }
 
-export function UserDialog() {
+interface UserDialogProps {
+  isOpen?: boolean;
+  message?: string;
+  onOpenChange?: (isOpen: boolean) => void;
+}
+
+export function UserDialog({
+  isOpen: controlledIsOpen,
+  message,
+  onOpenChange,
+}: UserDialogProps = {}) {
   const navigate = useNavigate();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(false);
+  const isDialogOpen = controlledIsOpen ?? uncontrolledIsOpen;
   const [identity, setIdentity] = useState<LocalIdentity>();
   const [profile, setProfile] = useState<UserProfile>();
   const [value, setValue] = useState("");
@@ -195,6 +206,19 @@ export function UserDialog() {
   const setMessage = (section: FeedbackSection, text: string): void => {
     setFeedback({ section, tone: "message", text });
   };
+
+  const setDialogOpen = (isOpen: boolean): void => {
+    if (controlledIsOpen === undefined) {
+      setUncontrolledIsOpen(isOpen);
+    }
+    onOpenChange?.(isOpen);
+  };
+
+  useEffect(() => {
+    if (isDialogOpen && message) {
+      setMessage("username", message);
+    }
+  }, [isDialogOpen, message]);
 
   const canManagePasskeys = Boolean(
     identity?.remoteUsername &&
@@ -485,7 +509,7 @@ export function UserDialog() {
       await clearLocalData();
       setIsClearingData(false);
       setIsConfirmingClearData(false);
-      setIsDialogOpen(false);
+      setDialogOpen(false);
       await navigate({ replace: true, to: "/" });
     } catch {
       setIsClearingData(false);
@@ -526,7 +550,7 @@ export function UserDialog() {
       await clearRemoteUserData();
       setIsConfirmingDeleteAccount(false);
       setDeleteConfirmation("");
-      setIsDialogOpen(false);
+      setDialogOpen(false);
       await navigate({ replace: true, to: "/" });
     } catch {
       setError("account", "Could not delete the remote user right now.");
@@ -539,7 +563,7 @@ export function UserDialog() {
     <DialogTrigger
       isOpen={isDialogOpen}
       onOpenChange={(isOpen) => {
-        setIsDialogOpen(isOpen);
+        setDialogOpen(isOpen);
         if (isOpen) {
           resetFeedback();
           setIsConfirmingClearData(false);
@@ -573,10 +597,10 @@ export function UserDialog() {
         <span className="hidden sm:inline">User</span>
       </Button>
       <ModalOverlay
-        className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-10 sm:pt-16"
+        className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 px-4 pt-6 pb-6 sm:pt-16 sm:pb-0"
         isDismissable
       >
-        <Modal className="max-h-[calc(100vh-5rem)] w-full max-w-lg overflow-y-auto outline-none">
+        <Modal className="max-h-[calc(100svh-6rem)] w-full max-w-lg overflow-y-auto overscroll-contain outline-none sm:max-h-[calc(100vh-5rem)]">
           <Dialog
             aria-label="Set your username"
             className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
@@ -604,7 +628,7 @@ export function UserDialog() {
                     </label>
                     <Input
                       autoComplete="nickname"
-                      className="mt-1.5 h-10 text-base sm:text-sm"
+                      className="mt-1.5 h-10 font-serif text-base sm:text-sm"
                       disabled={!identity || isSaving}
                       id="user-username"
                       maxLength={48}
@@ -891,18 +915,23 @@ export function UserDialog() {
                     </h3>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Permanently delete <span className="font-medium">{identity.remoteUsername}</span>{" "}
-                    and every remote list created by this user. Lists only shared with this user
-                    are kept for their owners.
+                    Permanently delete{" "}
+                    <span className="font-serif font-medium">{identity.remoteUsername}</span> and
+                    every remote list created by this user. Lists only shared with this user are
+                    kept for their owners.
                   </p>
                   {isConfirmingDeleteAccount ? (
                     <div className="space-y-2">
-                      <label className="text-xs font-medium" htmlFor="delete-remote-user-confirmation">
-                        Type <span className="font-mono">{identity.remoteUsername}</span> to confirm
+                      <label
+                        className="text-xs font-medium"
+                        htmlFor="delete-remote-user-confirmation"
+                      >
+                        Type <span className="font-serif">{identity.remoteUsername}</span> to
+                        confirm
                       </label>
                       <Input
                         autoComplete="off"
-                        className="h-10 text-base sm:text-sm"
+                        className="h-10 font-serif text-base sm:text-sm"
                         disabled={isDeletingAccount}
                         id="delete-remote-user-confirmation"
                         onChange={(event) => {

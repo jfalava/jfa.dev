@@ -133,7 +133,7 @@ function EmptyState() {
                       className="group min-w-0 flex-1"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-lg font-semibold tracking-tight group-hover:text-primary">
+                        <p className="truncate font-serif text-lg font-semibold tracking-tight group-hover:text-primary">
                           {list.title}
                         </p>
                         <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">

@@ -11,5 +11,7 @@ export default defineConfig({
   ],
   test: {
     include: ["test/**/*.test.ts"],
+    // Workers/DO startup can be slower than Vitest's 5-second default in CI.
+    testTimeout: 15_000,
   },
 });

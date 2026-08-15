@@ -14,6 +14,9 @@ interface KewekeHeaderProps {
   backend?: ListBackend;
   isMigrating?: boolean;
   onMigrate?: () => void;
+  isUserDialogOpen?: boolean;
+  userDialogMessage?: string;
+  onUserDialogOpenChange?: (isOpen: boolean) => void;
   hideMobileNewListButton?: boolean;
 }
 
@@ -23,6 +26,9 @@ export function KewekeHeader({
   isMigrating,
   listId,
   onMigrate,
+  isUserDialogOpen,
+  userDialogMessage,
+  onUserDialogOpenChange,
 }: KewekeHeaderProps) {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
@@ -65,7 +71,11 @@ export function KewekeHeader({
 
         <nav className="flex shrink-0 items-center gap-1" aria-label="General navigation">
           <OpenListCommand />
-          <UserDialog />
+          <UserDialog
+            isOpen={isUserDialogOpen}
+            message={userDialogMessage}
+            onOpenChange={onUserDialogOpenChange}
+          />
           <ThemeToggle />
           {backend === "local" && onMigrate ? (
             <Button

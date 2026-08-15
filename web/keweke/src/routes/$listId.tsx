@@ -75,6 +75,8 @@ function ListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isMigrating, setIsMigrating] = useState(false);
   const [isPublishConfirmOpen, setIsPublishConfirmOpen] = useState(false);
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
+  const [userDialogMessage, setUserDialogMessage] = useState<string>();
   const [isRenaming, setIsRenaming] = useState(false);
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [error, setError] = useState<string>();
@@ -272,7 +274,20 @@ function ListPage() {
   }, [loadedList]);
 
   const requestMigration = useCallback((): void => {
+    if (!identity?.username) {
+      setUserDialogMessage("You must create a local user to publish remote lists.");
+      setIsUserDialogOpen(true);
+      return;
+    }
+
     setIsPublishConfirmOpen(true);
+  }, [identity?.username]);
+
+  const handleUserDialogOpenChange = useCallback((isOpen: boolean): void => {
+    setIsUserDialogOpen(isOpen);
+    if (!isOpen) {
+      setUserDialogMessage(undefined);
+    }
   }, []);
 
   const confirmMigration = useCallback((): void => {
@@ -491,6 +506,9 @@ function ListPage() {
         isMigrating={isMigrating}
         listId={listId}
         onMigrate={requestMigration}
+        isUserDialogOpen={isUserDialogOpen}
+        onUserDialogOpenChange={handleUserDialogOpenChange}
+        userDialogMessage={userDialogMessage}
       />
       <PublishListDialog
         alias={snapshot.alias}
@@ -529,7 +547,7 @@ function ListPage() {
             <Input
               id="filter-items"
               aria-label="Search items"
-              className="w-full max-w-none pl-10 font-mono text-base sm:text-[11px]"
+              className="w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
               onChange={(event) => setFilter(event.target.value)}
               placeholder="Search items"
               value={filter}
@@ -584,7 +602,7 @@ function ListTitleEditor({
   if (!isEditing) {
     return (
       <div className="mt-1 flex items-center gap-1">
-        <h1 className="text-xl leading-none font-semibold tracking-tight uppercase sm:text-2xl">
+        <h1 className="font-serif text-xl leading-none font-semibold tracking-tight sm:text-2xl">
           {title}
         </h1>
         <Button
@@ -623,7 +641,7 @@ function ListTitleEditor({
       <Input
         id="list-title"
         aria-label="List title"
-        className="min-w-44 flex-1 font-serif text-lg font-semibold uppercase"
+        className="min-w-44 flex-1 font-serif text-lg font-semibold"
         disabled={isSaving}
         maxLength={160}
         onChange={(event) => setValue(event.target.value)}
@@ -766,23 +784,33 @@ function SignedItemBadge({
   return (
     <span
       aria-label={`${action} ${actorName}`}
-      className="inline-flex max-w-full items-center gap-1 truncate font-mono text-[10px] tracking-[0.06em] text-muted-foreground uppercase"
+      className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
       title={title}
     >
       <span
         aria-hidden="true"
         className={`size-1.5 shrink-0 rounded-full ${identityColor(actor.id)}`}
       />
-      <span className="truncate">
-        {action} {actorName}
-      </span>
+      <span className="truncate font-mono uppercase">{action}</span>
+      <span className="truncate font-serif">{actorName}</span>
     </span>
   );
 }
 
-function formatItemMeasure(item: Pick<ListItem, "quantity" | "unit" | "amount">): string {
-  const measure = `${item.quantity} ${item.unit}`;
-  return item.amount ? `${measure} (${item.amount} each)` : measure;
+function ItemMeasure({ item }: { item: Pick<ListItem, "quantity" | "unit" | "amount"> }) {
+  return (
+    <>
+      <span className="font-mono">{item.quantity}</span>{" "}
+      <span className="font-serif">{item.unit}</span>
+      {item.amount ? (
+        <>
+          {" ("}
+          <span className="font-serif">{item.amount}</span>
+          <span className="font-mono"> each)</span>
+        </>
+      ) : null}
+    </>
+  );
 }
 
 function ShoppingTable({
@@ -1011,7 +1039,7 @@ function DesktopNewItemRow({
       <TableCell className="px-3 py-3">
         <Input
           aria-label="New item name"
-          className="h-9 min-w-32 text-base sm:text-xs"
+          className="h-9 min-w-32 font-serif text-base sm:text-xs"
           maxLength={200}
           onChange={(event) => onChange("name", event.target.value)}
           onKeyDown={onKeyDown}
@@ -1033,7 +1061,7 @@ function DesktopNewItemRow({
       <TableCell className="px-3 py-3">
         <Input
           aria-label="New item unit"
-          className="h-9 w-20 font-mono text-base uppercase sm:text-xs"
+          className="h-9 w-20 font-serif text-base sm:text-xs"
           maxLength={32}
           onChange={(event) => onChange("unit", event.target.value)}
           onKeyDown={onKeyDown}
@@ -1043,7 +1071,7 @@ function DesktopNewItemRow({
       <TableCell className="px-3 py-3">
         <Input
           aria-label="New item amount each"
-          className="h-9 w-28 text-base sm:text-xs"
+          className="h-9 w-28 font-serif text-base sm:text-xs"
           maxLength={64}
           onChange={(event) => onChange("amount", event.target.value)}
           onKeyDown={onKeyDown}
@@ -1054,7 +1082,7 @@ function DesktopNewItemRow({
       <TableCell className="px-3 py-3">
         <Input
           aria-label="New item category"
-          className="h-9 w-28 font-mono text-base uppercase sm:text-[10px]"
+          className="h-9 w-28 font-serif text-base sm:text-[10px]"
           maxLength={64}
           onChange={(event) => onChange("category", event.target.value)}
           onKeyDown={onKeyDown}
@@ -1146,7 +1174,7 @@ function MobileShoppingTable({
                         <Input
                           id={`mobile-edit-name-${row.original.id}`}
                           aria-label={`Edit ${row.original.name} name`}
-                          className="col-span-2 min-w-0"
+                          className="col-span-2 min-w-0 font-serif"
                           maxLength={200}
                           onChange={(event) => onEditDraftChange("name", event.target.value)}
                           value={editDraft?.name ?? row.original.name}
@@ -1172,7 +1200,7 @@ function MobileShoppingTable({
                         <Input
                           id={`mobile-edit-unit-${row.original.id}`}
                           aria-label={`Edit ${row.original.name} unit`}
-                          className="min-w-0 font-mono"
+                          className="min-w-0 font-serif"
                           maxLength={32}
                           onChange={(event) => onEditDraftChange("unit", event.target.value)}
                           value={editDraft?.unit ?? row.original.unit}
@@ -1186,7 +1214,7 @@ function MobileShoppingTable({
                         <Input
                           id={`mobile-edit-amount-${row.original.id}`}
                           aria-label={`Edit ${row.original.name} amount each`}
-                          className="col-span-2 min-w-0 font-mono"
+                          className="col-span-2 min-w-0 font-serif"
                           maxLength={64}
                           onChange={(event) => onEditDraftChange("amount", event.target.value)}
                           placeholder="Amount each (optional)"
@@ -1201,7 +1229,7 @@ function MobileShoppingTable({
                         <Input
                           id={`mobile-edit-category-${row.original.id}`}
                           aria-label={`Edit ${row.original.name} category`}
-                          className="col-span-2 min-w-0 font-mono tracking-[0.08em]"
+                          className="col-span-2 min-w-0 font-serif"
                           maxLength={64}
                           onChange={(event) => onEditDraftChange("category", event.target.value)}
                           value={editDraft?.category ?? row.original.category}
@@ -1294,7 +1322,7 @@ function MobileNewItemRow({
             <Input
               id="new-item-mobile"
               aria-label="New item name"
-              className="h-9 text-base"
+              className="h-9 font-serif text-base"
               maxLength={200}
               onChange={(event) => onChange("name", event.target.value)}
               onKeyDown={onKeyDown}
@@ -1324,7 +1352,7 @@ function MobileNewItemRow({
             <Input
               id="new-unit-mobile"
               aria-label="New item unit"
-              className="h-9 font-mono text-base uppercase"
+              className="h-9 font-serif text-base"
               maxLength={32}
               onChange={(event) => onChange("unit", event.target.value)}
               onKeyDown={onKeyDown}
@@ -1338,7 +1366,7 @@ function MobileNewItemRow({
             <Input
               id="new-amount-mobile"
               aria-label="New item amount each"
-              className="h-9 text-base"
+              className="h-9 font-serif text-base"
               maxLength={64}
               onChange={(event) => onChange("amount", event.target.value)}
               onKeyDown={onKeyDown}
@@ -1353,7 +1381,7 @@ function MobileNewItemRow({
             <Input
               id="new-category-mobile"
               aria-label="New item category"
-              className="h-9 font-mono text-base uppercase"
+              className="h-9 font-serif text-base"
               maxLength={64}
               onChange={(event) => onChange("category", event.target.value)}
               onKeyDown={onKeyDown}
@@ -1416,13 +1444,23 @@ function DeletedItemsHistory({
               key={item.archiveId}
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{item.name}</p>
-                <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                  {formatItemMeasure(item)} · {item.category} · Deleted{" "}
-                  {item.deletedAt.slice(0, 10)}
-                  {item.deletedBy
-                    ? ` · Deleted by ${identityDisplayName(item.deletedBy, identity)}`
-                    : ""}
+                <p className="truncate font-serif text-sm font-medium">{item.name}</p>
+                <p className="mt-1 flex flex-wrap items-center gap-x-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                  <ItemMeasure item={item} />
+                  <span aria-hidden="true">·</span>
+                  <span className="font-serif">{item.category}</span>
+                  <span aria-hidden="true">·</span>
+                  <span className="uppercase">Deleted</span>
+                  <span>{item.deletedAt.slice(0, 10)}</span>
+                  {item.deletedBy ? (
+                    <>
+                      <span aria-hidden="true">·</span>
+                      <span className="uppercase">Deleted by</span>
+                      <span className="font-serif">
+                        {identityDisplayName(item.deletedBy, identity)}
+                      </span>
+                    </>
+                  ) : null}
                 </p>
               </div>
               {confirmingArchiveId === item.archiveId ? (
@@ -1532,7 +1570,7 @@ function createShoppingColumns({
           return (
             <Input
               aria-label={`Edit ${row.original.name} name`}
-              className="min-w-32"
+              className="min-w-32 font-serif"
               maxLength={200}
               onChange={(event) => onEditDraftChange("name", event.target.value)}
               value={editDraft?.name ?? getValue()}
@@ -1541,7 +1579,11 @@ function createShoppingColumns({
         }
 
         return (
-          <span className={row.original.checked ? "text-muted-foreground line-through" : undefined}>
+          <span
+            className={
+              row.original.checked ? "font-serif text-muted-foreground line-through" : "font-serif"
+            }
+          >
             {getValue()}
           </span>
         );
@@ -1573,7 +1615,7 @@ function createShoppingColumns({
           return (
             <Input
               aria-label={`Edit ${row.original.name} unit`}
-              className="w-20 font-mono text-[11px]"
+              className="w-20 font-serif text-[11px]"
               maxLength={32}
               onChange={(event) => onEditDraftChange("unit", event.target.value)}
               value={editDraft?.unit ?? getValue()}
@@ -1581,7 +1623,7 @@ function createShoppingColumns({
           );
         }
 
-        return <span className="font-mono text-[11px]">{getValue()}</span>;
+        return <span className="font-serif text-[11px]">{getValue()}</span>;
       },
     }),
     shoppingColumnHelper.accessor("amount", {
@@ -1591,7 +1633,7 @@ function createShoppingColumns({
           return (
             <Input
               aria-label={`Edit ${row.original.name} amount each`}
-              className="w-28 font-mono text-[11px]"
+              className="w-28 font-serif text-[11px]"
               maxLength={64}
               onChange={(event) => onEditDraftChange("amount", event.target.value)}
               placeholder="optional"
@@ -1600,7 +1642,7 @@ function createShoppingColumns({
           );
         }
 
-        return <span className="font-mono text-[11px]">{getValue() || "—"}</span>;
+        return <span className="font-serif text-[11px]">{getValue() || "—"}</span>;
       },
     }),
     shoppingColumnHelper.accessor("category", {
@@ -1610,7 +1652,7 @@ function createShoppingColumns({
           return (
             <Input
               aria-label={`Edit ${row.original.name} category`}
-              className="w-28 font-mono text-[10px] tracking-[0.08em]"
+              className="w-28 font-serif text-[10px]"
               maxLength={64}
               onChange={(event) => onEditDraftChange("category", event.target.value)}
               value={editDraft?.category ?? getValue()}
@@ -1618,11 +1660,7 @@ function createShoppingColumns({
           );
         }
 
-        return (
-          <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
-            {getValue()}
-          </span>
-        );
+        return <span className="font-serif text-[10px] text-muted-foreground">{getValue()}</span>;
       },
     }),
     shoppingColumnHelper.display({
@@ -1729,17 +1767,22 @@ function createMobileShoppingColumns({
           <p
             className={
               row.original.checked
-                ? "truncate font-medium text-muted-foreground line-through"
-                : "truncate font-medium"
+                ? "truncate font-serif font-medium text-muted-foreground line-through"
+                : "truncate font-serif font-medium"
             }
           >
             {row.original.name}
           </p>
-          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-            <span>
-              {formatItemMeasure(row.original)} · {row.original.category} ·{" "}
-              {row.original.checked ? "done" : "open"}
+          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[10px] tracking-[0.08em] text-muted-foreground">
+            <ItemMeasure item={row.original} />
+            <span aria-hidden="true" className="font-mono">
+              ·
             </span>
+            <span className="font-serif">{row.original.category}</span>
+            <span aria-hidden="true" className="font-mono">
+              ·
+            </span>
+            <span className="font-mono uppercase">{row.original.checked ? "done" : "open"}</span>
             <SignedItemBadge identity={identity} item={row.original} />
           </div>
         </div>

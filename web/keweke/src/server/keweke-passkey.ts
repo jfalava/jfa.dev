@@ -117,7 +117,10 @@ export class KewekePasskeySession extends DurableObject {
 
   async finish(): Promise<boolean> {
     const row = this.readRow();
-    if (!row || new Date(row.expires_at).getTime() <= Date.now()) {
+    if (!row) {
+      return false;
+    }
+    if (new Date(row.expires_at).getTime() <= Date.now()) {
       this.ctx.storage.sql.exec("DELETE FROM passkey_session WHERE id = 1");
       await this.ctx.storage.deleteAlarm();
       return false;

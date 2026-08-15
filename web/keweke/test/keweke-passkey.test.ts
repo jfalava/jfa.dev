@@ -85,6 +85,8 @@ describe("passkey adoption persistence", () => {
       targetDeviceId: target.deviceId,
       targetDevicePublicKey: target.devicePublicKey,
     });
+    expect(await session.finish()).toBe(true);
+    expect(await session.finish()).toBe(false);
   });
 
   it("stores, uses, lists, and deletes a passkey credential", async () => {
