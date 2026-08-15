@@ -5,12 +5,16 @@ import { Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
+import { ensureLocalIdentity } from "@/lib/local-identity";
 import {
   createLocalList,
   deleteLocalList,
   listLocalLists,
   subscribeToLocalLists,
 } from "@/lib/local-list-store";
+import { syncRemoteLists } from "@/lib/remote-list-sync";
+
+const REMOTE_LIST_SYNC_INTERVAL_MS = 60_000;
 
 export const Route = createFileRoute("/")({ component: EmptyState });
 
@@ -34,6 +38,38 @@ function EmptyState() {
   useEffect(() => {
     refreshLists();
     return subscribeToLocalLists(refreshLists);
+  }, [refreshLists]);
+
+  useEffect(() => {
+    let cancelled = false;
+    let isSyncing = false;
+
+    const syncLists = async (): Promise<void> => {
+      if (isSyncing) {
+        return;
+      }
+      isSyncing = true;
+      try {
+        const identity = await ensureLocalIdentity();
+        if (identity?.remoteUsername) {
+          await syncRemoteLists(identity);
+        }
+      } catch {
+        // The local catalog remains usable while remote synchronization retries.
+      } finally {
+        isSyncing = false;
+        if (!cancelled) {
+          refreshLists();
+        }
+      }
+    };
+
+    void syncLists();
+    const interval = window.setInterval(() => void syncLists(), REMOTE_LIST_SYNC_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
   }, [refreshLists]);
 
   const removeList = useCallback(async (list: ListSummary): Promise<void> => {

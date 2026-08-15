@@ -1,6 +1,7 @@
 import {
   deviceRevocationSigningPayload,
   pairingApprovalSigningPayload,
+  userListsSigningPayload,
   userRenameSigningPayload,
 } from "@jfa.dev/common/crypto";
 import {
@@ -11,11 +12,13 @@ import {
   userProfileSchema,
   usernameSchema,
 } from "@jfa.dev/common/identities";
+import type { ListSnapshot } from "@jfa.dev/common/lists";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
 import type { PairingApprovalStatus, PairingStatus } from "./keweke-pairing";
+import { readRemoteList } from "./lists";
 
 const pairingStartInputSchema = z.object({
   code: pairingCodeSchema,
@@ -42,11 +45,37 @@ const revokeInputSchema = z.object({
   targetDeviceId: identityIdSchema,
 });
 
+const userListsInputSchema = z.object({ auth: identityAuthSchema });
+
 export const getUserProfile = createServerFn()
   .validator(identityIdSchema)
   .handler(async ({ data }) => {
     const profile = await env.KEWEKE_USERS.getByName(data).getProfile(data);
     return profile ? userProfileSchema.parse(profile) : null;
+  });
+
+export const getUserLists = createServerFn()
+  .validator(userListsInputSchema)
+  .handler(async ({ data }) => {
+    const payload = userListsSigningPayload({
+      userId: data.auth.userId,
+      deviceId: data.auth.deviceId,
+    });
+    const listIds = await env.KEWEKE_USERS.getByName(data.auth.userId).getListIds({
+      auth: data.auth,
+      payload,
+    });
+    if (!listIds) {
+      return { status: "unauthorized" as const };
+    }
+
+    const snapshots = await Promise.all(listIds.map((listId) => readRemoteList(listId)));
+    return {
+      status: "ok" as const,
+      snapshots: snapshots.filter(
+        (snapshot): snapshot is ListSnapshot => snapshot !== null,
+      ),
+    };
   });
 
 export const updateUserProfile = createServerFn({ method: "POST" })

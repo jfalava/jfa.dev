@@ -22,6 +22,7 @@ import {
   subscribeToLocalIdentity,
   type LocalIdentity,
 } from "@/lib/local-identity";
+import { syncRemoteLists } from "@/lib/remote-list-sync";
 import {
   approveDevicePairing,
   getDevicePairingStatus,
@@ -256,6 +257,7 @@ export function UserDialog() {
     resetFeedback();
     try {
       const nextIdentity = await adoptLocalIdentity(pairingStatus.profile);
+      await syncRemoteLists(nextIdentity);
       setIdentity(nextIdentity);
       setProfile(pairingStatus.profile);
       setValue(nextIdentity.username ?? "");

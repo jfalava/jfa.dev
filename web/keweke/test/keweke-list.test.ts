@@ -7,6 +7,7 @@ import {
   pairingApprovalSigningPayload,
   publicKeyFingerprint,
   signPayload,
+  userListsSigningPayload,
 } from "@jfa.dev/common/crypto";
 import type { PublishAuth } from "@jfa.dev/common/identities";
 import {
@@ -23,6 +24,9 @@ import { KewekeList } from "../src/server/keweke-list";
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000020";
 const SECOND_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000021";
 const THIRD_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000022";
+const FOURTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000023";
+const FIFTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000024";
+const SIXTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000025";
 const NOW = "2026-08-14T10:00:00.000Z";
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
@@ -135,6 +139,19 @@ async function signedMutation(
   return { ...unsigned, auth: { ...unsigned.auth!, signature } };
 }
 
+async function signedUserListsAuth(identity: TestIdentity) {
+  const auth = {
+    userId: identity.userId,
+    deviceId: identity.deviceId,
+    signature: UNSIGNED_SIGNATURE,
+  };
+  const signature = await signPayload(
+    identity.devicePrivateKey,
+    userListsSigningPayload({ userId: auth.userId, deviceId: auth.deviceId }),
+  );
+  return { ...auth, signature };
+}
+
 describe("public-key list authorization", () => {
   it("registers a named user, imports a list, and applies signed mutations idempotently", async () => {
     const identity = await createIdentity("Alex");
@@ -170,6 +187,56 @@ describe("public-key list authorization", () => {
     );
     expect(retry.status).toBe("ok");
     expect(stale.status).toBe("conflict");
+  });
+
+  it("indexes lists created and touched by the authenticated user", async () => {
+    const owner = await createIdentity("Owner");
+    const collaborator = await createIdentity("Collaborator");
+    const { listStub: ownerListStub, snapshot: ownerSnapshot } = await publish(
+      owner,
+      FOURTH_LIST_ID,
+    );
+    await publish(collaborator, FIFTH_LIST_ID);
+
+    const touched = await ownerListStub.applyMutation(
+      FOURTH_LIST_ID,
+      await signedMutation(collaborator, ownerSnapshot, {
+        type: "set-item-checked",
+        itemId: "starter-bread",
+        checked: true,
+      }),
+    );
+    expect(touched.status).toBe("ok");
+
+    const auth = await signedUserListsAuth(collaborator);
+    const listIds = await env.KEWEKE_USERS.getByName(collaborator.userId).getListIds({
+      auth,
+      payload: userListsSigningPayload({
+        userId: collaborator.userId,
+        deviceId: collaborator.deviceId,
+      }),
+    });
+    expect(listIds).not.toBeNull();
+    expect(listIds).toEqual(expect.arrayContaining([FOURTH_LIST_ID, FIFTH_LIST_ID]));
+  });
+
+  it("rejects an unsigned or unaccepted user-list index read", async () => {
+    const identity = await createIdentity("Indexed");
+    await publish(identity, SIXTH_LIST_ID);
+    const auth = await signedUserListsAuth(identity);
+    const userStub = env.KEWEKE_USERS.getByName(identity.userId);
+    const payload = userListsSigningPayload({
+      userId: identity.userId,
+      deviceId: identity.deviceId,
+    });
+
+    expect(
+      await userStub.getListIds({ auth: { ...auth, signature: UNSIGNED_SIGNATURE }, payload }),
+    ).toBeNull();
+
+    const unaccepted = await createIdentity("Unaccepted");
+    const unacceptedAuth = await signedUserListsAuth(unaccepted);
+    expect(await userStub.getListIds({ auth: unacceptedAuth, payload })).toBeNull();
   });
 
   it("rejects unsigned and tampered mutations, then rejects a revoked device", async () => {

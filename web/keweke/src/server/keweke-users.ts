@@ -9,6 +9,7 @@ import {
   type DeviceProfile,
   type UserProfile,
 } from "@jfa.dev/common/identities";
+import { listIdSchema } from "@jfa.dev/common/lists";
 import { DurableObject } from "cloudflare:workers";
 
 interface UserRow {
@@ -25,6 +26,11 @@ interface DeviceRow {
   approved_at: string;
   approved_by: string | null;
   revoked_at: string | null;
+}
+
+interface UserListRow {
+  [key: string]: string | number | null;
+  list_id: string;
 }
 
 export type AuthorizedDevice = {
@@ -52,6 +58,55 @@ export class KewekeUserDirectory extends DurableObject {
   async getProfile(userId: string): Promise<UserProfile | null> {
     const normalizedUserId = identityIdSchema.parse(userId);
     return this.readProfile(normalizedUserId);
+  }
+
+  async getListIds(input: { auth: unknown; payload: string }): Promise<string[] | null> {
+    const auth = identityAuthSchema.safeParse(input.auth);
+    if (!auth.success) {
+      return null;
+    }
+
+    const authorization = await this.authorizeDevice({
+      auth: auth.data,
+      payload: input.payload,
+    });
+    if (!authorization) {
+      return null;
+    }
+
+    return this.ctx.storage.sql
+      .exec<UserListRow>(
+        "SELECT list_id FROM user_lists ORDER BY touched_at DESC, list_id ASC",
+      )
+      .toArray()
+      .map((row) => row.list_id);
+  }
+
+  async recordListCreated(listId: string): Promise<void> {
+    const normalizedListId = listIdSchema.parse(listId);
+    const now = new Date().toISOString();
+    this.ctx.storage.sql.exec(
+      `INSERT INTO user_lists (list_id, created_at, touched_at)
+       VALUES (?, ?, ?)
+       ON CONFLICT(list_id) DO UPDATE SET
+         created_at = COALESCE(user_lists.created_at, excluded.created_at),
+         touched_at = excluded.touched_at`,
+      normalizedListId,
+      now,
+      now,
+    );
+  }
+
+  async recordListTouched(listId: string): Promise<void> {
+    const normalizedListId = listIdSchema.parse(listId);
+    const now = new Date().toISOString();
+    this.ctx.storage.sql.exec(
+      `INSERT INTO user_lists (list_id, created_at, touched_at)
+       VALUES (?, NULL, ?)
+       ON CONFLICT(list_id) DO UPDATE SET touched_at = excluded.touched_at`,
+      normalizedListId,
+      now,
+    );
   }
 
   async authorizePublish(input: { auth: unknown; payload: string }): Promise<PublishAuthorization> {
@@ -327,6 +382,13 @@ export class KewekeUserDirectory extends DurableObject {
         approved_by TEXT,
         revoked_at TEXT
       );
+      CREATE TABLE IF NOT EXISTS user_lists (
+        list_id TEXT PRIMARY KEY,
+        created_at TEXT,
+        touched_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS user_lists_by_touched_at
+        ON user_lists(touched_at DESC, list_id ASC);
     `);
   }
 }

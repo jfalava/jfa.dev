@@ -143,6 +143,13 @@ export function userRenameSigningPayload(input: {
   return canonicalPayload("keweke:user-rename:v1", input);
 }
 
+export function userListsSigningPayload(input: {
+  userId: string;
+  deviceId: string;
+}): string {
+  return canonicalPayload("keweke:user-lists:v1", input);
+}
+
 export function pairingApprovalSigningPayload(input: {
   code: string;
   userId: string;

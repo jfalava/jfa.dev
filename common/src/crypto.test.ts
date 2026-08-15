@@ -8,6 +8,7 @@ import {
   listMutationSigningPayload,
   publicKeyFingerprint,
   signPayload,
+  userListsSigningPayload,
   verifyPayload,
 } from "./crypto";
 
@@ -34,5 +35,22 @@ describe("identity cryptography", () => {
     expect(await verifyPayload(publicKey, signature, `${payload}!`)).toBe(
       false,
     );
+  });
+
+  test("signs and verifies the user-list index payload", async () => {
+    const keys = await generateEd25519KeyPair();
+    const publicKey = await exportPublicKey(keys.publicKey);
+    const userId = await publicKeyFingerprint(publicKey);
+    const payload = userListsSigningPayload({ userId, deviceId: userId });
+    const signature = await signPayload(keys.privateKey, payload);
+
+    expect(await verifyPayload(publicKey, signature, payload)).toBe(true);
+    expect(
+      await verifyPayload(
+        publicKey,
+        signature,
+        userListsSigningPayload({ userId, deviceId: "B".repeat(43) }),
+      ),
+    ).toBe(false);
   });
 });

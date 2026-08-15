@@ -110,6 +110,29 @@ export async function saveLocalList(
   });
 }
 
+export async function saveRemoteLists(snapshots: ListSnapshot[]): Promise<void> {
+  if (snapshots.length === 0) {
+    return;
+  }
+
+  const database = await getDatabase();
+  const transaction = database.transaction("lists", "readwrite");
+  for (const snapshot of snapshots) {
+    const existing = await transaction.store.get(snapshot.id);
+    if (existing?.backend === "local") {
+      continue;
+    }
+    await transaction.store.put({
+      id: snapshot.id,
+      backend: "remote",
+      snapshot,
+      updatedAt: snapshot.updatedAt,
+    });
+  }
+  await transaction.done;
+  emitChange();
+}
+
 export async function createLocalList(): Promise<ListSnapshot> {
   const snapshot = createListSnapshot(uuidv7());
   await saveLocalList(snapshot);

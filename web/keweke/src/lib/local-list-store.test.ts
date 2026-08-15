@@ -17,6 +17,7 @@ import {
   listLocalLists,
   markListRemote,
   saveLocalList,
+  saveRemoteLists,
 } from "./local-list-store";
 
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000010";
@@ -78,6 +79,23 @@ describe("local list store", () => {
     expect((await getLocalListRecord(LIST_ID))?.backend).toBe("remote");
     await deleteLocalList(LIST_ID);
     expect(await getLocalListRecord(LIST_ID)).toBeUndefined();
+  });
+
+  test("merges fetched remote snapshots without replacing local lists", async () => {
+    const local = await createLocalList();
+    const remote = createStarterListSnapshot(LIST_ID, { now: NOW });
+
+    await saveRemoteLists([remote]);
+
+    const summaries = await listLocalLists();
+    expect(summaries.map((summary) => summary.id)).toEqual(
+      expect.arrayContaining([local.id, remote.id]),
+    );
+    expect(summaries.find((summary) => summary.id === remote.id)?.backend).toBe("remote");
+
+    await saveRemoteLists([{ ...local, title: "Remote collision" }]);
+    expect((await getLocalListRecord(local.id))?.backend).toBe("local");
+    expect((await getLocalListRecord(local.id))?.snapshot.title).toBe("New list");
   });
 
   test("derives an alias from the first saved title and keeps it after renames", async () => {

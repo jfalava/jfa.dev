@@ -66,6 +66,16 @@ export const ensureRemoteListAlias = createServerFn({ method: "POST" })
       throw new Error("List disappeared while assigning its alias");
     }
 
+    try {
+      await env.KEWEKE_USERS.getByName(data.auth.userId).recordListTouched(data.listId);
+    } catch (error) {
+      console.error("Keweke list alias index update failed", {
+        error,
+        listId: data.listId,
+        userId: data.auth.userId,
+      });
+    }
+
     return {
       status: reservation.status,
       snapshot: await resolveActorNames(listSnapshotSchema.parse(updated)),
@@ -145,7 +155,7 @@ export const importRemoteList = createServerFn({ method: "POST" })
     };
   });
 
-async function readRemoteList(listId: string) {
+export async function readRemoteList(listId: string) {
   const snapshot = await env.KEWEKE_LISTS.getByName(listId).getSnapshot(listId);
   if (!snapshot) {
     return null;

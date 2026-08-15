@@ -132,6 +132,7 @@ export class KewekeList extends DurableObject {
       )
       .toArray()[0];
     if (alreadyApplied) {
+      await this.recordListTouched(parsedMutation.auth.userId, normalizedListId);
       return { status: "ok", snapshot: current };
     }
 
@@ -148,6 +149,7 @@ export class KewekeList extends DurableObject {
         next.revision,
       );
     });
+    await this.recordListTouched(authorization.userId, normalizedListId);
     return { status: "ok", snapshot: next };
   }
 
@@ -191,7 +193,24 @@ export class KewekeList extends DurableObject {
       this.writeSnapshot(snapshot);
       this.ctx.storage.sql.exec("INSERT INTO imports (id) VALUES (?)", migrationId);
     });
+    await this.recordListCreated(authorization.authorization.userId, normalizedListId);
     return { status: "imported", snapshot };
+  }
+
+  private async recordListCreated(userId: string, listId: string): Promise<void> {
+    try {
+      await this.env.KEWEKE_USERS.getByName(userId).recordListCreated(listId);
+    } catch (error) {
+      console.error("Keweke list creation index update failed", { error, listId, userId });
+    }
+  }
+
+  private async recordListTouched(userId: string, listId: string): Promise<void> {
+    try {
+      await this.env.KEWEKE_USERS.getByName(userId).recordListTouched(listId);
+    } catch (error) {
+      console.error("Keweke list touch index update failed", { error, listId, userId });
+    }
   }
 
   private migrate(): void {
