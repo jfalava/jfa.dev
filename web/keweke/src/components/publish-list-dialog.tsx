@@ -49,7 +49,7 @@ export function PublishListDialog({
             </p>
 
             <div className="space-y-2 border border-border bg-muted/40 p-3 text-[11px]">
-              <p className="tracking-[0.1em] text-muted-foreground uppercase">public addresses</p>
+              <p className="tracking-widest text-muted-foreground uppercase">public addresses</p>
               <div className="flex gap-3">
                 <span className="w-12 shrink-0 text-muted-foreground uppercase">id</span>
                 <span className="min-w-0 font-mono break-all text-primary">{listId}</span>

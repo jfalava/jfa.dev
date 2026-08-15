@@ -685,7 +685,7 @@ export function UserDialog({
                   aria-labelledby="passkey-adoption-heading"
                 >
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                    <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
                       pair with a passkey
                     </p>
                     <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -718,7 +718,7 @@ export function UserDialog({
                 aria-labelledby="pairing-heading"
               >
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                  <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
                     pair a browser
                   </p>
                   <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -741,7 +741,7 @@ export function UserDialog({
                 <FeedbackMessage feedback={feedback} section="pairing" />
                 {pairingCode ? (
                   <div className="border border-border bg-muted/40 p-3">
-                    <p className="font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
+                    <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
                       pairing code
                     </p>
                     <p className="mt-1 font-mono text-xl tracking-[0.18em] break-all text-primary">
@@ -772,7 +772,7 @@ export function UserDialog({
                 aria-labelledby="approve-heading"
               >
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                  <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
                     approve a browser
                   </p>
                   <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -788,7 +788,7 @@ export function UserDialog({
                 <form className="flex gap-2" onSubmit={(event) => void findDevice(event)}>
                   <Input
                     aria-label="Pairing code"
-                    className="h-10 font-mono tracking-[0.1em]"
+                    className="h-10 font-mono tracking-widest"
                     maxLength={10}
                     onChange={(event) => setApprovalCode(event.target.value)}
                     placeholder="CODE"
@@ -824,7 +824,7 @@ export function UserDialog({
                   aria-labelledby="devices-heading"
                 >
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                    <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
                       accepted devices
                     </p>
                     <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -894,7 +894,7 @@ export function UserDialog({
                   className="space-y-3 border-t border-border pt-4"
                 >
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                    <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
                       passkeys
                     </p>
                     <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -963,7 +963,7 @@ export function UserDialog({
                   aria-labelledby="account-heading"
                 >
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <p className="font-mono text-[10px] tracking-[0.1em] text-destructive uppercase">
+                    <p className="font-mono text-[10px] tracking-widest text-destructive uppercase">
                       remote account
                     </p>
                     <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -1045,7 +1045,7 @@ export function UserDialog({
                 aria-labelledby="data-heading"
               >
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                  <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
                     local data
                   </p>
                   <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">

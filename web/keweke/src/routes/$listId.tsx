@@ -486,7 +486,7 @@ function ListPage() {
               <p className="font-mono text-[11px] tracking-[0.12em] text-destructive uppercase">
                 list unavailable
               </p>
-              <h1 className="mt-3 text-4xl leading-[0.95] font-semibold tracking-[-0.05em] uppercase sm:text-6xl">
+              <h1 className="mt-3 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
                 Nothing here
               </h1>
               <p className="mt-6 max-w-lg text-sm text-muted-foreground">
@@ -951,7 +951,7 @@ function ShoppingTable({
         onNewItemKeyDown={submitNewItemOnEnter}
       />
       <div className="hidden w-full overflow-x-auto md:block">
-        <table className="w-full min-w-[760px] border-collapse">
+        <table className="w-full min-w-190 border-collapse">
           <colgroup>
             <col className="w-24" />
             <col className="w-10" />
@@ -1145,7 +1145,7 @@ function MobileShoppingTable({
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={`h-8 bg-muted/50 px-2 text-left font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase first:pl-3 last:pr-3 ${header.column.id === "done" ? "w-12" : header.column.id === "actions" ? "w-20 text-right" : ""}`}
+                  className={`h-8 bg-muted/50 px-2 text-left font-mono text-[10px] tracking-widest text-muted-foreground uppercase first:pl-3 last:pr-3 ${header.column.id === "done" ? "w-12" : header.column.id === "actions" ? "w-20 text-right" : ""}`}
                   scope="col"
                 >
                   {header.isPlaceholder ? null : <table.FlexRender header={header} />}
@@ -1316,7 +1316,7 @@ function MobileNewItemRow({
       <TableCell className="min-w-0 px-2 py-3">
         <div className="grid grid-cols-6 gap-x-2 gap-y-2">
           <label className="col-span-6 flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
-            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+            <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
               item
             </span>
             <Input
@@ -1331,7 +1331,7 @@ function MobileNewItemRow({
             />
           </label>
           <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-quantity-mobile">
-            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+            <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
               qty
             </span>
             <Input
@@ -1346,7 +1346,7 @@ function MobileNewItemRow({
             />
           </label>
           <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-unit-mobile">
-            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+            <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
               unit
             </span>
             <Input
@@ -1360,7 +1360,7 @@ function MobileNewItemRow({
             />
           </label>
           <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-amount-mobile">
-            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+            <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
               amount each
             </span>
             <Input
@@ -1375,7 +1375,7 @@ function MobileNewItemRow({
             />
           </label>
           <label className="col-span-6 flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
-            <span className="font-mono text-[9px] tracking-[0.1em] text-muted-foreground uppercase">
+            <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
               category
             </span>
             <Input

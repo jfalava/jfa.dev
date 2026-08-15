@@ -110,7 +110,7 @@ function EmptyState() {
                 <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
                   local collection
                 </p>
-                <h1 className="mt-2 text-4xl leading-[0.95] font-semibold tracking-[-0.05em] uppercase sm:text-6xl">
+                <h1 className="mt-2 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
                   Your lists
                 </h1>
               </div>

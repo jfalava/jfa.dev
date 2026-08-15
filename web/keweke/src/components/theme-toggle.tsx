@@ -88,7 +88,7 @@ function ThemeMenuItem({
 }) {
   return (
     <MenuItem
-      className="flex min-h-7 cursor-default items-center gap-2 rounded-sm px-2 py-1 text-xs outline-none data-[focused]:bg-muted data-[focused]:text-foreground"
+      className="flex min-h-7 cursor-default items-center gap-2 rounded-sm px-2 py-1 text-xs outline-none data-focused:bg-muted data-focused:text-foreground"
       id={id}
     >
       {icon}
