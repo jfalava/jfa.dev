@@ -4,10 +4,7 @@ import {
   pairingApprovalSigningPayload,
   userRenameSigningPayload,
 } from "@jfa.dev/common/crypto";
-import {
-  type UserProfile,
-  usernameSchema,
-} from "@jfa.dev/common/identities";
+import { type UserProfile, usernameSchema } from "@jfa.dev/common/identities";
 import { Button, Input } from "@jfa.dev/common/ui";
 import { UserRound } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
@@ -169,10 +166,10 @@ export function UserDialog() {
           setValue(confirmed.username ?? "");
           setMessage("Username updated.");
         } else {
-          setMessage("Saved here; the remote username will catch up later.");
+          setMessage("Username saved.");
         }
       } else {
-        setMessage("Saved on this device. Publishing a list will register this user.");
+        setMessage("Username saved.");
       }
     } catch {
       setError("Could not save this user right now.");
@@ -200,7 +197,7 @@ export function UserDialog() {
       setIdentity(currentIdentity);
       setPairingCode(code);
       setPairingStatus(result);
-      setMessage("Give this code to an accepted device.");
+      setMessage("Code ready.");
     } catch {
       setError("Could not start device pairing.");
     } finally {
@@ -219,7 +216,7 @@ export function UserDialog() {
       setIdentity(nextIdentity);
       setProfile(pairingStatus.profile);
       setValue(nextIdentity.username ?? "");
-      setMessage("This browser now uses the adopted user.");
+      setMessage("Username added.");
       setPairingCode("");
     } catch {
       setError("This browser could not adopt that user.");
@@ -356,167 +353,214 @@ export function UserDialog() {
       >
         <Modal className="max-h-[calc(100vh-5rem)] w-full max-w-lg overflow-y-auto outline-none">
           <Dialog
-            aria-label="Your user"
+            aria-label="Set your username"
             className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
           >
             <div className="border-b border-border px-4 py-4">
-              <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-                device identity
-              </p>
-              <h2 className="mt-1 text-lg font-semibold tracking-tight">Your user</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Your private device key stays in this browser. Accepted devices share one public
-                user identity.
-              </p>
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
+                  device identity
+                </p>
+                <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                  /
+                </span>
+                <h2 className="text-[11px] font-normal text-muted-foreground/75">
+                  Set your username
+                </h2>
+              </div>
             </div>
 
             <div className="space-y-5 p-4">
               <form className="space-y-3" onSubmit={(event) => void save(event)}>
-                <div>
-                  <label className="text-xs font-medium" htmlFor="user-username">
-                    Display name
-                  </label>
-                  <Input
-                    autoComplete="nickname"
-                    className="mt-1.5 h-10 text-base sm:text-sm"
-                    disabled={!identity || isSaving}
-                    id="user-username"
-                    maxLength={48}
-                    onChange={(event) => {
-                      setValue(event.target.value);
-                      resetFeedback();
-                    }}
-                    placeholder={LOCAL_IDENTITY_PLACEHOLDER}
-                    value={value}
-                  />
-                </div>
-                {identity ? (
-                  <div className="grid gap-2 border-t border-border pt-3 text-xs sm:grid-cols-2">
-                    <IdentityValue label="User ID" value={identity.userId} />
-                    <IdentityValue label="Device ID" value={identity.deviceId} />
-                    {identity.remoteUsername && identity.username !== identity.remoteUsername ? (
-                      <p className="text-muted-foreground sm:col-span-2">
-                        Remote name: <span className="text-foreground">{identity.remoteUsername}</span>
-                      </p>
-                    ) : null}
+                <div className="flex items-end gap-2">
+                  <div className="min-w-0 flex-1">
+                    <label className="text-xs font-medium" htmlFor="user-username">
+                      Username
+                    </label>
+                    <Input
+                      autoComplete="nickname"
+                      className="mt-1.5 h-10 text-base sm:text-sm"
+                      disabled={!identity || isSaving}
+                      id="user-username"
+                      maxLength={48}
+                      onChange={(event) => {
+                        setValue(event.target.value);
+                        resetFeedback();
+                      }}
+                      placeholder={LOCAL_IDENTITY_PLACEHOLDER}
+                      value={value}
+                    />
                   </div>
-                ) : null}
-                {error ? <p className="text-sm text-destructive">{error}</p> : null}
-                {message ? <p className="text-sm text-primary">{message}</p> : null}
-                <div className="flex justify-end">
-                  <Button isDisabled={!identity || isSaving} type="submit">
-                    {isSaving ? "Saving…" : "Save name"}
+                  <Button
+                    className="h-10 min-w-24 px-5 text-sm"
+                    isDisabled={!identity || isSaving}
+                    type="submit"
+                  >
+                    {isSaving ? "Saving…" : "Save"}
                   </Button>
                 </div>
+                {error ? <p className="text-sm text-destructive">{error}</p> : null}
+                {message ? <p className="text-sm text-primary">{message}</p> : null}
               </form>
 
-              <section className="space-y-3 border-t border-border pt-4" aria-labelledby="pairing-heading">
-                <div>
+              <section
+                className="space-y-3 border-t border-border pt-4"
+                aria-labelledby="pairing-heading"
+              >
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
                     pair a browser
                   </p>
-                  <h3 className="mt-1 font-semibold" id="pairing-heading">
-                    Use this user on another device
+                  <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                    /
+                  </span>
+                  <h3
+                    className="text-[11px] font-normal text-muted-foreground/75"
+                    id="pairing-heading"
+                  >
+                    Use on another device
                   </h3>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    Show a one-time code here, then approve it from an accepted device.
-                  </p>
                 </div>
-                <Button isDisabled={!identity || isStartingPairing} onPress={() => void startPairing()} variant="outline">
-                  {isStartingPairing ? "Creating code…" : "Show pairing code"}
+                <Button
+                  className="h-10 min-w-24 px-5 text-sm"
+                  isDisabled={!identity || isStartingPairing}
+                  onPress={() => void startPairing()}
+                >
+                  {isStartingPairing ? "Creating…" : "Show code"}
                 </Button>
                 {pairingCode && pairingStatus ? (
                   <div className="border border-border bg-muted/40 p-3">
                     <p className="font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
-                      one-time code
+                      pairing code
                     </p>
-                    <p className="mt-1 break-all font-mono text-xl tracking-[0.18em] text-primary">
+                    <p className="mt-1 font-mono text-xl tracking-[0.18em] break-all text-primary">
                       {pairingCode}
                     </p>
                     <p className="mt-2 text-xs text-muted-foreground">
                       {pairingStatus.status === "pending"
-                        ? "Waiting for an accepted device…"
+                        ? "Waiting…"
                         : pairingStatus.status === "approved"
-                          ? "A device approved this browser."
-                          : "This code is no longer active."}
+                          ? "Ready."
+                          : "Expired."}
                     </p>
                     {pairingStatus.status === "approved" ? (
                       <Button className="mt-3" isDisabled={isAdopting} onPress={() => void adopt()}>
-                        {isAdopting ? "Adopting…" : `Adopt ${pairingStatus.profile.username}`}
+                        {isAdopting ? "Saving…" : "Use this username"}
                       </Button>
                     ) : null}
                   </div>
                 ) : null}
               </section>
 
-              <section className="space-y-3 border-t border-border pt-4" aria-labelledby="approve-heading">
-                <div>
+              <section
+                className="space-y-3 border-t border-border pt-4"
+                aria-labelledby="approve-heading"
+              >
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
                     approve a browser
                   </p>
-                  <h3 className="mt-1 font-semibold" id="approve-heading">
-                    Add a device to this user
+                  <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                    /
+                  </span>
+                  <h3
+                    className="text-[11px] font-normal text-muted-foreground/75"
+                    id="approve-heading"
+                  >
+                    Add another device
                   </h3>
                 </div>
                 <form className="flex gap-2" onSubmit={(event) => void findDevice(event)}>
                   <Input
                     aria-label="Pairing code"
-                    className="h-9 font-mono tracking-[0.1em]"
+                    className="h-10 font-mono tracking-[0.1em]"
                     maxLength={10}
                     onChange={(event) => setApprovalCode(event.target.value)}
-                    placeholder="PAIRING CODE"
+                    placeholder="CODE"
                     spellCheck={false}
                     value={approvalCode}
                   />
-                  <Button isDisabled={isFindingDevice || !identity} type="submit" variant="outline">
+                  <Button
+                    className="h-10 min-w-24 px-5 text-sm"
+                    isDisabled={isFindingDevice || !identity}
+                    type="submit"
+                  >
                     {isFindingDevice ? "Finding…" : "Find"}
                   </Button>
                 </form>
                 {pairingStatus?.status === "pending" && pairingStatus.code === approvalCode ? (
                   <div className="border border-border p-3">
-                    <p className="text-sm">A browser is asking to adopt this user.</p>
-                    <p className="mt-1 break-all font-mono text-[10px] text-muted-foreground">
-                      Device {pairingStatus.targetDeviceId}
-                    </p>
-                    <Button className="mt-3" isDisabled={isApproving} onPress={() => void approve()}>
-                      {isApproving ? "Approving…" : "Approve this device"}
+                    <p className="text-sm">A new device is waiting.</p>
+                    <Button
+                      className="mt-3"
+                      isDisabled={isApproving}
+                      onPress={() => void approve()}
+                    >
+                      {isApproving ? "Approving…" : "Approve device"}
                     </Button>
                   </div>
                 ) : null}
               </section>
 
               {profile ? (
-                <section className="space-y-3 border-t border-border pt-4" aria-labelledby="devices-heading">
-                  <div>
+                <section
+                  className="space-y-3 border-t border-border pt-4"
+                  aria-labelledby="devices-heading"
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
                       accepted devices
                     </p>
-                    <h3 className="mt-1 font-semibold" id="devices-heading">
-                      This user&apos;s devices
+                    <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                      /
+                    </span>
+                    <h3
+                      className="text-[11px] font-normal text-muted-foreground/75"
+                      id="devices-heading"
+                    >
+                      Manage devices
                     </h3>
                   </div>
                   <div className="divide-y divide-border border border-border">
                     {profile.devices.map((device) => (
-                      <div className="flex items-center justify-between gap-3 p-3" key={device.deviceId}>
+                      <div
+                        className="flex items-center justify-between gap-3 p-3"
+                        key={device.deviceId}
+                      >
                         <div className="min-w-0">
-                          <p className="truncate font-mono text-xs">{device.deviceId}</p>
+                          <p className="text-sm">
+                            {device.deviceId === identity?.deviceId
+                              ? "This device"
+                              : "Other device"}
+                          </p>
                           <p className="mt-1 text-[11px] text-muted-foreground">
-                            {device.deviceId === identity?.deviceId ? "This device" : "Accepted device"}
-                            {device.revokedAt ? " · revoked" : " · active"}
+                            {device.revokedAt ? "Revoked" : "Active"}
                           </p>
                         </div>
                         {device.revokedAt === null ? (
                           confirmingDeviceId === device.deviceId ? (
                             <div className="flex shrink-0 gap-1">
-                              <Button onPress={() => void revoke(device.deviceId)} size="sm" variant="destructive">
+                              <Button
+                                onPress={() => void revoke(device.deviceId)}
+                                size="sm"
+                                variant="destructive"
+                              >
                                 Confirm
                               </Button>
-                              <Button onPress={() => setConfirmingDeviceId(undefined)} size="sm" variant="ghost">
+                              <Button
+                                onPress={() => setConfirmingDeviceId(undefined)}
+                                size="sm"
+                                variant="ghost"
+                              >
                                 Cancel
                               </Button>
                             </div>
                           ) : (
-                            <Button onPress={() => setConfirmingDeviceId(device.deviceId)} size="sm" variant="ghost">
+                            <Button
+                              onPress={() => setConfirmingDeviceId(device.deviceId)}
+                              size="sm"
+                              variant="ghost"
+                            >
                               Revoke
                             </Button>
                           )
@@ -531,14 +575,5 @@ export function UserDialog() {
         </Modal>
       </ModalOverlay>
     </DialogTrigger>
-  );
-}
-
-function IdentityValue({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="min-w-0">
-      <p className="font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">{label}</p>
-      <p className="mt-1 break-all font-mono text-[11px] text-foreground">{value}</p>
-    </div>
   );
 }
