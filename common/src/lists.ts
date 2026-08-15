@@ -50,6 +50,11 @@ export const listSnapshotSchema = z.object({
   updatedAt: timestampSchema,
 });
 
+export const listLiveMessageSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("snapshot"), snapshot: listSnapshotSchema }),
+  z.object({ type: z.literal("deleted"), listId: listIdSchema }),
+]);
+
 const itemInputSchema = z.object({
   id: itemIdSchema,
   name: z.string().trim().min(1).max(200),
@@ -99,6 +104,7 @@ export const listMutationSchema = z.object({
 export type ListItem = z.infer<typeof listItemSchema>;
 export type DeletedListItem = z.infer<typeof deletedListItemSchema>;
 export type ListSnapshot = z.infer<typeof listSnapshotSchema>;
+export type ListLiveMessage = z.infer<typeof listLiveMessageSchema>;
 export type ListCommand = z.infer<typeof listCommandSchema>;
 export type ListMutation = z.infer<typeof listMutationSchema>;
 

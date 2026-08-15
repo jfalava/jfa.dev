@@ -13,6 +13,7 @@ import {
 import type { PublishAuth } from "@jfa.dev/common/identities";
 import {
   createStarterListSnapshot,
+  listLiveMessageSchema,
   type ListCommand,
   type ListMutation,
 } from "@jfa.dev/common/lists";
@@ -30,6 +31,7 @@ const FIFTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000024";
 const SIXTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000025";
 const SEVENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000026";
 const EIGHTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000027";
+const NINTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000028";
 const NOW = "2026-08-14T10:00:00.000Z";
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
@@ -155,6 +157,20 @@ async function signedUserListsAuth(identity: TestIdentity) {
   return { ...auth, signature };
 }
 
+function nextLiveMessage(socket: WebSocket): Promise<unknown> {
+  return new Promise((resolve) => {
+    socket.addEventListener(
+      "message",
+      (event) => {
+        if (typeof event.data === "string") {
+          resolve(JSON.parse(event.data) as unknown);
+        }
+      },
+      { once: true },
+    );
+  });
+}
+
 describe("public-key list authorization", () => {
   it("registers a named user, imports a list, and applies signed mutations idempotently", async () => {
     const identity = await createIdentity("Alex");
@@ -190,6 +206,42 @@ describe("public-key list authorization", () => {
     );
     expect(retry.status).toBe("ok");
     expect(stale.status).toBe("conflict");
+  });
+
+  it("streams the current snapshot and committed updates to live sessions", async () => {
+    const identity = await createIdentity("Live viewer");
+    const { listStub, snapshot } = await publish(identity, NINTH_LIST_ID);
+    const response = await listStub.fetch(`https://example.com/api/lists/${NINTH_LIST_ID}/live`, {
+      headers: { Upgrade: "websocket" },
+    });
+    expect(response.status).toBe(101);
+    expect(response.webSocket).not.toBeNull();
+    if (!response.webSocket) {
+      return;
+    }
+
+    const socket = response.webSocket;
+    socket.accept();
+    const initial = listLiveMessageSchema.parse(await nextLiveMessage(socket));
+    expect(initial).toEqual({ type: "snapshot", snapshot });
+
+    const nextMessage = nextLiveMessage(socket);
+    const applied = await listStub.applyMutation(
+      NINTH_LIST_ID,
+      await signedMutation(identity, snapshot, {
+        type: "set-item-checked",
+        itemId: "starter-bread",
+        checked: true,
+      }),
+    );
+    expect(applied.status).toBe("ok");
+    const streamed = listLiveMessageSchema.parse(await nextMessage);
+    expect(streamed.type).toBe("snapshot");
+    if (streamed.type === "snapshot") {
+      expect(streamed.snapshot.revision).toBe(snapshot.revision + 1);
+      expect(streamed.snapshot.items[0]?.checked).toBe(true);
+    }
+    socket.close(1000, "done");
   });
 
   it("indexes lists created and touched by the authenticated user", async () => {

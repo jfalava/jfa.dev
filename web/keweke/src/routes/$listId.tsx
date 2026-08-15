@@ -38,6 +38,7 @@ import {
   subscribeToLocalIdentity,
   type LocalIdentity,
 } from "@/lib/local-identity";
+import { openRemoteListLiveSession } from "@/lib/remote-list-live";
 import { appPath } from "@/lib/site-paths";
 
 const shoppingTableFeatures = tableFeatures({});
@@ -130,28 +131,69 @@ function ListPage() {
     };
   }, [listId]);
 
+  const remoteListId = loadedList?.backend === "remote" ? loadedList.snapshot.id : undefined;
+
   useEffect(() => {
-    if (loadedList?.backend !== "remote") {
+    if (!remoteListId) {
       return undefined;
     }
 
     let cancelled = false;
-    const refreshRemoteList = (): void => {
-      void loadList(listId)
-        .then((nextList) => {
-          if (!cancelled && nextList?.backend === "remote") {
-            setLoadedList(nextList);
+    let reconnectTimer: number | undefined;
+    let reconnectAttempt = 0;
+    let webSocket: WebSocket | undefined;
+
+    const connect = (): void => {
+      if (cancelled) {
+        return;
+      }
+
+      webSocket = openRemoteListLiveSession(remoteListId, {
+        onOpen: () => {
+          reconnectAttempt = 0;
+        },
+        onSnapshot: (nextSnapshot) => {
+          if (cancelled) {
+            return;
           }
-          return nextList;
-        })
-        .catch(() => undefined);
+          setLoadedList((current) => {
+            if (
+              !current ||
+              current.backend !== "remote" ||
+              current.snapshot.id !== nextSnapshot.id ||
+              nextSnapshot.revision < current.snapshot.revision
+            ) {
+              return current;
+            }
+            return { backend: "remote", snapshot: nextSnapshot };
+          });
+        },
+        onDeleted: () => {
+          if (!cancelled) {
+            setLoadedList(undefined);
+            setError("This list no longer exists.");
+          }
+        },
+        onClose: () => {
+          if (cancelled) {
+            return;
+          }
+          const delay = Math.min(30_000, 1_000 * 2 ** reconnectAttempt);
+          reconnectAttempt += 1;
+          reconnectTimer = window.setTimeout(connect, delay);
+        },
+      });
     };
-    const interval = window.setInterval(refreshRemoteList, 60_000);
+
+    connect();
     return () => {
       cancelled = true;
-      window.clearInterval(interval);
+      if (reconnectTimer !== undefined) {
+        window.clearTimeout(reconnectTimer);
+      }
+      webSocket?.close(1000, "Leaving list");
     };
-  }, [listId, loadedList?.backend]);
+  }, [remoteListId]);
 
   const commit = useCallback(
     async (command: ListCommand): Promise<ListSnapshot | null> => {

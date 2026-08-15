@@ -14,6 +14,7 @@ import {
   parseListSnapshot,
   type ApplyMutationResult,
   type ImportSnapshotResult,
+  type ListLiveMessage,
   type ListMutation,
   type ListSnapshot,
 } from "@jfa.dev/common/lists";
@@ -70,6 +71,9 @@ interface DeletedListItemRow {
   deleted_by_username: string | null;
 }
 
+type WebSocketPairConstructor = new () => { 0: WebSocket; 1: WebSocket };
+declare const WebSocketPair: WebSocketPairConstructor;
+
 export type ListDeletionResult =
   | { status: "deleted"; alias: string | null }
   | { status: "missing"; alias: null }
@@ -79,6 +83,28 @@ export class KewekeList extends DurableObject {
   constructor(ctx: DurableObjectState, env: Cloudflare.Env) {
     super(ctx, env);
     void ctx.blockConcurrencyWhile(async () => this.migrate());
+  }
+
+  async fetch(request: Request): Promise<Response> {
+    if (request.headers.get("Upgrade")?.toLowerCase() !== "websocket") {
+      return new Response("Expected Upgrade: websocket", { status: 426 });
+    }
+
+    const snapshot = this.readSnapshot();
+    if (!snapshot) {
+      return new Response("List not found", { status: 404 });
+    }
+
+    const webSocketPair = new WebSocketPair();
+    const client = webSocketPair[0];
+    const server = webSocketPair[1];
+    this.ctx.acceptWebSocket(server, ["list"]);
+    server.send(JSON.stringify({ type: "snapshot", snapshot } satisfies ListLiveMessage));
+
+    return new Response(null, {
+      status: 101,
+      webSocket: client,
+    });
   }
 
   async getSnapshot(listId: string): Promise<ListSnapshot | null> {
@@ -100,6 +126,7 @@ export class KewekeList extends DurableObject {
       return { status: "unauthorized", alias: null };
     }
 
+    const normalizedListId = listIdSchema.parse(metadata.list_id);
     const alias = metadata.alias;
     this.ctx.storage.transactionSync(() => {
       this.ctx.storage.sql.exec("DELETE FROM items");
@@ -108,6 +135,10 @@ export class KewekeList extends DurableObject {
       this.ctx.storage.sql.exec("DELETE FROM imports");
       this.ctx.storage.sql.exec("DELETE FROM metadata");
     });
+    this.broadcast({ type: "deleted", listId: normalizedListId });
+    for (const webSocket of this.ctx.getWebSockets("list")) {
+      webSocket.close(1000, "List deleted");
+    }
     return { status: "deleted", alias };
   }
 
@@ -124,6 +155,7 @@ export class KewekeList extends DurableObject {
 
     const next = { ...current, alias: normalizedAlias };
     this.ctx.storage.transactionSync(() => this.writeSnapshot(next));
+    this.broadcast({ type: "snapshot", snapshot: next });
     return next;
   }
 
@@ -177,6 +209,7 @@ export class KewekeList extends DurableObject {
         next.revision,
       );
     });
+    this.broadcast({ type: "snapshot", snapshot: next });
     await this.recordListTouched(authorization.userId, normalizedListId);
     return { status: "ok", snapshot: next };
   }
@@ -222,6 +255,7 @@ export class KewekeList extends DurableObject {
       this.writeSnapshot(snapshot, authorization.authorization.userId);
       this.ctx.storage.sql.exec("INSERT INTO imports (id) VALUES (?)", migrationId);
     });
+    this.broadcast({ type: "snapshot", snapshot });
     return { status: "imported", snapshot };
   }
 
@@ -412,6 +446,17 @@ export class KewekeList extends DurableObject {
         )
         .toArray()[0] ?? null
     );
+  }
+
+  private broadcast(message: ListLiveMessage): void {
+    const encodedMessage = JSON.stringify(message);
+    for (const webSocket of this.ctx.getWebSockets("list")) {
+      try {
+        webSocket.send(encodedMessage);
+      } catch {
+        webSocket.close(1011, "Live update failed");
+      }
+    }
   }
 
   private writeSnapshot(snapshot: ListSnapshot, ownerUserId?: string): void {

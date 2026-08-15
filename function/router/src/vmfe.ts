@@ -582,6 +582,9 @@ export async function handleMountedApp(
     upstreamRequest.headers.set("x-forwarded-prefix", normalizedMount);
   }
   const upstreamResp = await upstream.fetch(upstreamRequest);
+  if (upstreamResp.status === 101) {
+    return upstreamResp;
+  }
   const headers = new Headers(upstreamResp.headers);
   const contentType = headers.get("content-type") || "";
 

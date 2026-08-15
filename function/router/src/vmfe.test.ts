@@ -58,6 +58,23 @@ describe("mounted app forwarding", () => {
     );
   });
 
+  test("passes WebSocket upgrade responses through without rebuilding them", async () => {
+    const upgradeResponse = { status: 101 } as Response;
+    const upstream = createUpstream(async () => upgradeResponse);
+
+    const response = await handleMountedApp(
+      new Request("https://jfa.dev/keweke/api/lists/list/live", {
+        headers: { Upgrade: "websocket" },
+      }),
+      upstream,
+      "/keweke",
+      ["/assets/"],
+      { preserveMount: true },
+    );
+
+    expect(response).toBe(upgradeResponse);
+  });
+
   test("preserves the mount for known static assets", async () => {
     let forwardedRequest: Request | undefined;
     const upstream = createUpstream(async (request) => {
