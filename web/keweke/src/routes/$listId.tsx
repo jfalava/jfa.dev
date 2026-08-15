@@ -318,7 +318,7 @@ function ListPage() {
         onMigrate={migrate}
       />
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-        <div className="invoice-rule flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5 sm:px-6 lg:px-8">
+        <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
           <div>
             <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
               {loadedList.backend} list
@@ -342,11 +342,11 @@ function ListPage() {
           </div>
         ) : null}
 
-        <div className="invoice-rule flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3 sm:px-6 lg:px-8">
+        <div className="invoice-rule flex flex-col items-stretch gap-2 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <Input
             id="filter-items"
             aria-label="Filter list items"
-            className="max-w-xs font-mono text-[11px]"
+            className="max-w-xs font-mono text-base sm:text-[11px]"
             onChange={(event) => setFilter(event.target.value)}
             placeholder="filter items"
             value={filter}
@@ -358,7 +358,7 @@ function ListPage() {
             <Input
               id="new-item"
               aria-label="New item"
-              className="min-w-44 flex-1 sm:w-56 sm:flex-none"
+              className="min-w-44 flex-1 text-base sm:w-56 sm:flex-none sm:text-sm"
               onChange={(event) => setDraftItem(event.target.value)}
               placeholder="new item"
               value={draftItem}
@@ -369,7 +369,7 @@ function ListPage() {
             <Input
               id="new-quantity"
               aria-label="Quantity"
-              className="w-16 text-right font-mono"
+              className="w-16 text-right font-mono text-base sm:text-sm"
               inputMode="numeric"
               onChange={(event) => setDraftQuantity(event.target.value)}
               value={draftQuantity}
@@ -429,10 +429,10 @@ function ListTitleEditor({
         <Button
           aria-label="Edit list title"
           onPress={() => setIsEditing(true)}
-          size="icon-xs"
+          size="icon"
           variant="ghost"
         >
-          <Pencil />
+          <Pencil className="h-5 w-5" />
         </Button>
       </div>
     );
@@ -520,7 +520,7 @@ function ListAliasEditor({
       <Input
         id="list-alias"
         aria-label="Friendly list address"
-        className="min-w-44 flex-1 font-mono text-[11px]"
+        className="min-w-44 flex-1 font-mono text-base sm:text-[11px]"
         onChange={(event) => setValue(event.target.value)}
         placeholder="name this list for sharing"
         value={value}
