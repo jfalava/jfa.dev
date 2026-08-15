@@ -81,6 +81,7 @@ describe("service search", () => {
         aws: "Amazon S3",
       }),
     ];
+    // SAFETY: JSON serialization preserves the builder's JSON-safe shape; this test verifies hydration after that round trip.
     const artifact = JSON.parse(JSON.stringify(buildServiceSearchArtifact(services))) as ReturnType<
       typeof buildServiceSearchArtifact
     >;

@@ -109,6 +109,7 @@ export async function fetchServices(baseUrl: string): Promise<ServiceMapping[]> 
   if (!response.ok) {
     throw new Error(`Failed to fetch services: ${response.statusText}`);
   }
+  // SAFETY: The value is checked by isServiceMapping for every array element before it is returned.
   const data = JSON.parse(await response.text()) as JsonValue;
 
   if (!Array.isArray(data) || !data.every(isServiceMapping)) {
