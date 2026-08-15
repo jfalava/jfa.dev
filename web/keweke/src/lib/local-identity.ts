@@ -81,6 +81,7 @@ export function readLocalIdentity(): LocalIdentity | undefined {
     return {
       id: legacy.data.id,
       username:
+        legacy.data.username === null ||
         legacy.data.username.toLowerCase() === LOCAL_IDENTITY_PLACEHOLDER.toLowerCase()
           ? null
           : legacy.data.username,

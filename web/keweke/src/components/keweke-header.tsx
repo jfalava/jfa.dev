@@ -13,9 +13,16 @@ interface KewekeHeaderProps {
   backend?: ListBackend;
   isMigrating?: boolean;
   onMigrate?: () => void;
+  hideMobileNewListButton?: boolean;
 }
 
-export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: KewekeHeaderProps) {
+export function KewekeHeader({
+  backend,
+  hideMobileNewListButton = false,
+  isMigrating,
+  listId,
+  onMigrate,
+}: KewekeHeaderProps) {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -45,7 +52,7 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
             className="flex min-w-0 cursor-default items-baseline gap-3 truncate lg:pr-4"
           >
             <span className="shrink-0 text-sm font-bold text-primary">
-              <span className="inline tracking-wide">KEWEKE</span>
+              <span className="inline tracking-wide">/KEWEKE</span>
               <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
             </span>
             <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
@@ -68,14 +75,15 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
           <ThemeToggle />
           {backend === "local" && onMigrate ? (
             <Button
-              aria-label="Migrate list to a remote list"
-              className="hidden h-7 min-w-0 sm:inline-flex"
+              aria-label="Publish list to a remote list"
+              className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
               isDisabled={isMigrating}
               onPress={onMigrate}
+              size="icon"
               variant="outline"
             >
               <CloudUpload className="size-3.5" />
-              <span className="hidden sm:inline">{isMigrating ? "Migrating" : "Migrate"}</span>
+              <span className="hidden sm:inline">{isMigrating ? "Publishing" : "Publish"}</span>
             </Button>
           ) : null}
           {listId && backend === "remote" ? (
@@ -91,12 +99,13 @@ export function KewekeHeader({ backend, isMigrating, listId, onMigrate }: Keweke
           ) : null}
           <Button
             aria-label="Create new list"
-            className="hidden h-7 min-w-0 sm:inline-flex"
+            className={`${hideMobileNewListButton ? "hidden sm:inline-flex" : "inline-flex"} w-7 sm:w-auto sm:gap-1 sm:px-2`}
             isDisabled={isCreating}
             onPress={() => void createList()}
+            size="icon"
           >
             <Plus className="size-3.5" />
-            <span className="hidden sm:inline">New</span>
+            <span className="hidden sm:inline">New list</span>
           </Button>
         </nav>
       </div>

@@ -1,6 +1,6 @@
 import { Button, Input } from "@jfa.dev/common/ui";
 import { useNavigate } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { ArrowUpRight, Search } from "lucide-react";
 import { useState } from "react";
 import {
   Autocomplete,
@@ -47,7 +47,7 @@ export function OpenListCommand() {
       }}
     >
       <Button aria-label="Open list" className="h-7" variant="outline">
-        <Search className="size-3.5" />
+        <ArrowUpRight className="size-3.5" />
         <span>Open list</span>
       </Button>
       <ModalOverlay

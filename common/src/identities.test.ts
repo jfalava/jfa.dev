@@ -14,6 +14,13 @@ describe("local identity contract", () => {
     });
   });
 
+  test("accepts an anonymous identity with a stable id", () => {
+    expect(listIdentitySchema.parse({ id: "abcde", username: null })).toEqual({
+      id: "abcde",
+      username: null,
+    });
+  });
+
   test("rejects identity ids that are not five lowercase letters", () => {
     expect(() =>
       listIdentitySchema.parse({ id: "abc12", username: "Alex" }),

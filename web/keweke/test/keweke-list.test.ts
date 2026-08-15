@@ -8,6 +8,7 @@ import { KewekeList } from "../src/server/keweke-list";
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000020";
 const SECOND_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000021";
 const THIRD_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000022";
+const FOURTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000023";
 const NOW = "2026-08-14T10:00:00.000Z";
 
 describe("KewekeList Durable Object", () => {
@@ -69,6 +70,36 @@ describe("KewekeList Durable Object", () => {
 
     expect(retry.status).toBe("already-imported");
     expect(conflictingImport.status).toBe("conflict");
+  });
+
+  it("persists an anonymous signer id without a username", async () => {
+    const snapshot = createStarterListSnapshot(FOURTH_LIST_ID, { now: NOW });
+    const stub = env.KEWEKE_LISTS.getByName(FOURTH_LIST_ID);
+    await stub.importSnapshot(FOURTH_LIST_ID, snapshot, "migration-004");
+
+    const applied = await stub.applyMutation(FOURTH_LIST_ID, {
+      id: "mutation-anonymous-004",
+      baseRevision: 0,
+      actor: { id: "abcde", username: null },
+      command: {
+        type: "set-item-checked",
+        itemId: "starter-bread",
+        checked: true,
+      },
+    });
+
+    expect(applied.status).toBe("ok");
+    if (applied.status === "ok") {
+      expect(applied.snapshot.items[0]?.updatedBy).toEqual({
+        id: "abcde",
+        username: null,
+      });
+    }
+
+    expect((await stub.getSnapshot(FOURTH_LIST_ID))?.items[0]?.updatedBy).toEqual({
+      id: "abcde",
+      username: null,
+    });
   });
 
   it("persists deleted history and supports recovery and permanent deletion", async () => {

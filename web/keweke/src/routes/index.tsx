@@ -65,7 +65,7 @@ function EmptyState() {
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
-      <KewekeHeader />
+      <KewekeHeader hideMobileNewListButton={!isLoading && lists.length === 0} />
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
         <section className="invoice-paper invoice-rule border border-t-4 border-t-primary">
           <div className="px-4 py-10 sm:px-8 sm:py-16">

@@ -134,6 +134,35 @@ describe("list contract", () => {
     expect(parsed.items[0]?.updatedBy).toBeNull();
   });
 
+  test("keeps an anonymous signer id on created items", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const anonymous = { id: "abcde", username: null };
+    const nextSnapshot = applyListMutation(
+      snapshot,
+      {
+        id: "add-anonymous-item",
+        baseRevision: 0,
+        actor: anonymous,
+        command: {
+          type: "add-item",
+          item: {
+            id: "anonymous-milk",
+            name: "Milk",
+            quantity: 1,
+            unit: "EA",
+            category: "DAIRY",
+          },
+        },
+      },
+      NOW,
+    );
+
+    expect(nextSnapshot?.items[nextSnapshot.items.length - 1]).toMatchObject({
+      createdBy: anonymous,
+      updatedBy: anonymous,
+    });
+  });
+
   test("updates editable item fields", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
     const nextSnapshot = applyListMutation(

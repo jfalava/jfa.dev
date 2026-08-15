@@ -9,7 +9,7 @@ export const listIdentityIdSchema = z
 
 export const listIdentitySchema = z.object({
   id: listIdentityIdSchema,
-  username: z.string().trim().min(1).max(48),
+  username: z.string().trim().min(1).max(48).nullable(),
 });
 
 export type ListIdentity = z.infer<typeof listIdentitySchema>;

@@ -1,3 +1,4 @@
+import type { ListIdentity } from "@jfa.dev/common/identities";
 import type { DeletedListItem, ListCommand, ListItem, ListSnapshot } from "@jfa.dev/common/lists";
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
@@ -122,11 +123,7 @@ function ListPage() {
       const result = await applyMutation(
         loadedList.snapshot.id,
         loadedList.backend,
-        createMutation(
-          loadedList.snapshot,
-          command,
-          identity.username ? { id: identity.id, username: identity.username } : undefined,
-        ),
+        createMutation(loadedList.snapshot, command, identity),
       );
       if (result.status === "missing") {
         setError("This list no longer exists.");
@@ -453,6 +450,7 @@ function ListPage() {
         </div>
 
         <ShoppingTable
+          identity={identity}
           items={visibleItems}
           onRemove={removeItem}
           onToggle={toggleItem}
@@ -460,6 +458,7 @@ function ListPage() {
         />
         <DeletedItemsHistory
           busyArchiveId={busyArchiveId}
+          identity={identity}
           items={snapshot.deletedItems}
           onPurge={(archiveId) => {
             void updateDeletedItem({ type: "purge-deleted-item", archiveId }, archiveId);
@@ -565,7 +564,7 @@ function ListAlias({ alias, listId }: { alias: string | null; listId: string }) 
   }, [alias, listId]);
 
   const identifier = showListId || alias === null ? listId : alias;
-  const label = showListId || alias === null ? "list id" : "friendly address";
+  const label = showListId || alias === null ? "ID" : "Alias";
 
   const copyUrl = async (): Promise<void> => {
     try {
@@ -582,7 +581,7 @@ function ListAlias({ alias, listId }: { alias: string | null; listId: string }) 
     <div className="mt-2 flex min-w-0 max-w-full items-center gap-1 overflow-hidden font-mono text-[10px] tracking-[0.08em] uppercase">
       {alias ? (
         <Button
-          aria-label={`Show ${showListId ? "friendly address" : "list ID"}`}
+          aria-label={`Show ${showListId ? "Alias" : "ID"}`}
           className="h-7 gap-1 px-1 text-[10px] tracking-[0.08em] text-muted-foreground uppercase"
           onPress={() => {
             setShowListId((current) => !current);
@@ -719,9 +718,19 @@ function identityColor(identityId: string): (typeof IDENTITY_COLORS)[number] {
   return IDENTITY_COLORS[hash % IDENTITY_COLORS.length];
 }
 
+function identityDisplayName(actor: ListIdentity, currentIdentity?: LocalIdentity): string {
+  if (currentIdentity?.id === actor.id && currentIdentity.username) {
+    return currentIdentity.username;
+  }
+
+  return actor.username ?? LOCAL_IDENTITY_PLACEHOLDER;
+}
+
 function SignedItemBadge({
+  identity,
   item,
 }: {
+  identity?: LocalIdentity;
   item: Pick<ListItem, "createdAt" | "createdBy" | "updatedAt" | "updatedBy">;
 }) {
   const wasEdited =
@@ -737,13 +746,18 @@ function SignedItemBadge({
   }
 
   const action = wasEdited ? "edited by" : "added by";
-  const createdBy = item.createdBy ? `Added by ${item.createdBy.username}` : undefined;
-  const updatedBy = item.updatedBy ? `Last edited by ${item.updatedBy.username}` : undefined;
+  const actorName = identityDisplayName(actor, identity);
+  const createdBy = item.createdBy
+    ? `Added by ${identityDisplayName(item.createdBy, identity)}`
+    : undefined;
+  const updatedBy = item.updatedBy
+    ? `Last edited by ${identityDisplayName(item.updatedBy, identity)}`
+    : undefined;
   const title = [createdBy, wasEdited ? updatedBy : undefined].filter(Boolean).join(" · ");
 
   return (
     <span
-      aria-label={`${action} ${actor.username}`}
+      aria-label={`${action} ${actorName}`}
       className="inline-flex max-w-full items-center gap-1 truncate font-mono text-[10px] tracking-[0.06em] text-muted-foreground uppercase"
       title={title}
     >
@@ -752,18 +766,20 @@ function SignedItemBadge({
         className={`size-1.5 shrink-0 rounded-full ${identityColor(actor.id)}`}
       />
       <span className="truncate">
-        {action} {actor.username}
+        {action} {actorName}
       </span>
     </span>
   );
 }
 
 function ShoppingTable({
+  identity,
   items,
   onRemove,
   onToggle,
   onUpdate,
 }: {
+  identity?: LocalIdentity;
   items: ListItem[];
   onRemove: (id: string) => void;
   onToggle: (id: string, checked: boolean) => void;
@@ -812,6 +828,7 @@ function ShoppingTable({
       createShoppingColumns({
         editDraft,
         editingItemId,
+        identity,
         isSaving,
         onCancelEditing: cancelEditing,
         onEditDraftChange: updateDraft,
@@ -824,6 +841,7 @@ function ShoppingTable({
       cancelEditing,
       editDraft,
       editingItemId,
+      identity,
       isSaving,
       onRemove,
       onToggle,
@@ -835,12 +853,13 @@ function ShoppingTable({
   const mobileColumns = useMemo(
     () =>
       createMobileShoppingColumns({
+        identity,
         isSaving,
         onRemove,
         onStartEditing: startEditing,
         onToggle,
       }),
-    [isSaving, onRemove, onToggle, startEditing],
+    [identity, isSaving, onRemove, onToggle, startEditing],
   );
   const table = useTable({
     features: shoppingTableFeatures,
@@ -1077,11 +1096,13 @@ function MobileShoppingTable({
 
 function DeletedItemsHistory({
   busyArchiveId,
+  identity,
   items,
   onPurge,
   onRestore,
 }: {
   busyArchiveId?: string;
+  identity?: LocalIdentity;
   items: DeletedListItem[];
   onPurge: (archiveId: string) => void;
   onRestore: (archiveId: string) => void;
@@ -1122,7 +1143,9 @@ function DeletedItemsHistory({
                 <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
                   {item.quantity} {item.unit} · {item.category} · Deleted{" "}
                   {item.deletedAt.slice(0, 10)}
-                  {item.deletedBy ? ` · Deleted by ${item.deletedBy.username}` : ""}
+                  {item.deletedBy
+                    ? ` · Deleted by ${identityDisplayName(item.deletedBy, identity)}`
+                    : ""}
                 </p>
               </div>
               {confirmingArchiveId === item.archiveId ? (
@@ -1183,6 +1206,7 @@ function DeletedItemsHistory({
 function createShoppingColumns({
   editDraft,
   editingItemId,
+  identity,
   isSaving,
   onCancelEditing,
   onEditDraftChange,
@@ -1193,6 +1217,7 @@ function createShoppingColumns({
 }: {
   editDraft?: ItemEditDraft;
   editingItemId?: string;
+  identity?: LocalIdentity;
   isSaving: boolean;
   onCancelEditing: () => void;
   onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
@@ -1307,7 +1332,7 @@ function createShoppingColumns({
     shoppingColumnHelper.display({
       id: "signed",
       header: "signed",
-      cell: ({ row }) => <SignedItemBadge item={row.original} />,
+      cell: ({ row }) => <SignedItemBadge identity={identity} item={row.original} />,
     }),
     shoppingColumnHelper.display({
       id: "status",
@@ -1375,11 +1400,13 @@ function createShoppingColumns({
 }
 
 function createMobileShoppingColumns({
+  identity,
   isSaving,
   onRemove,
   onStartEditing,
   onToggle,
 }: {
+  identity?: LocalIdentity;
   isSaving: boolean;
   onRemove: (id: string) => void;
   onStartEditing: (item: ListItem) => void;
@@ -1417,7 +1444,7 @@ function createMobileShoppingColumns({
               {row.original.quantity} {row.original.unit} · {row.original.category} ·{" "}
               {row.original.checked ? "done" : "open"}
             </span>
-            <SignedItemBadge item={row.original} />
+            <SignedItemBadge identity={identity} item={row.original} />
           </div>
         </div>
       ),

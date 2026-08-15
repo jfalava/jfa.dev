@@ -392,7 +392,7 @@ export class KewekeList extends DurableObject {
 }
 
 function readIdentity(id: string | null, username: string | null): ListIdentity | null {
-  if (id === null || username === null) {
+  if (id === null) {
     return null;
   }
 
