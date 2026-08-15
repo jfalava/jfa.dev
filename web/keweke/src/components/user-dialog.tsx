@@ -79,6 +79,7 @@ function FeedbackMessage({
 
 export function UserDialog() {
   const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [identity, setIdentity] = useState<LocalIdentity>();
   const [profile, setProfile] = useState<UserProfile>();
   const [value, setValue] = useState("");
@@ -381,6 +382,9 @@ export function UserDialog() {
     resetFeedback();
     try {
       await clearLocalData();
+      setIsClearingData(false);
+      setIsConfirmingClearData(false);
+      setIsDialogOpen(false);
       await navigate({ replace: true, to: "/" });
     } catch {
       setIsClearingData(false);
@@ -391,7 +395,9 @@ export function UserDialog() {
 
   return (
     <DialogTrigger
+      isOpen={isDialogOpen}
       onOpenChange={(isOpen) => {
+        setIsDialogOpen(isOpen);
         if (isOpen) {
           resetFeedback();
           setIsConfirmingClearData(false);
