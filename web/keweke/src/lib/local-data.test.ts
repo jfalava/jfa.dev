@@ -4,13 +4,18 @@
 import "fake-indexeddb/auto";
 import { afterEach, describe, expect, test } from "bun:test";
 
-import { clearLocalData } from "./local-data";
+import { clearLocalData, clearRemoteUserData } from "./local-data";
 import {
   clearLocalIdentityDatabase,
   ensureLocalIdentity,
   readLocalIdentity,
 } from "./local-identity";
-import { clearLocalListDatabase, createLocalList, listLocalLists } from "./local-list-store";
+import {
+  clearLocalListDatabase,
+  createLocalList,
+  listLocalLists,
+  markListRemote,
+} from "./local-list-store";
 
 const originalWindow = globalThis.window;
 
@@ -55,5 +60,17 @@ describe("local Keweke data", () => {
     expect(clearCalls).toBe(1);
     expect(await readLocalIdentity()).toBeUndefined();
     expect(await listLocalLists()).toEqual([]);
+  });
+
+  test("clears the remote user and remote lists but keeps local lists", async () => {
+    const localList = await createLocalList();
+    const remoteList = await createLocalList();
+    await markListRemote(remoteList);
+    await ensureLocalIdentity();
+
+    await clearRemoteUserData();
+
+    expect(await readLocalIdentity()).toBeUndefined();
+    expect((await listLocalLists()).map((list) => list.id)).toEqual([localList.id]);
   });
 });

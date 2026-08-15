@@ -204,7 +204,7 @@ export async function signLocalPayload(payload: string): Promise<string> {
   return signPayload(record.devicePrivateKey, payload);
 }
 
-export async function clearLocalIdentityDatabase(): Promise<void> {
+export async function clearLocalIdentityDatabase(emitIdentityChange = true): Promise<void> {
   if (typeof indexedDB === "undefined") {
     return;
   }
@@ -214,7 +214,9 @@ export async function clearLocalIdentityDatabase(): Promise<void> {
     databasePromise = undefined;
   }
   await deleteDB(DATABASE_NAME);
-  emitChange();
+  if (emitIdentityChange) {
+    emitChange();
+  }
 }
 
 export function subscribeToLocalIdentity(listener: () => void): () => void {

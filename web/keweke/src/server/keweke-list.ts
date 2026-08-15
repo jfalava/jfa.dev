@@ -1,6 +1,7 @@
 import { listAliasSchema } from "@jfa.dev/common/aliases";
 import { listMutationSigningPayload } from "@jfa.dev/common/crypto";
 import {
+  identityIdSchema,
   listIdentitySchema,
   publishAuthSchema,
   type ListIdentity,
@@ -26,6 +27,7 @@ interface ListMetadataRow {
   revision: number;
   created_at: string;
   updated_at: string;
+  owner_user_id: string | null;
 }
 
 interface ListItemRow {
@@ -68,6 +70,11 @@ interface DeletedListItemRow {
   deleted_by_username: string | null;
 }
 
+export type ListDeletionResult =
+  | { status: "deleted"; alias: string | null }
+  | { status: "missing"; alias: null }
+  | { status: "unauthorized"; alias: null };
+
 export class KewekeList extends DurableObject {
   constructor(ctx: DurableObjectState, env: Cloudflare.Env) {
     super(ctx, env);
@@ -81,6 +88,27 @@ export class KewekeList extends DurableObject {
       return null;
     }
     return snapshot;
+  }
+
+  async deleteOwnedList(ownerUserId: string): Promise<ListDeletionResult> {
+    const normalizedOwnerUserId = identityIdSchema.parse(ownerUserId);
+    const metadata = this.readMetadata();
+    if (!metadata) {
+      return { status: "missing", alias: null };
+    }
+    if (metadata.owner_user_id !== normalizedOwnerUserId) {
+      return { status: "unauthorized", alias: null };
+    }
+
+    const alias = metadata.alias;
+    this.ctx.storage.transactionSync(() => {
+      this.ctx.storage.sql.exec("DELETE FROM items");
+      this.ctx.storage.sql.exec("DELETE FROM deleted_items");
+      this.ctx.storage.sql.exec("DELETE FROM applied_mutations");
+      this.ctx.storage.sql.exec("DELETE FROM imports");
+      this.ctx.storage.sql.exec("DELETE FROM metadata");
+    });
+    return { status: "deleted", alias };
   }
 
   async setAlias(listId: string, alias: string): Promise<ListSnapshot | null> {
@@ -189,20 +217,16 @@ export class KewekeList extends DurableObject {
       return { status: "conflict", snapshot: current };
     }
 
+    await this.recordListCreated(authorization.authorization.userId, normalizedListId);
     this.ctx.storage.transactionSync(() => {
-      this.writeSnapshot(snapshot);
+      this.writeSnapshot(snapshot, authorization.authorization.userId);
       this.ctx.storage.sql.exec("INSERT INTO imports (id) VALUES (?)", migrationId);
     });
-    await this.recordListCreated(authorization.authorization.userId, normalizedListId);
     return { status: "imported", snapshot };
   }
 
   private async recordListCreated(userId: string, listId: string): Promise<void> {
-    try {
-      await this.env.KEWEKE_USERS.getByName(userId).recordListCreated(listId);
-    } catch (error) {
-      console.error("Keweke list creation index update failed", { error, listId, userId });
-    }
+    await this.env.KEWEKE_USERS.getByName(userId).recordListCreated(listId);
   }
 
   private async recordListTouched(userId: string, listId: string): Promise<void> {
@@ -304,14 +328,15 @@ export class KewekeList extends DurableObject {
         INSERT INTO _sql_schema_migrations (id) VALUES (4);
       `);
     }
+
+    if (currentVersion < 5) {
+      this.ctx.storage.sql.exec("ALTER TABLE metadata ADD COLUMN owner_user_id TEXT");
+      this.ctx.storage.sql.exec("INSERT INTO _sql_schema_migrations (id) VALUES (5)");
+    }
   }
 
   private readSnapshot(): ListSnapshot | null {
-    const metadata = this.ctx.storage.sql
-      .exec<ListMetadataRow>(
-        "SELECT list_id, alias, title, revision, created_at, updated_at FROM metadata LIMIT 1",
-      )
-      .toArray()[0];
+    const metadata = this.readMetadata();
     if (!metadata) {
       return null;
     }
@@ -379,22 +404,34 @@ export class KewekeList extends DurableObject {
     });
   }
 
-  private writeSnapshot(snapshot: ListSnapshot): void {
+  private readMetadata(): ListMetadataRow | null {
+    return (
+      this.ctx.storage.sql
+        .exec<ListMetadataRow>(
+          "SELECT list_id, alias, title, revision, created_at, updated_at, owner_user_id FROM metadata LIMIT 1",
+        )
+        .toArray()[0] ?? null
+    );
+  }
+
+  private writeSnapshot(snapshot: ListSnapshot, ownerUserId?: string): void {
     this.ctx.storage.sql.exec(
-      `INSERT INTO metadata (list_id, alias, title, revision, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?)
+      `INSERT INTO metadata (list_id, alias, title, revision, created_at, updated_at, owner_user_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(list_id) DO UPDATE SET
          alias = excluded.alias,
          title = excluded.title,
          revision = excluded.revision,
          created_at = excluded.created_at,
-         updated_at = excluded.updated_at`,
+         updated_at = excluded.updated_at,
+         owner_user_id = COALESCE(metadata.owner_user_id, excluded.owner_user_id)`,
       snapshot.id,
       snapshot.alias,
       snapshot.title,
       snapshot.revision,
       snapshot.createdAt,
       snapshot.updatedAt,
+      ownerUserId ?? null,
     );
     this.ctx.storage.sql.exec("DELETE FROM items WHERE list_id = ?", snapshot.id);
 

@@ -7,6 +7,7 @@ import {
   pairingApprovalSigningPayload,
   publicKeyFingerprint,
   signPayload,
+  userDeleteSigningPayload,
   userListsSigningPayload,
 } from "@jfa.dev/common/crypto";
 import type { PublishAuth } from "@jfa.dev/common/identities";
@@ -27,6 +28,8 @@ const THIRD_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000022";
 const FOURTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000023";
 const FIFTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000024";
 const SIXTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000025";
+const SEVENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000026";
+const EIGHTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000027";
 const NOW = "2026-08-14T10:00:00.000Z";
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
@@ -277,6 +280,56 @@ describe("public-key list authorization", () => {
     ).not.toBeNull();
 
     expect((await listStub.applyMutation(SECOND_LIST_ID, valid)).status).toBe("unauthorized");
+  });
+
+  it("deletes only created lists, releases aliases, and is idempotent", async () => {
+    const owner = await createIdentity("Owner to delete");
+    const otherUser = await createIdentity("Other owner");
+    const { listStub: keptListStub, snapshot: keptSnapshot } = await publish(
+      otherUser,
+      SEVENTH_LIST_ID,
+    );
+    const { listStub: deletedListStub } = await publish(owner, EIGHTH_LIST_ID);
+    const aliases = env.KEWEKE_ALIASES.getByName("directory");
+    await aliases.claimAlias(SEVENTH_LIST_ID, "kept-list-abcde");
+    await aliases.claimAlias(EIGHTH_LIST_ID, "deleted-list-abcde");
+
+    await env.KEWEKE_USERS.getByName(owner.userId).recordListTouched(SEVENTH_LIST_ID);
+    expect(await keptListStub.getSnapshot(SEVENTH_LIST_ID)).toEqual(keptSnapshot);
+    expect(await aliases.getListId("deleted-list-abcde")).toBe(EIGHTH_LIST_ID);
+    expect(
+      await deletedListStub.deleteOwnedList(otherUser.userId),
+    ).toEqual({ status: "unauthorized", alias: null });
+
+    const payload = userDeleteSigningPayload({
+      userId: owner.userId,
+      deviceId: owner.deviceId,
+    });
+    const result = await env.KEWEKE_USERS.getByName(owner.userId).deleteAccount({
+      auth: {
+        userId: owner.userId,
+        deviceId: owner.deviceId,
+        signature: await signPayload(owner.devicePrivateKey, payload),
+      },
+      payload,
+    });
+
+    expect(result).toEqual({ status: "deleted" });
+    expect(await deletedListStub.getSnapshot(EIGHTH_LIST_ID)).toBeNull();
+    expect(await keptListStub.getSnapshot(SEVENTH_LIST_ID)).toEqual(keptSnapshot);
+    expect(await aliases.getListId("deleted-list-abcde")).toBeNull();
+    expect(await aliases.getListId("kept-list-abcde")).toBe(SEVENTH_LIST_ID);
+    expect(await env.KEWEKE_USERS.getByName(owner.userId).getProfile(owner.userId)).toBeNull();
+
+    const retry = await env.KEWEKE_USERS.getByName(owner.userId).deleteAccount({
+      auth: {
+        userId: owner.userId,
+        deviceId: owner.deviceId,
+        signature: "not-used-after-tombstone",
+      },
+      payload,
+    });
+    expect(retry).toEqual({ status: "deleted" });
   });
 
   it("lets an accepted device approve another device, including transitive approval", async () => {

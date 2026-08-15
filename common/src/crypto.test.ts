@@ -8,6 +8,7 @@ import {
   listMutationSigningPayload,
   publicKeyFingerprint,
   signPayload,
+  userDeleteSigningPayload,
   userListsSigningPayload,
   verifyPayload,
 } from "./crypto";
@@ -50,6 +51,23 @@ describe("identity cryptography", () => {
         publicKey,
         signature,
         userListsSigningPayload({ userId, deviceId: "B".repeat(43) }),
+      ),
+    ).toBe(false);
+  });
+
+  test("signs and verifies the account deletion payload", async () => {
+    const keys = await generateEd25519KeyPair();
+    const publicKey = await exportPublicKey(keys.publicKey);
+    const userId = await publicKeyFingerprint(publicKey);
+    const payload = userDeleteSigningPayload({ userId, deviceId: userId });
+    const signature = await signPayload(keys.privateKey, payload);
+
+    expect(await verifyPayload(publicKey, signature, payload)).toBe(true);
+    expect(
+      await verifyPayload(
+        publicKey,
+        signature,
+        userDeleteSigningPayload({ userId, deviceId: "B".repeat(43) }),
       ),
     ).toBe(false);
   });

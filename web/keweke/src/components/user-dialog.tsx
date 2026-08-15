@@ -2,6 +2,7 @@ import {
   deviceRevocationSigningPayload,
   generatePairingCode,
   pairingApprovalSigningPayload,
+  userDeleteSigningPayload,
   userRenameSigningPayload,
 } from "@jfa.dev/common/crypto";
 import { type UserProfile, usernameSchema } from "@jfa.dev/common/identities";
@@ -11,7 +12,7 @@ import { UserRound } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Dialog, DialogTrigger, Modal, ModalOverlay } from "react-aria-components";
 
-import { clearLocalData } from "@/lib/local-data";
+import { clearLocalData, clearRemoteUserData } from "@/lib/local-data";
 import {
   adoptLocalIdentity,
   confirmRemoteUsername,
@@ -25,6 +26,7 @@ import {
 import { syncRemoteLists } from "@/lib/remote-list-sync";
 import {
   approveDevicePairing,
+  deleteRemoteUser,
   getDevicePairingStatus,
   getUserProfile,
   revokeUserDevice,
@@ -52,7 +54,7 @@ type PairingStatusView =
 
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
-type FeedbackSection = "username" | "pairing" | "approval" | "devices" | "data";
+type FeedbackSection = "username" | "pairing" | "approval" | "devices" | "account" | "data";
 
 type DialogFeedback = {
   section: FeedbackSection;
@@ -95,6 +97,9 @@ export function UserDialog() {
   const [isAdopting, setIsAdopting] = useState(false);
   const [isClearingData, setIsClearingData] = useState(false);
   const [isConfirmingClearData, setIsConfirmingClearData] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isConfirmingDeleteAccount, setIsConfirmingDeleteAccount] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [confirmingDeviceId, setConfirmingDeviceId] = useState<string>();
 
   useEffect(() => {
@@ -395,6 +400,47 @@ export function UserDialog() {
     }
   };
 
+  const deleteAccount = async (): Promise<void> => {
+    if (!identity?.remoteUsername || deleteConfirmation !== identity.remoteUsername) {
+      setError("account", "Type the remote username exactly to confirm deletion.");
+      return;
+    }
+
+    setIsDeletingAccount(true);
+    resetFeedback();
+    try {
+      const auth = {
+        userId: identity.userId,
+        deviceId: identity.deviceId,
+        signature: UNSIGNED_SIGNATURE,
+      };
+      const signature = await signLocalPayload(
+        userDeleteSigningPayload({ userId: auth.userId, deviceId: auth.deviceId }),
+      );
+      const result = await deleteRemoteUser({
+        data: { auth: { ...auth, signature } },
+      });
+      if (result.status === "unauthorized") {
+        setError("account", "This device is not allowed to delete that remote user.");
+        return;
+      }
+      if (result.status === "failed") {
+        setError("account", "The remote user could not be fully deleted. Try again.");
+        return;
+      }
+
+      await clearRemoteUserData();
+      setIsConfirmingDeleteAccount(false);
+      setDeleteConfirmation("");
+      setIsDialogOpen(false);
+      await navigate({ replace: true, to: "/" });
+    } catch {
+      setError("account", "Could not delete the remote user right now.");
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  };
+
   return (
     <DialogTrigger
       isOpen={isDialogOpen}
@@ -403,6 +449,8 @@ export function UserDialog() {
         if (isOpen) {
           resetFeedback();
           setIsConfirmingClearData(false);
+          setIsConfirmingDeleteAccount(false);
+          setDeleteConfirmation("");
           setValue(identity?.username ?? "");
           if (identity) {
             void getUserProfile({ data: identity.userId })
@@ -415,6 +463,8 @@ export function UserDialog() {
         } else {
           resetFeedback();
           setIsConfirmingClearData(false);
+          setIsConfirmingDeleteAccount(false);
+          setDeleteConfirmation("");
           setConfirmingDeviceId(undefined);
         }
       }}
@@ -655,6 +705,84 @@ export function UserDialog() {
                     ))}
                   </div>
                   <FeedbackMessage feedback={feedback} section="devices" />
+                </section>
+              ) : null}
+
+              {identity?.remoteUsername ? (
+                <section
+                  className="space-y-3 border-t border-border pt-4"
+                  aria-labelledby="account-heading"
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="font-mono text-[10px] tracking-[0.1em] text-destructive uppercase">
+                      remote account
+                    </p>
+                    <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                      /
+                    </span>
+                    <h3
+                      className="text-[11px] font-normal text-muted-foreground/75"
+                      id="account-heading"
+                    >
+                      Delete user and created lists
+                    </h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Permanently delete <span className="font-medium">{identity.remoteUsername}</span>{" "}
+                    and every remote list created by this user. Lists only shared with this user
+                    are kept for their owners.
+                  </p>
+                  {isConfirmingDeleteAccount ? (
+                    <div className="space-y-2">
+                      <label className="text-xs font-medium" htmlFor="delete-remote-user-confirmation">
+                        Type <span className="font-mono">{identity.remoteUsername}</span> to confirm
+                      </label>
+                      <Input
+                        autoComplete="off"
+                        className="h-10 text-base sm:text-sm"
+                        disabled={isDeletingAccount}
+                        id="delete-remote-user-confirmation"
+                        onChange={(event) => {
+                          setDeleteConfirmation(event.target.value);
+                          resetFeedback();
+                        }}
+                        spellCheck={false}
+                        value={deleteConfirmation}
+                      />
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          className="h-8 px-4 text-sm"
+                          isDisabled={
+                            isDeletingAccount || deleteConfirmation !== identity.remoteUsername
+                          }
+                          onPress={() => void deleteAccount()}
+                          variant="destructive"
+                        >
+                          {isDeletingAccount ? "Deleting…" : "Delete remote user"}
+                        </Button>
+                        <Button
+                          className="h-8 px-4 text-sm"
+                          isDisabled={isDeletingAccount}
+                          onPress={() => {
+                            setIsConfirmingDeleteAccount(false);
+                            setDeleteConfirmation("");
+                          }}
+                          variant="ghost"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      className="h-10 min-w-24 px-5 text-sm"
+                      onPress={() => setIsConfirmingDeleteAccount(true)}
+                      variant="destructive"
+                    >
+                      Delete remote user
+                    </Button>
+                  )}
+                  <FeedbackMessage feedback={feedback} section="account" />
                 </section>
               ) : null}
 

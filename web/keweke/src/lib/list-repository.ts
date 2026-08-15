@@ -23,6 +23,7 @@ import {
 } from "@/lib/local-identity";
 import {
   applyLocalMutation,
+  deleteLocalList,
   ensureLocalListAlias,
   getLocalListByAlias,
   getLocalListRecord,
@@ -137,9 +138,10 @@ async function loadCanonicalList(
   }
 
   if (!remoteSnapshot) {
-    return localRecord?.backend === "remote"
-      ? { backend: "remote", snapshot: localRecord.snapshot }
-      : null;
+    if (localRecord?.backend === "remote") {
+      await deleteLocalList(listId);
+    }
+    return null;
   }
 
   await markListRemote(remoteSnapshot);

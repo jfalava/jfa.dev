@@ -9,6 +9,7 @@ import { createStarterListSnapshot } from "@jfa.dev/common/lists";
 import {
   applyLocalMutation,
   clearLocalListDatabase,
+  clearRemoteListDatabase,
   createLocalList,
   deleteLocalList,
   ensureLocalListAlias,
@@ -96,6 +97,28 @@ describe("local list store", () => {
     await saveRemoteLists([{ ...local, title: "Remote collision" }]);
     expect((await getLocalListRecord(local.id))?.backend).toBe("local");
     expect((await getLocalListRecord(local.id))?.snapshot.title).toBe("New list");
+  });
+
+  test("removes missing remote snapshots without touching local lists", async () => {
+    const local = await createLocalList();
+    const remote = createStarterListSnapshot(LIST_ID, { now: NOW });
+    await saveRemoteLists([remote]);
+
+    await saveRemoteLists([], [remote.id]);
+
+    expect(await getLocalListRecord(remote.id)).toBeUndefined();
+    expect((await getLocalListRecord(local.id))?.backend).toBe("local");
+  });
+
+  test("clears remote-backed lists while preserving local lists", async () => {
+    const local = await createLocalList();
+    const remote = createStarterListSnapshot(LIST_ID, { now: NOW });
+    await markListRemote(remote);
+
+    await clearRemoteListDatabase();
+
+    expect((await getLocalListRecord(local.id))?.backend).toBe("local");
+    expect(await getLocalListRecord(remote.id)).toBeUndefined();
   });
 
   test("derives an alias from the first saved title and keeps it after renames", async () => {

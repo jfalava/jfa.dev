@@ -33,6 +33,11 @@ interface UserListRow {
   list_id: string;
 }
 
+interface AccountStateRow {
+  [key: string]: string | number | null;
+  status: "deleting" | "deleted";
+}
+
 export type AuthorizedDevice = {
   userId: string;
   userPublicKey: string;
@@ -47,6 +52,11 @@ export type PublishAuthorization =
 
 export type DeviceApprovalResult =
   | { status: "approved"; profile: UserProfile }
+  | { status: "unauthorized" };
+
+export type AccountDeletionResult =
+  | { status: "deleted" }
+  | { status: "failed" }
   | { status: "unauthorized" };
 
 export class KewekeUserDirectory extends DurableObject {
@@ -82,7 +92,61 @@ export class KewekeUserDirectory extends DurableObject {
       .map((row) => row.list_id);
   }
 
+  async deleteAccount(input: {
+    auth: unknown;
+    payload: string;
+  }): Promise<AccountDeletionResult> {
+    const auth = identityAuthSchema.safeParse(input.auth);
+    if (!auth.success) {
+      return { status: "unauthorized" };
+    }
+
+    const state = this.readAccountState();
+    if (state?.status === "deleted") {
+      return { status: "deleted" };
+    }
+
+    const authorization = await this.authorizeDevice({
+      auth: auth.data,
+      payload: input.payload,
+      allowDeleting: true,
+    });
+    if (!authorization) {
+      return { status: "unauthorized" };
+    }
+
+    if (!state) {
+      this.ctx.storage.sql.exec(
+        "INSERT OR IGNORE INTO account_state (id, status, updated_at) VALUES (1, 'deleting', ?)",
+        new Date().toISOString(),
+      );
+    }
+
+    try {
+      await this.deleteCreatedLists(authorization.userId);
+      this.ctx.storage.transactionSync(() => {
+        this.ctx.storage.sql.exec("DELETE FROM devices");
+        this.ctx.storage.sql.exec("DELETE FROM user_profile");
+        this.ctx.storage.sql.exec("DELETE FROM user_lists");
+        this.ctx.storage.sql.exec(
+          "UPDATE account_state SET status = 'deleted', updated_at = ? WHERE id = 1",
+          new Date().toISOString(),
+        );
+      });
+      return { status: "deleted" };
+    } catch (error) {
+      console.error("Keweke remote account deletion failed", {
+        error,
+        userId: authorization.userId,
+      });
+      return { status: "failed" };
+    }
+  }
+
   async recordListCreated(listId: string): Promise<void> {
+    if (this.readAccountState()) {
+      throw new Error("Remote user is unavailable");
+    }
     const normalizedListId = listIdSchema.parse(listId);
     const now = new Date().toISOString();
     this.ctx.storage.sql.exec(
@@ -124,6 +188,10 @@ export class KewekeUserDirectory extends DurableObject {
 
     const current = await this.readProfile(auth.data.userId);
     if (!current) {
+      if (this.readAccountState()) {
+        return { status: "unauthorized" };
+      }
+
       const signatureValid = await verifyPayload(
         auth.data.devicePublicKey,
         auth.data.signature,
@@ -167,6 +235,10 @@ export class KewekeUserDirectory extends DurableObject {
       current.userPublicKey !== auth.data.userPublicKey ||
       current.username !== auth.data.username
     ) {
+      return { status: "unauthorized" };
+    }
+
+    if (this.readAccountState()) {
       return { status: "unauthorized" };
     }
 
@@ -237,6 +309,9 @@ export class KewekeUserDirectory extends DurableObject {
     }
 
     const profile = await this.readProfile(userId.data);
+    if (this.readAccountState()) {
+      return { status: "unauthorized" };
+    }
     const approver = profile?.devices.find(
       (device) => device.deviceId === approverDeviceId.data && device.revokedAt === null,
     );
@@ -307,7 +382,16 @@ export class KewekeUserDirectory extends DurableObject {
   private async authorizeDevice(input: {
     auth: { userId: string; deviceId: string; signature: string };
     payload: string;
+    allowDeleting?: boolean;
   }): Promise<AuthorizedDevice | null> {
+    const accountState = this.readAccountState();
+    if (
+      accountState &&
+      !(input.allowDeleting && accountState.status === "deleting")
+    ) {
+      return null;
+    }
+
     const profile = await this.readProfile(input.auth.userId);
     const device = profile?.devices.find(
       (candidate) => candidate.deviceId === input.auth.deviceId && candidate.revokedAt === null,
@@ -332,6 +416,38 @@ export class KewekeUserDirectory extends DurableObject {
       deviceId: device.deviceId,
       devicePublicKey: device.publicKey,
     };
+  }
+
+  private async deleteCreatedLists(userId: string): Promise<void> {
+    while (true) {
+      const listIds = this.ctx.storage.sql
+        .exec<UserListRow>(
+          "SELECT list_id FROM user_lists WHERE created_at IS NOT NULL ORDER BY list_id ASC",
+        )
+        .toArray()
+        .map((row) => row.list_id);
+      if (listIds.length === 0) {
+        return;
+      }
+
+      for (const listId of listIds) {
+        const deletion = await this.env.KEWEKE_LISTS.getByName(listId).deleteOwnedList(userId);
+        if (deletion.status === "unauthorized") {
+          throw new Error(`The user does not own indexed list ${listId}`);
+        }
+
+        await this.env.KEWEKE_ALIASES.getByName("directory").releaseAlias(listId);
+        this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", listId);
+      }
+    }
+  }
+
+  private readAccountState(): AccountStateRow | null {
+    return (
+      this.ctx.storage.sql
+        .exec<AccountStateRow>("SELECT status FROM account_state WHERE id = 1")
+        .toArray()[0] ?? null
+    );
   }
 
   private async readProfile(userId: string): Promise<UserProfile | null> {
@@ -389,6 +505,11 @@ export class KewekeUserDirectory extends DurableObject {
       );
       CREATE INDEX IF NOT EXISTS user_lists_by_touched_at
         ON user_lists(touched_at DESC, list_id ASC);
+      CREATE TABLE IF NOT EXISTS account_state (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        status TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
     `);
   }
 }

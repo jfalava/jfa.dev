@@ -110,13 +110,18 @@ export async function saveLocalList(
   });
 }
 
-export async function saveRemoteLists(snapshots: ListSnapshot[]): Promise<void> {
-  if (snapshots.length === 0) {
-    return;
-  }
-
+export async function saveRemoteLists(
+  snapshots: ListSnapshot[],
+  missingListIds: string[] = [],
+): Promise<void> {
   const database = await getDatabase();
   const transaction = database.transaction("lists", "readwrite");
+  for (const listId of missingListIds) {
+    const existing = await transaction.store.get(listId);
+    if (existing?.backend === "remote") {
+      await transaction.store.delete(listId);
+    }
+  }
   for (const snapshot of snapshots) {
     const existing = await transaction.store.get(snapshot.id);
     if (existing?.backend === "local") {
@@ -219,5 +224,18 @@ export async function clearLocalListDatabase(): Promise<void> {
     databasePromise = undefined;
   }
   await deleteDB(DATABASE_NAME);
+  emitChange();
+}
+
+export async function clearRemoteListDatabase(): Promise<void> {
+  const database = await getDatabase();
+  const transaction = database.transaction("lists", "readwrite");
+  const records = await transaction.store.getAll();
+  for (const record of records) {
+    if (record.backend === "remote") {
+      await transaction.store.delete(record.id);
+    }
+  }
+  await transaction.done;
   emitChange();
 }

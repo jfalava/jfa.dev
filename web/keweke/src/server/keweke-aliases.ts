@@ -99,6 +99,11 @@ export class KewekeAliasDirectory extends DurableObject {
     return row?.alias ?? null;
   }
 
+  async releaseAlias(listId: string): Promise<void> {
+    const normalizedListId = listIdSchema.parse(listId);
+    this.ctx.storage.sql.exec("DELETE FROM aliases WHERE list_id = ?", normalizedListId);
+  }
+
   private migrate(): void {
     this.ctx.storage.sql.exec(`
       CREATE TABLE IF NOT EXISTS aliases (

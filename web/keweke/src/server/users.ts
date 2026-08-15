@@ -1,6 +1,7 @@
 import {
   deviceRevocationSigningPayload,
   pairingApprovalSigningPayload,
+  userDeleteSigningPayload,
   userListsSigningPayload,
   userRenameSigningPayload,
 } from "@jfa.dev/common/crypto";
@@ -18,7 +19,8 @@ import { env } from "cloudflare:workers";
 import { z } from "zod";
 
 import type { PairingApprovalStatus, PairingStatus } from "./keweke-pairing";
-import { readRemoteList } from "./lists";
+import type { AccountDeletionResult } from "./keweke-users";
+import { readRemoteList } from "./remote-list";
 
 const pairingStartInputSchema = z.object({
   code: pairingCodeSchema,
@@ -46,6 +48,7 @@ const revokeInputSchema = z.object({
 });
 
 const userListsInputSchema = z.object({ auth: identityAuthSchema });
+const deleteRemoteUserInputSchema = z.object({ auth: identityAuthSchema });
 
 export const getUserProfile = createServerFn()
   .validator(identityIdSchema)
@@ -69,13 +72,28 @@ export const getUserLists = createServerFn()
       return { status: "unauthorized" as const };
     }
 
-    const snapshots = await Promise.all(listIds.map((listId) => readRemoteList(listId)));
+    const results = await Promise.all(listIds.map((listId) => readRemoteList(listId)));
     return {
       status: "ok" as const,
-      snapshots: snapshots.filter(
+      snapshots: results.filter(
         (snapshot): snapshot is ListSnapshot => snapshot !== null,
       ),
+      missingListIds: listIds.filter((_, index) => results[index] === null),
     };
+  });
+
+export const deleteRemoteUser = createServerFn({ method: "POST" })
+  .validator(deleteRemoteUserInputSchema)
+  .handler(async ({ data }) => {
+    const payload = userDeleteSigningPayload({
+      userId: data.auth.userId,
+      deviceId: data.auth.deviceId,
+    });
+    const result = await env.KEWEKE_USERS.getByName(data.auth.userId).deleteAccount({
+      auth: data.auth,
+      payload,
+    });
+    return JSON.parse(JSON.stringify(result)) as AccountDeletionResult;
   });
 
 export const updateUserProfile = createServerFn({ method: "POST" })

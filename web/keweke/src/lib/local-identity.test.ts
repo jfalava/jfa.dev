@@ -12,16 +12,21 @@ import {
 } from "./local-identity";
 
 const originalWindow = globalThis.window;
+let dispatchCount = 0;
 
 function createWindowStub(): Window {
   return {
     addEventListener: () => undefined,
     removeEventListener: () => undefined,
-    dispatchEvent: () => true,
+    dispatchEvent: () => {
+      dispatchCount += 1;
+      return true;
+    },
   } as unknown as Window;
 }
 
 beforeEach(() => {
+  dispatchCount = 0;
   Object.defineProperty(globalThis, "window", {
     configurable: true,
     value: createWindowStub(),
@@ -62,5 +67,14 @@ describe("public-key local identity storage", () => {
   test("does not read the previous local-storage identity format", async () => {
     const identity = await ensureLocalIdentity();
     expect(identity?.userId).not.toBe("abcde");
+  });
+
+  test("can clear identity storage without notifying mounted consumers", async () => {
+    await ensureLocalIdentity();
+
+    await clearLocalIdentityDatabase(false);
+
+    expect(await readLocalIdentity()).toBeUndefined();
+    expect(dispatchCount).toBe(1);
   });
 });
