@@ -131,11 +131,11 @@ function EmptyState() {
             ) : lists.length > 0 ? (
               <div className="divide-y divide-border">
                 {lists.map((list) => (
-                  <div className="flex items-center justify-between gap-4 py-4" key={list.id}>
+                  <div className="group flex items-center justify-between gap-4 py-4" key={list.id}>
                     <Link
                       params={{ listId: list.alias ?? list.id }}
                       to="/$listId"
-                      className="group min-w-0 flex-1"
+                      className="min-w-0 flex-1"
                     >
                       <div className="min-w-0">
                         <p className="truncate font-serif text-lg font-semibold tracking-tight group-hover:text-primary">
@@ -191,9 +191,14 @@ function EmptyState() {
                           </Button>
                         )
                       ) : null}
-                      <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                      <Link
+                        aria-label={`Open ${list.title}`}
+                        className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary group-hover:text-primary"
+                        params={{ listId: list.alias ?? list.id }}
+                        to="/$listId"
+                      >
                         Open →
-                      </span>
+                      </Link>
                     </div>
                   </div>
                 ))}
