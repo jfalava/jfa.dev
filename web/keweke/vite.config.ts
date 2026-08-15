@@ -10,6 +10,9 @@ const MOUNT_PATH = "/keweke/";
 export default defineConfig({
   base: MOUNT_PATH,
   plugins: [tailwindcss(), tanstackStart(), viteReact()],
+  optimizeDeps: {
+    exclude: ["cloudflare:workers"],
+  },
   build: {
     rolldownOptions: {
       external: ["cloudflare:workers"],
