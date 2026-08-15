@@ -5,14 +5,23 @@ import {
   userDeleteSigningPayload,
   userRenameSigningPayload,
 } from "@jfa.dev/common/crypto";
-import { type UserProfile, usernameSchema } from "@jfa.dev/common/identities";
+import {
+  type PasskeyProfile,
+  type UserProfile,
+  usernameSchema,
+} from "@jfa.dev/common/identities";
 import { Button, Input } from "@jfa.dev/common/ui";
 import { useNavigate } from "@tanstack/react-router";
-import { UserRound } from "lucide-react";
+import { KeyRound, UserRound } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Dialog, DialogTrigger, Modal, ModalOverlay } from "react-aria-components";
 
 import { clearLocalData, clearRemoteUserData } from "@/lib/local-data";
+import {
+  isPasskeyAvailable,
+  listLocalPasskeys,
+  registerLocalPasskey,
+} from "@/lib/passkeys";
 import {
   adoptLocalIdentity,
   confirmRemoteUsername,
@@ -54,7 +63,14 @@ type PairingStatusView =
 
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
-type FeedbackSection = "username" | "pairing" | "approval" | "devices" | "account" | "data";
+type FeedbackSection =
+  | "username"
+  | "pairing"
+  | "approval"
+  | "devices"
+  | "passkeys"
+  | "account"
+  | "data";
 
 type DialogFeedback = {
   section: FeedbackSection;
@@ -80,6 +96,10 @@ function FeedbackMessage({
   );
 }
 
+function formatPasskeyDate(value: string): string {
+  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(value));
+}
+
 export function UserDialog() {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -94,6 +114,9 @@ export function UserDialog() {
   const [isStartingPairing, setIsStartingPairing] = useState(false);
   const [isFindingDevice, setIsFindingDevice] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [passkeys, setPasskeys] = useState<PasskeyProfile[]>([]);
+  const [isLoadingPasskeys, setIsLoadingPasskeys] = useState(false);
+  const [isRegisteringPasskey, setIsRegisteringPasskey] = useState(false);
   const [isAdopting, setIsAdopting] = useState(false);
   const [isClearingData, setIsClearingData] = useState(false);
   const [isConfirmingClearData, setIsConfirmingClearData] = useState(false);
@@ -173,6 +196,47 @@ export function UserDialog() {
     setFeedback({ section, tone: "message", text });
   };
 
+  const canManagePasskeys = Boolean(
+    identity?.remoteUsername &&
+      profile?.devices.some(
+        (device) => device.deviceId === identity.deviceId && device.revokedAt === null,
+      ),
+  );
+  const passkeyAvailable = isPasskeyAvailable();
+
+  useEffect(() => {
+    if (!isDialogOpen || !canManagePasskeys) {
+      setPasskeys([]);
+      setIsLoadingPasskeys(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setIsLoadingPasskeys(true);
+    void listLocalPasskeys()
+      .then((nextPasskeys) => {
+        if (!cancelled) {
+          setPasskeys(nextPasskeys);
+        }
+        return nextPasskeys;
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPasskeys([]);
+          setError("passkeys", "Could not load passkeys right now.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsLoadingPasskeys(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [canManagePasskeys, identity?.deviceId, identity?.userId, isDialogOpen]);
+
   const save = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     resetFeedback();
@@ -251,6 +315,36 @@ export function UserDialog() {
       setError("pairing", "Could not create a pairing code.");
     } finally {
       setIsStartingPairing(false);
+    }
+  };
+
+  const addPasskey = async (): Promise<void> => {
+    if (!canManagePasskeys || !passkeyAvailable) {
+      return;
+    }
+
+    setIsRegisteringPasskey(true);
+    resetFeedback();
+    try {
+      const result = await registerLocalPasskey();
+      if (result.status === "unauthorized") {
+        setError("passkeys", "This device is not allowed to add a passkey.");
+        return;
+      }
+      if (result.status !== "registered" && result.status !== "existing") {
+        setError("passkeys", "The passkey could not be added. Try again.");
+        return;
+      }
+
+      setPasskeys(await listLocalPasskeys());
+      setMessage(
+        "passkeys",
+        result.status === "registered" ? "Passkey added." : "That passkey is already registered.",
+      );
+    } catch {
+      setError("passkeys", "Passkey creation was cancelled or failed. Try again.");
+    } finally {
+      setIsRegisteringPasskey(false);
     }
   };
 
@@ -705,6 +799,75 @@ export function UserDialog() {
                     ))}
                   </div>
                   <FeedbackMessage feedback={feedback} section="devices" />
+                </section>
+              ) : null}
+
+              {canManagePasskeys ? (
+                <section
+                  aria-labelledby="passkeys-heading"
+                  className="space-y-3 border-t border-border pt-4"
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                      passkeys
+                    </p>
+                    <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                      /
+                    </span>
+                    <h3
+                      className="text-[11px] font-normal text-muted-foreground/75"
+                      id="passkeys-heading"
+                    >
+                      Sign in without pairing codes
+                    </h3>
+                  </div>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="min-w-0 text-sm text-muted-foreground">
+                      Add as many passkeys as your password manager supports. Each one can adopt a
+                      new browser without a pairing code.
+                    </p>
+                    {passkeyAvailable ? (
+                      <Button
+                        className="h-9 shrink-0 gap-1.5 px-3 text-sm"
+                        isDisabled={isRegisteringPasskey}
+                        onPress={() => void addPasskey()}
+                      >
+                        <KeyRound aria-hidden="true" className="size-3.5" />
+                        {isRegisteringPasskey ? "Waiting…" : "Add passkey"}
+                      </Button>
+                    ) : null}
+                  </div>
+                  {!passkeyAvailable ? (
+                    <p className="text-sm text-muted-foreground">
+                      Passkeys are not available in this browser.
+                    </p>
+                  ) : null}
+                  <FeedbackMessage feedback={feedback} section="passkeys" />
+                  {isLoadingPasskeys ? (
+                    <p className="text-sm text-muted-foreground">Loading passkeys…</p>
+                  ) : passkeys.length > 0 ? (
+                    <div className="divide-y divide-border border border-border">
+                      {passkeys.map((passkey, index) => (
+                        <div className="flex items-center gap-3 p-3" key={passkey.id}>
+                          <div className="flex size-8 shrink-0 items-center justify-center border border-border bg-muted/40 text-primary">
+                            <KeyRound aria-hidden="true" className="size-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm">Passkey {index + 1}</p>
+                            <p className="mt-1 text-[11px] text-muted-foreground">
+                              Added {formatPasskeyDate(passkey.createdAt)} ·{" "}
+                              {passkey.synced ? "Available to sync" : "Device-bound"}
+                              {passkey.transports.length > 0
+                                ? ` · ${passkey.transports.join(", ")}`
+                                : ""}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No passkeys added yet.</p>
+                  )}
                 </section>
               ) : null}
 
