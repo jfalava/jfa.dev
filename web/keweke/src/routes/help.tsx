@@ -36,6 +36,11 @@ function HelpPage() {
                   anything you are not ready to share. They are also the one that keeps working when
                   you are offline.
                 </p>
+                <p>
+                  Each list also has a local username. Choose yours from the list header and new
+                  lines will show who added or last edited them. Duplicate display names are
+                  allowed. It is a label for collaboration, not a password or proof of identity.
+                </p>
                 <Callout label="The boundary">
                   Clear this site&apos;s data, switch browsers, or move to another device and the
                   list will not come along automatically. Local means local.

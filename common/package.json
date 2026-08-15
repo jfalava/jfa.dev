@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./aliases": "./src/aliases.ts",
+    "./identities": "./src/identities.ts",
     "./preferences": "./src/preferences.ts",
     "./styles.css": "./src/styles.css",
     "./ui": "./src/components/ui/index.ts",

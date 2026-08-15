@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { listAliasSchema } from "./aliases";
+import { listIdentitySchema } from "./identities";
 
 const UUID_V7_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -26,11 +27,14 @@ export const listItemSchema = z.object({
   position: z.number().int().min(0),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
+  createdBy: listIdentitySchema.nullable().default(null),
+  updatedBy: listIdentitySchema.nullable().default(null),
 });
 
 export const deletedListItemSchema = listItemSchema.extend({
   archiveId: archiveIdSchema,
   deletedAt: timestampSchema,
+  deletedBy: listIdentitySchema.nullable().default(null),
 });
 
 export const listSnapshotSchema = z.object({
@@ -85,6 +89,7 @@ export const listCommandSchema = z.discriminatedUnion("type", [
 export const listMutationSchema = z.object({
   id: z.string().min(1).max(128),
   baseRevision: z.number().int().min(0),
+  actor: listIdentitySchema.nullable().optional(),
   command: listCommandSchema,
 });
 
@@ -156,6 +161,8 @@ export function createStarterListSnapshot(
         position: 0,
         createdAt: now,
         updatedAt: now,
+        createdBy: null,
+        updatedBy: null,
       },
       {
         id: "starter-tomatoes",
@@ -167,6 +174,8 @@ export function createStarterListSnapshot(
         position: 1,
         createdAt: now,
         updatedAt: now,
+        createdBy: null,
+        updatedBy: null,
       },
       {
         id: "starter-coffee",
@@ -178,6 +187,8 @@ export function createStarterListSnapshot(
         position: 2,
         createdAt: now,
         updatedAt: now,
+        createdBy: null,
+        updatedBy: null,
       },
     ],
   };
@@ -209,6 +220,9 @@ export function applyListMutation(
   }
 
   const command = listCommandSchema.parse(mutation.command);
+  const actor = mutation.actor
+    ? listIdentitySchema.parse(mutation.actor)
+    : null;
   let nextItems = snapshot.items;
   let nextDeletedItems = snapshot.deletedItems;
   let nextTitle = snapshot.title;
@@ -223,26 +237,40 @@ export function applyListMutation(
           checked: false,
           createdAt: now,
           updatedAt: now,
+          createdBy: actor,
+          updatedBy: actor,
         },
       ];
       break;
     case "update-item":
       nextItems = snapshot.items.map((item) =>
         item.id === command.itemId
-          ? { ...item, ...command.changes, updatedAt: now }
+          ? {
+              ...item,
+              ...command.changes,
+              updatedAt: now,
+              updatedBy: actor ?? item.updatedBy,
+            }
           : item,
       );
       break;
     case "set-item-checked":
       nextItems = snapshot.items.map((item) =>
         item.id === command.itemId
-          ? { ...item, checked: command.checked, updatedAt: now }
+          ? {
+              ...item,
+              checked: command.checked,
+              updatedAt: now,
+              updatedBy: actor ?? item.updatedBy,
+            }
           : item,
       );
       break;
     case "remove-item":
       {
-        const removedItem = snapshot.items.find((item) => item.id === command.itemId);
+        const removedItem = snapshot.items.find(
+          (item) => item.id === command.itemId,
+        );
         nextItems = snapshot.items
           .filter((item) => item.id !== command.itemId)
           .map((item, index) => ({ ...item, position: index }));
@@ -253,6 +281,7 @@ export function applyListMutation(
               ...removedItem,
               archiveId: `${removedItem.id}:${snapshot.revision + 1}`,
               deletedAt: now,
+              deletedBy: actor,
             },
           ];
         }
@@ -263,7 +292,10 @@ export function applyListMutation(
         const deletedItem = snapshot.deletedItems.find(
           (item) => item.archiveId === command.archiveId,
         );
-        if (deletedItem && !snapshot.items.some((item) => item.id === deletedItem.id)) {
+        if (
+          deletedItem &&
+          !snapshot.items.some((item) => item.id === deletedItem.id)
+        ) {
           nextItems = [
             ...snapshot.items,
             {
@@ -276,6 +308,8 @@ export function applyListMutation(
               position: snapshot.items.length,
               createdAt: deletedItem.createdAt,
               updatedAt: now,
+              createdBy: deletedItem.createdBy,
+              updatedBy: actor ?? deletedItem.updatedBy,
             },
           ];
           nextDeletedItems = snapshot.deletedItems.filter(

@@ -1,4 +1,5 @@
 import { listAliasSchema } from "@jfa.dev/common/aliases";
+import { listIdentitySchema, type ListIdentity } from "@jfa.dev/common/identities";
 import {
   applyListMutation,
   listIdSchema,
@@ -22,7 +23,7 @@ interface ListMetadataRow {
 }
 
 interface ListItemRow {
-  [key: string]: string | number;
+  [key: string]: string | number | null;
   id: string;
   name: string;
   quantity: number;
@@ -32,10 +33,14 @@ interface ListItemRow {
   position: number;
   created_at: string;
   updated_at: string;
+  created_by_id: string | null;
+  created_by_username: string | null;
+  updated_by_id: string | null;
+  updated_by_username: string | null;
 }
 
 interface DeletedListItemRow {
-  [key: string]: string | number;
+  [key: string]: string | number | null;
   archive_id: string;
   item_id: string;
   name: string;
@@ -47,6 +52,12 @@ interface DeletedListItemRow {
   created_at: string;
   updated_at: string;
   deleted_at: string;
+  created_by_id: string | null;
+  created_by_username: string | null;
+  updated_by_id: string | null;
+  updated_by_username: string | null;
+  deleted_by_id: string | null;
+  deleted_by_username: string | null;
 }
 
 export class KewekeList extends DurableObject {
@@ -218,6 +229,22 @@ export class KewekeList extends DurableObject {
         INSERT INTO _sql_schema_migrations (id) VALUES (3);
       `);
     }
+
+    if (currentVersion < 4) {
+      this.ctx.storage.sql.exec(`
+        ALTER TABLE items ADD COLUMN created_by_id TEXT;
+        ALTER TABLE items ADD COLUMN created_by_username TEXT;
+        ALTER TABLE items ADD COLUMN updated_by_id TEXT;
+        ALTER TABLE items ADD COLUMN updated_by_username TEXT;
+        ALTER TABLE deleted_items ADD COLUMN created_by_id TEXT;
+        ALTER TABLE deleted_items ADD COLUMN created_by_username TEXT;
+        ALTER TABLE deleted_items ADD COLUMN updated_by_id TEXT;
+        ALTER TABLE deleted_items ADD COLUMN updated_by_username TEXT;
+        ALTER TABLE deleted_items ADD COLUMN deleted_by_id TEXT;
+        ALTER TABLE deleted_items ADD COLUMN deleted_by_username TEXT;
+        INSERT INTO _sql_schema_migrations (id) VALUES (4);
+      `);
+    }
   }
 
   private readSnapshot(): ListSnapshot | null {
@@ -232,7 +259,8 @@ export class KewekeList extends DurableObject {
 
     const items = this.ctx.storage.sql
       .exec<ListItemRow>(
-        `SELECT id, name, quantity, unit, category, checked, position, created_at, updated_at
+        `SELECT id, name, quantity, unit, category, checked, position, created_at, updated_at,
+                created_by_id, created_by_username, updated_by_id, updated_by_username
          FROM items WHERE list_id = ? ORDER BY position ASC`,
         metadata.list_id,
       )
@@ -247,12 +275,15 @@ export class KewekeList extends DurableObject {
         position: item.position,
         createdAt: item.created_at,
         updatedAt: item.updated_at,
+        createdBy: readIdentity(item.created_by_id, item.created_by_username),
+        updatedBy: readIdentity(item.updated_by_id, item.updated_by_username),
       }));
 
     const deletedItems = this.ctx.storage.sql
       .exec<DeletedListItemRow>(
         `SELECT archive_id, item_id, name, quantity, unit, category, checked, position,
-                created_at, updated_at, deleted_at
+                created_at, updated_at, deleted_at, created_by_id, created_by_username,
+                updated_by_id, updated_by_username, deleted_by_id, deleted_by_username
          FROM deleted_items WHERE list_id = ? ORDER BY deleted_at ASC, archive_id ASC`,
         metadata.list_id,
       )
@@ -269,6 +300,9 @@ export class KewekeList extends DurableObject {
         createdAt: item.created_at,
         updatedAt: item.updated_at,
         deletedAt: item.deleted_at,
+        createdBy: readIdentity(item.created_by_id, item.created_by_username),
+        updatedBy: readIdentity(item.updated_by_id, item.updated_by_username),
+        deletedBy: readIdentity(item.deleted_by_id, item.deleted_by_username),
       }));
 
     return parseListSnapshot({
@@ -306,8 +340,9 @@ export class KewekeList extends DurableObject {
     for (const item of snapshot.items) {
       this.ctx.storage.sql.exec(
         `INSERT INTO items
-          (id, list_id, name, quantity, unit, category, checked, position, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          (id, list_id, name, quantity, unit, category, checked, position, created_at, updated_at,
+           created_by_id, created_by_username, updated_by_id, updated_by_username)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         item.id,
         snapshot.id,
         item.name,
@@ -318,6 +353,10 @@ export class KewekeList extends DurableObject {
         item.position,
         item.createdAt,
         item.updatedAt,
+        item.createdBy?.id ?? null,
+        item.createdBy?.username ?? null,
+        item.updatedBy?.id ?? null,
+        item.updatedBy?.username ?? null,
       );
     }
 
@@ -326,8 +365,9 @@ export class KewekeList extends DurableObject {
       this.ctx.storage.sql.exec(
         `INSERT INTO deleted_items
           (archive_id, list_id, item_id, name, quantity, unit, category, checked, position,
-           created_at, updated_at, deleted_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           created_at, updated_at, deleted_at, created_by_id, created_by_username,
+           updated_by_id, updated_by_username, deleted_by_id, deleted_by_username)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         item.archiveId,
         snapshot.id,
         item.id,
@@ -340,7 +380,22 @@ export class KewekeList extends DurableObject {
         item.createdAt,
         item.updatedAt,
         item.deletedAt,
+        item.createdBy?.id ?? null,
+        item.createdBy?.username ?? null,
+        item.updatedBy?.id ?? null,
+        item.updatedBy?.username ?? null,
+        item.deletedBy?.id ?? null,
+        item.deletedBy?.username ?? null,
       );
     }
   }
+}
+
+function readIdentity(id: string | null, username: string | null): ListIdentity | null {
+  if (id === null || username === null) {
+    return null;
+  }
+
+  const result = listIdentitySchema.safeParse({ id, username });
+  return result.success ? result.data : null;
 }

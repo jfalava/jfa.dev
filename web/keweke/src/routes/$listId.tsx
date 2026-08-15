@@ -1,3 +1,4 @@
+import type { ListIdentity } from "@jfa.dev/common/identities";
 import type { DeletedListItem, ListCommand, ListItem, ListSnapshot } from "@jfa.dev/common/lists";
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
@@ -15,6 +16,11 @@ import {
   loadList,
   migrateList,
 } from "@/lib/list-repository";
+import {
+  ensureLocalIdentity,
+  saveLocalIdentity,
+  subscribeToLocalIdentity,
+} from "@/lib/local-identity";
 
 const shoppingTableFeatures = tableFeatures({});
 const shoppingColumnHelper = createColumnHelper<typeof shoppingTableFeatures, ListItem>();
@@ -51,6 +57,14 @@ function ListPage() {
   const [filter, setFilter] = useState("");
   const [draftItem, setDraftItem] = useState("");
   const [draftQuantity, setDraftQuantity] = useState("1");
+  const [identity, setIdentity] = useState<ListIdentity>();
+  const [isSavingIdentity, setIsSavingIdentity] = useState(false);
+
+  useEffect(() => {
+    const refreshIdentity = (): void => setIdentity(ensureLocalIdentity());
+    refreshIdentity();
+    return subscribeToLocalIdentity(refreshIdentity);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,11 +96,15 @@ function ListPage() {
       if (!loadedList) {
         return false;
       }
+      if (!identity) {
+        setError("Your local identity is still being prepared. Try again in a moment.");
+        return false;
+      }
 
       const result = await applyMutation(
         loadedList.snapshot.id,
         loadedList.backend,
-        createMutation(loadedList.snapshot, command),
+        createMutation(loadedList.snapshot, command, identity),
       );
       if (result.status === "missing") {
         setError("This list no longer exists.");
@@ -102,8 +120,23 @@ function ListPage() {
       setError(undefined);
       return true;
     },
-    [loadedList],
+    [identity, loadedList],
   );
+
+  const updateIdentity = useCallback((username: string): boolean => {
+    setIsSavingIdentity(true);
+    try {
+      const nextIdentity = saveLocalIdentity(username);
+      setIdentity(nextIdentity);
+      setError(undefined);
+      return true;
+    } catch {
+      setError("Use a username between 1 and 48 characters.");
+      return false;
+    } finally {
+      setIsSavingIdentity(false);
+    }
+  }, []);
 
   const migrate = useCallback(async (): Promise<void> => {
     if (!loadedList || loadedList.backend !== "local") {
@@ -329,6 +362,11 @@ function ListPage() {
               isSaving={isAssigningAlias}
               onSave={assignAlias}
             />
+            <LocalIdentityEditor
+              identity={identity}
+              isSaving={isSavingIdentity}
+              onSave={updateIdentity}
+            />
           </div>
           <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
             {String(activeCount).padStart(2, "0")} open · {String(completedCount).padStart(2, "0")}{" "}
@@ -548,6 +586,146 @@ function ListAliasEditor({
   );
 }
 
+function LocalIdentityEditor({
+  identity,
+  isSaving,
+  onSave,
+}: {
+  identity?: ListIdentity;
+  isSaving: boolean;
+  onSave: (username: string) => boolean;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState("");
+
+  useEffect(() => {
+    if (!isEditing) {
+      setValue(identity?.username ?? "");
+    }
+  }, [identity, isEditing]);
+
+  if (!identity) {
+    return (
+      <p className="mt-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+        local identity / preparing…
+      </p>
+    );
+  }
+
+  if (!isEditing) {
+    return (
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-2">
+        <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">by</p>
+        <span className="text-sm font-medium">{identity.username}</span>
+        <Button
+          aria-label="Change local username"
+          className="size-7 p-0"
+          onPress={() => setIsEditing(true)}
+          size="icon-sm"
+          variant="ghost"
+        >
+          <Pencil className="size-3.5" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      className="mt-3 flex max-w-lg flex-wrap items-center gap-1.5 border-t border-border pt-2"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const username = value.trim();
+        if (username && onSave(username)) {
+          setIsEditing(false);
+        }
+      }}
+    >
+      <label className="sr-only" htmlFor="local-username">
+        Local username
+      </label>
+      <Input
+        id="local-username"
+        aria-label="Local username"
+        className="min-w-40 flex-1 font-mono text-base sm:text-[11px]"
+        disabled={isSaving}
+        maxLength={48}
+        onChange={(event) => setValue(event.target.value)}
+        placeholder="Your username"
+        value={value}
+      />
+      <Button isDisabled={isSaving} size="sm" type="submit">
+        {isSaving ? "saving" : "save"}
+      </Button>
+      <Button
+        isDisabled={isSaving}
+        onPress={() => setIsEditing(false)}
+        size="sm"
+        type="button"
+        variant="ghost"
+      >
+        cancel
+      </Button>
+    </form>
+  );
+}
+
+const IDENTITY_COLORS = [
+  "bg-primary",
+  "bg-emerald-500",
+  "bg-amber-500",
+  "bg-rose-500",
+  "bg-sky-500",
+  "bg-violet-500",
+] as const;
+
+function identityColor(identityId: string): (typeof IDENTITY_COLORS)[number] {
+  const hash = Array.from(identityId).reduce(
+    (value, character) => value + character.charCodeAt(0),
+    0,
+  );
+  return IDENTITY_COLORS[hash % IDENTITY_COLORS.length];
+}
+
+function SignedItemBadge({
+  item,
+}: {
+  item: Pick<ListItem, "createdAt" | "createdBy" | "updatedAt" | "updatedBy">;
+}) {
+  const wasEdited =
+    item.updatedAt !== item.createdAt ||
+    (item.createdBy !== null && item.updatedBy !== null && item.createdBy.id !== item.updatedBy.id);
+  const actor = (wasEdited ? item.updatedBy : item.createdBy) ?? item.updatedBy ?? item.createdBy;
+  if (!actor) {
+    return (
+      <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+        unsigned
+      </span>
+    );
+  }
+
+  const action = wasEdited ? "edited by" : "added by";
+  const createdBy = item.createdBy ? `Added by ${item.createdBy.username}` : undefined;
+  const updatedBy = item.updatedBy ? `Last edited by ${item.updatedBy.username}` : undefined;
+  const title = [createdBy, wasEdited ? updatedBy : undefined].filter(Boolean).join(" · ");
+
+  return (
+    <span
+      aria-label={`${action} ${actor.username}`}
+      className="inline-flex max-w-full items-center gap-1 truncate font-mono text-[10px] tracking-[0.06em] text-muted-foreground uppercase"
+      title={title}
+    >
+      <span
+        aria-hidden="true"
+        className={`size-1.5 shrink-0 rounded-full ${identityColor(actor.id)}`}
+      />
+      <span className="truncate">
+        {action} {actor.username}
+      </span>
+    </span>
+  );
+}
+
 function ShoppingTable({
   items,
   onRemove,
@@ -651,6 +829,7 @@ function ShoppingTable({
             <col />
             <col className="w-20" />
             <col className="w-20" />
+            <col className="w-32" />
             <col className="w-32" />
             <col className="w-24" />
             <col className="w-12" />
@@ -825,9 +1004,12 @@ function MobileShoppingList({
               >
                 {item.name}
               </p>
-              <p className="mt-1 truncate font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                {item.quantity} {item.unit} · {item.category} · {item.checked ? "done" : "open"}
-              </p>
+              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                <span>
+                  {item.quantity} {item.unit} · {item.category} · {item.checked ? "done" : "open"}
+                </span>
+                <SignedItemBadge item={item} />
+              </div>
             </div>
             <div className="flex shrink-0 items-center gap-0.5">
               <Button
@@ -906,6 +1088,7 @@ function DeletedItemsHistory({
                 <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
                   {item.quantity} {item.unit} · {item.category} · deleted{" "}
                   {item.deletedAt.slice(0, 10)}
+                  {item.deletedBy ? ` · deleted by ${item.deletedBy.username}` : ""}
                 </p>
               </div>
               {confirmingArchiveId === item.archiveId ? (
@@ -1086,6 +1269,11 @@ function createShoppingColumns({
           </span>
         );
       },
+    }),
+    shoppingColumnHelper.display({
+      id: "signed",
+      header: "signed",
+      cell: ({ row }) => <SignedItemBadge item={row.original} />,
     }),
     shoppingColumnHelper.display({
       id: "status",

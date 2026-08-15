@@ -53,6 +53,87 @@ describe("list contract", () => {
     ).toBeNull();
   });
 
+  test("keeps the local signer on created, edited, and deleted items", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const creator = { id: "abcde", username: "Alex" };
+    const editor = { id: "fghij", username: "Sam" };
+    const added = applyListMutation(
+      snapshot,
+      {
+        id: "add-signed-item",
+        baseRevision: 0,
+        actor: creator,
+        command: {
+          type: "add-item",
+          item: {
+            id: "signed-milk",
+            name: "Milk",
+            quantity: 1,
+            unit: "EA",
+            category: "DAIRY",
+          },
+        },
+      },
+      NOW,
+    );
+
+    expect(added?.items[added.items.length - 1]).toMatchObject({
+      createdBy: creator,
+      updatedBy: creator,
+    });
+
+    const edited = applyListMutation(
+      added!,
+      {
+        id: "edit-signed-item",
+        baseRevision: 1,
+        actor: editor,
+        command: {
+          type: "update-item",
+          itemId: "signed-milk",
+          changes: { quantity: 2 },
+        },
+      },
+      "2026-08-14T10:05:00.000Z",
+    );
+    expect(edited?.items[edited.items.length - 1]).toMatchObject({
+      createdBy: creator,
+      updatedBy: editor,
+      quantity: 2,
+    });
+
+    const removed = applyListMutation(
+      edited!,
+      {
+        id: "delete-signed-item",
+        baseRevision: 2,
+        actor: editor,
+        command: { type: "remove-item", itemId: "signed-milk" },
+      },
+      "2026-08-14T10:10:00.000Z",
+    );
+    expect(removed?.deletedItems[0]).toMatchObject({
+      createdBy: creator,
+      updatedBy: editor,
+      deletedBy: editor,
+    });
+  });
+
+  test("normalizes snapshots from before local attribution existed", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const legacy = {
+      ...snapshot,
+      items: snapshot.items.map(
+        ({ createdBy: _createdBy, updatedBy: _updatedBy, ...item }) => item,
+      ),
+      deletedItems: [],
+    };
+
+    const parsed = parseListSnapshot(legacy);
+    expect(parsed.items[0]?.createdBy).toBeNull();
+    expect(parsed.items[0]?.updatedBy).toBeNull();
+  });
+
   test("updates editable item fields", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
     const nextSnapshot = applyListMutation(

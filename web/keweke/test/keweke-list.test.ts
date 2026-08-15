@@ -27,6 +27,7 @@ describe("KewekeList Durable Object", () => {
     const mutation: ListMutation = {
       id: "mutation-001",
       baseRevision: 0,
+      actor: { id: "abcde", username: "Alex" },
       command: {
         type: "set-item-checked",
         itemId: "starter-bread",
@@ -39,6 +40,7 @@ describe("KewekeList Durable Object", () => {
     if (applied.status === "ok") {
       expect(applied.snapshot.revision).toBe(1);
       expect(applied.snapshot.items[0]?.checked).toBe(true);
+      expect(applied.snapshot.items[0]?.updatedBy).toEqual({ id: "abcde", username: "Alex" });
     }
 
     const retry = await stub.applyMutation(LIST_ID, mutation);

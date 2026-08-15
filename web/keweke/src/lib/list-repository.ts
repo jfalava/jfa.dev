@@ -1,3 +1,4 @@
+import type { ListIdentity } from "@jfa.dev/common/identities";
 import type {
   ApplyMutationResult,
   ImportSnapshotResult,
@@ -31,10 +32,15 @@ export interface LoadedList {
   snapshot: ListSnapshot;
 }
 
-export function createMutation(snapshot: ListSnapshot, command: ListCommand): ListMutation {
+export function createMutation(
+  snapshot: ListSnapshot,
+  command: ListCommand,
+  actor?: ListIdentity,
+): ListMutation {
   return {
     id: uuidv7(),
     baseRevision: snapshot.revision,
+    ...(actor ? { actor } : {}),
     command,
   };
 }
