@@ -16,7 +16,7 @@ describe("list contract", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
 
     expect(snapshot.id).toBe(LIST_ID);
-    expect(snapshot.schemaVersion).toBe(2);
+    expect(snapshot.schemaVersion).toBe(3);
     expect(snapshot.revision).toBe(0);
     expect(snapshot.alias).toBeNull();
     expect(snapshot.title).toBe("New list");
@@ -56,8 +56,14 @@ describe("list contract", () => {
 
   test("keeps the local signer on created, edited, and deleted items", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const creator = { id: "abcde", username: "Alex" };
-    const editor = { id: "fghij", username: "Sam" };
+    const creator = {
+      id: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      username: "Alex",
+    };
+    const editor = {
+      id: "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      username: "Sam",
+    };
     const added = applyListMutation(
       snapshot,
       {
@@ -138,7 +144,10 @@ describe("list contract", () => {
 
   test("keeps an anonymous signer id on created items", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const anonymous = { id: "abcde", username: null };
+    const anonymous = {
+      id: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      username: null,
+    };
     const nextSnapshot = applyListMutation(
       snapshot,
       {

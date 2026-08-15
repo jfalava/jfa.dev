@@ -1,19 +1,20 @@
 /// <reference types="bun" />
 
+// oxlint-disable-next-line import/no-unassigned-import
+import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 
-import { ensureLocalIdentity, readLocalIdentity, saveLocalIdentity } from "./local-identity";
+import {
+  clearLocalIdentityDatabase,
+  ensureLocalIdentity,
+  readLocalIdentity,
+  saveLocalIdentity,
+} from "./local-identity";
 
 const originalWindow = globalThis.window;
 
 function createWindowStub(): Window {
-  const values = new Map<string, string>();
-
   return {
-    localStorage: {
-      getItem: (key: string) => values.get(key) ?? null,
-      setItem: (key: string, value: string) => values.set(key, value),
-    },
     addEventListener: () => undefined,
     removeEventListener: () => undefined,
     dispatchEvent: () => true,
@@ -27,7 +28,8 @@ beforeEach(() => {
   });
 });
 
-afterEach(() => {
+afterEach(async () => {
+  await clearLocalIdentityDatabase();
   if (originalWindow === undefined) {
     Reflect.deleteProperty(globalThis, "window");
   } else {
@@ -38,26 +40,27 @@ afterEach(() => {
   }
 });
 
-describe("local identity storage", () => {
-  test("keeps anonymous as a placeholder until the username changes", () => {
-    const first = ensureLocalIdentity();
+describe("public-key local identity storage", () => {
+  test("creates one browser identity and persists a display name", async () => {
+    const first = await ensureLocalIdentity();
 
-    expect(first).toEqual({ id: first.id, username: null });
-    expect(readLocalIdentity()).toEqual(first);
+    expect(first).toBeDefined();
+    const firstIdentity = first!;
+    expect(firstIdentity.userId).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(firstIdentity.deviceId).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(firstIdentity.username).toBeNull();
+    expect(await readLocalIdentity()).toEqual(first);
 
-    const updated = saveLocalIdentity("  Alex  ");
+    const updated = await saveLocalIdentity("  Alex  ");
 
-    expect(first.id).toMatch(/^[a-z]{5}$/);
-    expect(updated).toEqual({ id: first.id, username: "Alex" });
-    expect(readLocalIdentity()).toEqual(updated);
+    expect(updated.userId).toBe(firstIdentity.userId);
+    expect(updated.deviceId).toBe(firstIdentity.deviceId);
+    expect(updated.username).toBe("Alex");
+    expect(await readLocalIdentity()).toEqual(updated);
   });
 
-  test("treats the old persisted anonymous default as an unset username", () => {
-    window.localStorage.setItem(
-      "keweke-local-identity",
-      JSON.stringify({ id: "abcde", username: "Anonymous" }),
-    );
-
-    expect(readLocalIdentity()).toEqual({ id: "abcde", username: null });
+  test("does not read the previous local-storage identity format", async () => {
+    const identity = await ensureLocalIdentity();
+    expect(identity?.userId).not.toBe("abcde");
   });
 });

@@ -1,7 +1,6 @@
 import { listAliasSchema } from "@jfa.dev/common/aliases";
 import {
   aliasSigningPayload,
-  listMutationSigningPayload,
   listPublishSigningPayload,
 } from "@jfa.dev/common/crypto";
 import { identityAuthSchema, publishAuthSchema } from "@jfa.dev/common/identities";
@@ -74,7 +73,7 @@ export const ensureRemoteListAlias = createServerFn({ method: "POST" })
 
     return {
       status: reservation.status,
-      snapshot: listSnapshotSchema.parse(updated),
+      snapshot: await resolveActorNames(listSnapshotSchema.parse(updated)),
     };
   });
 
@@ -163,13 +162,23 @@ async function readRemoteList(listId: string) {
 async function resolveActorNames(snapshot: ReturnType<typeof listSnapshotSchema.parse>) {
   const userIds = new Set<string>();
   for (const item of snapshot.items) {
-    if (item.createdBy) userIds.add(item.createdBy.id);
-    if (item.updatedBy) userIds.add(item.updatedBy.id);
+    if (item.createdBy) {
+      userIds.add(item.createdBy.id);
+    }
+    if (item.updatedBy) {
+      userIds.add(item.updatedBy.id);
+    }
   }
   for (const item of snapshot.deletedItems) {
-    if (item.createdBy) userIds.add(item.createdBy.id);
-    if (item.updatedBy) userIds.add(item.updatedBy.id);
-    if (item.deletedBy) userIds.add(item.deletedBy.id);
+    if (item.createdBy) {
+      userIds.add(item.createdBy.id);
+    }
+    if (item.updatedBy) {
+      userIds.add(item.updatedBy.id);
+    }
+    if (item.deletedBy) {
+      userIds.add(item.deletedBy.id);
+    }
   }
 
   const profiles = await Promise.all(
@@ -178,12 +187,13 @@ async function resolveActorNames(snapshot: ReturnType<typeof listSnapshotSchema.
       await env.KEWEKE_USERS.getByName(userId).getProfile(userId),
     ] as const),
   );
-  const usernames = new Map(
-    profiles
-      .filter(([, profile]) => profile !== null)
-      .map(([userId, profile]) => [userId, profile.username]),
-  );
-  const currentIdentity = (identity: { id: string; username: string } | null) =>
+  const usernames = new Map<string, string>();
+  for (const [userId, profile] of profiles) {
+    if (profile) {
+      usernames.set(userId, profile.username);
+    }
+  }
+  const currentIdentity = (identity: { id: string; username: string | null } | null) =>
     identity ? { ...identity, username: usernames.get(identity.id) ?? identity.username } : null;
 
   return listSnapshotSchema.parse({

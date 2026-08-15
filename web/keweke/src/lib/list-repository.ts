@@ -80,7 +80,11 @@ export async function createMutation(
   const signature = await signLocalPayload(listMutationSigningPayload(unsignedMutation));
   return {
     ...unsignedMutation,
-    auth: { ...unsignedMutation.auth, signature },
+    auth: {
+      userId: identity.userId,
+      deviceId: identity.deviceId,
+      signature,
+    },
   };
 }
 
@@ -193,8 +197,8 @@ export async function migrateList(snapshot: ListSnapshot): Promise<ImportSnapsho
   }
   if (result.status !== "conflict" && result.status !== "alias-conflict") {
     await saveLocalList(result.snapshot, "remote");
-    await confirmRemoteUsername(unsignedAuth.username);
   }
+  await confirmRemoteUsername(unsignedAuth.username);
 
   return result;
 }

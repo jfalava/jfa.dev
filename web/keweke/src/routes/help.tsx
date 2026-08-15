@@ -37,9 +37,8 @@ function HelpPage() {
                   you are offline.
                 </p>
                 <p>
-                  Each list also has a local username. Choose yours from the list header and new
-                  lines will show who added or last edited them. Duplicate display names are
-                  allowed. It is a label for collaboration, not a password or proof of identity.
+                  This browser can keep a local display name for attribution. Local lists do not
+                  require a user setup, and anonymous local changes remain anonymous.
                 </p>
                 <Callout label="The boundary">
                   Clear this site&apos;s data, switch browsers, or move to another device and the
@@ -54,13 +53,13 @@ function HelpPage() {
                   keep around after this browser forgets its local data.
                 </p>
                 <p>
-                  Remote lists need a connection when you save a change. If the service is having a
-                  moment, keweke can still show the last remote copy it knows about on this device.
+                  Remote lists need a connection when you save a change. Every publish and change
+                  is signed by a device key; the private key stays in this browser. Accepted
+                  devices can be paired with a short, one-time code.
                 </p>
                 <Callout label="A plain privacy note">
-                  The UUID7 in the address is the list&apos;s address, not a password. Anyone you
-                  give it to can open that remote list, so share it with the same care as a shared
-                  link.
+                  The UUID7 in the address is the list&apos;s address, not a password. Anyone you give
+                  it to can read the remote list, so share it with the same care as a shared link.
                 </Callout>
               </HelpSection>
             </div>

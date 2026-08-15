@@ -1,6 +1,10 @@
 import { listAliasSchema } from "@jfa.dev/common/aliases";
-import { listMutationSigningPayload, listPublishSigningPayload } from "@jfa.dev/common/crypto";
-import { listIdentitySchema, type ListIdentity } from "@jfa.dev/common/identities";
+import { listMutationSigningPayload } from "@jfa.dev/common/crypto";
+import {
+  listIdentitySchema,
+  publishAuthSchema,
+  type ListIdentity,
+} from "@jfa.dev/common/identities";
 import {
   LIST_SCHEMA_VERSION,
   applyListMutation,
@@ -160,13 +164,13 @@ export class KewekeList extends DurableObject {
       throw new Error("Snapshot list identifier does not match the requested list");
     }
 
+    const parsedAuth = publishAuthSchema.safeParse(auth);
+    if (!parsedAuth.success) {
+      return { status: "unauthorized" };
+    }
     const authorization = await this.env.KEWEKE_USERS
-      .getByName(
-        typeof auth === "object" && auth !== null && "userId" in auth && typeof auth.userId === "string"
-          ? auth.userId
-          : "invalid",
-      )
-      .authorizePublish({ auth, payload });
+      .getByName(parsedAuth.data.userId)
+      .authorizePublish({ auth: parsedAuth.data, payload });
     if (authorization.status === "unauthorized") {
       return { status: "unauthorized" };
     }

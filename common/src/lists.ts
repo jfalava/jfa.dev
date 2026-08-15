@@ -91,8 +91,8 @@ export const listCommandSchema = z.discriminatedUnion("type", [
 export const listMutationSchema = z.object({
   id: z.string().min(1).max(128),
   baseRevision: z.number().int().min(0),
-  actor: listIdentitySchema.nullable().default(null),
-  auth: identityAuthSchema.nullable().default(null),
+  actor: listIdentitySchema.nullable().optional(),
+  auth: identityAuthSchema.nullable().optional(),
   command: listCommandSchema,
 });
 

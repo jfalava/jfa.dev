@@ -26,7 +26,7 @@ export const listIdentityIdSchema = identityIdSchema;
 
 export const listIdentitySchema = z.object({
   id: identityIdSchema,
-  username: usernameSchema,
+  username: usernameSchema.nullable(),
 });
 
 export const identityAuthSchema = z.object({

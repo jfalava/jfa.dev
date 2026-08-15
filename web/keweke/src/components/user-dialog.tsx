@@ -91,7 +91,7 @@ export function UserDialog() {
     const refreshProfile = (): void => {
       if (!identity?.adopted && !identity?.remoteUsername) {
         setProfile(undefined);
-        return;
+        return undefined;
       }
       void getUserProfile({ data: identity.userId })
         .then(async (nextProfile) => {
@@ -111,13 +111,13 @@ export function UserDialog() {
 
   useEffect(() => {
     if (!pairingCode || pairingStatus?.status === "approved") {
-      return;
+      return undefined;
     }
 
     const poll = (): void => {
       void getDevicePairingStatus({ data: pairingCode })
         .then((nextStatus) => {
-          setPairingStatus(nextStatus as PairingStatusView);
+          setPairingStatus(nextStatus);
           return nextStatus;
         })
         .catch(() => undefined);
@@ -199,7 +199,7 @@ export function UserDialog() {
       });
       setIdentity(currentIdentity);
       setPairingCode(code);
-      setPairingStatus(result as PairingStatusView);
+      setPairingStatus(result);
       setMessage("Give this code to an accepted device.");
     } catch {
       setError("Could not start device pairing.");
@@ -234,7 +234,7 @@ export function UserDialog() {
     setIsFindingDevice(true);
     try {
       const result = await getDevicePairingStatus({ data: approvalCode });
-      setPairingStatus(result as PairingStatusView);
+      setPairingStatus(result);
       if (result.status === "missing" || result.status === "expired") {
         setError("That pairing code is no longer active.");
       }
@@ -274,7 +274,7 @@ export function UserDialog() {
           targetDevicePublicKey: pairingStatus.targetDevicePublicKey,
         },
       });
-      setPairingStatus(result as PairingStatusView);
+      setPairingStatus(result);
       if (result.status === "approved") {
         setProfile(result.profile);
         setMessage("The device was approved.");

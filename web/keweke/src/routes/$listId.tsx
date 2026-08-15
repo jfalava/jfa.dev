@@ -96,7 +96,11 @@ function ListPage() {
       });
     };
     refreshIdentity();
-    return subscribeToLocalIdentity(refreshIdentity);
+    const unsubscribe = subscribeToLocalIdentity(refreshIdentity);
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -126,7 +130,7 @@ function ListPage() {
 
   useEffect(() => {
     if (loadedList?.backend !== "remote") {
-      return;
+      return undefined;
     }
 
     let cancelled = false;
@@ -157,11 +161,21 @@ function ListPage() {
         return null;
       }
 
-      const result = await applyMutation(
-        loadedList.snapshot.id,
-        loadedList.backend,
-        await createMutation(loadedList.snapshot, command, identity, loadedList.backend),
-      );
+      let result;
+      try {
+        result = await applyMutation(
+          loadedList.snapshot.id,
+          loadedList.backend,
+          await createMutation(loadedList.snapshot, command, identity, loadedList.backend),
+        );
+      } catch {
+        setError(
+          loadedList.backend === "remote"
+            ? "Set up an accepted named user before changing a remote list."
+            : "Could not prepare this change.",
+        );
+        return null;
+      }
       if (result.status === "missing") {
         setError("This list no longer exists.");
         return null;
@@ -191,6 +205,10 @@ function ListPage() {
     setIsMigrating(true);
     try {
       const result = await migrateList(loadedList.snapshot);
+      if (result.status === "unauthorized") {
+        setError("Set up an accepted named user before publishing this list.");
+        return;
+      }
       if (result.status === "conflict") {
         setError("A remote list already exists for this identifier.");
         return;
@@ -646,8 +664,11 @@ function identityColor(identityId: string): (typeof IDENTITY_COLORS)[number] {
 }
 
 function identityDisplayName(actor: ListIdentity, currentIdentity?: LocalIdentity): string {
-  if (currentIdentity?.userId === actor.id && currentIdentity.username) {
-    return currentIdentity.username;
+  if (currentIdentity?.userId === actor.id) {
+    const currentUsername = currentIdentity.remoteUsername ?? currentIdentity.username;
+    if (currentUsername) {
+      return currentUsername;
+    }
   }
 
   return actor.username ?? LOCAL_IDENTITY_PLACEHOLDER;

@@ -15,6 +15,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
+import type { PairingStatus } from "./keweke-pairing";
+
 const pairingStartInputSchema = z.object({
   code: pairingCodeSchema,
   targetDeviceId: identityIdSchema,
@@ -67,17 +69,21 @@ export const updateUserProfile = createServerFn({ method: "POST" })
 
 export const startDevicePairing = createServerFn({ method: "POST" })
   .validator(pairingStartInputSchema)
-  .handler(({ data }) =>
-    env.KEWEKE_PAIRING.getByName(data.code).start(data),
-  );
+  .handler(async ({ data }) => {
+    const result = await env.KEWEKE_PAIRING.getByName(data.code).start(data);
+    return JSON.parse(JSON.stringify(result)) as PairingStatus;
+  });
 
 export const getDevicePairingStatus = createServerFn()
   .validator(pairingStatusInputSchema)
-  .handler(({ data }) => env.KEWEKE_PAIRING.getByName(data).getStatus(data));
+  .handler(async ({ data }) => {
+    const result = await env.KEWEKE_PAIRING.getByName(data).getStatus(data);
+    return JSON.parse(JSON.stringify(result)) as PairingStatus;
+  });
 
 export const approveDevicePairing = createServerFn({ method: "POST" })
   .validator(pairingApprovalInputSchema)
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     const payload = pairingApprovalSigningPayload({
       code: data.code,
       userId: data.auth.userId,
@@ -85,7 +91,7 @@ export const approveDevicePairing = createServerFn({ method: "POST" })
       targetDeviceId: data.targetDeviceId,
       targetDevicePublicKey: data.targetDevicePublicKey,
     });
-    return env.KEWEKE_PAIRING.getByName(data.code).approve({
+    const result = await env.KEWEKE_PAIRING.getByName(data.code).approve({
       code: data.code,
       userId: data.auth.userId,
       approverDeviceId: data.auth.deviceId,
@@ -94,6 +100,7 @@ export const approveDevicePairing = createServerFn({ method: "POST" })
       signature: data.auth.signature,
       payload,
     });
+    return JSON.parse(JSON.stringify(result)) as PairingStatus;
   });
 
 export const revokeUserDevice = createServerFn({ method: "POST" })

@@ -211,7 +211,13 @@ export async function clearLocalIdentityDatabase(): Promise<void> {
   const database = await databasePromise;
   database.close();
   databasePromise = undefined;
-  indexedDB.deleteDatabase(DATABASE_NAME);
+  await new Promise<void>((resolve) => {
+    const request = indexedDB.deleteDatabase(DATABASE_NAME);
+    const complete = (): void => resolve();
+    request.addEventListener("success", complete, { once: true });
+    request.addEventListener("error", complete, { once: true });
+    request.addEventListener("blocked", complete, { once: true });
+  });
 }
 
 export function subscribeToLocalIdentity(listener: () => void): () => void {

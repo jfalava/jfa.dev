@@ -1,7 +1,12 @@
 import type { ListMutation, ListSnapshot } from "./lists";
 
 const textEncoder = new TextEncoder();
-const PAIRING_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+const PAIRING_ALPHABET =
+  "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+
+function arrayBuffer(value: Uint8Array): ArrayBuffer {
+  return Uint8Array.from(value).buffer as ArrayBuffer;
+}
 
 export function base64UrlEncode(value: ArrayBuffer | Uint8Array): string {
   const bytes = value instanceof Uint8Array ? value : new Uint8Array(value);
@@ -9,22 +14,26 @@ export function base64UrlEncode(value: ArrayBuffer | Uint8Array): string {
   for (const byte of bytes) {
     binary += String.fromCharCode(byte);
   }
-  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
 }
 
 export function base64UrlDecode(value: string): Uint8Array {
-  const normalized = value.replaceAll("-", "+").replaceAll("_", "/");
-  const padding = normalized.length % 4 === 0 ? "" : "=".repeat(4 - (normalized.length % 4));
+  const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padding =
+    normalized.length % 4 === 0 ? "" : "=".repeat(4 - (normalized.length % 4));
   const binary = atob(`${normalized}${padding}`);
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
 export async function sha256(value: string | Uint8Array): Promise<Uint8Array> {
   const bytes = typeof value === "string" ? textEncoder.encode(value) : value;
-  return new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
+  const input = new Uint8Array(bytes);
+  return new Uint8Array(await crypto.subtle.digest("SHA-256", input.buffer));
 }
 
-export async function sha256Base64Url(value: string | Uint8Array): Promise<string> {
+export async function sha256Base64Url(
+  value: string | Uint8Array,
+): Promise<string> {
   return base64UrlEncode(await sha256(value));
 }
 
@@ -48,9 +57,13 @@ export async function exportPublicKey(publicKey: CryptoKey): Promise<string> {
   return base64UrlEncode(await crypto.subtle.exportKey("spki", publicKey));
 }
 
-export async function signPayload(privateKey: CryptoKey, payload: string): Promise<string> {
+export async function signPayload(
+  privateKey: CryptoKey,
+  payload: string,
+): Promise<string> {
+  const data = textEncoder.encode(payload);
   return base64UrlEncode(
-    await crypto.subtle.sign("Ed25519", privateKey, textEncoder.encode(payload)),
+    await crypto.subtle.sign("Ed25519", privateKey, data.buffer),
   );
 }
 
@@ -62,7 +75,7 @@ export async function verifyPayload(
   try {
     const imported = await crypto.subtle.importKey(
       "spki",
-      base64UrlDecode(publicKey),
+      arrayBuffer(base64UrlDecode(publicKey)),
       { name: "Ed25519" },
       false,
       ["verify"],
@@ -70,8 +83,8 @@ export async function verifyPayload(
     return await crypto.subtle.verify(
       "Ed25519",
       imported,
-      base64UrlDecode(signature),
-      textEncoder.encode(payload),
+      arrayBuffer(base64UrlDecode(signature)),
+      arrayBuffer(textEncoder.encode(payload)),
     );
   } catch {
     return false;
@@ -85,7 +98,7 @@ function canonicalize(value: unknown): unknown {
   if (value !== null && typeof value === "object") {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>)
-        .sort(([left], [right]) => left.localeCompare(right))
+        .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
         .map(([key, entry]) => [key, canonicalize(entry)]),
     );
   }
@@ -148,7 +161,11 @@ export function deviceRevocationSigningPayload(input: {
   return canonicalPayload("keweke:device-revocation:v1", input);
 }
 
-export function aliasSigningPayload(input: { listId: string; userId: string; deviceId: string }): string {
+export function aliasSigningPayload(input: {
+  listId: string;
+  userId: string;
+  deviceId: string;
+}): string {
   return canonicalPayload("keweke:list-alias:v1", input);
 }
 
@@ -156,5 +173,8 @@ export async function generatePairingCode(): Promise<string> {
   const seed = new Uint8Array(32);
   crypto.getRandomValues(seed);
   const digest = await sha256(seed);
-  return Array.from(digest.slice(0, 10), (byte) => PAIRING_ALPHABET[byte % PAIRING_ALPHABET.length]).join("");
+  return Array.from(
+    digest.slice(0, 10),
+    (byte) => PAIRING_ALPHABET[byte % PAIRING_ALPHABET.length],
+  ).join("");
 }

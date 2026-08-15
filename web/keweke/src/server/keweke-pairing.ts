@@ -107,6 +107,9 @@ export class KewekePairingSession extends DurableObject {
       this.ctx.storage.sql.exec("UPDATE pairing SET status = 'expired' WHERE id = 1");
       return { status: "expired", code };
     }
+    if (row.status === "expired") {
+      return { status: "expired", code };
+    }
     return this.toStatus(code, row);
   }
 
