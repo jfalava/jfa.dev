@@ -33,11 +33,12 @@ export function ThemeToggle() {
     <MenuTrigger>
       <Button
         aria-label={`Theme: ${themeLabels[theme]}`}
-        className="text-primary hover:bg-primary/10 hover:text-primary"
+        className="gap-1.5 px-2 text-primary hover:bg-primary/10 hover:text-primary sm:w-auto sm:gap-1"
         size="icon"
         variant="outline"
       >
         <ThemeIcon theme={theme} />
+        <span className="hidden sm:inline">{themeLabels[theme]}</span>
       </Button>
       <Popover className="min-w-36 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none">
         <Menu

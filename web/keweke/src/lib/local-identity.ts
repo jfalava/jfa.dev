@@ -5,7 +5,7 @@ import {
   signPayload,
 } from "@jfa.dev/common/crypto";
 import { usernameSchema, userProfileSchema, type UserProfile } from "@jfa.dev/common/identities";
-import { openDB, type DBSchema, type IDBPDatabase } from "idb";
+import { deleteDB, openDB, type DBSchema, type IDBPDatabase } from "idb";
 
 const DATABASE_NAME = "keweke-local-identity-v2";
 const DATABASE_VERSION = 1;
@@ -205,19 +205,16 @@ export async function signLocalPayload(payload: string): Promise<string> {
 }
 
 export async function clearLocalIdentityDatabase(): Promise<void> {
-  if (!databasePromise) {
+  if (typeof indexedDB === "undefined") {
     return;
   }
-  const database = await databasePromise;
-  database.close();
-  databasePromise = undefined;
-  await new Promise<void>((resolve) => {
-    const request = indexedDB.deleteDatabase(DATABASE_NAME);
-    const complete = (): void => resolve();
-    request.addEventListener("success", complete, { once: true });
-    request.addEventListener("error", complete, { once: true });
-    request.addEventListener("blocked", complete, { once: true });
-  });
+  if (databasePromise) {
+    const database = await databasePromise;
+    database.close();
+    databasePromise = undefined;
+  }
+  await deleteDB(DATABASE_NAME);
+  emitChange();
 }
 
 export function subscribeToLocalIdentity(listener: () => void): () => void {

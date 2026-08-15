@@ -6,10 +6,12 @@ import {
 } from "@jfa.dev/common/crypto";
 import { type UserProfile, usernameSchema } from "@jfa.dev/common/identities";
 import { Button, Input } from "@jfa.dev/common/ui";
+import { useNavigate } from "@tanstack/react-router";
 import { UserRound } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Dialog, DialogTrigger, Modal, ModalOverlay } from "react-aria-components";
 
+import { clearLocalData } from "@/lib/local-data";
 import {
   adoptLocalIdentity,
   confirmRemoteUsername,
@@ -49,7 +51,7 @@ type PairingStatusView =
 
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
-type FeedbackSection = "username" | "pairing" | "approval" | "devices";
+type FeedbackSection = "username" | "pairing" | "approval" | "devices" | "data";
 
 type DialogFeedback = {
   section: FeedbackSection;
@@ -76,6 +78,7 @@ function FeedbackMessage({
 }
 
 export function UserDialog() {
+  const navigate = useNavigate();
   const [identity, setIdentity] = useState<LocalIdentity>();
   const [profile, setProfile] = useState<UserProfile>();
   const [value, setValue] = useState("");
@@ -88,6 +91,8 @@ export function UserDialog() {
   const [isFindingDevice, setIsFindingDevice] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isAdopting, setIsAdopting] = useState(false);
+  const [isClearingData, setIsClearingData] = useState(false);
+  const [isConfirmingClearData, setIsConfirmingClearData] = useState(false);
   const [confirmingDeviceId, setConfirmingDeviceId] = useState<string>();
 
   useEffect(() => {
@@ -355,11 +360,25 @@ export function UserDialog() {
     }
   };
 
+  const clearData = async (): Promise<void> => {
+    setIsClearingData(true);
+    resetFeedback();
+    try {
+      await clearLocalData();
+      await navigate({ replace: true, to: "/" });
+    } catch {
+      setIsClearingData(false);
+      setIsConfirmingClearData(false);
+      setError("data", "Could not clear this browser's Keweke data.");
+    }
+  };
+
   return (
     <DialogTrigger
       onOpenChange={(isOpen) => {
         if (isOpen) {
           resetFeedback();
+          setIsConfirmingClearData(false);
           setValue(identity?.username ?? "");
           if (identity) {
             void getUserProfile({ data: identity.userId })
@@ -371,6 +390,7 @@ export function UserDialog() {
           }
         } else {
           resetFeedback();
+          setIsConfirmingClearData(false);
           setConfirmingDeviceId(undefined);
         }
       }}
@@ -613,6 +633,62 @@ export function UserDialog() {
                   <FeedbackMessage feedback={feedback} section="devices" />
                 </section>
               ) : null}
+
+              <section
+                className="space-y-3 border-t border-border pt-4"
+                aria-labelledby="data-heading"
+              >
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
+                    local data
+                  </p>
+                  <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+                    /
+                  </span>
+                  <h3
+                    className="text-[11px] font-normal text-muted-foreground/75"
+                    id="data-heading"
+                  >
+                    Clear this browser
+                  </h3>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Remove local lists, this browser&apos;s identity, and Keweke&apos;s stored browser
+                  data. Remote lists are not deleted.
+                </p>
+                {isConfirmingClearData ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
+                      clear all local data?
+                    </span>
+                    <Button
+                      className="h-8 px-4 text-sm"
+                      isDisabled={isClearingData}
+                      onPress={() => void clearData()}
+                      variant="destructive"
+                    >
+                      {isClearingData ? "Clearing…" : "Yes, clear"}
+                    </Button>
+                    <Button
+                      className="h-8 px-4 text-sm"
+                      isDisabled={isClearingData}
+                      onPress={() => setIsConfirmingClearData(false)}
+                      variant="ghost"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    className="h-10 min-w-24 px-5 text-sm"
+                    onPress={() => setIsConfirmingClearData(true)}
+                    variant="destructive"
+                  >
+                    Clear data
+                  </Button>
+                )}
+                <FeedbackMessage feedback={feedback} section="data" />
+              </section>
             </div>
           </Dialog>
         </Modal>

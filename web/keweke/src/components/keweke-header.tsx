@@ -1,7 +1,7 @@
 import type { ListBackend } from "@jfa.dev/common/lists";
 import { Button } from "@jfa.dev/common/ui";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Check, CircleHelp, CloudUpload, Copy, Plus } from "lucide-react";
+import { Check, CloudUpload, Copy, Plus } from "lucide-react";
 import { useState } from "react";
 
 import { OpenListCommand } from "@/components/open-list-command";
@@ -66,14 +66,6 @@ export function KewekeHeader({
         <nav className="flex shrink-0 items-center gap-1" aria-label="General navigation">
           <OpenListCommand />
           <UserDialog />
-          <Link
-            aria-label="Help"
-            className="inline-flex size-7 items-center justify-center rounded-md border border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"
-            title="Help"
-            to="/help"
-          >
-            <CircleHelp className="size-3.5" />
-          </Link>
           <ThemeToggle />
           {backend === "local" && onMigrate ? (
             <Button
