@@ -726,12 +726,6 @@ export function UserDialog({
                 <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
                   device identity
                 </p>
-                <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                  /
-                </span>
-                <h2 className="text-[11px] font-normal text-muted-foreground/75">
-                  Set your username
-                </h2>
               </div>
             </div>
 
