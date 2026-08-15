@@ -28,9 +28,9 @@ export class KewekeAliasDirectory extends DurableObject {
     void ctx.blockConcurrencyWhile(async () => this.migrate());
   }
 
-  async reserveAlias(listId: string, aliasBase: string): Promise<AliasReservationResult> {
+  async reserveAlias(listId: string, listTitle: string): Promise<AliasReservationResult> {
     const normalizedListId = listIdSchema.parse(listId);
-    const normalizedBase = normalizeListAliasBase(aliasBase);
+    const normalizedBase = normalizeListAliasBase(listTitle);
     const existing = this.ctx.storage.sql
       .exec<AliasRow>("SELECT alias, list_id FROM aliases WHERE list_id = ?", normalizedListId)
       .toArray()[0];

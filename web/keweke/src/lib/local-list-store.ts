@@ -116,10 +116,7 @@ export async function createLocalList(): Promise<ListSnapshot> {
   return snapshot;
 }
 
-export async function assignLocalListAlias(
-  listId: string,
-  aliasBase: string,
-): Promise<ListSnapshot | null> {
+export async function ensureLocalListAlias(listId: string): Promise<ListSnapshot | null> {
   const record = await getLocalListRecord(listId.toLowerCase());
   if (!record || record.backend !== "local") {
     return null;
@@ -132,7 +129,7 @@ export async function assignLocalListAlias(
   const records = await database.getAll("lists");
   let alias: string | undefined;
   for (let attempt = 0; attempt < 32 && alias === undefined; attempt += 1) {
-    const candidate = createListAlias(aliasBase);
+    const candidate = createListAlias(record.snapshot.title);
     if (!records.some((candidateRecord) => candidateRecord.snapshot.alias === candidate)) {
       alias = candidate;
     }

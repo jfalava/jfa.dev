@@ -251,4 +251,23 @@ describe("list contract", () => {
     );
     expect(purged?.deletedItems).toEqual([]);
   });
+
+  test("preserves a generated alias when a list is renamed", () => {
+    const snapshot = {
+      ...createStarterListSnapshot(LIST_ID, { now: NOW }),
+      alias: "weekend-groceries-abcde",
+    };
+    const renamed = applyListMutation(
+      snapshot,
+      {
+        id: "019c5f7e-7b7b-7000-0000-000000000009",
+        baseRevision: 0,
+        command: { type: "rename-list", title: "Saturday market" },
+      },
+      NOW,
+    );
+
+    expect(renamed?.title).toBe("Saturday market");
+    expect(renamed?.alias).toBe(snapshot.alias);
+  });
 });

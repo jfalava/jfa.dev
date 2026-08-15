@@ -12,7 +12,7 @@ import { v7 as uuidv7 } from "uuid";
 import { isUuidV7, normalizeListAddress } from "@/lib/list-id";
 import {
   applyLocalMutation,
-  assignLocalListAlias,
+  ensureLocalListAlias,
   getLocalListByAlias,
   getLocalListRecord,
   markListRemote,
@@ -21,7 +21,7 @@ import {
 } from "@/lib/local-list-store";
 import {
   applyRemoteMutation,
-  assignRemoteListAlias,
+  ensureRemoteListAlias,
   getRemoteList,
   getRemoteListByAlias,
   importRemoteList,
@@ -132,25 +132,26 @@ export async function migrateList(snapshot: ListSnapshot): Promise<ImportSnapsho
   return result;
 }
 
-export async function assignListAlias(
+export async function ensureListAlias(
   backend: ListBackend,
   snapshot: ListSnapshot,
-  aliasBase: string,
 ): Promise<{ status: "created" | "existing"; snapshot: ListSnapshot }> {
+  if (snapshot.alias !== null) {
+    return { status: "existing", snapshot };
+  }
+
   if (backend === "local") {
-    const nextSnapshot = await assignLocalListAlias(snapshot.id, aliasBase);
+    const nextSnapshot = await ensureLocalListAlias(snapshot.id);
     if (!nextSnapshot) {
       throw new Error("Local list is unavailable");
     }
     return {
-      status: snapshot.alias === null ? "created" : "existing",
+      status: "created",
       snapshot: nextSnapshot,
     };
   }
 
-  const result = await assignRemoteListAlias({
-    data: { listId: snapshot.id, aliasBase },
-  });
+  const result = await ensureRemoteListAlias({ data: { listId: snapshot.id } });
   if (result.status === "missing") {
     throw new Error("This list no longer exists");
   }

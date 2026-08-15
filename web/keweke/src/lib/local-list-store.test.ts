@@ -8,10 +8,10 @@ import { createStarterListSnapshot } from "@jfa.dev/common/lists";
 
 import {
   applyLocalMutation,
-  assignLocalListAlias,
   clearLocalListDatabase,
   createLocalList,
   deleteLocalList,
+  ensureLocalListAlias,
   getLocalListByAlias,
   getLocalListRecord,
   listLocalLists,
@@ -80,10 +80,23 @@ describe("local list store", () => {
     expect(await getLocalListRecord(LIST_ID)).toBeUndefined();
   });
 
-  test("assigns and resolves a readable alias for a local list", async () => {
+  test("derives an alias from the first saved title and keeps it after renames", async () => {
     const snapshot = await createLocalList();
-    const assigned = await assignLocalListAlias(snapshot.id, "Weekend groceries");
-    const reassigned = await assignLocalListAlias(snapshot.id, "Different label");
+    const renamed = await applyLocalMutation(snapshot.id, {
+      id: "local-rename-001",
+      baseRevision: 0,
+      command: { type: "rename-list", title: "Weekend groceries" },
+    });
+    expect(renamed.status).toBe("ok");
+
+    const assigned = await ensureLocalListAlias(snapshot.id);
+    const renamedAgain = await applyLocalMutation(snapshot.id, {
+      id: "local-rename-002",
+      baseRevision: 1,
+      command: { type: "rename-list", title: "Different label" },
+    });
+    expect(renamedAgain.status).toBe("ok");
+    const reassigned = await ensureLocalListAlias(snapshot.id);
 
     expect(assigned?.alias).toMatch(/^weekend-groceries-[a-z]{5}$/);
     expect(reassigned?.alias).toBe(assigned?.alias);

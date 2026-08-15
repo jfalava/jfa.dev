@@ -3,16 +3,27 @@ import type { DeletedListItem, ListCommand, ListItem, ListSnapshot } from "@jfa.
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
-import { Check, Pencil, Plus, RotateCcw, Search, Trash2, X } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Check,
+  Copy,
+  Pencil,
+  Plus,
+  RotateCcw,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { v7 as uuidv7 } from "uuid";
 
 import { KewekeHeader } from "@/components/keweke-header";
 import { isListAddress } from "@/lib/list-id";
+import { appPath } from "@/lib/site-paths";
 import {
   applyMutation,
-  assignListAlias,
   createMutation,
+  ensureListAlias,
   loadList,
   migrateList,
 } from "@/lib/list-repository";
@@ -50,7 +61,6 @@ function ListPage() {
   >();
   const [isLoading, setIsLoading] = useState(true);
   const [isMigrating, setIsMigrating] = useState(false);
-  const [isAssigningAlias, setIsAssigningAlias] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [error, setError] = useState<string>();
@@ -92,13 +102,13 @@ function ListPage() {
   }, [listId]);
 
   const commit = useCallback(
-    async (command: ListCommand): Promise<boolean> => {
+    async (command: ListCommand): Promise<ListSnapshot | null> => {
       if (!loadedList) {
-        return false;
+        return null;
       }
       if (!identity) {
         setError("Your local identity is still being prepared. Try again in a moment.");
-        return false;
+        return null;
       }
 
       const result = await applyMutation(
@@ -108,17 +118,17 @@ function ListPage() {
       );
       if (result.status === "missing") {
         setError("This list no longer exists.");
-        return false;
+        return null;
       }
       if (result.status === "conflict") {
         setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
         setError("This list changed elsewhere. Your view was refreshed.");
-        return false;
+        return null;
       }
 
       setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
       setError(undefined);
-      return true;
+      return result.snapshot;
     },
     [identity, loadedList],
   );
@@ -164,38 +174,37 @@ function ListPage() {
     }
   }, [loadedList]);
 
-  const assignAlias = useCallback(
-    async (aliasBase: string): Promise<void> => {
-      if (!loadedList) {
-        return;
-      }
-
-      setIsAssigningAlias(true);
-      try {
-        const result = await assignListAlias(loadedList.backend, loadedList.snapshot, aliasBase);
-        setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
-        setError(undefined);
-        if (result.snapshot.alias) {
-          await navigate({
-            to: "/$listId",
-            params: { listId: result.snapshot.alias },
-            replace: true,
-          });
-        }
-      } catch {
-        setError("Could not create that friendly address. Try a few letters or numbers.");
-      } finally {
-        setIsAssigningAlias(false);
-      }
-    },
-    [loadedList, navigate],
-  );
-
   const renameList = useCallback(
     async (title: string): Promise<boolean> => {
+      if (!loadedList) {
+        return false;
+      }
+
       setIsRenaming(true);
       try {
-        return await commit({ type: "rename-list", title });
+        const renamedSnapshot = await commit({ type: "rename-list", title });
+        if (!renamedSnapshot) {
+          return false;
+        }
+
+        if (renamedSnapshot.alias === null) {
+          try {
+            const result = await ensureListAlias(loadedList.backend, renamedSnapshot);
+            setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
+            setError(undefined);
+            if (result.snapshot.alias) {
+              await navigate({
+                to: "/$listId",
+                params: { listId: result.snapshot.alias },
+                replace: true,
+              });
+            }
+          } catch {
+            setError("Could not create that friendly address. Try a few letters or numbers.");
+          }
+        }
+
+        return true;
       } catch {
         setError("Could not save the list title right now.");
         return false;
@@ -203,7 +212,7 @@ function ListPage() {
         setIsRenaming(false);
       }
     },
-    [commit],
+    [commit, loadedList, navigate],
   );
 
   const updateItem = useCallback(
@@ -218,11 +227,11 @@ function ListPage() {
       }
 
       try {
-        return await commit({
+        return (await commit({
           type: "update-item",
           itemId,
           changes: { name, quantity, unit, category },
-        });
+        })) !== null;
       } catch {
         setError("Could not save the item right now.");
         return false;
@@ -357,11 +366,7 @@ function ListPage() {
               {loadedList.backend} list
             </p>
             <ListTitleEditor isSaving={isRenaming} onSave={renameList} title={snapshot.title} />
-            <ListAliasEditor
-              alias={snapshot.alias ?? null}
-              isSaving={isAssigningAlias}
-              onSave={assignAlias}
-            />
+            <ListAlias alias={snapshot.alias} listId={snapshot.id} />
             <LocalIdentityEditor
               identity={identity}
               isSaving={isSavingIdentity}
@@ -538,51 +543,64 @@ function ListTitleEditor({
   );
 }
 
-function ListAliasEditor({
-  alias,
-  isSaving,
-  onSave,
-}: {
-  alias: string | null;
-  isSaving: boolean;
-  onSave: (aliasBase: string) => void;
-}) {
-  const [value, setValue] = useState("");
+function ListAlias({ alias, listId }: { alias: string | null; listId: string }) {
+  const [showListId, setShowListId] = useState(alias === null);
+  const [isCopied, setIsCopied] = useState(false);
 
-  if (alias !== null) {
-    return (
-      <p className="mt-2 font-mono text-[10px] tracking-[0.08em] text-primary uppercase">
-        friendly address / {alias}
-      </p>
-    );
-  }
+  useEffect(() => {
+    setShowListId(alias === null);
+    setIsCopied(false);
+  }, [alias, listId]);
+
+  const identifier = showListId || alias === null ? listId : alias;
+  const label = showListId || alias === null ? "list id" : "friendly address";
+
+  const copyUrl = async (): Promise<void> => {
+    try {
+      const url = new URL(appPath(identifier), window.location.origin).toString();
+      await navigator.clipboard.writeText(url);
+      setIsCopied(true);
+      window.setTimeout(() => setIsCopied(false), 1600);
+    } catch {
+      setIsCopied(false);
+    }
+  };
 
   return (
-    <form
-      className="mt-3 flex max-w-md flex-wrap items-center gap-1.5"
-      onSubmit={(event) => {
-        event.preventDefault();
-        const aliasBase = value.trim();
-        if (aliasBase) {
-          onSave(aliasBase);
-        }
-      }}
-    >
-      <label className="sr-only" htmlFor="list-alias">
-        Friendly list address
-      </label>
-      <Input
-        id="list-alias"
-        aria-label="Friendly list address"
-        className="min-w-44 flex-1 font-mono text-base sm:text-[11px]"
-        onChange={(event) => setValue(event.target.value)}
-        placeholder="Name this list for sharing"
-        value={value}
-      />
-      <Button isDisabled={isSaving} type="submit" variant="outline">
-        {isSaving ? "Saving" : "Make address"}
+    <div className="mt-2 flex min-w-0 max-w-full items-center gap-1 overflow-hidden font-mono text-[10px] tracking-[0.08em] uppercase">
+      {alias ? (
+        <Button
+          aria-label={`Show ${showListId ? "friendly address" : "list ID"}`}
+          className="h-7 gap-1 px-1 text-[10px] tracking-[0.08em] text-muted-foreground uppercase"
+          onPress={() => {
+            setShowListId((current) => !current);
+            setIsCopied(false);
+          }}
+          size="sm"
+          variant="ghost"
+        >
+          {label}
+          <ArrowLeftRight aria-hidden="true" className="size-2.5" />
+        </Button>
+      ) : (
+        <span className="shrink-0 text-muted-foreground">{label}</span>
+      )}
+      <span aria-hidden="true" className="shrink-0 text-muted-foreground">
+        /
+      </span>
+      <span className="min-w-0 flex-1 truncate text-primary" title={identifier}>
+        {identifier}
+      </span>
+      <Button
+        aria-label={isCopied ? "Copied list URL" : `Copy full ${label} URL`}
+        className="size-7 p-0 text-primary"
+        onPress={() => void copyUrl()}
+        size="icon"
+        variant="ghost"
+      >
+        {isCopied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
       </Button>
-    </form>
+    </div>
   );
 }
 

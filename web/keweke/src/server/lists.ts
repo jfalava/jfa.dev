@@ -19,7 +19,6 @@ const remoteImportInputSchema = z.object({
 
 const remoteAliasInputSchema = z.object({
   listId: listIdSchema,
-  aliasBase: z.string().trim().min(1).max(160),
 });
 
 export const getRemoteList = createServerFn()
@@ -33,7 +32,7 @@ export const getRemoteListByAlias = createServerFn()
     return listId ? readRemoteList(listId) : null;
   });
 
-export const assignRemoteListAlias = createServerFn({ method: "POST" })
+export const ensureRemoteListAlias = createServerFn({ method: "POST" })
   .validator(remoteAliasInputSchema)
   .handler(async ({ data }) => {
     const listStub = env.KEWEKE_LISTS.getByName(data.listId);
@@ -44,7 +43,7 @@ export const assignRemoteListAlias = createServerFn({ method: "POST" })
 
     const reservation = await env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME).reserveAlias(
       data.listId,
-      data.aliasBase,
+      snapshot.title,
     );
     const updated = await listStub.setAlias(data.listId, reservation.alias);
     if (!updated) {
