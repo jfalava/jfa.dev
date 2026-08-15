@@ -111,12 +111,12 @@ export class KewekeList extends DurableObject {
     if (!parsedMutation.auth) {
       return { status: "unauthorized" };
     }
-    const authorization = await this.env.KEWEKE_USERS
-      .getByName(parsedMutation.auth.userId)
-      .authorizeMutation({
-        auth: parsedMutation.auth,
-        payload: listMutationSigningPayload(parsedMutation),
-      });
+    const authorization = await this.env.KEWEKE_USERS.getByName(
+      parsedMutation.auth.userId,
+    ).authorizeMutation({
+      auth: parsedMutation.auth,
+      payload: listMutationSigningPayload(parsedMutation),
+    });
     if (!authorization) {
       return { status: "unauthorized" };
     }
@@ -168,9 +168,9 @@ export class KewekeList extends DurableObject {
     if (!parsedAuth.success) {
       return { status: "unauthorized" };
     }
-    const authorization = await this.env.KEWEKE_USERS
-      .getByName(parsedAuth.data.userId)
-      .authorizePublish({ auth: parsedAuth.data, payload });
+    const authorization = await this.env.KEWEKE_USERS.getByName(
+      parsedAuth.data.userId,
+    ).authorizePublish({ auth: parsedAuth.data, payload });
     if (authorization.status === "unauthorized") {
       return { status: "unauthorized" };
     }

@@ -49,6 +49,32 @@ type PairingStatusView =
 
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
+type FeedbackSection = "username" | "pairing" | "approval" | "devices";
+
+type DialogFeedback = {
+  section: FeedbackSection;
+  tone: "error" | "message";
+  text: string;
+};
+
+function FeedbackMessage({
+  feedback,
+  section,
+}: {
+  feedback?: DialogFeedback;
+  section: FeedbackSection;
+}) {
+  if (feedback?.section !== section) {
+    return null;
+  }
+
+  return (
+    <p className={feedback.tone === "error" ? "text-sm text-destructive" : "text-sm text-primary"}>
+      {feedback.text}
+    </p>
+  );
+}
+
 export function UserDialog() {
   const [identity, setIdentity] = useState<LocalIdentity>();
   const [profile, setProfile] = useState<UserProfile>();
@@ -56,8 +82,7 @@ export function UserDialog() {
   const [approvalCode, setApprovalCode] = useState("");
   const [pairingCode, setPairingCode] = useState("");
   const [pairingStatus, setPairingStatus] = useState<PairingStatusView>();
-  const [error, setError] = useState<string>();
-  const [message, setMessage] = useState<string>();
+  const [feedback, setFeedback] = useState<DialogFeedback>();
   const [isSaving, setIsSaving] = useState(false);
   const [isStartingPairing, setIsStartingPairing] = useState(false);
   const [isFindingDevice, setIsFindingDevice] = useState(false);
@@ -125,8 +150,15 @@ export function UserDialog() {
   }, [pairingCode, pairingStatus?.status]);
 
   const resetFeedback = (): void => {
-    setError(undefined);
-    setMessage(undefined);
+    setFeedback(undefined);
+  };
+
+  const setError = (section: FeedbackSection, text: string): void => {
+    setFeedback({ section, tone: "error", text });
+  };
+
+  const setMessage = (section: FeedbackSection, text: string): void => {
+    setFeedback({ section, tone: "message", text });
   };
 
   const save = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -135,7 +167,7 @@ export function UserDialog() {
     const username = value.trim();
     const parsedUsername = usernameSchema.safeParse(username);
     if (!parsedUsername.success) {
-      setError("Use a username between 1 and 48 characters.");
+      setError("username", "Use a username between 1 and 48 characters.");
       return;
     }
 
@@ -164,15 +196,15 @@ export function UserDialog() {
           setIdentity(confirmed);
           setProfile(result.profile);
           setValue(confirmed.username ?? "");
-          setMessage("Username updated.");
+          setMessage("username", "Username updated.");
         } else {
-          setMessage("Username saved.");
+          setMessage("username", "Username saved.");
         }
       } else {
-        setMessage("Username saved.");
+        setMessage("username", "Username saved.");
       }
     } catch {
-      setError("Could not save this user right now.");
+      setError("username", "Could not save this user right now.");
     } finally {
       setIsSaving(false);
     }
@@ -197,9 +229,14 @@ export function UserDialog() {
       setIdentity(currentIdentity);
       setPairingCode(code);
       setPairingStatus(result);
-      setMessage("Code ready.");
+      setMessage(
+        "pairing",
+        currentIdentity.remoteUsername
+          ? "Pairing code created below. Enter it on an approved device."
+          : "Pairing code created below. Publish a list before another device can approve it.",
+      );
     } catch {
-      setError("Could not start device pairing.");
+      setError("pairing", "Could not create a pairing code.");
     } finally {
       setIsStartingPairing(false);
     }
@@ -216,10 +253,10 @@ export function UserDialog() {
       setIdentity(nextIdentity);
       setProfile(pairingStatus.profile);
       setValue(nextIdentity.username ?? "");
-      setMessage("Username added.");
+      setMessage("pairing", "Username added.");
       setPairingCode("");
     } catch {
-      setError("This browser could not adopt that user.");
+      setError("pairing", "This browser could not adopt that user.");
     } finally {
       setIsAdopting(false);
     }
@@ -233,10 +270,10 @@ export function UserDialog() {
       const result = await getDevicePairingStatus({ data: approvalCode });
       setPairingStatus(result);
       if (result.status === "missing" || result.status === "expired") {
-        setError("That pairing code is no longer active.");
+        setError("approval", "That pairing code is no longer active.");
       }
     } catch {
-      setError("Use the ten-character pairing code exactly as shown.");
+      setError("approval", "Use the ten-character pairing code exactly as shown.");
     } finally {
       setIsFindingDevice(false);
     }
@@ -274,12 +311,12 @@ export function UserDialog() {
       setPairingStatus(result);
       if (result.status === "approved") {
         setProfile(result.profile);
-        setMessage("The device was approved.");
+        setMessage("approval", "The device was approved.");
       } else {
-        setError("This device could not be approved.");
+        setError("approval", "This device could not be approved.");
       }
     } catch {
-      setError("This device could not be approved.");
+      setError("approval", "This device could not be approved.");
     } finally {
       setIsApproving(false);
     }
@@ -309,12 +346,12 @@ export function UserDialog() {
       });
       if (result.status === "revoked") {
         setProfile(result.profile);
-        setMessage("The device was revoked.");
+        setMessage("devices", "The device was revoked.");
       } else {
-        setError("This device could not be revoked.");
+        setError("devices", "This device could not be revoked.");
       }
     } catch {
-      setError("This device could not be revoked.");
+      setError("devices", "This device could not be revoked.");
     }
   };
 
@@ -399,8 +436,7 @@ export function UserDialog() {
                     {isSaving ? "Saving…" : "Save"}
                   </Button>
                 </div>
-                {error ? <p className="text-sm text-destructive">{error}</p> : null}
-                {message ? <p className="text-sm text-primary">{message}</p> : null}
+                <FeedbackMessage feedback={feedback} section="username" />
               </form>
 
               <section
@@ -428,7 +464,8 @@ export function UserDialog() {
                 >
                   {isStartingPairing ? "Creating…" : "Show code"}
                 </Button>
-                {pairingCode && pairingStatus ? (
+                <FeedbackMessage feedback={feedback} section="pairing" />
+                {pairingCode ? (
                   <div className="border border-border bg-muted/40 p-3">
                     <p className="font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
                       pairing code
@@ -437,13 +474,17 @@ export function UserDialog() {
                       {pairingCode}
                     </p>
                     <p className="mt-2 text-xs text-muted-foreground">
-                      {pairingStatus.status === "pending"
+                      {pairingStatus?.status === "pending"
                         ? "Waiting…"
-                        : pairingStatus.status === "approved"
+                        : pairingStatus?.status === "approved"
                           ? "Ready."
-                          : "Expired."}
+                          : pairingStatus?.status === "expired"
+                            ? "Expired."
+                            : pairingStatus?.status === "missing"
+                              ? "Unavailable."
+                              : "Checking status…"}
                     </p>
-                    {pairingStatus.status === "approved" ? (
+                    {pairingStatus?.status === "approved" ? (
                       <Button className="mt-3" isDisabled={isAdopting} onPress={() => void adopt()}>
                         {isAdopting ? "Saving…" : "Use this username"}
                       </Button>
@@ -488,6 +529,7 @@ export function UserDialog() {
                     {isFindingDevice ? "Finding…" : "Find"}
                   </Button>
                 </form>
+                <FeedbackMessage feedback={feedback} section="approval" />
                 {pairingStatus?.status === "pending" && pairingStatus.code === approvalCode ? (
                   <div className="border border-border p-3">
                     <p className="text-sm">A new device is waiting.</p>
@@ -568,6 +610,7 @@ export function UserDialog() {
                       </div>
                     ))}
                   </div>
+                  <FeedbackMessage feedback={feedback} section="devices" />
                 </section>
               ) : null}
             </div>

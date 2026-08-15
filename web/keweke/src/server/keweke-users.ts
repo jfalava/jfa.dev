@@ -1,3 +1,4 @@
+import { publicKeyFingerprint, verifyPayload } from "@jfa.dev/common/crypto";
 import {
   identityAuthSchema,
   identityIdSchema,
@@ -8,7 +9,6 @@ import {
   type DeviceProfile,
   type UserProfile,
 } from "@jfa.dev/common/identities";
-import { publicKeyFingerprint, verifyPayload } from "@jfa.dev/common/crypto";
 import { DurableObject } from "cloudflare:workers";
 
 interface UserRow {
@@ -54,10 +54,7 @@ export class KewekeUserDirectory extends DurableObject {
     return this.readProfile(normalizedUserId);
   }
 
-  async authorizePublish(input: {
-    auth: unknown;
-    payload: string;
-  }): Promise<PublishAuthorization> {
+  async authorizePublish(input: { auth: unknown; payload: string }): Promise<PublishAuthorization> {
     const auth = publishAuthSchema.safeParse(input.auth);
     if (!auth.success) {
       return { status: "unauthorized" };
@@ -111,7 +108,10 @@ export class KewekeUserDirectory extends DurableObject {
       };
     }
 
-    if (current.userPublicKey !== auth.data.userPublicKey || current.username !== auth.data.username) {
+    if (
+      current.userPublicKey !== auth.data.userPublicKey ||
+      current.username !== auth.data.username
+    ) {
       return { status: "unauthorized" };
     }
 
@@ -119,9 +119,7 @@ export class KewekeUserDirectory extends DurableObject {
       auth: auth.data,
       payload: input.payload,
     });
-    return authorization
-      ? { status: "authorized", authorization }
-      : { status: "unauthorized" };
+    return authorization ? { status: "authorized", authorization } : { status: "unauthorized" };
   }
 
   async authorizeMutation(input: {
@@ -154,10 +152,7 @@ export class KewekeUserDirectory extends DurableObject {
       return null;
     }
 
-    this.ctx.storage.sql.exec(
-      "UPDATE user_profile SET username = ? WHERE id = 1",
-      username.data,
-    );
+    this.ctx.storage.sql.exec("UPDATE user_profile SET username = ? WHERE id = 1", username.data);
     return this.readProfile(auth.data.userId);
   }
 
@@ -173,7 +168,12 @@ export class KewekeUserDirectory extends DurableObject {
     const approverDeviceId = identityIdSchema.safeParse(input.approverDeviceId);
     const targetDeviceId = identityIdSchema.safeParse(input.targetDeviceId);
     const targetPublicKey = publicKeySchema.safeParse(input.targetDevicePublicKey);
-    if (!userId.success || !approverDeviceId.success || !targetDeviceId.success || !targetPublicKey.success) {
+    if (
+      !userId.success ||
+      !approverDeviceId.success ||
+      !targetDeviceId.success ||
+      !targetPublicKey.success
+    ) {
       return { status: "unauthorized" };
     }
 
@@ -189,11 +189,7 @@ export class KewekeUserDirectory extends DurableObject {
       return { status: "unauthorized" };
     }
 
-    const signatureValid = await verifyPayload(
-      approver.publicKey,
-      input.signature,
-      input.payload,
-    );
+    const signatureValid = await verifyPayload(approver.publicKey, input.signature, input.payload);
     if (!signatureValid) {
       return { status: "unauthorized" };
     }
@@ -214,9 +210,7 @@ export class KewekeUserDirectory extends DurableObject {
     }
 
     const updated = await this.readProfile(userId.data);
-    return updated
-      ? { status: "approved", profile: updated }
-      : { status: "unauthorized" };
+    return updated ? { status: "approved", profile: updated } : { status: "unauthorized" };
   }
 
   async revokeDevice(input: {

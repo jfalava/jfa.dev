@@ -23,6 +23,7 @@ import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "r
 import { v7 as uuidv7 } from "uuid";
 
 import { KewekeHeader } from "@/components/keweke-header";
+import { PublishListDialog } from "@/components/publish-list-dialog";
 import { isListAddress } from "@/lib/list-id";
 import {
   applyMutation,
@@ -72,6 +73,7 @@ function ListPage() {
   >();
   const [isLoading, setIsLoading] = useState(true);
   const [isMigrating, setIsMigrating] = useState(false);
+  const [isPublishConfirmOpen, setIsPublishConfirmOpen] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [error, setError] = useState<string>();
@@ -226,6 +228,15 @@ function ListPage() {
       setIsMigrating(false);
     }
   }, [loadedList]);
+
+  const requestMigration = useCallback((): void => {
+    setIsPublishConfirmOpen(true);
+  }, []);
+
+  const confirmMigration = useCallback((): void => {
+    setIsPublishConfirmOpen(false);
+    void migrate();
+  }, [migrate]);
 
   const renameList = useCallback(
     async (title: string): Promise<boolean> => {
@@ -437,7 +448,14 @@ function ListPage() {
         backend={loadedList.backend}
         isMigrating={isMigrating}
         listId={listId}
-        onMigrate={migrate}
+        onMigrate={requestMigration}
+      />
+      <PublishListDialog
+        alias={snapshot.alias}
+        isOpen={isPublishConfirmOpen}
+        listId={snapshot.id}
+        onConfirm={confirmMigration}
+        onOpenChange={setIsPublishConfirmOpen}
       />
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">

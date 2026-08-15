@@ -53,13 +53,14 @@ function HelpPage() {
                   keep around after this browser forgets its local data.
                 </p>
                 <p>
-                  Remote lists need a connection when you save a change. Every publish and change
-                  is signed by a device key; the private key stays in this browser. Accepted
-                  devices can be paired with a short, one-time code.
+                  Remote lists need a connection when you save a change. Every publish and change is
+                  signed by a device key; the private key stays in this browser. Accepted devices
+                  can be paired with a short, one-time code.
                 </p>
                 <Callout label="A plain privacy note">
-                  The UUID7 in the address is the list&apos;s address, not a password. Anyone you give
-                  it to can read the remote list, so share it with the same care as a shared link.
+                  The UUID7 in the address is the list&apos;s address, not a password. Anyone you
+                  give it to can read the remote list, so share it with the same care as a shared
+                  link.
                 </Callout>
               </HelpSection>
             </div>

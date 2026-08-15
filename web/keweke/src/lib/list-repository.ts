@@ -16,6 +16,12 @@ import { v7 as uuidv7 } from "uuid";
 
 import { isUuidV7, normalizeListAddress } from "@/lib/list-id";
 import {
+  confirmRemoteUsername,
+  ensureLocalIdentity,
+  signLocalPayload,
+  type LocalIdentity,
+} from "@/lib/local-identity";
+import {
   applyLocalMutation,
   ensureLocalListAlias,
   getLocalListByAlias,
@@ -24,12 +30,6 @@ import {
   saveLocalList,
   type LocalListRecord,
 } from "@/lib/local-list-store";
-import {
-  confirmRemoteUsername,
-  ensureLocalIdentity,
-  signLocalPayload,
-  type LocalIdentity,
-} from "@/lib/local-identity";
 import {
   applyRemoteMutation,
   ensureRemoteListAlias,
@@ -49,10 +49,9 @@ export async function createMutation(
   identity?: LocalIdentity,
   backend: ListBackend = "local",
 ): Promise<ListMutation> {
-  const localActor: ListIdentity | null =
-    identity?.username
-      ? { id: identity.userId, username: identity.username }
-      : null;
+  const localActor: ListIdentity | null = identity?.username
+    ? { id: identity.userId, username: identity.username }
+    : null;
   const base = {
     id: uuidv7(),
     baseRevision: snapshot.revision,

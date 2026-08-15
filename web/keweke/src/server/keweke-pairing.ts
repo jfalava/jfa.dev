@@ -1,3 +1,4 @@
+import { publicKeyFingerprint, sha256Base64Url } from "@jfa.dev/common/crypto";
 import {
   identityIdSchema,
   pairingCodeSchema,
@@ -5,7 +6,6 @@ import {
   userProfileSchema,
   type UserProfile,
 } from "@jfa.dev/common/identities";
-import { publicKeyFingerprint, sha256Base64Url } from "@jfa.dev/common/crypto";
 import { DurableObject } from "cloudflare:workers";
 
 interface PairingRow {

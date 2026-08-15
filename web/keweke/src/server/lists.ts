@@ -1,8 +1,5 @@
 import { listAliasSchema } from "@jfa.dev/common/aliases";
-import {
-  aliasSigningPayload,
-  listPublishSigningPayload,
-} from "@jfa.dev/common/crypto";
+import { aliasSigningPayload, listPublishSigningPayload } from "@jfa.dev/common/crypto";
 import { identityAuthSchema, publishAuthSchema } from "@jfa.dev/common/identities";
 import { listIdSchema, listMutationSchema, listSnapshotSchema } from "@jfa.dev/common/lists";
 import { createServerFn } from "@tanstack/react-start";
@@ -48,16 +45,14 @@ export const ensureRemoteListAlias = createServerFn({ method: "POST" })
       return { status: "missing" as const };
     }
 
-    const authorized = await env.KEWEKE_USERS
-      .getByName(data.auth.userId)
-      .authorizeMutation({
-        auth: data.auth,
-        payload: aliasSigningPayload({
-          listId: data.listId,
-          userId: data.auth.userId,
-          deviceId: data.auth.deviceId,
-        }),
-      });
+    const authorized = await env.KEWEKE_USERS.getByName(data.auth.userId).authorizeMutation({
+      auth: data.auth,
+      payload: aliasSigningPayload({
+        listId: data.listId,
+        userId: data.auth.userId,
+        deviceId: data.auth.deviceId,
+      }),
+    });
     if (!authorized) {
       return { status: "unauthorized" as const };
     }
@@ -107,9 +102,10 @@ export const importRemoteList = createServerFn({ method: "POST" })
       deviceId: data.auth.deviceId,
       username: data.auth.username,
     });
-    const authorized = await env.KEWEKE_USERS
-      .getByName(data.auth.userId)
-      .authorizePublish({ auth: data.auth, payload });
+    const authorized = await env.KEWEKE_USERS.getByName(data.auth.userId).authorizePublish({
+      auth: data.auth,
+      payload,
+    });
     if (authorized.status === "unauthorized") {
       return { status: "unauthorized" as const };
     }
@@ -156,7 +152,9 @@ async function readRemoteList(listId: string) {
   }
 
   const alias = await env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME).getAlias(listId);
-  return resolveActorNames(listSnapshotSchema.parse({ ...snapshot, alias: alias ?? snapshot.alias }));
+  return resolveActorNames(
+    listSnapshotSchema.parse({ ...snapshot, alias: alias ?? snapshot.alias }),
+  );
 }
 
 async function resolveActorNames(snapshot: ReturnType<typeof listSnapshotSchema.parse>) {
@@ -182,10 +180,10 @@ async function resolveActorNames(snapshot: ReturnType<typeof listSnapshotSchema.
   }
 
   const profiles = await Promise.all(
-    [...userIds].map(async (userId) => [
-      userId,
-      await env.KEWEKE_USERS.getByName(userId).getProfile(userId),
-    ] as const),
+    [...userIds].map(
+      async (userId) =>
+        [userId, await env.KEWEKE_USERS.getByName(userId).getProfile(userId)] as const,
+    ),
   );
   const usernames = new Map<string, string>();
   for (const [userId, profile] of profiles) {

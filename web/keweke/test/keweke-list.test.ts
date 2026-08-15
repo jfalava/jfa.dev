@@ -9,7 +9,11 @@ import {
   signPayload,
 } from "@jfa.dev/common/crypto";
 import type { PublishAuth } from "@jfa.dev/common/identities";
-import { createStarterListSnapshot, type ListCommand, type ListMutation } from "@jfa.dev/common/lists";
+import {
+  createStarterListSnapshot,
+  type ListCommand,
+  type ListMutation,
+} from "@jfa.dev/common/lists";
 import { runInDurableObject } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { describe, expect, it } from "vitest";
@@ -154,11 +158,15 @@ describe("public-key list authorization", () => {
     const retry = await listStub.applyMutation(LIST_ID, mutation);
     const stale = await listStub.applyMutation(
       LIST_ID,
-      await signedMutation(identity, { ...snapshot, revision: 0 }, {
-        type: "set-item-checked",
-        itemId: "starter-tomatoes",
-        checked: true,
-      }),
+      await signedMutation(
+        identity,
+        { ...snapshot, revision: 0 },
+        {
+          type: "set-item-checked",
+          itemId: "starter-tomatoes",
+          checked: true,
+        },
+      ),
     );
     expect(retry.status).toBe("ok");
     expect(stale.status).toBe("conflict");
@@ -197,7 +205,9 @@ describe("public-key list authorization", () => {
       signature: revokeSignature,
       payload: revokePayload,
     });
-    expect(revoked?.devices.find((device) => device.deviceId === identity.deviceId)?.revokedAt).not.toBeNull();
+    expect(
+      revoked?.devices.find((device) => device.deviceId === identity.deviceId)?.revokedAt,
+    ).not.toBeNull();
 
     expect((await listStub.applyMutation(SECOND_LIST_ID, valid)).status).toBe("unauthorized");
   });
@@ -233,11 +243,17 @@ describe("public-key list authorization", () => {
     });
     expect(approved.status).toBe("approved");
 
-    const targetMutation = await signedMutation(target, snapshot, {
-      type: "set-item-checked",
-      itemId: "starter-tomatoes",
-      checked: true,
-    }, "Taylor", identity.userId);
+    const targetMutation = await signedMutation(
+      target,
+      snapshot,
+      {
+        type: "set-item-checked",
+        itemId: "starter-tomatoes",
+        checked: true,
+      },
+      "Taylor",
+      identity.userId,
+    );
     const targetApplied = await listStub.applyMutation(THIRD_LIST_ID, targetMutation);
     expect(targetApplied.status).toBe("ok");
 
@@ -256,10 +272,7 @@ describe("public-key list authorization", () => {
       targetDeviceId: transitiveTarget.deviceId,
       targetDevicePublicKey: transitiveTarget.devicePublicKey,
     });
-    const transitiveSignature = await signPayload(
-      target.devicePrivateKey,
-      transitivePayload,
-    );
+    const transitiveSignature = await signPayload(target.devicePrivateKey, transitivePayload);
     const transitivelyApproved = await transitivePairing.approve({
       code: transitiveCode,
       userId: identity.userId,
