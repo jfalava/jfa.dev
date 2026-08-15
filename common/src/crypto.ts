@@ -167,6 +167,45 @@ export function pairingApprovalSigningPayload(input: {
   return canonicalPayload("keweke:pairing-approval:v1", input);
 }
 
+export function passkeyRegistrationStartSigningPayload(input: {
+  userId: string;
+  deviceId: string;
+}): string {
+  return canonicalPayload("keweke:passkey-registration-start:v1", input);
+}
+
+export function passkeyRegistrationFinishSigningPayload(input: {
+  sessionId: string;
+  userId: string;
+  deviceId: string;
+  credentialId: string;
+}): string {
+  return canonicalPayload("keweke:passkey-registration-finish:v1", input);
+}
+
+export function passkeyAdoptionFinishSigningPayload(input: {
+  sessionId: string;
+  targetDeviceId: string;
+  credentialId: string;
+}): string {
+  return canonicalPayload("keweke:passkey-adoption-finish:v1", input);
+}
+
+export function passkeyListSigningPayload(input: {
+  userId: string;
+  deviceId: string;
+}): string {
+  return canonicalPayload("keweke:passkey-list:v1", input);
+}
+
+export function passkeyDeleteSigningPayload(input: {
+  userId: string;
+  deviceId: string;
+  credentialId: string;
+}): string {
+  return canonicalPayload("keweke:passkey-delete:v1", input);
+}
+
 export function deviceRevocationSigningPayload(input: {
   userId: string;
   approverDeviceId: string;

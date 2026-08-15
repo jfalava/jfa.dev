@@ -18,6 +18,10 @@
         "class_name": "KewekePairingSession",
       },
       {
+        "name": "KEWEKE_PASSKEY_SESSIONS",
+        "class_name": "KewekePasskeySession",
+      },
+      {
         "name": "KEWEKE_USERS",
         "class_name": "KewekeUserDirectory",
       },
@@ -31,6 +35,10 @@
     {
       "tag": "v2",
       "new_sqlite_classes": ["KewekePairingSession", "KewekeUserDirectory"],
+    },
+    {
+      "tag": "v3",
+      "new_sqlite_classes": ["KewekePasskeySession"],
     },
   ],
 }

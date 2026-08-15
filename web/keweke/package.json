@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@jfa.dev/common": "workspace:*",
+    "@passwordless-id/webauthn": "^2.4.0",
     "@tailwindcss/vite": "4.3.3",
     "@tanstack/react-router": "1.170.27",
     "@tanstack/react-start": "1.168.44",

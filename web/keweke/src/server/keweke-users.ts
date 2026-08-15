@@ -2,10 +2,15 @@ import { publicKeyFingerprint, verifyPayload } from "@jfa.dev/common/crypto";
 import {
   identityAuthSchema,
   identityIdSchema,
+  passkeyCredentialIdSchema,
+  passkeyCredentialSchema,
+  passkeyProfileSchema,
   publishAuthSchema,
   publicKeySchema,
   userProfileSchema,
   usernameSchema,
+  type PasskeyCredential,
+  type PasskeyProfile,
   type DeviceProfile,
   type UserProfile,
 } from "@jfa.dev/common/identities";
@@ -26,6 +31,18 @@ interface DeviceRow {
   approved_at: string;
   approved_by: string | null;
   revoked_at: string | null;
+}
+
+interface PasskeyRow {
+  [key: string]: string | number | null;
+  credential_id: string;
+  public_key: string;
+  algorithm: string;
+  transports: string;
+  counter: number;
+  synced: number;
+  created_at: string;
+  last_used_at: string | null;
 }
 
 interface UserListRow {
@@ -57,6 +74,10 @@ export type DeviceApprovalResult =
 export type AccountDeletionResult =
   | { status: "deleted" }
   | { status: "failed" }
+  | { status: "unauthorized" };
+
+export type PasskeyRegistrationResult =
+  | { status: "registered" | "existing" }
   | { status: "unauthorized" };
 
 export class KewekeUserDirectory extends DurableObject {
@@ -126,6 +147,7 @@ export class KewekeUserDirectory extends DurableObject {
       await this.deleteCreatedLists(authorization.userId);
       this.ctx.storage.transactionSync(() => {
         this.ctx.storage.sql.exec("DELETE FROM devices");
+        this.ctx.storage.sql.exec("DELETE FROM passkeys");
         this.ctx.storage.sql.exec("DELETE FROM user_profile");
         this.ctx.storage.sql.exec("DELETE FROM user_lists");
         this.ctx.storage.sql.exec(
@@ -281,6 +303,173 @@ export class KewekeUserDirectory extends DurableObject {
 
     this.ctx.storage.sql.exec("UPDATE user_profile SET username = ? WHERE id = 1", username.data);
     return this.readProfile(auth.data.userId);
+  }
+
+  async getPasskeyCredential(input: {
+    userId: string;
+    credentialId: string;
+  }): Promise<PasskeyCredential | null> {
+    const userId = identityIdSchema.safeParse(input.userId);
+    const credentialId = passkeyCredentialIdSchema.safeParse(input.credentialId);
+    if (!userId.success || !credentialId.success || this.readAccountState()) {
+      return null;
+    }
+    if (!(await this.readProfile(userId.data))) {
+      return null;
+    }
+
+    const row = this.readPasskey(credentialId.data);
+    return row ? this.toPasskeyCredential(row) : null;
+  }
+
+  async registerPasskey(input: {
+    userId: string;
+    credential: PasskeyCredential;
+  }): Promise<PasskeyRegistrationResult> {
+    const userId = identityIdSchema.safeParse(input.userId);
+    const credential = passkeyCredentialSchema.safeParse(input.credential);
+    if (!userId.success || !credential.success || this.readAccountState()) {
+      return { status: "unauthorized" };
+    }
+    if (!(await this.readProfile(userId.data))) {
+      return { status: "unauthorized" };
+    }
+
+    const existing = this.readPasskey(credential.data.id);
+    if (existing) {
+      const existingCredential = this.toPasskeyCredential(existing);
+      return existingCredential.publicKey === credential.data.publicKey &&
+        existingCredential.algorithm === credential.data.algorithm
+        ? { status: "existing" }
+        : { status: "unauthorized" };
+    }
+
+    this.ctx.storage.sql.exec(
+      `INSERT INTO passkeys (
+         credential_id, public_key, algorithm, transports, counter, synced, created_at, last_used_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL)`,
+      credential.data.id,
+      credential.data.publicKey,
+      credential.data.algorithm,
+      JSON.stringify(credential.data.transports),
+      credential.data.counter,
+      credential.data.synced ? 1 : 0,
+      new Date().toISOString(),
+    );
+    return { status: "registered" };
+  }
+
+  async approveDeviceByPasskey(input: {
+    userId: string;
+    targetDeviceId: string;
+    targetDevicePublicKey: string;
+    credentialId: string;
+    counter: number;
+  }): Promise<DeviceApprovalResult> {
+    const userId = identityIdSchema.safeParse(input.userId);
+    const targetDeviceId = identityIdSchema.safeParse(input.targetDeviceId);
+    const targetPublicKey = publicKeySchema.safeParse(input.targetDevicePublicKey);
+    const credentialId = passkeyCredentialIdSchema.safeParse(input.credentialId);
+    if (
+      !userId.success ||
+      !targetDeviceId.success ||
+      !targetPublicKey.success ||
+      !credentialId.success ||
+      !Number.isSafeInteger(input.counter) ||
+      input.counter < 0
+    ) {
+      return { status: "unauthorized" };
+    }
+
+    if ((await publicKeyFingerprint(targetPublicKey.data)) !== targetDeviceId.data) {
+      return { status: "unauthorized" };
+    }
+
+    const profile = await this.readProfile(userId.data);
+    const passkey = this.readPasskey(credentialId.data);
+    if (!profile || this.readAccountState() || !passkey) {
+      return { status: "unauthorized" };
+    }
+
+    const existing = profile.devices.find((device) => device.deviceId === targetDeviceId.data);
+    if (existing?.revokedAt !== null && existing !== undefined) {
+      return { status: "unauthorized" };
+    }
+
+    this.ctx.storage.transactionSync(() => {
+      this.ctx.storage.sql.exec(
+        `UPDATE passkeys
+         SET counter = CASE WHEN counter < ? THEN ? ELSE counter END,
+             last_used_at = ?
+         WHERE credential_id = ?`,
+        input.counter,
+        input.counter,
+        new Date().toISOString(),
+        credentialId.data,
+      );
+      if (!existing) {
+        this.ctx.storage.sql.exec(
+          `INSERT INTO devices (device_id, public_key, approved_at, approved_by, revoked_at)
+           VALUES (?, ?, ?, NULL, NULL)`,
+          targetDeviceId.data,
+          targetPublicKey.data,
+          new Date().toISOString(),
+        );
+      }
+    });
+
+    const updated = await this.readProfile(userId.data);
+    return updated ? { status: "approved", profile: updated } : { status: "unauthorized" };
+  }
+
+  async listPasskeys(input: { auth: unknown; payload: string }): Promise<PasskeyProfile[] | null> {
+    const auth = identityAuthSchema.safeParse(input.auth);
+    if (!auth.success) {
+      return null;
+    }
+    const authorization = await this.authorizeDevice({
+      auth: auth.data,
+      payload: input.payload,
+    });
+    if (!authorization) {
+      return null;
+    }
+
+    return this.ctx.storage.sql
+      .exec<PasskeyRow>(
+        `SELECT credential_id, public_key, algorithm, transports, counter, synced, created_at, last_used_at
+         FROM passkeys ORDER BY created_at ASC, credential_id ASC`,
+      )
+      .toArray()
+      .map((row) => this.toPasskeyProfile(row));
+  }
+
+  async deletePasskey(input: {
+    auth: unknown;
+    credentialId: string;
+    payload: string;
+  }): Promise<PasskeyProfile[] | null> {
+    const auth = identityAuthSchema.safeParse(input.auth);
+    const credentialId = passkeyCredentialIdSchema.safeParse(input.credentialId);
+    if (!auth.success || !credentialId.success) {
+      return null;
+    }
+    const authorization = await this.authorizeDevice({
+      auth: auth.data,
+      payload: input.payload,
+    });
+    if (!authorization) {
+      return null;
+    }
+
+    this.ctx.storage.sql.exec("DELETE FROM passkeys WHERE credential_id = ?", credentialId.data);
+    return this.ctx.storage.sql
+      .exec<PasskeyRow>(
+        `SELECT credential_id, public_key, algorithm, transports, counter, synced, created_at, last_used_at
+         FROM passkeys ORDER BY created_at ASC, credential_id ASC`,
+      )
+      .toArray()
+      .map((row) => this.toPasskeyProfile(row));
   }
 
   async approveDevice(input: {
@@ -483,6 +672,39 @@ export class KewekeUserDirectory extends DurableObject {
     });
   }
 
+  private readPasskey(credentialId: string): PasskeyRow | undefined {
+    return this.ctx.storage.sql
+      .exec<PasskeyRow>(
+        `SELECT credential_id, public_key, algorithm, transports, counter, synced, created_at, last_used_at
+         FROM passkeys WHERE credential_id = ?`,
+        credentialId,
+      )
+      .toArray()[0];
+  }
+
+  private toPasskeyCredential(row: PasskeyRow): PasskeyCredential {
+    const transports: unknown = JSON.parse(row.transports);
+    return passkeyCredentialSchema.parse({
+      id: row.credential_id,
+      publicKey: row.public_key,
+      algorithm: row.algorithm,
+      transports,
+      counter: row.counter,
+      synced: row.synced === 1,
+    });
+  }
+
+  private toPasskeyProfile(row: PasskeyRow): PasskeyProfile {
+    const transports: unknown = JSON.parse(row.transports);
+    return passkeyProfileSchema.parse({
+      id: row.credential_id,
+      transports,
+      synced: row.synced === 1,
+      createdAt: row.created_at,
+      lastUsedAt: row.last_used_at,
+    });
+  }
+
   private migrate(): void {
     this.ctx.storage.sql.exec(`
       CREATE TABLE IF NOT EXISTS user_profile (
@@ -497,6 +719,16 @@ export class KewekeUserDirectory extends DurableObject {
         approved_at TEXT NOT NULL,
         approved_by TEXT,
         revoked_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS passkeys (
+        credential_id TEXT PRIMARY KEY,
+        public_key TEXT NOT NULL,
+        algorithm TEXT NOT NULL,
+        transports TEXT NOT NULL,
+        counter INTEGER NOT NULL,
+        synced INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        last_used_at TEXT
       );
       CREATE TABLE IF NOT EXISTS user_lists (
         list_id TEXT PRIMARY KEY,

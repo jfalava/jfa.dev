@@ -5,6 +5,7 @@ import { env } from "cloudflare:workers";
 export { KewekeList } from "./server/keweke-list";
 export { KewekeAliasDirectory } from "./server/keweke-aliases";
 export { KewekePairingSession } from "./server/keweke-pairing";
+export { KewekePasskeySession } from "./server/keweke-passkey";
 export { KewekeUserDirectory } from "./server/keweke-users";
 
 function getLiveListId(request: Request): string | null {

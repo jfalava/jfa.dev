@@ -22,6 +22,15 @@ import type { PairingApprovalStatus, PairingStatus } from "./keweke-pairing";
 import type { AccountDeletionResult } from "./keweke-users";
 import { readRemoteList } from "./remote-list";
 
+export {
+  completePasskeyAdoption,
+  completePasskeyRegistration,
+  deletePasskey,
+  listPasskeys,
+  startPasskeyAdoption,
+  startPasskeyRegistration,
+} from "./passkeys";
+
 const pairingStartInputSchema = z.object({
   code: pairingCodeSchema,
   targetDeviceId: identityIdSchema,
