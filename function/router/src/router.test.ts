@@ -72,18 +72,15 @@ describe("router configuration", () => {
   });
 
   test("returns 418 for requests outside the configured route mounts", async () => {
-    const response = await router.fetch(
-      new Request("https://jfa.dev/wp-admin.php"),
-      {
-        ROUTES: JSON.stringify({
-          routes: [
-            { binding: "LANDING", path: "/" },
-            { binding: "OG_IMG_GEN", path: "/og-img-gen" },
-            { binding: "HYPERSCALER_SERVICES", path: "/hyperscaler-services" },
-          ],
-        }),
-      },
-    );
+    const response = await router.fetch(new Request("https://jfa.dev/wp-admin.php"), {
+      ROUTES: JSON.stringify({
+        routes: [
+          { binding: "LANDING", path: "/" },
+          { binding: "OG_IMG_GEN", path: "/og-img-gen" },
+          { binding: "HYPERSCALER_SERVICES", path: "/hyperscaler-services" },
+        ],
+      }),
+    });
 
     expect(response.status).toBe(418);
     expect(await response.text()).toBe("I'm a teapot");

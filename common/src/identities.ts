@@ -87,9 +87,7 @@ const passkeyUserSchema = z.object({
   displayName: z.string().min(1).max(128),
 });
 
-const passkeyClientExtensionResultsSchema = z
-  .record(z.string(), z.unknown())
-  .default({});
+const passkeyClientExtensionResultsSchema = z.record(z.string(), z.unknown()).default({});
 
 export const passkeyRegistrationSchema = z.object({
   id: passkeyCredentialIdSchema,

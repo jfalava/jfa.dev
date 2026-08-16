@@ -1288,7 +1288,9 @@ function MobileShoppingTable({
                         </label>
                         <div className="col-span-6 flex justify-end gap-2 pt-1">
                           <Button
-                            aria-label={isSaving ? "Saving" : `Save changes to ${row.original.name}`}
+                            aria-label={
+                              isSaving ? "Saving" : `Save changes to ${row.original.name}`
+                            }
                             className="size-11"
                             isDisabled={isSaving}
                             type="submit"

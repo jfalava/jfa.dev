@@ -1,8 +1,10 @@
 "use client";
 
-import * as React from "react";
+import { cn } from "../../lib/utils";
+
 import { cva } from "class-variance-authority";
 import { Check, ChevronRight } from "lucide-react";
+import * as React from "react";
 import {
   composeRenderProps,
   Header as HeaderPrimitive,
@@ -17,11 +19,7 @@ import {
   type MenuSectionProps as MenuSectionPrimitiveProps,
 } from "react-aria-components";
 
-import { cn } from "../../lib/utils";
-
-function DropdownMenuTrigger({
-  ...props
-}: React.ComponentProps<typeof MenuTriggerPrimitive>) {
+function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof MenuTriggerPrimitive>) {
   return <MenuTriggerPrimitive data-slot="dropdown-menu-trigger" {...props} />;
 }
 
@@ -33,14 +31,8 @@ function DropdownMenu({
   className,
   children,
   ...props
-}: Omit<
-  React.ComponentProps<typeof MenuPrimitive<object>>,
-  "children" | "className"
-> &
-  Pick<
-    React.ComponentProps<typeof PopoverPrimitive>,
-    "placement" | "offset" | "crossOffset"
-  > & {
+}: Omit<React.ComponentProps<typeof MenuPrimitive<object>>, "children" | "className"> &
+  Pick<React.ComponentProps<typeof PopoverPrimitive>, "placement" | "offset" | "crossOffset"> & {
     "data-slot"?: string;
     className?: string;
     children?: React.ReactNode;
@@ -107,9 +99,7 @@ const dropdownMenuItemVariants = cva(
   },
 );
 
-function isStringChild(
-  value: MenuItemPrimitiveProps<object>["children"],
-): value is string {
+function isStringChild(value: MenuItemPrimitiveProps["children"]): value is string {
   return Object.prototype.toString.call(value) === "[object String]";
 }
 
@@ -119,7 +109,7 @@ function DropdownMenuItem({
   variant = "default",
   children,
   ...props
-}: MenuItemPrimitiveProps<object> & {
+}: MenuItemPrimitiveProps & {
   inset?: boolean;
   variant?: "default" | "destructive";
 }) {
@@ -134,33 +124,28 @@ function DropdownMenuItem({
       )}
       {...props}
     >
-      {composeRenderProps(
-        children,
-        (children, { isSelected, selectionMode }) => (
-          <>
-            {selectionMode !== "none" ? (
-              <span
-                className="pointer-events-none absolute right-2 flex items-center justify-center"
-                data-slot={
-                  selectionMode === "single"
-                    ? "dropdown-menu-radio-item-indicator"
-                    : "dropdown-menu-checkbox-item-indicator"
-                }
-              >
-                {isSelected ? <Check className="size-3.5" /> : null}
-              </span>
-            ) : null}
-            {children}
-          </>
-        ),
-      )}
+      {composeRenderProps(children, (children, { isSelected, selectionMode }) => (
+        <>
+          {selectionMode !== "none" ? (
+            <span
+              className="pointer-events-none absolute right-2 flex items-center justify-center"
+              data-slot={
+                selectionMode === "single"
+                  ? "dropdown-menu-radio-item-indicator"
+                  : "dropdown-menu-checkbox-item-indicator"
+              }
+            >
+              {isSelected ? <Check className="size-3.5" /> : null}
+            </span>
+          ) : null}
+          {children}
+        </>
+      ))}
     </MenuItemPrimitive>
   );
 }
 
-function DropdownMenuSub({
-  ...props
-}: React.ComponentProps<typeof SubmenuTriggerPrimitive>) {
+function DropdownMenuSub({ ...props }: React.ComponentProps<typeof SubmenuTriggerPrimitive>) {
   return <SubmenuTriggerPrimitive data-slot="dropdown-menu-sub" {...props} />;
 }
 
@@ -169,7 +154,7 @@ function DropdownMenuSubTrigger({
   inset,
   children,
   ...props
-}: MenuItemPrimitiveProps<object> & { inset?: boolean }) {
+}: MenuItemPrimitiveProps & { inset?: boolean }) {
   return (
     <MenuItemPrimitive
       data-slot="dropdown-menu-sub-trigger"
@@ -226,10 +211,7 @@ function DropdownMenuSeparator({
   );
 }
 
-function DropdownMenuShortcut({
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="dropdown-menu-shortcut"

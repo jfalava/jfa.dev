@@ -9,9 +9,7 @@ const DEVICE_ID = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 
 describe("public-key identity contract", () => {
   test("normalizes display names without changing the fingerprint", () => {
-    expect(
-      listIdentitySchema.parse({ id: USER_ID, username: "  Alex  " }),
-    ).toEqual({
+    expect(listIdentitySchema.parse({ id: USER_ID, username: "  Alex  " })).toEqual({
       id: USER_ID,
       username: "Alex",
     });
@@ -25,9 +23,7 @@ describe("public-key identity contract", () => {
   });
 
   test("requires a full base64url fingerprint and complete publish credentials", () => {
-    expect(() =>
-      listIdentitySchema.parse({ id: "abcde", username: "Alex" }),
-    ).toThrow();
+    expect(() => listIdentitySchema.parse({ id: "abcde", username: "Alex" })).toThrow();
     expect(() =>
       publishAuthSchema.parse({
         userId: USER_ID,

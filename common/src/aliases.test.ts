@@ -2,11 +2,7 @@
 
 import { describe, expect, test } from "bun:test";
 
-import {
-  createListAlias,
-  isListAlias,
-  normalizeListAliasBase,
-} from "./aliases";
+import { createListAlias, isListAlias, normalizeListAliasBase } from "./aliases";
 
 describe("list aliases", () => {
   test("turns a human label into a readable slug with a five-letter suffix", () => {

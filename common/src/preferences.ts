@@ -6,8 +6,7 @@ export const preferenceCookies = {
   wrapText: "jfa-wrap-text",
 } as const;
 
-export type PreferenceCookieName =
-  (typeof preferenceCookies)[keyof typeof preferenceCookies];
+export type PreferenceCookieName = (typeof preferenceCookies)[keyof typeof preferenceCookies];
 
 const COOKIE_LIFETIME_DAYS = 365;
 
@@ -22,10 +21,7 @@ function cookieAttributes() {
     sameSite: "lax" as const,
   };
 
-  if (
-    globalThis.location !== undefined &&
-    globalThis.location.protocol === "https:"
-  ) {
+  if (globalThis.location !== undefined && globalThis.location.protocol === "https:") {
     return { ...attributes, secure: true };
   }
 
@@ -36,10 +32,7 @@ export function readPreference(name: PreferenceCookieName): string | undefined {
   return canUseCookies() ? Cookies.get(name) : undefined;
 }
 
-export function writePreference(
-  name: PreferenceCookieName,
-  value: string,
-): void {
+export function writePreference(name: PreferenceCookieName, value: string): void {
   if (canUseCookies()) {
     Cookies.set(name, value, cookieAttributes());
   }

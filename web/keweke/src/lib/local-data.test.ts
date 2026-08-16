@@ -103,8 +103,6 @@ describe("local Keweke data", () => {
     expect(clearCalls).toBe(0);
     expect(await readLocalIdentity()).toBeUndefined();
     const lists = await listLocalLists();
-    expect(new Set(lists.map((list) => list.id))).toEqual(
-      new Set([localList.id, remoteList.id]),
-    );
+    expect(new Set(lists.map((list) => list.id))).toEqual(new Set([localList.id, remoteList.id]));
   });
 });

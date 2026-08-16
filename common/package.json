@@ -1,6 +1,5 @@
 {
   "name": "@jfa.dev/common",
-  "version": "0.1.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -14,7 +13,8 @@
     "./lists": "./src/lists.ts"
   },
   "scripts": {
-    "lint": "oxlint src",
+    "check": "vp check --fix",
+    "lint": "vp lint",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
@@ -30,13 +30,15 @@
     "react-aria-components": "catalog:react-ui",
     "react-dom": "catalog:react-ui",
     "tailwind-merge": "catalog:styling",
-    "zod": "^4.4.3"
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@types/js-cookie": "3.0.6",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "oxlint": "catalog:build",
-    "typescript": "catalog:build"
+    "oxlint-tsgolint": "catalog:build",
+    "typescript": "catalog:build",
+    "vite-plus": "catalog:build"
   }
 }

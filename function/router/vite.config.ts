@@ -31,7 +31,7 @@ export default defineConfig({
     },
     env: {
       browser: true,
-      es2022: true,
+      ESNext: true,
     },
     globals: {
       Bun: "readonly",

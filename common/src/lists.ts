@@ -1,10 +1,9 @@
-import { z } from "zod";
-
 import { listAliasSchema } from "./aliases";
 import { identityAuthSchema, listIdentitySchema } from "./identities";
 
-const UUID_V7_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import { z } from "zod";
+
+const UUID_V7_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export const LIST_SCHEMA_VERSION = 3 as const;
 
@@ -241,9 +240,7 @@ export function applyListMutation(
   }
 
   const command = listCommandSchema.parse(mutation.command);
-  const actor = mutation.actor
-    ? listIdentitySchema.parse(mutation.actor)
-    : null;
+  const actor = mutation.actor ? listIdentitySchema.parse(mutation.actor) : null;
   let nextItems = snapshot.items;
   let nextDeletedItems = snapshot.deletedItems;
   let nextTitle = snapshot.title;
@@ -289,9 +286,7 @@ export function applyListMutation(
       break;
     case "remove-item":
       {
-        const removedItem = snapshot.items.find(
-          (item) => item.id === command.itemId,
-        );
+        const removedItem = snapshot.items.find((item) => item.id === command.itemId);
         nextItems = snapshot.items
           .filter((item) => item.id !== command.itemId)
           .map((item, index) => ({ ...item, position: index }));
@@ -313,10 +308,7 @@ export function applyListMutation(
         const deletedItem = snapshot.deletedItems.find(
           (item) => item.archiveId === command.archiveId,
         );
-        if (
-          deletedItem &&
-          !snapshot.items.some((item) => item.id === deletedItem.id)
-        ) {
+        if (deletedItem && !snapshot.items.some((item) => item.id === deletedItem.id)) {
           nextItems = [
             ...snapshot.items,
             {
@@ -360,14 +352,10 @@ export function applyListMutation(
   };
 }
 
-export function parseListSnapshot(
-  value: z.input<typeof listSnapshotSchema>,
-): ListSnapshot {
+export function parseListSnapshot(value: z.input<typeof listSnapshotSchema>): ListSnapshot {
   return listSnapshotSchema.parse(value);
 }
 
-export function parseListMutation(
-  value: z.input<typeof listMutationSchema>,
-): ListMutation {
+export function parseListMutation(value: z.input<typeof listMutationSchema>): ListMutation {
   return listMutationSchema.parse(value);
 }

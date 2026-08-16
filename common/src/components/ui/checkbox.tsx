@@ -1,11 +1,11 @@
+import { cn } from "../../lib/utils";
+
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import {
   Checkbox as AriaCheckbox,
   type CheckboxProps as AriaCheckboxProps,
 } from "react-aria-components";
-
-import { cn } from "../../lib/utils";
 
 type CheckboxProps = Omit<AriaCheckboxProps, "children" | "className"> & {
   children?: ReactNode;

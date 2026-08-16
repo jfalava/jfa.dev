@@ -1,5 +1,10 @@
 "use client";
 
+import { cn } from "../../lib/utils";
+
+import { Button } from "./button";
+
+import { X } from "lucide-react";
 import * as React from "react";
 import {
   Dialog as DialogPrimitive,
@@ -11,20 +16,12 @@ import {
   type DialogTriggerProps as DialogTriggerPrimitiveProps,
   type ModalOverlayProps as ModalOverlayPrimitiveProps,
 } from "react-aria-components";
-import { X } from "lucide-react";
-
-import { cn } from "../../lib/utils";
-
-import { Button } from "./button";
 
 function DialogTrigger(props: DialogTriggerPrimitiveProps) {
   return <DialogTriggerPrimitive data-slot="dialog-trigger" {...props} />;
 }
 
-function DialogClose({
-  className,
-  ...props
-}: React.ComponentProps<typeof Button>) {
+function DialogClose({ className, ...props }: React.ComponentProps<typeof Button>) {
   return (
     <Button
       slot="close"
@@ -108,20 +105,14 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className,
-      )}
+      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
       data-slot="dialog-footer"
       {...props}
     />
   );
 }
 
-function DialogTitle({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof Heading>, "slot">) {
+function DialogTitle({ className, ...props }: Omit<React.ComponentProps<typeof Heading>, "slot">) {
   return (
     <Heading
       className={cn("text-lg leading-none font-semibold", className)}
@@ -132,10 +123,7 @@ function DialogTitle({
   );
 }
 
-function DialogDescription({
-  className,
-  ...props
-}: Omit<React.ComponentProps<"div">, "slot">) {
+function DialogDescription({ className, ...props }: Omit<React.ComponentProps<"div">, "slot">) {
   return (
     <div
       className={cn("text-sm text-muted-foreground", className)}

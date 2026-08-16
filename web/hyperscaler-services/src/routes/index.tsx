@@ -52,7 +52,7 @@ interface PageTranslations {
 const translations = {
   en: {
     title: "HYPERSCALER SERVICES",
-    titleSmol:"HYPERSCALERS",
+    titleSmol: "HYPERSCALERS",
     subtitle: "A directory of equivalent cloud services",
     services: "Services",
     providers: "Providers",
@@ -85,7 +85,7 @@ const translations = {
   },
   es: {
     title: "SERVICIOS de HIPERESCALARES",
-    titleSmol:"HIPERESCALARES",
+    titleSmol: "HIPERESCALARES",
     subtitle: "Un directorio de servicios cloud equivalentes",
     services: "Servicios",
     providers: "Proveedores",
@@ -162,8 +162,8 @@ function CatalogHeader({
           className="flex min-w-0 cursor-default items-baseline gap-3 truncate lg:pr-4"
         >
           <span className="shrink-0 text-sm font-bold tracking-wide text-primary">
-            <span className="sm:inline hidden">/{t.title}</span>
-            <span className="sm:hidden inline">/{t.titleSmol}</span>
+            <span className="hidden sm:inline">/{t.title}</span>
+            <span className="inline sm:hidden">/{t.titleSmol}</span>
             <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
           </span>
           <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>

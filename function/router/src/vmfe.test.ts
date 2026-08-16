@@ -2,9 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import { handleMountedApp } from "./vmfe";
 
-function createUpstream(
-  fetch: (request: Request) => Promise<Response>,
-): Fetcher {
+function createUpstream(fetch: (request: Request) => Promise<Response>): Fetcher {
   return {
     fetch,
     connect: () => {
@@ -30,9 +28,7 @@ describe("mounted app forwarding", () => {
 
     expect(await response.text()).toBe("ok");
     expect(forwardedRequest?.url).toBe("https://jfa.dev/search?q=cloud");
-    expect(forwardedRequest?.headers.get("x-forwarded-prefix")).toBe(
-      "/hyperscaler-services",
-    );
+    expect(forwardedRequest?.headers.get("x-forwarded-prefix")).toBe("/hyperscaler-services");
   });
 
   test("preserves the mount for apps built with a public base path", async () => {
@@ -50,12 +46,8 @@ describe("mounted app forwarding", () => {
       { preserveMount: true },
     );
 
-    expect(forwardedRequest?.url).toBe(
-      "https://jfa.dev/hyperscaler-services/search?q=cloud",
-    );
-    expect(forwardedRequest?.headers.get("x-forwarded-prefix")).toBe(
-      "/hyperscaler-services",
-    );
+    expect(forwardedRequest?.url).toBe("https://jfa.dev/hyperscaler-services/search?q=cloud");
+    expect(forwardedRequest?.headers.get("x-forwarded-prefix")).toBe("/hyperscaler-services");
   });
 
   test("passes WebSocket upgrade responses through without rebuilding them", async () => {
@@ -91,9 +83,7 @@ describe("mounted app forwarding", () => {
     );
 
     expect(await response.text()).toBe("asset");
-    expect(forwardedRequest?.url).toBe(
-      "https://jfa.dev/hyperscaler-services/assets/app.css",
-    );
+    expect(forwardedRequest?.url).toBe("https://jfa.dev/hyperscaler-services/assets/app.css");
   });
 
   test("rewrites redirects and cookie paths", async () => {
@@ -115,9 +105,7 @@ describe("mounted app forwarding", () => {
       ["/assets/"],
     );
 
-    expect(response.headers.get("location")).toBe(
-      "https://jfa.dev/hyperscaler-services/login",
-    );
+    expect(response.headers.get("location")).toBe("https://jfa.dev/hyperscaler-services/login");
     expect(response.headers.get("set-cookie")).toContain(
       "session=1; Path=/hyperscaler-services/; HttpOnly",
     );
@@ -140,9 +128,7 @@ describe("mounted app forwarding", () => {
       ["/assets/"],
     );
 
-    expect(response.headers.get("set-cookie")).toBe(
-      "jfa-theme=dark; Path=/; SameSite=Lax",
-    );
+    expect(response.headers.get("set-cookie")).toBe("jfa-theme=dark; Path=/; SameSite=Lax");
   });
 
   test("normalizes shared preference cookies emitted with a mounted path", async () => {
@@ -162,9 +148,7 @@ describe("mounted app forwarding", () => {
       ["/assets/"],
     );
 
-    expect(response.headers.get("set-cookie")).toBe(
-      "jfa-language=es; Path=/; SameSite=Lax",
-    );
+    expect(response.headers.get("set-cookie")).toBe("jfa-language=es; Path=/; SameSite=Lax");
   });
 
   test("rewrites CSS asset URLs without buffering the response", async () => {
@@ -189,8 +173,6 @@ describe("mounted app forwarding", () => {
       ["/assets/"],
     );
 
-    expect(await response.text()).toBe(
-      ".a{src:url('/hyperscaler-services/assets/font.woff2)}",
-    );
+    expect(await response.text()).toBe(".a{src:url('/hyperscaler-services/assets/font.woff2)}");
   });
 });

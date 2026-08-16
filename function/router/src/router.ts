@@ -1,9 +1,4 @@
-import {
-  handleMountedApp,
-  type RouteConfig,
-  type RoutesConfig,
-  type WorkerFetcher,
-} from "./vmfe";
+import { handleMountedApp, type RouteConfig, type RoutesConfig, type WorkerFetcher } from "./vmfe";
 
 import { Hono } from "hono";
 
@@ -106,10 +101,7 @@ export async function isCountryBlocked(
   return blockedCountries.has(country);
 }
 
-export function segmentsMatch(
-  routeSegments: string[],
-  pathnameSegments: string[],
-): boolean {
+export function segmentsMatch(routeSegments: string[], pathnameSegments: string[]): boolean {
   if (routeSegments.length > pathnameSegments.length) {
     return false;
   }
@@ -180,20 +172,14 @@ function getPreloadMounts(routeDefs: RouteConfig[], currentMount: string): strin
     .map((r) => r.path);
 }
 
-function isRecord(
-  value: JsonValue,
-): value is JsonObject {
+function isRecord(value: JsonValue): value is JsonObject {
   return Object.prototype.toString.call(value) === "[object Object]";
 }
 
 function normalizeRoutePath(path: string): string {
   const trimmed = path.trim();
-  const withLeadingSlash = trimmed.startsWith("/")
-    ? trimmed
-    : `/${trimmed}`;
-  return withLeadingSlash.length > 1
-    ? withLeadingSlash.replace(/\/+$/, "")
-    : withLeadingSlash;
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.length > 1 ? withLeadingSlash.replace(/\/+$/, "") : withLeadingSlash;
 }
 
 function parseRoute(value: JsonValue): RouteConfig | null {
@@ -256,10 +242,7 @@ export function parseRoutesConfig(routesJson: string): RoutesConfig {
     throw new Error("ROUTES contains an invalid route definition");
   }
 
-  if (
-    parsed.smoothTransitions !== undefined &&
-    !isBoolean(parsed.smoothTransitions)
-  ) {
+  if (parsed.smoothTransitions !== undefined && !isBoolean(parsed.smoothTransitions)) {
     throw new Error("ROUTES smoothTransitions must be a boolean");
   }
 

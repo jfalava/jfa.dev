@@ -146,7 +146,11 @@ class AssetAttributeRewriter {
       .map((candidate) => {
         const parts = candidate.split(/\s+/);
         const url = parts[0];
-        if (isRootRelativeUrl(url) && !this.isScoped(url) && hasAssetPrefix(url, this.assetPrefixes)) {
+        if (
+          isRootRelativeUrl(url) &&
+          !this.isScoped(url) &&
+          hasAssetPrefix(url, this.assetPrefixes)
+        ) {
           return this.prepend(url) + (parts[1] ? " " + parts[1] : "");
         }
         return candidate;
@@ -278,16 +282,10 @@ function mountedRelativePath(pathname: string, mount: string): string | null {
     return pathname;
   }
 
-  return pathname === normalizedMount
-    ? "/"
-    : pathname.slice(normalizedMount.length);
+  return pathname === normalizedMount ? "/" : pathname.slice(normalizedMount.length);
 }
 
-function isMountedAssetRequest(
-  pathname: string,
-  mount: string,
-  assetPrefixes: string[],
-): boolean {
+function isMountedAssetRequest(pathname: string, mount: string, assetPrefixes: string[]): boolean {
   const relativePath = mountedRelativePath(pathname, mount);
   return relativePath !== null && hasAssetPrefix(relativePath, assetPrefixes);
 }
@@ -459,11 +457,7 @@ function handleHtmlResponse(ctx: HtmlResponseContext): Response {
   );
 }
 
-function rewriteCssText(
-  css: string,
-  mount: string,
-  assetPrefixes: string[],
-): string {
+function rewriteCssText(css: string, mount: string, assetPrefixes: string[]): string {
   const directoryPrefixes = assetPrefixes.filter(
     (prefix) => prefix.endsWith("/") && prefix !== "/",
   );
@@ -475,10 +469,7 @@ function rewriteCssText(
   const prefixPattern = directoryPrefixes
     .map((prefix) => prefix.slice(1, -1).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
     .join("|");
-  const urlPattern = new RegExp(
-    `url\\(\\s*(['"]?)(/(?:${prefixPattern})/[^'"\\s)]+)`,
-    "gi",
-  );
+  const urlPattern = new RegExp(`url\\(\\s*(['"]?)(/(?:${prefixPattern})/[^'"\\s)]+)`, "gi");
 
   return css.replace(urlPattern, (_match, quote: string, url: string) => {
     return `url(${quote}${mount}${url}`;

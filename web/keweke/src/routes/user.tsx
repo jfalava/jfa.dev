@@ -88,9 +88,7 @@ function deviceColumnClassName(id: string): string | undefined {
 }
 
 function DeviceLabel({ isCurrent }: { isCurrent: boolean }) {
-  return (
-    <p className="text-sm font-medium">{isCurrent ? "This device" : "Other device"}</p>
-  );
+  return <p className="text-sm font-medium">{isCurrent ? "This device" : "Other device"}</p>;
 }
 
 function DeviceStatus({ isRevoked }: { isRevoked: boolean }) {
@@ -319,10 +317,7 @@ function DevicesTable({
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow className="hover:bg-transparent" key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <TableHead
-                className={deviceColumnClassName(header.column.id)}
-                key={header.id}
-              >
+              <TableHead className={deviceColumnClassName(header.column.id)} key={header.id}>
                 {header.isPlaceholder ? null : <table.FlexRender header={header} />}
               </TableHead>
             ))}
@@ -690,10 +685,7 @@ function UserRoutePage() {
           "Enter the ten-character pairing code shown on another device to authorize it.",
         content: (
           <div>
-            <form
-              className="flex max-w-md gap-2"
-              onSubmit={(event) => void findDevice(event)}
-            >
+            <form className="flex max-w-md gap-2" onSubmit={(event) => void findDevice(event)}>
               <Input
                 aria-label="Pairing code"
                 className="h-10 font-mono tracking-widest uppercase"
@@ -867,8 +859,7 @@ function UserRoutePage() {
             {isConfirmingDeleteAccount ? (
               <div className="max-w-md space-y-3">
                 <label className="text-xs font-medium" htmlFor="delete-remote-user-confirmation">
-                  Type{" "}
-                  <span className="font-serif font-bold">{identity.remoteUsername}</span> to
+                  Type <span className="font-serif font-bold">{identity.remoteUsername}</span> to
                   confirm deletion
                 </label>
                 <Input
@@ -886,9 +877,7 @@ function UserRoutePage() {
                 <div className="flex flex-wrap gap-2">
                   <Button
                     className="h-8 px-4 text-sm"
-                    isDisabled={
-                      isDeletingAccount || deleteConfirmation !== identity.remoteUsername
-                    }
+                    isDisabled={isDeletingAccount || deleteConfirmation !== identity.remoteUsername}
                     onPress={() => void deleteAccount()}
                     variant="destructive"
                   >

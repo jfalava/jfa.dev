@@ -1,8 +1,7 @@
 import type { ListMutation, ListSnapshot } from "./lists";
 
 const textEncoder = new TextEncoder();
-const PAIRING_ALPHABET =
-  "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+const PAIRING_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
 
 type CanonicalValue =
   | null
@@ -34,8 +33,7 @@ export function base64UrlEncode(value: ArrayBuffer | Uint8Array): string {
 
 export function base64UrlDecode(value: string): Uint8Array {
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
-  const padding =
-    normalized.length % 4 === 0 ? "" : "=".repeat(4 - (normalized.length % 4));
+  const padding = normalized.length % 4 === 0 ? "" : "=".repeat(4 - (normalized.length % 4));
   const binary = atob(`${normalized}${padding}`);
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
@@ -46,9 +44,7 @@ export async function sha256(value: string | Uint8Array): Promise<Uint8Array> {
   return new Uint8Array(await crypto.subtle.digest("SHA-256", input.buffer));
 }
 
-export async function sha256Base64Url(
-  value: string | Uint8Array,
-): Promise<string> {
+export async function sha256Base64Url(value: string | Uint8Array): Promise<string> {
   return base64UrlEncode(await sha256(value));
 }
 
@@ -57,11 +53,7 @@ export async function publicKeyFingerprint(publicKey: string): Promise<string> {
 }
 
 export async function generateEd25519KeyPair(): Promise<CryptoKeyPair> {
-  const generated = await crypto.subtle.generateKey(
-    { name: "Ed25519" },
-    false,
-    ["sign", "verify"],
-  );
+  const generated = await crypto.subtle.generateKey({ name: "Ed25519" }, false, ["sign", "verify"]);
   if (!("privateKey" in generated)) {
     throw new Error("Ed25519 key generation did not return a key pair");
   }
@@ -72,14 +64,9 @@ export async function exportPublicKey(publicKey: CryptoKey): Promise<string> {
   return base64UrlEncode(await crypto.subtle.exportKey("spki", publicKey));
 }
 
-export async function signPayload(
-  privateKey: CryptoKey,
-  payload: string,
-): Promise<string> {
+export async function signPayload(privateKey: CryptoKey, payload: string): Promise<string> {
   const data = textEncoder.encode(payload);
-  return base64UrlEncode(
-    await crypto.subtle.sign("Ed25519", privateKey, data.buffer),
-  );
+  return base64UrlEncode(await crypto.subtle.sign("Ed25519", privateKey, data.buffer));
 }
 
 export async function verifyPayload(
@@ -168,10 +155,7 @@ export function userCreateSigningPayload(input: {
   return canonicalPayload("keweke:user-create:v1", input);
 }
 
-export function userListsSigningPayload(input: {
-  userId: string;
-  deviceId: string;
-}): string {
+export function userListsSigningPayload(input: { userId: string; deviceId: string }): string {
   return canonicalPayload("keweke:user-lists:v1", input);
 }
 
@@ -183,10 +167,7 @@ export function listDeletionSigningPayload(input: {
   return canonicalPayload("keweke:list-deletion:v1", input);
 }
 
-export function userDeleteSigningPayload(input: {
-  userId: string;
-  deviceId: string;
-}): string {
+export function userDeleteSigningPayload(input: { userId: string; deviceId: string }): string {
   return canonicalPayload("keweke:user-delete:v1", input);
 }
 
@@ -224,10 +205,7 @@ export function passkeyAdoptionFinishSigningPayload(input: {
   return canonicalPayload("keweke:passkey-adoption-finish:v1", input);
 }
 
-export function passkeyListSigningPayload(input: {
-  userId: string;
-  deviceId: string;
-}): string {
+export function passkeyListSigningPayload(input: { userId: string; deviceId: string }): string {
   return canonicalPayload("keweke:passkey-list:v1", input);
 }
 

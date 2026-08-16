@@ -1,9 +1,6 @@
-import {
-  Input as AriaInput,
-  type InputProps as AriaInputProps,
-} from "react-aria-components";
-
 import { cn } from "../../lib/utils";
+
+import { Input as AriaInput, type InputProps as AriaInputProps } from "react-aria-components";
 
 type InputProps = Omit<AriaInputProps, "className"> & {
   className?: string;

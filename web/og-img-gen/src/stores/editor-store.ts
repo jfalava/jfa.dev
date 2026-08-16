@@ -547,9 +547,7 @@ export const useEditorStore = create<EditorState>()(
       version: 2,
       migrate: (persistedState): PersistedEditorState => {
         // SAFETY: Zustand persisted state is versioned by this store and optional fields are normalized below.
-        const state = isRecord(persistedState)
-          ? (persistedState as PersistedEditorState)
-          : {};
+        const state = isRecord(persistedState) ? (persistedState as PersistedEditorState) : {};
 
         return {
           templates: Array.isArray(state.templates) ? state.templates : [],

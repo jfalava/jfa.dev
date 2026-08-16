@@ -1,6 +1,5 @@
 {
   "name": "@jfa.dev/redirects",
-  "version": "0.7.1",
   "private": true,
   "scripts": {
     "check": "vp check --fix",

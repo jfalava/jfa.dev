@@ -6,10 +6,7 @@ const ALIAS_BASE_MAX_LENGTH = 48;
 
 export const listAliasSchema = z
   .string()
-  .regex(
-    /^[a-z0-9]+(?:-[a-z0-9]+)*-[a-z]{5}$/,
-    "Expected a generated list alias",
-  )
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*-[a-z]{5}$/, "Expected a generated list alias")
   .max(64)
   .transform((value) => value.toLowerCase());
 
@@ -36,8 +33,9 @@ export function createListAlias(value: string, randomBytes?: Uint8Array): string
     throw new Error("Alias randomness source is too short");
   }
 
-  const suffix = Array.from(bytes.slice(0, ALIAS_SUFFIX_LENGTH), (byte) =>
-    ALIAS_SUFFIX_ALPHABET[byte % ALIAS_SUFFIX_ALPHABET.length],
+  const suffix = Array.from(
+    bytes.slice(0, ALIAS_SUFFIX_LENGTH),
+    (byte) => ALIAS_SUFFIX_ALPHABET[byte % ALIAS_SUFFIX_ALPHABET.length],
   ).join("");
   return listAliasSchema.parse(`${normalizeListAliasBase(value)}-${suffix}`);
 }

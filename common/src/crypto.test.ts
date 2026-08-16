@@ -34,9 +34,7 @@ describe("identity cryptography", () => {
     const signature = await signPayload(keys.privateKey, payload);
 
     expect(await verifyPayload(publicKey, signature, payload)).toBe(true);
-    expect(await verifyPayload(publicKey, signature, `${payload}!`)).toBe(
-      false,
-    );
+    expect(await verifyPayload(publicKey, signature, `${payload}!`)).toBe(false);
   });
 
   test("signs and verifies the user-list index payload", async () => {

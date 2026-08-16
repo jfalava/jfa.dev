@@ -69,7 +69,7 @@ export default defineConfig({
     },
     env: {
       browser: true,
-      es2024: true,
+      ESNext: true,
     },
     ignorePatterns: ["*.d.ts", "**/*.d.ts", "public/**"],
     rules: {

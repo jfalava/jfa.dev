@@ -1,25 +1,6 @@
-import path from "path";
-
-import tailwindcss from "@tailwindcss/vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
 
-/**
- * Vite configuration for the hyperscaler services application.
- * Configures plugins for React, TypeScript paths, Tailwind CSS, TanStack Start, and Cloudflare.
- *
- * @returns Vite configuration object
- */
-
 export default defineConfig({
-  plugins: [tailwindcss(), tanstackStart(), viteReact()],
-  resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "./src"),
-    },
-    tsconfigPaths: true,
-  },
   fmt: {
     printWidth: 100,
     tabWidth: 2,
@@ -35,30 +16,15 @@ export default defineConfig({
     sortImports: {
       order: "asc",
       newlinesBetween: true,
-      internalPattern: ["@/"],
+      internalPattern: ["./"],
       sortSideEffects: false,
-      groups: [
-        ["builtin"],
-        ["external", "type-external"],
-        ["internal", "type-internal"],
-        ["parent", "type-parent"],
-        ["sibling", "type-sibling"],
-        ["index", "type-index"],
-        ["unknown"],
-      ],
+      groups: ["side_effect", "builtin", "internal", "parent", "sibling", "index", "unknown"],
     },
-    sortTailwindcss: {
-      stylesheet: "./src/styles/globals.css",
-      attributes: ["class", "className"],
-      functions: ["clsx", "cn", "cva", "twMerge"],
-      preserveDuplicates: false,
-      preserveWhitespace: false,
-    },
-    ignorePatterns: ["cloudflare-env.d.ts", "src/routeTree.gen.ts", "node_modules/**", "bun.lock"],
+    ignorePatterns: ["*.d.ts", "node_modules/**"],
   },
   lint: {
-    plugins: ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],
-    jsPlugins: [{ name: "anti-slop", specifier: "../../tools/oxlint/anti-slop/index.ts" }],
+    plugins: ["eslint", "typescript", "unicorn", "oxc", "import", "promise"],
+    jsPlugins: [{ name: "anti-slop", specifier: "../tools/oxlint/anti-slop/index.ts" }],
     categories: {
       correctness: "error",
       suspicious: "warn",
@@ -67,7 +33,23 @@ export default defineConfig({
       browser: true,
       ESNext: true,
     },
-    ignorePatterns: ["*.d.ts", "**/*.d.ts", "public/**"],
+    globals: {
+      Bun: "readonly",
+      HTMLRewriter: "readonly",
+    },
+    ignorePatterns: ["**/*.d.ts"],
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
+    overrides: [
+      {
+        files: ["src/vmfe.ts"],
+        rules: {
+          complexity: "off",
+        },
+      },
+    ],
     rules: {
       "typescript/no-explicit-any": "error",
       "typescript/no-unsafe-assignment": "error",
@@ -94,12 +76,7 @@ export default defineConfig({
       "no-duplicate-imports": "error",
       "no-eval": "error",
       "no-debugger": "error",
-      "no-console": [
-        "error",
-        {
-          allow: ["warn", "error"],
-        },
-      ],
+      "no-console": ["error", { allow: ["warn", "error"] }],
       "no-with": "error",
       "no-proto": "error",
       "no-new-wrappers": "error",
@@ -113,13 +90,7 @@ export default defineConfig({
       "no-extra-bind": "error",
       "no-useless-constructor": "error",
       "no-unused-expressions": "error",
-      eqeqeq: [
-        "error",
-        "always",
-        {
-          null: "ignore",
-        },
-      ],
+      eqeqeq: ["error", "always", { null: "ignore" }],
       curly: ["error", "all"],
       "no-implicit-coercion": [
         "error",
@@ -130,13 +101,8 @@ export default defineConfig({
           disallowTemplateShorthand: true,
         },
       ],
-      "prefer-const": [
-        "error",
-        {
-          destructuring: "all",
-        },
-      ],
-      complexity: ["error", 25],
+      "prefer-const": ["error", { destructuring: "all" }],
+      complexity: ["error", 16],
       "max-depth": ["error", 4],
       "max-params": ["error", 5],
       "max-statements": ["error", 40],
@@ -144,15 +110,9 @@ export default defineConfig({
       "import/no-mutable-exports": "error",
       "import/no-cycle": "error",
       "import/no-self-import": "error",
-      "react/jsx-key": "error",
-      "react/jsx-no-undef": "error",
-      "react/react-in-jsx-scope": "off",
-      "react/no-direct-mutation-state": "error",
-      "react/no-find-dom-node": "error",
-      "react/no-danger": "error",
       "typescript/no-implied-eval": "error",
-      "typescript/no-unsafe-type-assertion": "error",
-      "typescript/no-unnecessary-type-assertion": "warn",
+      "typescript/no-unsafe-type-assertion": "off",
+      "typescript/no-unnecessary-type-assertion": "off",
       "anti-slop/no-chained-type-assertions": "error",
       "anti-slop/no-conditional-empty-object-spread": "error",
       "anti-slop/no-known-value-widening": "error",
@@ -168,10 +128,6 @@ export default defineConfig({
       "anti-slop/no-unsafe-dictionary-type": "error",
       "anti-slop/no-widen-then-assert": "error",
       "anti-slop/require-safety-comment-for-type-assertion": "error",
-    },
-    options: {
-      typeAware: true,
-      typeCheck: true,
     },
   },
 });

@@ -1,6 +1,5 @@
 {
   "name": "@jfa.dev/router",
-  "version": "0.1.0-rc",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,9 +14,9 @@
     "hono": "catalog:backend"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
     "@types/bun": "catalog:types",
     "@types/node": "catalog:types",
-    "@cloudflare/workers-types": "catalog:cloudflare",
     "typescript": "catalog:build",
     "vite-plus": "catalog:build"
   }

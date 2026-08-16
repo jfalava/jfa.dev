@@ -2,11 +2,7 @@
 
 import { describe, expect, test } from "bun:test";
 
-import {
-  applyListMutation,
-  createStarterListSnapshot,
-  parseListSnapshot,
-} from "./lists";
+import { applyListMutation, createStarterListSnapshot, parseListSnapshot } from "./lists";
 
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000001";
 const NOW = "2026-08-14T10:00:00.000Z";
@@ -46,12 +42,8 @@ describe("list contract", () => {
 
     const nextSnapshot = applyListMutation(snapshot, mutation, NOW);
     expect(nextSnapshot?.revision).toBe(1);
-    expect(nextSnapshot?.items[nextSnapshot.items.length - 1]?.name).toBe(
-      "Milk",
-    );
-    expect(
-      applyListMutation(snapshot, { ...mutation, baseRevision: 1 }, NOW),
-    ).toBeNull();
+    expect(nextSnapshot?.items[nextSnapshot.items.length - 1]?.name).toBe("Milk");
+    expect(applyListMutation(snapshot, { ...mutation, baseRevision: 1 }, NOW)).toBeNull();
   });
 
   test("keeps the local signer on created, edited, and deleted items", () => {
@@ -222,10 +214,7 @@ describe("list contract", () => {
     );
 
     expect(nextSnapshot?.items.map((item) => item.position)).toEqual([0, 1]);
-    expect(nextSnapshot?.items.map((item) => item.name)).toEqual([
-      "Bread",
-      "Coffee",
-    ]);
+    expect(nextSnapshot?.items.map((item) => item.name)).toEqual(["Bread", "Coffee"]);
     expect(nextSnapshot?.deletedItems[0]?.name).toBe("Tomatoes");
     expect(nextSnapshot?.deletedItems[0]?.archiveId).toBe("starter-tomatoes:1");
   });
@@ -264,11 +253,7 @@ describe("list contract", () => {
       },
       NOW,
     );
-    expect(restored?.items.map((item) => item.name)).toEqual([
-      "Tomatoes",
-      "Coffee",
-      "Bread",
-    ]);
+    expect(restored?.items.map((item) => item.name)).toEqual(["Tomatoes", "Coffee", "Bread"]);
     expect(restored?.deletedItems).toEqual([]);
 
     const removedAgain = applyListMutation(
