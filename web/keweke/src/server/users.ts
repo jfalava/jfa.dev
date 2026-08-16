@@ -1,4 +1,5 @@
 import {
+  deviceForgetSigningPayload,
   deviceRevocationSigningPayload,
   listDeletionSigningPayload,
   pairingApprovalSigningPayload,
@@ -59,6 +60,11 @@ const renameInputSchema = z.object({
 });
 
 const revokeInputSchema = z.object({
+  auth: identityAuthSchema,
+  targetDeviceId: identityIdSchema,
+});
+
+const forgetInputSchema = z.object({
   auth: identityAuthSchema,
   targetDeviceId: identityIdSchema,
 });
@@ -227,5 +233,25 @@ export const revokeUserDevice = createServerFn({ method: "POST" })
     });
     return profile
       ? { status: "revoked" as const, profile: userProfileSchema.parse(profile) }
+      : { status: "unauthorized" as const };
+  });
+
+export const forgetUserDevice = createServerFn({ method: "POST" })
+  .validator(forgetInputSchema)
+  .handler(async ({ data }) => {
+    const payload = deviceForgetSigningPayload({
+      userId: data.auth.userId,
+      approverDeviceId: data.auth.deviceId,
+      targetDeviceId: data.targetDeviceId,
+    });
+    const profile = await env.KEWEKE_USERS.getByName(data.auth.userId).forgetDevice({
+      userId: data.auth.userId,
+      approverDeviceId: data.auth.deviceId,
+      targetDeviceId: data.targetDeviceId,
+      signature: data.auth.signature,
+      payload,
+    });
+    return profile
+      ? { status: "forgotten" as const, profile: userProfileSchema.parse(profile) }
       : { status: "unauthorized" as const };
   });

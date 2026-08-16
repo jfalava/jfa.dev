@@ -1,4 +1,5 @@
 import {
+  deviceForgetSigningPayload,
   deviceRevocationSigningPayload,
   generatePairingCode,
   pairingApprovalSigningPayload,
@@ -31,6 +32,7 @@ import {
   approveDevicePairing,
   createRemoteUser,
   deleteRemoteUser,
+  forgetUserDevice,
   getDevicePairingStatus,
   getUserProfile,
   revokeUserDevice,
@@ -114,6 +116,7 @@ export function useUserManager({
   const [isConfirmingDeleteAccount, setIsConfirmingDeleteAccount] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [confirmingDeviceId, setConfirmingDeviceId] = useState<string>();
+  const [forgettingDeviceId, setForgettingDeviceId] = useState<string>();
 
   const resetFeedback = useCallback((): void => {
     setFeedback(undefined);
@@ -561,6 +564,39 @@ export function useUserManager({
     }
   };
 
+  const forget = async (deviceId: string): Promise<void> => {
+    if (!identity) {
+      return;
+    }
+    setForgettingDeviceId(undefined);
+    resetFeedback();
+    try {
+      const auth = {
+        userId: identity.userId,
+        deviceId: identity.deviceId,
+        signature: UNSIGNED_SIGNATURE,
+      };
+      const signature = await signLocalPayload(
+        deviceForgetSigningPayload({
+          userId: auth.userId,
+          approverDeviceId: auth.deviceId,
+          targetDeviceId: deviceId,
+        }),
+      );
+      const result = await forgetUserDevice({
+        data: { auth: { ...auth, signature }, targetDeviceId: deviceId },
+      });
+      if (result.status === "forgotten") {
+        setProfile(result.profile);
+        setMessage("devices", "The device was removed.");
+      } else {
+        setError("devices", "This device could not be removed.");
+      }
+    } catch {
+      setError("devices", "This device could not be removed.");
+    }
+  };
+
   const logOut = async (): Promise<void> => {
     setIsLoggingOut(true);
     resetFeedback();
@@ -651,6 +687,7 @@ export function useUserManager({
     setIsConfirmingLogOut(false);
     setDeleteConfirmation("");
     setConfirmingDeviceId(undefined);
+    setForgettingDeviceId(undefined);
   }, [resetFeedback]);
 
   return {
@@ -689,6 +726,8 @@ export function useUserManager({
     setDeleteConfirmation,
     confirmingDeviceId,
     setConfirmingDeviceId,
+    forgettingDeviceId,
+    setForgettingDeviceId,
     canManagePasskeys,
     passkeyAvailable,
     save,
@@ -700,6 +739,7 @@ export function useUserManager({
     findDevice,
     approve,
     revoke,
+    forget,
     logOut,
     clearData,
     deleteAccount,

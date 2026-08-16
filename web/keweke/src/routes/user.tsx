@@ -67,26 +67,139 @@ type DeviceRow = {
 const devicesTableFeatures = tableFeatures({});
 const devicesColumnHelper = createColumnHelper<typeof devicesTableFeatures, DeviceRow>();
 
+// Desktop shows one column per field (Device, Device ID, Status, Actions); mobile collapses
+// Device/Device ID/Status into a single "info" column so only two columns remain.
+const DEVICE_COLUMN_CLASSNAMES = {
+  info: "sm:hidden",
+  device: "hidden sm:table-cell",
+  deviceId: "hidden sm:table-cell",
+  status: "hidden sm:table-cell",
+  actions: "text-right",
+} satisfies Record<string, string>;
+
+type DeviceColumnId = keyof typeof DEVICE_COLUMN_CLASSNAMES;
+
+function isDeviceColumnId(id: string): id is DeviceColumnId {
+  return Object.hasOwn(DEVICE_COLUMN_CLASSNAMES, id);
+}
+
+function deviceColumnClassName(id: string): string | undefined {
+  return isDeviceColumnId(id) ? DEVICE_COLUMN_CLASSNAMES[id] : undefined;
+}
+
+function DeviceLabel({ isCurrent }: { isCurrent: boolean }) {
+  return (
+    <p className="text-sm font-medium">{isCurrent ? "This device" : "Other device"}</p>
+  );
+}
+
+function DeviceStatus({ isRevoked }: { isRevoked: boolean }) {
+  return isRevoked ? (
+    <span className="text-sm font-medium text-destructive">Revoked</span>
+  ) : (
+    <span className="text-sm font-medium text-primary">Active</span>
+  );
+}
+
+function DeviceRowActions({
+  deviceId,
+  isRevoked,
+  confirmingDeviceId,
+  forgettingDeviceId,
+  onCancelForget,
+  onCancelRevoke,
+  onConfirmForget,
+  onConfirmRevoke,
+  onForget,
+  onRevoke,
+}: {
+  deviceId: string;
+  isRevoked: boolean;
+  confirmingDeviceId?: string;
+  forgettingDeviceId?: string;
+  onCancelForget: () => void;
+  onCancelRevoke: () => void;
+  onConfirmForget: (deviceId: string) => void;
+  onConfirmRevoke: (deviceId: string) => void;
+  onForget: (deviceId: string) => void;
+  onRevoke: (deviceId: string) => void;
+}) {
+  if (isRevoked) {
+    if (forgettingDeviceId === deviceId) {
+      return (
+        <div className="flex shrink-0 justify-end gap-1.5">
+          <Button onPress={() => onForget(deviceId)} size="sm" variant="destructive">
+            Confirm
+          </Button>
+          <Button onPress={onCancelForget} size="sm" variant="ghost">
+            Cancel
+          </Button>
+        </div>
+      );
+    }
+    return (
+      <div className="flex justify-end">
+        <Button
+          className="gap-1.5"
+          onPress={() => onConfirmForget(deviceId)}
+          size="sm"
+          variant="ghost"
+        >
+          <Trash2 aria-hidden="true" className="size-3.5" />
+          Delete
+        </Button>
+      </div>
+    );
+  }
+
+  if (confirmingDeviceId === deviceId) {
+    return (
+      <div className="flex shrink-0 justify-end gap-1.5">
+        <Button onPress={() => onRevoke(deviceId)} size="sm" variant="destructive">
+          Confirm
+        </Button>
+        <Button onPress={onCancelRevoke} size="sm" variant="ghost">
+          Cancel
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-end">
+      <Button onPress={() => onConfirmRevoke(deviceId)} size="sm" variant="ghost">
+        Revoke
+      </Button>
+    </div>
+  );
+}
+
 function createDevicesColumns({
   confirmingDeviceId,
+  forgettingDeviceId,
+  onCancelForget,
   onCancelRevoke,
+  onConfirmForget,
   onConfirmRevoke,
+  onForget,
   onRevoke,
 }: {
   confirmingDeviceId?: string;
+  forgettingDeviceId?: string;
+  onCancelForget: () => void;
   onCancelRevoke: () => void;
+  onConfirmForget: (deviceId: string) => void;
   onConfirmRevoke: (deviceId: string) => void;
+  onForget: (deviceId: string) => void;
   onRevoke: (deviceId: string) => void;
 }) {
   return devicesColumnHelper.columns([
     devicesColumnHelper.display({
-      id: "device",
+      id: "info",
       header: "Device",
       cell: ({ row }) => (
         <div className="min-w-0">
-          <p className="text-sm font-medium">
-            {row.original.isCurrent ? "This device" : "Other device"}
-          </p>
+          <DeviceLabel isCurrent={row.original.isCurrent} />
           <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
             {row.original.deviceId.slice(0, 16)}… ·{" "}
             {row.original.isRevoked ? (
@@ -99,56 +212,65 @@ function createDevicesColumns({
       ),
     }),
     devicesColumnHelper.display({
+      id: "device",
+      header: "Device",
+      cell: ({ row }) => <DeviceLabel isCurrent={row.original.isCurrent} />,
+    }),
+    devicesColumnHelper.display({
+      id: "deviceId",
+      header: "Device ID",
+      cell: ({ row }) => (
+        <p className="font-mono text-[11px] break-all text-muted-foreground">
+          {row.original.deviceId}
+        </p>
+      ),
+    }),
+    devicesColumnHelper.display({
+      id: "status",
+      header: "Status",
+      cell: ({ row }) => <DeviceStatus isRevoked={row.original.isRevoked} />,
+    }),
+    devicesColumnHelper.display({
       id: "actions",
       header: "",
-      cell: ({ row }) => {
-        if (row.original.isRevoked) {
-          return null;
-        }
-        if (confirmingDeviceId === row.original.deviceId) {
-          return (
-            <div className="flex shrink-0 justify-end gap-1.5">
-              <Button
-                onPress={() => onRevoke(row.original.deviceId)}
-                size="sm"
-                variant="destructive"
-              >
-                Confirm
-              </Button>
-              <Button onPress={onCancelRevoke} size="sm" variant="ghost">
-                Cancel
-              </Button>
-            </div>
-          );
-        }
-        return (
-          <div className="flex justify-end">
-            <Button
-              onPress={() => onConfirmRevoke(row.original.deviceId)}
-              size="sm"
-              variant="ghost"
-            >
-              Revoke
-            </Button>
-          </div>
-        );
-      },
+      cell: ({ row }) => (
+        <DeviceRowActions
+          confirmingDeviceId={confirmingDeviceId}
+          deviceId={row.original.deviceId}
+          forgettingDeviceId={forgettingDeviceId}
+          isRevoked={row.original.isRevoked}
+          onCancelForget={onCancelForget}
+          onCancelRevoke={onCancelRevoke}
+          onConfirmForget={onConfirmForget}
+          onConfirmRevoke={onConfirmRevoke}
+          onForget={onForget}
+          onRevoke={onRevoke}
+        />
+      ),
     }),
   ]);
 }
 
 function DevicesTable({
   confirmingDeviceId,
+  forgettingDeviceId,
   identity,
+  onCancelForget,
   onCancelRevoke,
+  onConfirmForget,
   onConfirmRevoke,
+  onForget,
   onRevoke,
   profile,
 }: {
   confirmingDeviceId?: string;
+  forgettingDeviceId?: string;
   identity?: LocalIdentity;
+  onCancelForget: () => void;
   onCancelRevoke: () => void;
+  onConfirmForget: (deviceId: string) => void;
   onConfirmRevoke: (deviceId: string) => void;
+  onForget: (deviceId: string) => void;
   onRevoke: (deviceId: string) => void;
   profile: UserProfile;
 }) {
@@ -162,8 +284,27 @@ function DevicesTable({
     [identity?.deviceId, profile.devices],
   );
   const columns = useMemo(
-    () => createDevicesColumns({ confirmingDeviceId, onCancelRevoke, onConfirmRevoke, onRevoke }),
-    [confirmingDeviceId, onCancelRevoke, onConfirmRevoke, onRevoke],
+    () =>
+      createDevicesColumns({
+        confirmingDeviceId,
+        forgettingDeviceId,
+        onCancelForget,
+        onCancelRevoke,
+        onConfirmForget,
+        onConfirmRevoke,
+        onForget,
+        onRevoke,
+      }),
+    [
+      confirmingDeviceId,
+      forgettingDeviceId,
+      onCancelForget,
+      onCancelRevoke,
+      onConfirmForget,
+      onConfirmRevoke,
+      onForget,
+      onRevoke,
+    ],
   );
   const table = useTable({
     features: devicesTableFeatures,
@@ -178,7 +319,10 @@ function DevicesTable({
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow className="hover:bg-transparent" key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
+              <TableHead
+                className={deviceColumnClassName(header.column.id)}
+                key={header.id}
+              >
                 {header.isPlaceholder ? null : <table.FlexRender header={header} />}
               </TableHead>
             ))}
@@ -189,7 +333,7 @@ function DevicesTable({
         {table.getRowModel().rows.map((row) => (
           <TableRow key={row.id}>
             {row.getAllCells().map((cell) => (
-              <TableCell key={cell.id}>
+              <TableCell className={deviceColumnClassName(cell.column.id)} key={cell.id}>
                 <table.FlexRender cell={cell} />
               </TableCell>
             ))}
@@ -381,6 +525,8 @@ function UserRoutePage() {
     setDeleteConfirmation,
     confirmingDeviceId,
     setConfirmingDeviceId,
+    forgettingDeviceId,
+    setForgettingDeviceId,
     canManagePasskeys,
     passkeyAvailable,
     save,
@@ -392,6 +538,7 @@ function UserRoutePage() {
     findDevice,
     approve,
     revoke,
+    forget,
     logOut,
     clearData,
     deleteAccount,
@@ -594,9 +741,13 @@ function UserRoutePage() {
           <div>
             <DevicesTable
               confirmingDeviceId={confirmingDeviceId}
+              forgettingDeviceId={forgettingDeviceId}
               identity={identity}
+              onCancelForget={() => setForgettingDeviceId(undefined)}
               onCancelRevoke={() => setConfirmingDeviceId(undefined)}
+              onConfirmForget={(deviceId) => setForgettingDeviceId(deviceId)}
               onConfirmRevoke={(deviceId) => setConfirmingDeviceId(deviceId)}
+              onForget={(deviceId) => void forget(deviceId)}
               onRevoke={(deviceId) => void revoke(deviceId)}
               profile={profile}
             />
@@ -832,6 +983,8 @@ function UserRoutePage() {
     deleteConfirmation,
     feedback,
     findDevice,
+    forget,
+    forgettingDeviceId,
     identity,
     isAdopting,
     isAdoptingPasskey,
@@ -860,6 +1013,7 @@ function UserRoutePage() {
     setApprovalCode,
     setConfirmingDeviceId,
     setDeleteConfirmation,
+    setForgettingDeviceId,
     setIsConfirmingClearData,
     setIsConfirmingDeleteAccount,
     setIsConfirmingLogOut,

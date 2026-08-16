@@ -247,6 +247,14 @@ export function deviceRevocationSigningPayload(input: {
   return canonicalPayload("keweke:device-revocation:v1", input);
 }
 
+export function deviceForgetSigningPayload(input: {
+  userId: string;
+  approverDeviceId: string;
+  targetDeviceId: string;
+}): string {
+  return canonicalPayload("keweke:device-forget:v1", input);
+}
+
 export function aliasSigningPayload(input: {
   listId: string;
   userId: string;

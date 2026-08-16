@@ -684,6 +684,38 @@ export class KewekeUserDirectory extends DurableObject {
     return this.readProfile(auth.data.userId);
   }
 
+  async forgetDevice(input: {
+    userId: string;
+    approverDeviceId: string;
+    targetDeviceId: string;
+    signature: string;
+    payload: string;
+  }): Promise<UserProfile | null> {
+    const auth = identityAuthSchema.safeParse({
+      userId: input.userId,
+      deviceId: input.approverDeviceId,
+      signature: input.signature,
+    });
+    const targetDeviceId = identityIdSchema.safeParse(input.targetDeviceId);
+    if (!auth.success || !targetDeviceId.success) {
+      return null;
+    }
+
+    const authorization = await this.authorizeDevice({ auth: auth.data, payload: input.payload });
+    if (!authorization) {
+      return null;
+    }
+    const target = (await this.readProfile(auth.data.userId))?.devices.find(
+      (device) => device.deviceId === targetDeviceId.data,
+    );
+    if (!target || target.revokedAt === null) {
+      return null;
+    }
+
+    this.ctx.storage.sql.exec("DELETE FROM devices WHERE device_id = ?", targetDeviceId.data);
+    return this.readProfile(auth.data.userId);
+  }
+
   private async authorizeDevice(input: {
     auth: { userId: string; deviceId: string; signature: string };
     payload: string;
