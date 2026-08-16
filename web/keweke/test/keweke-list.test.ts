@@ -37,6 +37,7 @@ const NINTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000028";
 const TENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000029";
 const ELEVENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000030";
 const TWELFTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000031";
+const THIRTEENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000032";
 const NOW = "2026-08-14T10:00:00.000Z";
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
@@ -477,6 +478,35 @@ describe("public-key list authorization", () => {
     ).not.toBeNull();
 
     expect((await listStub.applyMutation(SECOND_LIST_ID, valid)).status).toBe("unauthorized");
+  });
+
+  it("serializes concurrent mutations so only one applies per base revision", async () => {
+    const identity = await createIdentity("Concurrent");
+    const { listStub, snapshot } = await publish(identity, THIRTEENTH_LIST_ID);
+
+    const first = await signedMutation(identity, snapshot, {
+      type: "set-item-checked",
+      itemId: "starter-bread",
+      checked: true,
+    });
+    const second = await signedMutation(identity, snapshot, {
+      type: "set-item-checked",
+      itemId: "starter-tomatoes",
+      checked: true,
+    });
+
+    const results = await Promise.all([
+      listStub.applyMutation(THIRTEENTH_LIST_ID, first),
+      listStub.applyMutation(THIRTEENTH_LIST_ID, second),
+    ]);
+
+    expect(results.map((result) => result.status).toSorted()).toEqual(["conflict", "ok"]);
+
+    const final = await listStub.getSnapshot(THIRTEENTH_LIST_ID);
+    expect(final?.revision).toBe(1);
+    const bread = final?.items.find((item) => item.id === "starter-bread");
+    const tomatoes = final?.items.find((item) => item.id === "starter-tomatoes");
+    expect(Number(bread?.checked) + Number(tomatoes?.checked)).toBe(1);
   });
 
   it("deletes only created lists, releases aliases, and is idempotent", async () => {

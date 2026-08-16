@@ -171,11 +171,6 @@ export class KewekeList extends DurableObject {
   async applyMutation(listId: string, mutation: ListMutation): Promise<ApplyMutationResult> {
     const normalizedListId = listIdSchema.parse(listId);
     const parsedMutation = parseListMutation(mutation);
-    const current = this.readSnapshot();
-
-    if (!current || current.id !== normalizedListId) {
-      return { status: "missing" };
-    }
 
     if (!parsedMutation.auth) {
       return { status: "unauthorized" };
@@ -194,46 +189,56 @@ export class KewekeList extends DurableObject {
       actor: { id: authorization.userId, username: authorization.username },
     };
 
-    const alreadyApplied = this.ctx.storage.sql
-      .exec<{ revision: number }>(
-        "SELECT revision FROM applied_mutations WHERE id = ?",
-        parsedMutation.id,
-      )
-      .toArray()[0];
-    if (alreadyApplied) {
-      await this.recordListTouched(parsedMutation.auth.userId, normalizedListId);
-      return { status: "ok", snapshot: current };
-    }
+    const result = await this.ctx.blockConcurrencyWhile(async (): Promise<ApplyMutationResult> => {
+      const current = this.readSnapshot();
+      if (!current || current.id !== normalizedListId) {
+        return { status: "missing" };
+      }
 
-    const now = new Date().toISOString();
-    const applied = applyListMutationWithDiff(current, authorizedMutation, now);
-    if (!applied) {
-      return { status: "conflict", snapshot: current };
-    }
-    const next = applied.snapshot;
+      const alreadyApplied = this.ctx.storage.sql
+        .exec<{ revision: number }>(
+          "SELECT revision FROM applied_mutations WHERE id = ?",
+          parsedMutation.id,
+        )
+        .toArray()[0];
+      if (alreadyApplied) {
+        return { status: "ok", snapshot: current };
+      }
 
-    this.ctx.storage.transactionSync(() => {
-      this.writeMutationDelta(next, applied.diff);
-      this.ctx.storage.sql.exec(
-        "INSERT INTO applied_mutations (id, revision) VALUES (?, ?)",
-        parsedMutation.id,
-        next.revision,
-      );
-      this.ctx.storage.sql.exec(
-        "DELETE FROM applied_mutations WHERE revision < ?",
-        next.revision - APPLIED_MUTATION_RETENTION,
-      );
+      const now = new Date().toISOString();
+      const applied = applyListMutationWithDiff(current, authorizedMutation, now);
+      if (!applied) {
+        return { status: "conflict", snapshot: current };
+      }
+      const next = applied.snapshot;
+
+      this.ctx.storage.transactionSync(() => {
+        this.writeMutationDelta(next, applied.diff);
+        this.ctx.storage.sql.exec(
+          "INSERT INTO applied_mutations (id, revision) VALUES (?, ?)",
+          parsedMutation.id,
+          next.revision,
+        );
+        this.ctx.storage.sql.exec(
+          "DELETE FROM applied_mutations WHERE revision < ?",
+          next.revision - APPLIED_MUTATION_RETENTION,
+        );
+      });
+
+      const liveMutation: LiveListMutation = {
+        id: authorizedMutation.id,
+        baseRevision: authorizedMutation.baseRevision,
+        actor: authorizedMutation.actor,
+        command: authorizedMutation.command,
+      };
+      this.broadcast({ type: "mutation", mutation: liveMutation, appliedAt: now });
+      return { status: "ok", snapshot: next };
     });
 
-    const liveMutation: LiveListMutation = {
-      id: authorizedMutation.id,
-      baseRevision: authorizedMutation.baseRevision,
-      actor: authorizedMutation.actor,
-      command: authorizedMutation.command,
-    };
-    this.broadcast({ type: "mutation", mutation: liveMutation, appliedAt: now });
-    await this.recordListTouched(authorization.userId, normalizedListId);
-    return { status: "ok", snapshot: next };
+    if (result.status === "ok") {
+      await this.recordListTouched(authorization.userId, normalizedListId);
+    }
+    return result;
   }
 
   async importSnapshot(
