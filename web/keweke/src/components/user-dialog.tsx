@@ -115,7 +115,7 @@ export function UserDialog({
   });
 
   const dialogContent = (
-    <Modal className="flex h-[calc(100svh-3rem)] w-full max-w-lg flex-col outline-none sm:h-140 sm:max-h-[calc(100vh-5.5rem)]">
+    <Modal className="flex w-full max-w-lg flex-col outline-none sm:h-140 sm:max-h-[calc(100vh-5.5rem)]">
       <Dialog
         aria-label="Set your username"
         className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
