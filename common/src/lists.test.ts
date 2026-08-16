@@ -208,7 +208,7 @@ describe("list contract", () => {
     expect(nextSnapshot?.revision).toBe(1);
   });
 
-  test("keeps positions contiguous when removing an item", () => {
+  test("keeps sparse positions when removing an item", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
     const nextSnapshot = applyListMutation(
       snapshot,
@@ -220,10 +220,74 @@ describe("list contract", () => {
       NOW,
     );
 
-    expect(nextSnapshot?.items.map((item) => item.position)).toEqual([0, 1]);
+    expect(nextSnapshot?.items.map((item) => item.position)).toEqual([0, 2]);
     expect(nextSnapshot?.items.map((item) => item.name)).toEqual(["Bread", "Coffee"]);
     expect(nextSnapshot?.deletedItems[0]?.name).toBe("Tomatoes");
+    expect(nextSnapshot?.deletedItems[0]?.position).toBe(1);
     expect(nextSnapshot?.deletedItems[0]?.archiveId).toBe("starter-tomatoes:1");
+  });
+
+  test("appends after a sparse remove using max position + 1", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const removed = applyListMutation(
+      snapshot,
+      {
+        id: "019c5f7e-7b7b-7000-8000-000000000013",
+        baseRevision: 0,
+        command: { type: "remove-item", itemId: "starter-tomatoes" },
+      },
+      NOW,
+    )!;
+    const nextSnapshot = applyListMutation(
+      removed,
+      {
+        id: "019c5f7e-7b7b-7000-8000-000000000014",
+        baseRevision: 1,
+        command: {
+          type: "add-item",
+          item: {
+            id: "added-milk",
+            name: "Milk",
+            quantity: 1,
+            unit: "EA",
+            amount: "",
+            category: "DAIRY",
+          },
+        },
+      },
+      NOW,
+    );
+
+    expect(nextSnapshot?.items.map((item) => item.position)).toEqual([0, 2, 3]);
+    expect(nextSnapshot?.items.at(-1)?.name).toBe("Milk");
+  });
+
+  test("restores at max position + 1 without renumbering survivors", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const removed = applyListMutation(
+      snapshot,
+      {
+        id: "019c5f7e-7b7b-7000-8000-000000000015",
+        baseRevision: 0,
+        command: { type: "remove-item", itemId: "starter-bread" },
+      },
+      NOW,
+    )!;
+    const restored = applyListMutation(
+      removed,
+      {
+        id: "019c5f7e-7b7b-7000-8000-000000000016",
+        baseRevision: 1,
+        command: { type: "restore-item", archiveId: removed.deletedItems[0]!.archiveId },
+      },
+      NOW,
+    );
+
+    expect(restored?.items.map((item) => ({ id: item.id, position: item.position }))).toEqual([
+      { id: "starter-tomatoes", position: 1 },
+      { id: "starter-coffee", position: 2 },
+      { id: "starter-bread", position: 3 },
+    ]);
   });
 
   test("renames lists, restores deleted items, and permanently purges history", () => {
@@ -381,7 +445,7 @@ describe("list snapshot diff", () => {
     });
   });
 
-  test("deletes the removed row, archives it, and shifts later positions", () => {
+  test("deletes the removed row and archives it without touching survivor positions", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
     const next = apply(snapshot, { type: "remove-item", itemId: "starter-tomatoes" });
 
@@ -389,7 +453,21 @@ describe("list snapshot diff", () => {
     expect(diff.deleteItemIds).toEqual(["starter-tomatoes"]);
     expect(diff.upsertDeletedItems).toEqual(next.deletedItems);
     expect(diff.deleteArchiveIds).toEqual([]);
-    expect(diff.upsertItems.map((item) => item.id)).toEqual(["starter-coffee"]);
+    expect(diff.upsertItems).toEqual([]);
+    expect(next.items.map((item) => item.position)).toEqual([0, 2]);
+  });
+
+  test("remove first item still leaves survivor positions untouched in the diff", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const next = apply(snapshot, { type: "remove-item", itemId: "starter-bread" });
+
+    expect(diffListSnapshots(snapshot, next)).toEqual({
+      upsertItems: [],
+      deleteItemIds: ["starter-bread"],
+      upsertDeletedItems: next.deletedItems,
+      deleteArchiveIds: [],
+    });
+    expect(next.items.map((item) => item.position)).toEqual([1, 2]);
   });
 
   test("restores a deleted item by upserting the row and dropping the archive", () => {

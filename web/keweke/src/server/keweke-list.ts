@@ -383,7 +383,7 @@ export class KewekeList extends DurableObject {
       .exec<ListItemRow>(
         `SELECT id, name, quantity, unit, amount, category, checked, position, created_at, updated_at,
                 created_by_id, created_by_username, updated_by_id, updated_by_username
-         FROM items WHERE list_id = ? ORDER BY position ASC`,
+         FROM items WHERE list_id = ? ORDER BY position ASC, id ASC`,
         metadata.list_id,
       )
       .toArray()

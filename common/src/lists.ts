@@ -258,7 +258,7 @@ export function applyListMutation(
         ...snapshot.items,
         {
           ...command.item,
-          position: snapshot.items.length,
+          position: nextItemPosition(snapshot.items),
           checked: false,
           createdAt: now,
           updatedAt: now,
@@ -294,9 +294,8 @@ export function applyListMutation(
     case "remove-item":
       {
         const removedItem = snapshot.items.find((item) => item.id === command.itemId);
-        nextItems = snapshot.items
-          .filter((item) => item.id !== command.itemId)
-          .map((item, index) => ({ ...item, position: index }));
+        // Sparse positions: survivors keep their ranks so remove is O(1) row writes.
+        nextItems = snapshot.items.filter((item) => item.id !== command.itemId);
         if (removedItem) {
           nextDeletedItems = [
             ...snapshot.deletedItems,
@@ -326,7 +325,7 @@ export function applyListMutation(
               amount: deletedItem.amount,
               category: deletedItem.category,
               checked: deletedItem.checked,
-              position: snapshot.items.length,
+              position: nextItemPosition(snapshot.items),
               createdAt: deletedItem.createdAt,
               updatedAt: now,
               createdBy: deletedItem.createdBy,
@@ -352,7 +351,7 @@ export function applyListMutation(
   return {
     ...snapshot,
     title: nextTitle,
-    items: nextItems,
+    items: [...nextItems].toSorted(compareListItemsByPosition),
     deletedItems: nextDeletedItems,
     revision: snapshot.revision + 1,
     updatedAt: now,
@@ -361,6 +360,24 @@ export function applyListMutation(
 
 export function parseListSnapshot(value: z.input<typeof listSnapshotSchema>): ListSnapshot {
   return listSnapshotSchema.parse(value);
+}
+
+function nextItemPosition(items: readonly ListItem[]): number {
+  let maxPosition = -1;
+  for (const item of items) {
+    if (item.position > maxPosition) {
+      maxPosition = item.position;
+    }
+  }
+  return maxPosition + 1;
+}
+
+/** Sort key for list order: sparse positions ascending, id as stable tie-break. */
+export function compareListItemsByPosition(left: ListItem, right: ListItem): number {
+  if (left.position !== right.position) {
+    return left.position - right.position;
+  }
+  return left.id < right.id ? -1 : left.id > right.id ? 1 : 0;
 }
 
 function identitiesEqual(left: ListIdentity | null, right: ListIdentity | null): boolean {
