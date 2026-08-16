@@ -559,9 +559,6 @@ function UserRoutePage() {
       content: (
         <div>
           <form id="username-form" onSubmit={(event) => void save(event)}>
-            <label className="text-xs font-medium" htmlFor="user-username">
-              Username
-            </label>
             <Input
               autoComplete="nickname"
               className="mt-1.5 h-10 font-serif text-base sm:text-sm"
