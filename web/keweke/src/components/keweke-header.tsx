@@ -73,18 +73,7 @@ export function KewekeHeader({
 
         <nav className="flex shrink-0 items-center gap-1" aria-label="General navigation">
           <OpenListCommand />
-          <Link
-            to="/user"
-            aria-label="User"
-            className={buttonVariants({
-              variant: "outline",
-              size: "icon",
-              className: "w-7 sm:w-auto sm:gap-1 sm:px-2",
-            })}
-          >
-            <UserRound aria-hidden="true" className="size-3.5" />
-            <span className="hidden sm:inline">User</span>
-          </Link>
+
           {isUserDialogOpen !== undefined ? (
             <UserDialog
               isOpen={isUserDialogOpen}
@@ -95,6 +84,18 @@ export function KewekeHeader({
             />
           ) : null}
           <ThemeToggle />
+          <Link
+            to="/user"
+            aria-label="User"
+            className={buttonVariants({
+              variant: "default",
+              size: "icon",
+              className: "w-7 sm:w-auto sm:gap-1 sm:px-2",
+            })}
+          >
+            <UserRound aria-hidden="true" className="size-3.5" />
+            <span className="hidden sm:inline">User</span>
+          </Link>
           {backend === "local" && onMigrate ? (
             <Button
               aria-label="Publish list to a remote list"
