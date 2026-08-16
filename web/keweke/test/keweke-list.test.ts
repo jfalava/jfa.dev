@@ -36,6 +36,7 @@ const EIGHTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000027";
 const NINTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000028";
 const TENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000029";
 const ELEVENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000030";
+const TWELFTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000031";
 const NOW = "2026-08-14T10:00:00.000Z";
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
@@ -275,6 +276,61 @@ describe("public-key list authorization", () => {
     );
     expect(retry.status).toBe("ok");
     expect(stale.status).toBe("conflict");
+  });
+
+  it("persists every mutation command incrementally and round-trips through getSnapshot", async () => {
+    const identity = await createIdentity("Delta");
+    const { listStub, snapshot } = await publish(identity, TWELFTH_LIST_ID);
+    let expected = snapshot;
+
+    const apply = async (command: ListCommand) => {
+      const applied = await listStub.applyMutation(
+        TWELFTH_LIST_ID,
+        await signedMutation(identity, expected, command),
+      );
+      expect(applied.status).toBe("ok");
+      if (applied.status !== "ok") {
+        return null;
+      }
+      expected = applied.snapshot;
+      expect(await listStub.getSnapshot(TWELFTH_LIST_ID)).toEqual(expected);
+      return applied.snapshot;
+    };
+
+    await apply({
+      type: "add-item",
+      item: {
+        id: "delta-milk",
+        name: "Milk",
+        quantity: 2,
+        unit: "EA",
+        amount: "",
+        category: "DAIRY",
+      },
+    });
+    await apply({
+      type: "update-item",
+      itemId: "delta-milk",
+      changes: { name: "Oat milk", quantity: 3 },
+    });
+    await apply({ type: "set-item-checked", itemId: "delta-milk", checked: true });
+    await apply({ type: "rename-list", title: "Delta list" });
+
+    const removed = await apply({ type: "remove-item", itemId: "delta-milk" });
+    const archiveId = removed?.deletedItems[0]?.archiveId ?? "";
+    expect(archiveId).not.toBe("");
+
+    const restored = await apply({ type: "restore-item", archiveId });
+    expect(restored?.deletedItems).toEqual([]);
+    expect(restored?.items.some((item) => item.id === "delta-milk")).toBe(true);
+
+    const removedAgain = await apply({ type: "remove-item", itemId: "delta-milk" });
+    const purgeArchiveId = removedAgain?.deletedItems[0]?.archiveId ?? "";
+    const purged = await apply({ type: "purge-deleted-item", archiveId: purgeArchiveId });
+    expect(purged?.deletedItems).toEqual([]);
+    expect(purged?.items.some((item) => item.id === "delta-milk")).toBe(false);
+
+    expect(await listStub.getSnapshot(TWELFTH_LIST_ID)).toEqual(expected);
   });
 
   it("streams the current snapshot and committed updates to live sessions", async () => {

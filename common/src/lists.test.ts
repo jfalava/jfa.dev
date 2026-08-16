@@ -2,7 +2,14 @@
 
 import { describe, expect, test } from "bun:test";
 
-import { applyListMutation, createStarterListSnapshot, parseListSnapshot } from "./lists";
+import {
+  applyListMutation,
+  createStarterListSnapshot,
+  diffListSnapshots,
+  parseListSnapshot,
+  type ListMutation,
+  type ListSnapshot,
+} from "./lists";
 
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000001";
 const NOW = "2026-08-14T10:00:00.000Z";
@@ -297,5 +304,132 @@ describe("list contract", () => {
 
     expect(renamed?.title).toBe("Saturday market");
     expect(renamed?.alias).toBe(snapshot.alias);
+  });
+});
+
+function apply(snapshot: ListSnapshot, command: ListMutation["command"], now = NOW): ListSnapshot {
+  return applyListMutation(
+    snapshot,
+    { id: crypto.randomUUID(), baseRevision: snapshot.revision, command },
+    now,
+  )!;
+}
+
+describe("list snapshot diff", () => {
+  test("is empty between identical snapshots", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+
+    expect(diffListSnapshots(snapshot, snapshot)).toEqual({
+      upsertItems: [],
+      deleteItemIds: [],
+      upsertDeletedItems: [],
+      deleteArchiveIds: [],
+    });
+  });
+
+  test("touches one item row for a checked toggle", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const next = apply(snapshot, {
+      type: "set-item-checked",
+      itemId: "starter-bread",
+      checked: true,
+    });
+
+    expect(diffListSnapshots(snapshot, next)).toEqual({
+      upsertItems: [next.items[0]],
+      deleteItemIds: [],
+      upsertDeletedItems: [],
+      deleteArchiveIds: [],
+    });
+  });
+
+  test("inserts one item row for an added item", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const next = apply(snapshot, {
+      type: "add-item",
+      item: {
+        id: "added-milk",
+        name: "Milk",
+        quantity: 2,
+        unit: "EA",
+        amount: "",
+        category: "DAIRY",
+      },
+    });
+
+    expect(diffListSnapshots(snapshot, next)).toEqual({
+      upsertItems: [next.items[next.items.length - 1]],
+      deleteItemIds: [],
+      upsertDeletedItems: [],
+      deleteArchiveIds: [],
+    });
+  });
+
+  test("touches one item row for an edited item", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const next = apply(snapshot, {
+      type: "update-item",
+      itemId: "starter-bread",
+      changes: { name: "Sourdough", quantity: 2 },
+    });
+
+    expect(diffListSnapshots(snapshot, next)).toEqual({
+      upsertItems: [next.items[0]],
+      deleteItemIds: [],
+      upsertDeletedItems: [],
+      deleteArchiveIds: [],
+    });
+  });
+
+  test("deletes the removed row, archives it, and shifts later positions", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const next = apply(snapshot, { type: "remove-item", itemId: "starter-tomatoes" });
+
+    const diff = diffListSnapshots(snapshot, next);
+    expect(diff.deleteItemIds).toEqual(["starter-tomatoes"]);
+    expect(diff.upsertDeletedItems).toEqual(next.deletedItems);
+    expect(diff.deleteArchiveIds).toEqual([]);
+    expect(diff.upsertItems.map((item) => item.id)).toEqual(["starter-coffee"]);
+  });
+
+  test("restores a deleted item by upserting the row and dropping the archive", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const removed = apply(snapshot, { type: "remove-item", itemId: "starter-bread" });
+    const next = apply(removed, {
+      type: "restore-item",
+      archiveId: removed.deletedItems[0]!.archiveId,
+    });
+
+    const diff = diffListSnapshots(removed, next);
+    expect(diff.upsertItems.map((item) => item.id)).toEqual(["starter-bread"]);
+    expect(diff.deleteArchiveIds).toEqual([removed.deletedItems[0]!.archiveId]);
+    expect(diff.upsertDeletedItems).toEqual([]);
+    expect(diff.deleteItemIds).toEqual([]);
+  });
+
+  test("purges a deleted item by dropping only its archive row", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const removed = apply(snapshot, { type: "remove-item", itemId: "starter-bread" });
+    const archiveId = removed.deletedItems[0]!.archiveId;
+    const next = apply(removed, { type: "purge-deleted-item", archiveId });
+
+    expect(diffListSnapshots(removed, next)).toEqual({
+      upsertItems: [],
+      deleteItemIds: [],
+      upsertDeletedItems: [],
+      deleteArchiveIds: [archiveId],
+    });
+  });
+
+  test("touches no item rows for a rename", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const next = apply(snapshot, { type: "rename-list", title: "Saturday market" });
+
+    expect(diffListSnapshots(snapshot, next)).toEqual({
+      upsertItems: [],
+      deleteItemIds: [],
+      upsertDeletedItems: [],
+      deleteArchiveIds: [],
+    });
   });
 });

@@ -1,5 +1,5 @@
 import { listAliasSchema } from "./aliases";
-import { identityAuthSchema, listIdentitySchema } from "./identities";
+import { identityAuthSchema, listIdentitySchema, type ListIdentity } from "./identities";
 
 import { z } from "zod";
 
@@ -134,6 +134,13 @@ export type ImportSnapshotResult =
   | { status: "conflict"; snapshot: ListSnapshot }
   | { status: "alias-conflict"; snapshot: ListSnapshot }
   | { status: "unauthorized" };
+
+export interface ListSnapshotDiff {
+  upsertItems: ListItem[];
+  deleteItemIds: string[];
+  upsertDeletedItems: DeletedListItem[];
+  deleteArchiveIds: string[];
+}
 
 export function createListSnapshot(
   id: string,
@@ -354,6 +361,63 @@ export function applyListMutation(
 
 export function parseListSnapshot(value: z.input<typeof listSnapshotSchema>): ListSnapshot {
   return listSnapshotSchema.parse(value);
+}
+
+function identitiesEqual(left: ListIdentity | null, right: ListIdentity | null): boolean {
+  return left?.id === right?.id && left?.username === right?.username;
+}
+
+function listItemsEqual(left: ListItem, right: ListItem): boolean {
+  return (
+    left.id === right.id &&
+    left.name === right.name &&
+    left.quantity === right.quantity &&
+    left.unit === right.unit &&
+    left.amount === right.amount &&
+    left.category === right.category &&
+    left.checked === right.checked &&
+    left.position === right.position &&
+    left.createdAt === right.createdAt &&
+    left.updatedAt === right.updatedAt &&
+    identitiesEqual(left.createdBy, right.createdBy) &&
+    identitiesEqual(left.updatedBy, right.updatedBy)
+  );
+}
+
+function deletedListItemsEqual(left: DeletedListItem, right: DeletedListItem): boolean {
+  return (
+    listItemsEqual(left, right) &&
+    left.archiveId === right.archiveId &&
+    left.deletedAt === right.deletedAt &&
+    identitiesEqual(left.deletedBy, right.deletedBy)
+  );
+}
+
+/**
+ * Computes the minimal row changes needed to persist `next` over `previous`.
+ * Keys are item ids and deleted-item archive ids, so mutations only touch
+ * rows they actually change instead of rewriting the whole list.
+ */
+export function diffListSnapshots(previous: ListSnapshot, next: ListSnapshot): ListSnapshotDiff {
+  const previousItems = new Map(previous.items.map((item) => [item.id, item]));
+  const nextItems = new Map(next.items.map((item) => [item.id, item]));
+  const previousDeletedItems = new Map(previous.deletedItems.map((item) => [item.archiveId, item]));
+  const nextDeletedItems = new Map(next.deletedItems.map((item) => [item.archiveId, item]));
+
+  return {
+    upsertItems: next.items.filter((item) => {
+      const prior = previousItems.get(item.id);
+      return !prior || !listItemsEqual(prior, item);
+    }),
+    deleteItemIds: previous.items.filter((item) => !nextItems.has(item.id)).map((item) => item.id),
+    upsertDeletedItems: next.deletedItems.filter((item) => {
+      const prior = previousDeletedItems.get(item.archiveId);
+      return !prior || !deletedListItemsEqual(prior, item);
+    }),
+    deleteArchiveIds: previous.deletedItems
+      .filter((item) => !nextDeletedItems.has(item.archiveId))
+      .map((item) => item.archiveId),
+  };
 }
 
 export function parseListMutation(value: z.input<typeof listMutationSchema>): ListMutation {

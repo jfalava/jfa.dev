@@ -10,11 +10,14 @@ import {
 import {
   LIST_SCHEMA_VERSION,
   applyListMutation,
+  diffListSnapshots,
   listIdSchema,
   parseListMutation,
   parseListSnapshot,
   type ApplyMutationResult,
+  type DeletedListItem,
   type ImportSnapshotResult,
+  type ListItem,
   type ListLiveMessage,
   type ListMutation,
   type ListSnapshot,
@@ -155,7 +158,7 @@ export class KewekeList extends DurableObject {
     }
 
     const next = { ...current, alias: normalizedAlias };
-    this.ctx.storage.transactionSync(() => this.writeSnapshot(next));
+    this.ctx.storage.transactionSync(() => this.writeMetadata(next));
     this.broadcast({ type: "snapshot", snapshot: next });
     return next;
   }
@@ -203,7 +206,7 @@ export class KewekeList extends DurableObject {
     }
 
     this.ctx.storage.transactionSync(() => {
-      this.writeSnapshot(next);
+      this.writeMutationDelta(current, next);
       this.ctx.storage.sql.exec(
         "INSERT INTO applied_mutations (id, revision) VALUES (?, ?)",
         parsedMutation.id,
@@ -461,6 +464,38 @@ export class KewekeList extends DurableObject {
   }
 
   private writeSnapshot(snapshot: ListSnapshot, ownerUserId?: string): void {
+    this.writeMetadata(snapshot, ownerUserId);
+
+    this.ctx.storage.sql.exec("DELETE FROM items WHERE list_id = ?", snapshot.id);
+    for (const item of snapshot.items) {
+      this.upsertItemRow(snapshot.id, item);
+    }
+
+    this.ctx.storage.sql.exec("DELETE FROM deleted_items WHERE list_id = ?", snapshot.id);
+    for (const item of snapshot.deletedItems) {
+      this.upsertDeletedItemRow(snapshot.id, item);
+    }
+  }
+
+  private writeMutationDelta(previous: ListSnapshot, next: ListSnapshot): void {
+    this.writeMetadata(next);
+
+    const delta = diffListSnapshots(previous, next);
+    for (const item of delta.upsertItems) {
+      this.upsertItemRow(next.id, item);
+    }
+    for (const id of delta.deleteItemIds) {
+      this.ctx.storage.sql.exec("DELETE FROM items WHERE id = ?", id);
+    }
+    for (const item of delta.upsertDeletedItems) {
+      this.upsertDeletedItemRow(next.id, item);
+    }
+    for (const archiveId of delta.deleteArchiveIds) {
+      this.ctx.storage.sql.exec("DELETE FROM deleted_items WHERE archive_id = ?", archiveId);
+    }
+  }
+
+  private writeMetadata(snapshot: ListSnapshot, ownerUserId?: string): void {
     this.ctx.storage.sql.exec(
       `INSERT INTO metadata (list_id, alias, title, revision, created_at, updated_at, owner_user_id)
        VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -479,61 +514,90 @@ export class KewekeList extends DurableObject {
       snapshot.updatedAt,
       ownerUserId ?? null,
     );
-    this.ctx.storage.sql.exec("DELETE FROM items WHERE list_id = ?", snapshot.id);
+  }
 
-    for (const item of snapshot.items) {
-      this.ctx.storage.sql.exec(
-        `INSERT INTO items
-          (id, list_id, name, quantity, unit, amount, category, checked, position, created_at, updated_at,
-           created_by_id, created_by_username, updated_by_id, updated_by_username)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        item.id,
-        snapshot.id,
-        item.name,
-        item.quantity,
-        item.unit,
-        item.amount,
-        item.category,
-        item.checked ? 1 : 0,
-        item.position,
-        item.createdAt,
-        item.updatedAt,
-        item.createdBy?.id ?? null,
-        item.createdBy?.username ?? null,
-        item.updatedBy?.id ?? null,
-        item.updatedBy?.username ?? null,
-      );
-    }
+  private upsertItemRow(listId: string, item: ListItem): void {
+    this.ctx.storage.sql.exec(
+      `INSERT INTO items
+        (id, list_id, name, quantity, unit, amount, category, checked, position, created_at, updated_at,
+         created_by_id, created_by_username, updated_by_id, updated_by_username)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         name = excluded.name,
+         quantity = excluded.quantity,
+         unit = excluded.unit,
+         amount = excluded.amount,
+         category = excluded.category,
+         checked = excluded.checked,
+         position = excluded.position,
+         created_at = excluded.created_at,
+         updated_at = excluded.updated_at,
+         created_by_id = excluded.created_by_id,
+         created_by_username = excluded.created_by_username,
+         updated_by_id = excluded.updated_by_id,
+         updated_by_username = excluded.updated_by_username`,
+      item.id,
+      listId,
+      item.name,
+      item.quantity,
+      item.unit,
+      item.amount,
+      item.category,
+      item.checked ? 1 : 0,
+      item.position,
+      item.createdAt,
+      item.updatedAt,
+      item.createdBy?.id ?? null,
+      item.createdBy?.username ?? null,
+      item.updatedBy?.id ?? null,
+      item.updatedBy?.username ?? null,
+    );
+  }
 
-    this.ctx.storage.sql.exec("DELETE FROM deleted_items WHERE list_id = ?", snapshot.id);
-    for (const item of snapshot.deletedItems) {
-      this.ctx.storage.sql.exec(
-        `INSERT INTO deleted_items
-          (archive_id, list_id, item_id, name, quantity, unit, amount, category, checked, position,
-           created_at, updated_at, deleted_at, created_by_id, created_by_username,
-           updated_by_id, updated_by_username, deleted_by_id, deleted_by_username)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        item.archiveId,
-        snapshot.id,
-        item.id,
-        item.name,
-        item.quantity,
-        item.unit,
-        item.amount,
-        item.category,
-        item.checked ? 1 : 0,
-        item.position,
-        item.createdAt,
-        item.updatedAt,
-        item.deletedAt,
-        item.createdBy?.id ?? null,
-        item.createdBy?.username ?? null,
-        item.updatedBy?.id ?? null,
-        item.updatedBy?.username ?? null,
-        item.deletedBy?.id ?? null,
-        item.deletedBy?.username ?? null,
-      );
-    }
+  private upsertDeletedItemRow(listId: string, item: DeletedListItem): void {
+    this.ctx.storage.sql.exec(
+      `INSERT INTO deleted_items
+        (archive_id, list_id, item_id, name, quantity, unit, amount, category, checked, position,
+         created_at, updated_at, deleted_at, created_by_id, created_by_username,
+         updated_by_id, updated_by_username, deleted_by_id, deleted_by_username)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(archive_id) DO UPDATE SET
+         name = excluded.name,
+         quantity = excluded.quantity,
+         unit = excluded.unit,
+         amount = excluded.amount,
+         category = excluded.category,
+         checked = excluded.checked,
+         position = excluded.position,
+         created_at = excluded.created_at,
+         updated_at = excluded.updated_at,
+         deleted_at = excluded.deleted_at,
+         created_by_id = excluded.created_by_id,
+         created_by_username = excluded.created_by_username,
+         updated_by_id = excluded.updated_by_id,
+         updated_by_username = excluded.updated_by_username,
+         deleted_by_id = excluded.deleted_by_id,
+         deleted_by_username = excluded.deleted_by_username`,
+      item.archiveId,
+      listId,
+      item.id,
+      item.name,
+      item.quantity,
+      item.unit,
+      item.amount,
+      item.category,
+      item.checked ? 1 : 0,
+      item.position,
+      item.createdAt,
+      item.updatedAt,
+      item.deletedAt,
+      item.createdBy?.id ?? null,
+      item.createdBy?.username ?? null,
+      item.updatedBy?.id ?? null,
+      item.updatedBy?.username ?? null,
+      item.deletedBy?.id ?? null,
+      item.deletedBy?.username ?? null,
+    );
   }
 }
 
