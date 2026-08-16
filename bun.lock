@@ -160,6 +160,7 @@
       "name": "@jfa.dev/landing",
       "dependencies": {
         "@base-ui/react": "catalog:react-ui",
+        "@jfa.dev/common": "workspace:*",
         "@tailwindcss/vite": "catalog:styling",
         "@tanstack/react-router": "catalog:tanstack",
         "@tanstack/react-router-ssr-query": "catalog:tanstack",
