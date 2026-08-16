@@ -1036,13 +1036,6 @@ function UserRoutePage() {
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
           <div>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="size-3" />
-              Back to lists
-            </Link>
             <p className="mt-3 font-mono text-[11px] tracking-[0.12em] text-primary uppercase">
               device identity
             </p>
