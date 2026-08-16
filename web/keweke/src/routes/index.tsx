@@ -300,9 +300,6 @@ function EmptyState() {
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5 sm:px-6 lg:px-8">
           <div>
-            <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
-              local collection
-            </p>
             <h1 className="mt-2 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
               Your lists
             </h1>
