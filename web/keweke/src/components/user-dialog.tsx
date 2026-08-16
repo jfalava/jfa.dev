@@ -81,9 +81,6 @@ export function UserDialog({
     isLoggingOut,
     isConfirmingLogOut,
     setIsConfirmingLogOut,
-    isClearingData,
-    isConfirmingClearData,
-    setIsConfirmingClearData,
     isDeletingAccount,
     isConfirmingDeleteAccount,
     setIsConfirmingDeleteAccount,
@@ -103,7 +100,7 @@ export function UserDialog({
     approve,
     revoke,
     logOut,
-    clearData,
+
     deleteAccount,
   } = useUserManager({
     isActive: isDialogOpen,
