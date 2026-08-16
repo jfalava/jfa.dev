@@ -55,10 +55,10 @@ export function KewekeHeader({
   return (
     <header className="catalog-header sticky top-0 z-30 shrink-0 border-b border-border bg-background">
       <div className="flex min-h-11 items-center justify-between gap-4 px-4 sm:gap-6 sm:px-6 lg:gap-8 lg:px-8">
-        <Link to="/" className="min-w-0 text-sm text-foreground">
+        <Link to="/" className="min-w-0 text-sm text-foreground cursor-pointer">
           <div
             aria-label="keweke"
-            className="flex min-w-0 cursor-default items-baseline gap-3 truncate lg:pr-4"
+            className="flex min-w-0 items-baseline gap-3 truncate lg:pr-4"
           >
             <span className="shrink-0 text-sm font-bold text-primary">
               <span className="inline tracking-wide">/KEWEKE</span>
