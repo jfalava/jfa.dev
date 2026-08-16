@@ -1,7 +1,7 @@
 import type { ListBackend } from "@jfa.dev/common/lists";
-import { Button } from "@jfa.dev/common/ui";
+import { Button, buttonVariants } from "@jfa.dev/common/ui";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Check, CloudUpload, Copy, Plus } from "lucide-react";
+import { Check, CloudUpload, Copy, Plus, UserRound } from "lucide-react";
 import { useState } from "react";
 
 import { OpenListCommand } from "@/components/open-list-command";
@@ -73,12 +73,27 @@ export function KewekeHeader({
 
         <nav className="flex shrink-0 items-center gap-1" aria-label="General navigation">
           <OpenListCommand />
-          <UserDialog
-            isOpen={isUserDialogOpen}
-            message={userDialogMessage}
-            onOpenChange={onUserDialogOpenChange}
-            onSaved={onUserDialogSaved}
-          />
+          <Link
+            to="/user"
+            aria-label="User"
+            className={buttonVariants({
+              variant: "outline",
+              size: "icon",
+              className: "w-7 sm:w-auto sm:gap-1 sm:px-2",
+            })}
+          >
+            <UserRound aria-hidden="true" className="size-3.5" />
+            <span className="hidden sm:inline">User</span>
+          </Link>
+          {isUserDialogOpen !== undefined ? (
+            <UserDialog
+              isOpen={isUserDialogOpen}
+              message={userDialogMessage}
+              onOpenChange={onUserDialogOpenChange}
+              onSaved={onUserDialogSaved}
+              showTrigger={false}
+            />
+          ) : null}
           <ThemeToggle />
           {backend === "local" && onMigrate ? (
             <Button
