@@ -1,4 +1,15 @@
+## For TanStack projects
+
+Use the CLI for queries; utilize JSON output for deterministic parsing:
+
+```sh
+tanstack libraries --json
+tanstack search-docs "loaders" --library router --framework react --json
+tanstack ecosystem --category auth --json
+```
+
 <!-- machine-memory:start -->
+
 ## Project memory
 
 This project uses `machine-memory` with a shared remote Worker-backed database.
