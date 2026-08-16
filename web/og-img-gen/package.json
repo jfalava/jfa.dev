@@ -24,12 +24,12 @@
     "clsx": "catalog:styling",
     "html-to-image": "1.11.13",
     "lucide-react": "catalog:ui",
-    "nanoid": "6.0.0",
+    "nanoid": "6.0.1",
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "tailwind-merge": "catalog:styling",
     "tw-animate-css": "catalog:styling",
-    "zustand": "5.0.14"
+    "zustand": "5.0.15"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:types",
@@ -39,7 +39,7 @@
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
-    "jsdom": "29.1.1",
+    "jsdom": "30.0.1",
     "shadcn": "catalog:ui",
     "tailwindcss": "catalog:styling",
     "typescript": "catalog:build",
