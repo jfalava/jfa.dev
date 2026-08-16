@@ -10,7 +10,7 @@ import {
 } from "@jfa.dev/common/ui";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
-import { Plus, Trash2 } from "lucide-react";
+import { ChevronRight, Cloud, House, List, ListChecks, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
@@ -201,6 +201,105 @@ function ListsTable({
   );
 }
 
+function MobileListsList({
+  confirmingListId,
+  deletingListId,
+  lists,
+  onCancelDelete,
+  onConfirmDelete,
+  onRemove,
+}: {
+  confirmingListId?: string;
+  deletingListId?: string;
+  lists: ListSummary[];
+  onCancelDelete: () => void;
+  onConfirmDelete: (listId: string) => void;
+  onRemove: (list: ListSummary) => void;
+}) {
+  return (
+    <ul className="divide-y divide-border md:hidden">
+      {lists.map((list) => {
+        const isForgetOnly = list.backend === "remote" && list.remoteRole !== "owner";
+        const isConfirming = confirmingListId === list.id;
+        const isDeleting = deletingListId === list.id;
+        const BackendIcon = list.backend === "remote" ? Cloud : House;
+        return (
+          <li key={list.id}>
+            <div className="flex items-center gap-2 px-4 py-3">
+              <Link
+                className="group flex min-w-0 flex-1 items-center gap-3"
+                params={{ listId: list.alias ?? list.id }}
+                to="/$listId"
+              >
+                <BackendIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-serif text-base font-semibold tracking-tight group-hover:text-primary">
+                    {list.title}
+                  </p>
+                  <p className="mt-0.5 flex items-center gap-x-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                    <span
+                      aria-label={`${list.itemCount} items`}
+                      className="inline-flex items-center gap-1"
+                    >
+                      <List aria-hidden="true" className="size-3.5" />
+                      {list.itemCount}
+                    </span>
+                    <span
+                      aria-label={`${list.completedCount} done`}
+                      className="inline-flex items-center gap-1"
+                    >
+                      <ListChecks aria-hidden="true" className="size-3.5" />
+                      {list.completedCount}
+                    </span>
+                  </p>
+                </div>
+                <ChevronRight
+                  aria-hidden="true"
+                  className="size-4 shrink-0 text-muted-foreground"
+                />
+              </Link>
+              {isConfirming ? (
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <span className="font-mono text-[10px] tracking-[0.08em] text-destructive">
+                    {isForgetOnly ? "Forget?" : "Delete?"}
+                  </span>
+                  <Button
+                    aria-label={`${isForgetOnly ? "Confirm forget" : "Confirm delete"} ${list.title}`}
+                    isDisabled={isDeleting}
+                    onPress={() => onRemove(list)}
+                    size="sm"
+                    variant="destructive"
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    aria-label={`Keep ${list.title}`}
+                    isDisabled={isDeleting}
+                    onPress={onCancelDelete}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    Keep
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  aria-label={`${isForgetOnly ? "Forget" : "Delete"} ${list.title}`}
+                  onPress={() => onConfirmDelete(list.id)}
+                  size="icon"
+                  variant="ghost"
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 /* -------------------------------------------------------------------------
  * Page
  * ---------------------------------------------------------------------- */
@@ -314,8 +413,18 @@ function EmptyState() {
             reading local storage…
           </p>
         ) : lists.length > 0 ? (
-          <div className="w-full overflow-x-auto">
-            <ListsTable
+          <>
+            <div className="hidden w-full overflow-x-auto md:block">
+              <ListsTable
+                confirmingListId={confirmingListId}
+                deletingListId={deletingListId}
+                lists={lists}
+                onCancelDelete={cancelDelete}
+                onConfirmDelete={confirmDelete}
+                onRemove={onRemove}
+              />
+            </div>
+            <MobileListsList
               confirmingListId={confirmingListId}
               deletingListId={deletingListId}
               lists={lists}
@@ -323,7 +432,7 @@ function EmptyState() {
               onConfirmDelete={confirmDelete}
               onRemove={onRemove}
             />
-          </div>
+          </>
         ) : (
           <div className="px-4 py-10 sm:px-6 lg:px-8">
             <p className="text-base text-muted-foreground">
