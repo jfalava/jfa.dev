@@ -1,13 +1,18 @@
 import type { ListBackend } from "@jfa.dev/common/lists";
 import { Button, buttonVariants } from "@jfa.dev/common/ui";
+import { useHotkeys } from "@tanstack/react-hotkeys";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Check, CloudUpload, Copy, Plus, UserRound } from "lucide-react";
 import { useState } from "react";
 
+import { HotkeyKbd } from "@/components/hotkey-kbd";
 import { OpenListCommand } from "@/components/open-list-command";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserDialog } from "@/components/user-dialog";
 import { createLocalList } from "@/lib/local-list-store";
+
+const NEW_LIST_HOTKEY = "Mod+E";
+const PUBLISH_HOTKEY = "Mod+U";
 
 interface KewekeHeaderProps {
   listId?: string;
@@ -51,6 +56,21 @@ export function KewekeHeader({
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
   };
+
+  useHotkeys([
+    {
+      hotkey: NEW_LIST_HOTKEY,
+      callback: () => void createList(),
+      options: { enabled: !isCreating },
+    },
+    {
+      hotkey: PUBLISH_HOTKEY,
+      callback: () => onMigrate?.(),
+      options: {
+        enabled: backend === "local" && Boolean(onMigrate) && !isMigrating,
+      },
+    },
+  ]);
 
   return (
     <header className="catalog-header sticky top-0 z-30 shrink-0 border-b border-border bg-background">
@@ -104,6 +124,9 @@ export function KewekeHeader({
             >
               <CloudUpload className="size-3.5" />
               <span className="hidden sm:inline">{isMigrating ? "Publishing" : "Publish"}</span>
+              {!isMigrating ? (
+                <HotkeyKbd className="hidden sm:inline-flex" hotkey={PUBLISH_HOTKEY} />
+              ) : null}
             </Button>
           ) : null}
           {listId && backend === "remote" ? (
@@ -126,6 +149,9 @@ export function KewekeHeader({
           >
             <Plus className="size-3.5" />
             <span className="hidden sm:inline">New list</span>
+            {!isCreating ? (
+              <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />
+            ) : null}
           </Button>
         </nav>
       </div>

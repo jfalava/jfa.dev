@@ -1,4 +1,5 @@
 import { Button, Input } from "@jfa.dev/common/ui";
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpRight, Search } from "lucide-react";
 import { useState } from "react";
@@ -13,12 +14,20 @@ import {
   SearchField,
 } from "react-aria-components";
 
+import { HotkeyKbd } from "@/components/hotkey-kbd";
 import { isListAddress, normalizeListAddress } from "@/lib/list-id";
+
+const OPEN_LIST_HOTKEY = "Mod+K";
 
 export function OpenListCommand() {
   const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [error, setError] = useState<string>();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useHotkey(OPEN_LIST_HOTKEY, () => {
+    setIsDialogOpen((isOpen) => !isOpen);
+  });
 
   const openList = async (): Promise<void> => {
     const normalizedValue = value.trim().toLowerCase();
@@ -40,7 +49,9 @@ export function OpenListCommand() {
 
   return (
     <DialogTrigger
+      isOpen={isDialogOpen}
       onOpenChange={(isOpen) => {
+        setIsDialogOpen(isOpen);
         if (!isOpen) {
           reset();
         }
@@ -49,6 +60,7 @@ export function OpenListCommand() {
       <Button aria-label="Open list" className="h-7" variant="outline">
         <ArrowUpRight className="size-3.5" />
         <span>Open list</span>
+        <HotkeyKbd className="hidden sm:inline-flex" hotkey={OPEN_LIST_HOTKEY} />
       </Button>
       <ModalOverlay
         className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-16 sm:pt-20"

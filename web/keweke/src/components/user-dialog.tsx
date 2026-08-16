@@ -115,7 +115,7 @@ export function UserDialog({
   });
 
   const dialogContent = (
-    <Modal className="flex w-full max-w-lg flex-col outline-none sm:h-140 sm:max-h-[calc(100vh-5.5rem)]">
+    <Modal className="flex w-full max-w-lg flex-col outline-none max-sm:max-h-[calc(100vh-5.5rem)]">
       <Dialog
         aria-label="Set your username"
         className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
@@ -604,56 +604,6 @@ export function UserDialog({
               <FeedbackMessage feedback={feedback} section="account" />
             </section>
           ) : null}
-
-          <section className="space-y-3 border-t border-border pt-4" aria-labelledby="data-heading">
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
-                local data
-              </p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h3 className="text-[11px] font-normal text-muted-foreground/75" id="data-heading">
-                Clear this browser
-              </h3>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Remove local lists, this browser&apos;s identity, and Keweke&apos;s stored browser
-              data. Remote lists are not deleted.
-            </p>
-            {isConfirmingClearData ? (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
-                  clear all local data?
-                </span>
-                <Button
-                  className="h-8 px-4 text-sm"
-                  isDisabled={isClearingData}
-                  onPress={() => void clearData()}
-                  variant="destructive"
-                >
-                  {isClearingData ? "Clearing…" : "Yes, clear"}
-                </Button>
-                <Button
-                  className="h-8 px-4 text-sm"
-                  isDisabled={isClearingData}
-                  onPress={() => setIsConfirmingClearData(false)}
-                  variant="ghost"
-                >
-                  Cancel
-                </Button>
-              </div>
-            ) : (
-              <Button
-                className="h-10 min-w-24 px-5 text-sm"
-                onPress={() => setIsConfirmingClearData(true)}
-                variant="destructive"
-              >
-                Clear data
-              </Button>
-            )}
-            <FeedbackMessage feedback={feedback} section="data" />
-          </section>
         </div>
       </Dialog>
     </Modal>

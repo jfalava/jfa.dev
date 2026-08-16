@@ -23,6 +23,7 @@ export {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 export { Input } from "./input";
+export { Kbd, KbdGroup } from "./kbd";
 export {
   Table,
   TableBody,
