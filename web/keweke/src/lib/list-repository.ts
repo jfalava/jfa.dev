@@ -13,7 +13,7 @@ import type {
   ListMutation,
   ListSnapshot,
 } from "@jfa.dev/common/lists";
-import { v7 as uuidv7 } from "uuid";
+import { uuidv7 } from "uuidv7";
 
 import { isUuidV7, normalizeListAddress } from "@/lib/list-id";
 import {

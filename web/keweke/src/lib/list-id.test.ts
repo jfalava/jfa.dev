@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { v7 as uuidv7 } from "uuid";
+import { uuidv7 } from "uuidv7";
 
 import { isListAddress, isUuidV7, normalizeListAddress, normalizeListId } from "./list-id";
 

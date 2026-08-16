@@ -30,7 +30,7 @@
     "shadcn": "catalog:ui",
     "tailwindcss": "catalog:styling",
     "tw-animate-css": "catalog:styling",
-    "uuid": "14.0.1",
+    "uuidv7": "1.2.1",
     "zod": "4.4.3"
   },
   "devDependencies": {

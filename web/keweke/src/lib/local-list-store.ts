@@ -13,7 +13,7 @@ import {
   type RemoteListRole,
 } from "@jfa.dev/common/lists";
 import { deleteDB, openDB, type DBSchema, type IDBPDatabase } from "idb";
-import { v7 as uuidv7 } from "uuid";
+import { uuidv7 } from "uuidv7";
 
 const DATABASE_NAME = "keweke-local-lists";
 const DATABASE_VERSION = 1;

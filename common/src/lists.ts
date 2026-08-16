@@ -304,20 +304,30 @@ export function applyListMutationWithDiff(
       break;
     }
     case "update-item":
-      nextItems = mapUpdatedItem(snapshot.items, command.itemId, (item) => ({
-        ...item,
-        ...command.changes,
-        updatedAt: now,
-        updatedBy: actor ?? item.updatedBy,
-      }), diff);
+      nextItems = mapUpdatedItem(
+        snapshot.items,
+        command.itemId,
+        (item) => ({
+          ...item,
+          ...command.changes,
+          updatedAt: now,
+          updatedBy: actor ?? item.updatedBy,
+        }),
+        diff,
+      );
       break;
     case "set-item-checked":
-      nextItems = mapUpdatedItem(snapshot.items, command.itemId, (item) => ({
-        ...item,
-        checked: command.checked,
-        updatedAt: now,
-        updatedBy: actor ?? item.updatedBy,
-      }), diff);
+      nextItems = mapUpdatedItem(
+        snapshot.items,
+        command.itemId,
+        (item) => ({
+          ...item,
+          checked: command.checked,
+          updatedAt: now,
+          updatedBy: actor ?? item.updatedBy,
+        }),
+        diff,
+      );
       break;
     case "remove-item": {
       const removedItem = snapshot.items.find((item) => item.id === command.itemId);

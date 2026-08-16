@@ -27,7 +27,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
-import { v7 as uuidv7 } from "uuid";
+import { uuidv7 } from "uuidv7";
 
 import { KewekeHeader } from "@/components/keweke-header";
 import { PublishListDialog } from "@/components/publish-list-dialog";
