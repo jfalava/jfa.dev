@@ -1052,9 +1052,6 @@ function UserRoutePage() {
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
           <div>
-            <p className="mt-3 font-mono text-[11px] tracking-[0.12em] text-primary uppercase">
-              device identity
-            </p>
             <h1 className="mt-1 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
               User settings
             </h1>
