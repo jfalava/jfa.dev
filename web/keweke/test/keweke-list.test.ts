@@ -361,10 +361,16 @@ describe("public-key list authorization", () => {
     );
     expect(applied.status).toBe("ok");
     const streamed = listLiveMessageSchema.parse(await nextMessage);
-    expect(streamed.type).toBe("snapshot");
-    if (streamed.type === "snapshot") {
-      expect(streamed.snapshot.revision).toBe(snapshot.revision + 1);
-      expect(streamed.snapshot.items[0]?.checked).toBe(true);
+    expect(streamed.type).toBe("mutation");
+    if (streamed.type === "mutation") {
+      expect(streamed.mutation.baseRevision).toBe(snapshot.revision);
+      expect(streamed.mutation.command).toEqual({
+        type: "set-item-checked",
+        itemId: "starter-bread",
+        checked: true,
+      });
+      expect(streamed.mutation.actor).toEqual({ id: identity.userId, username: "Live viewer" });
+      expect(streamed.appliedAt).toBeTypeOf("string");
     }
     socket.close(1000, "done");
   });

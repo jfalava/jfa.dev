@@ -1,9 +1,14 @@
-import { listLiveMessageSchema, type ListSnapshot } from "@jfa.dev/common/lists";
+import {
+  listLiveMessageSchema,
+  type ListSnapshot,
+  type LiveListMutation,
+} from "@jfa.dev/common/lists";
 
 import { appPath } from "@/lib/site-paths";
 
 export type RemoteListLiveHandlers = {
   onSnapshot: (snapshot: ListSnapshot) => void;
+  onMutation: (mutation: LiveListMutation, appliedAt: string) => void;
   onDeleted: () => void;
   onOpen?: () => void;
   onClose?: () => void;
@@ -42,6 +47,8 @@ export function openRemoteListLiveSession(
 
     if (message.data.type === "snapshot") {
       handlers.onSnapshot(message.data.snapshot);
+    } else if (message.data.type === "mutation") {
+      handlers.onMutation(message.data.mutation, message.data.appliedAt);
     } else {
       handlers.onDeleted();
     }

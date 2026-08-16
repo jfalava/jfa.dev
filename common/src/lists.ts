@@ -7,6 +7,9 @@ const UUID_V7_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}
 
 export const LIST_SCHEMA_VERSION = 3 as const;
 
+/** Cap on retained deleted-item history; the oldest entries are dropped past this. */
+export const MAX_DELETED_ITEMS = 100 as const;
+
 export const listIdSchema = z
   .string()
   .regex(UUID_V7_PATTERN, "Expected a UUID7 list identifier")
@@ -48,11 +51,6 @@ export const listSnapshotSchema = z.object({
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });
-
-export const listLiveMessageSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("snapshot"), snapshot: listSnapshotSchema }),
-  z.object({ type: z.literal("deleted"), listId: listIdSchema }),
-]);
 
 const itemInputSchema = z.object({
   id: itemIdSchema,
@@ -100,12 +98,26 @@ export const listMutationSchema = z.object({
   command: listCommandSchema,
 });
 
+/** Mutation shape broadcast to live sessions (no auth signature). */
+export const liveListMutationSchema = listMutationSchema.omit({ auth: true });
+
+export const listLiveMessageSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("snapshot"), snapshot: listSnapshotSchema }),
+  z.object({
+    type: z.literal("mutation"),
+    mutation: liveListMutationSchema,
+    appliedAt: timestampSchema,
+  }),
+  z.object({ type: z.literal("deleted"), listId: listIdSchema }),
+]);
+
 export type ListItem = z.infer<typeof listItemSchema>;
 export type DeletedListItem = z.infer<typeof deletedListItemSchema>;
 export type ListSnapshot = z.infer<typeof listSnapshotSchema>;
 export type ListLiveMessage = z.infer<typeof listLiveMessageSchema>;
 export type ListCommand = z.infer<typeof listCommandSchema>;
 export type ListMutation = z.infer<typeof listMutationSchema>;
+export type LiveListMutation = z.infer<typeof liveListMutationSchema>;
 
 export type ListBackend = "local" | "remote";
 export type RemoteListRole = "owner" | "collaborator";
@@ -140,6 +152,11 @@ export interface ListSnapshotDiff {
   deleteItemIds: string[];
   upsertDeletedItems: DeletedListItem[];
   deleteArchiveIds: string[];
+}
+
+export interface AppliedListMutation {
+  snapshot: ListSnapshot;
+  diff: ListSnapshotDiff;
 }
 
 export function createListSnapshot(
@@ -242,6 +259,19 @@ export function applyListMutation(
   mutation: ListMutation,
   now = new Date().toISOString(),
 ): ListSnapshot | null {
+  return applyListMutationWithDiff(snapshot, mutation, now)?.snapshot ?? null;
+}
+
+/**
+ * Applies a signed mutation and returns the resulting snapshot together with
+ * the minimal storage diff, computed inline so no full-snapshot comparison is
+ * needed on the persistence path.
+ */
+export function applyListMutationWithDiff(
+  snapshot: ListSnapshot,
+  mutation: ListMutation,
+  now = new Date().toISOString(),
+): AppliedListMutation | null {
   if (mutation.baseRevision !== snapshot.revision) {
     return null;
   }
@@ -251,115 +281,163 @@ export function applyListMutation(
   let nextItems = snapshot.items;
   let nextDeletedItems = snapshot.deletedItems;
   let nextTitle = snapshot.title;
+  const diff: ListSnapshotDiff = {
+    upsertItems: [],
+    deleteItemIds: [],
+    upsertDeletedItems: [],
+    deleteArchiveIds: [],
+  };
 
   switch (command.type) {
-    case "add-item":
-      nextItems = [
-        ...snapshot.items,
-        {
-          ...command.item,
-          position: nextItemPosition(snapshot.items),
-          checked: false,
-          createdAt: now,
-          updatedAt: now,
-          createdBy: actor,
-          updatedBy: actor,
-        },
-      ];
+    case "add-item": {
+      const item: ListItem = {
+        ...command.item,
+        position: nextItemPosition(snapshot.items),
+        checked: false,
+        createdAt: now,
+        updatedAt: now,
+        createdBy: actor,
+        updatedBy: actor,
+      };
+      nextItems = [...snapshot.items, item];
+      diff.upsertItems.push(item);
       break;
+    }
     case "update-item":
-      nextItems = snapshot.items.map((item) =>
-        item.id === command.itemId
-          ? {
-              ...item,
-              ...command.changes,
-              updatedAt: now,
-              updatedBy: actor ?? item.updatedBy,
-            }
-          : item,
-      );
+      nextItems = mapUpdatedItem(snapshot.items, command.itemId, (item) => ({
+        ...item,
+        ...command.changes,
+        updatedAt: now,
+        updatedBy: actor ?? item.updatedBy,
+      }), diff);
       break;
     case "set-item-checked":
-      nextItems = snapshot.items.map((item) =>
-        item.id === command.itemId
-          ? {
-              ...item,
-              checked: command.checked,
-              updatedAt: now,
-              updatedBy: actor ?? item.updatedBy,
-            }
-          : item,
+      nextItems = mapUpdatedItem(snapshot.items, command.itemId, (item) => ({
+        ...item,
+        checked: command.checked,
+        updatedAt: now,
+        updatedBy: actor ?? item.updatedBy,
+      }), diff);
+      break;
+    case "remove-item": {
+      const removedItem = snapshot.items.find((item) => item.id === command.itemId);
+      // Sparse positions: survivors keep their ranks so remove is O(1) row writes.
+      nextItems = snapshot.items.filter((item) => item.id !== command.itemId);
+      if (removedItem) {
+        const archivedItem: DeletedListItem = {
+          ...removedItem,
+          archiveId: `${removedItem.id}:${snapshot.revision + 1}`,
+          deletedAt: now,
+          deletedBy: actor,
+        };
+        diff.deleteItemIds.push(removedItem.id);
+        diff.upsertDeletedItems.push(archivedItem);
+        nextDeletedItems = trimDeletedItems([...snapshot.deletedItems, archivedItem], diff);
+      }
+      break;
+    }
+    case "restore-item": {
+      const deletedItem = snapshot.deletedItems.find(
+        (item) => item.archiveId === command.archiveId,
       );
-      break;
-    case "remove-item":
-      {
-        const removedItem = snapshot.items.find((item) => item.id === command.itemId);
-        // Sparse positions: survivors keep their ranks so remove is O(1) row writes.
-        nextItems = snapshot.items.filter((item) => item.id !== command.itemId);
-        if (removedItem) {
-          nextDeletedItems = [
-            ...snapshot.deletedItems,
-            {
-              ...removedItem,
-              archiveId: `${removedItem.id}:${snapshot.revision + 1}`,
-              deletedAt: now,
-              deletedBy: actor,
-            },
-          ];
-        }
-      }
-      break;
-    case "restore-item":
-      {
-        const deletedItem = snapshot.deletedItems.find(
-          (item) => item.archiveId === command.archiveId,
+      if (deletedItem && !snapshot.items.some((item) => item.id === deletedItem.id)) {
+        const restoredItem = buildRestoredItem(
+          deletedItem,
+          nextItemPosition(snapshot.items),
+          actor,
+          now,
         );
-        if (deletedItem && !snapshot.items.some((item) => item.id === deletedItem.id)) {
-          nextItems = [
-            ...snapshot.items,
-            {
-              id: deletedItem.id,
-              name: deletedItem.name,
-              quantity: deletedItem.quantity,
-              unit: deletedItem.unit,
-              amount: deletedItem.amount,
-              category: deletedItem.category,
-              checked: deletedItem.checked,
-              position: nextItemPosition(snapshot.items),
-              createdAt: deletedItem.createdAt,
-              updatedAt: now,
-              createdBy: deletedItem.createdBy,
-              updatedBy: actor ?? deletedItem.updatedBy,
-            },
-          ];
-          nextDeletedItems = snapshot.deletedItems.filter(
-            (item) => item.archiveId !== command.archiveId,
-          );
-        }
+        nextItems = [...snapshot.items, restoredItem];
+        nextDeletedItems = snapshot.deletedItems.filter(
+          (item) => item.archiveId !== command.archiveId,
+        );
+        diff.upsertItems.push(restoredItem);
+        diff.deleteArchiveIds.push(command.archiveId);
       }
       break;
-    case "purge-deleted-item":
+    }
+    case "purge-deleted-item": {
+      const exists = snapshot.deletedItems.some((item) => item.archiveId === command.archiveId);
       nextDeletedItems = snapshot.deletedItems.filter(
         (item) => item.archiveId !== command.archiveId,
       );
+      if (exists) {
+        diff.deleteArchiveIds.push(command.archiveId);
+      }
       break;
+    }
     case "rename-list":
       nextTitle = command.title;
       break;
   }
 
   return {
-    ...snapshot,
-    title: nextTitle,
-    items: [...nextItems].toSorted(compareListItemsByPosition),
-    deletedItems: nextDeletedItems,
-    revision: snapshot.revision + 1,
-    updatedAt: now,
+    snapshot: {
+      ...snapshot,
+      title: nextTitle,
+      items: [...nextItems].toSorted(compareListItemsByPosition),
+      deletedItems: nextDeletedItems,
+      revision: snapshot.revision + 1,
+      updatedAt: now,
+    },
+    diff,
   };
 }
 
 export function parseListSnapshot(value: z.input<typeof listSnapshotSchema>): ListSnapshot {
   return listSnapshotSchema.parse(value);
+}
+
+function mapUpdatedItem(
+  items: ListItem[],
+  itemId: string,
+  update: (item: ListItem) => ListItem,
+  diff: ListSnapshotDiff,
+): ListItem[] {
+  return items.map((item) => {
+    if (item.id !== itemId) {
+      return item;
+    }
+    const updated = update(item);
+    if (!listItemsEqual(item, updated)) {
+      diff.upsertItems.push(updated);
+    }
+    return updated;
+  });
+}
+
+function buildRestoredItem(
+  deletedItem: DeletedListItem,
+  position: number,
+  actor: ListIdentity | null,
+  now: string,
+): ListItem {
+  return {
+    id: deletedItem.id,
+    name: deletedItem.name,
+    quantity: deletedItem.quantity,
+    unit: deletedItem.unit,
+    amount: deletedItem.amount,
+    category: deletedItem.category,
+    checked: deletedItem.checked,
+    position,
+    createdAt: deletedItem.createdAt,
+    updatedAt: now,
+    createdBy: deletedItem.createdBy,
+    updatedBy: actor ?? deletedItem.updatedBy,
+  };
+}
+
+function trimDeletedItems(items: DeletedListItem[], diff: ListSnapshotDiff): DeletedListItem[] {
+  if (items.length <= MAX_DELETED_ITEMS) {
+    return items;
+  }
+  const overflow = items.length - MAX_DELETED_ITEMS;
+  const dropped = items.slice(0, overflow);
+  for (const item of dropped) {
+    diff.deleteArchiveIds.push(item.archiveId);
+  }
+  return items.slice(overflow);
 }
 
 function nextItemPosition(items: readonly ListItem[]): number {
@@ -399,42 +477,6 @@ function listItemsEqual(left: ListItem, right: ListItem): boolean {
     identitiesEqual(left.createdBy, right.createdBy) &&
     identitiesEqual(left.updatedBy, right.updatedBy)
   );
-}
-
-function deletedListItemsEqual(left: DeletedListItem, right: DeletedListItem): boolean {
-  return (
-    listItemsEqual(left, right) &&
-    left.archiveId === right.archiveId &&
-    left.deletedAt === right.deletedAt &&
-    identitiesEqual(left.deletedBy, right.deletedBy)
-  );
-}
-
-/**
- * Computes the minimal row changes needed to persist `next` over `previous`.
- * Keys are item ids and deleted-item archive ids, so mutations only touch
- * rows they actually change instead of rewriting the whole list.
- */
-export function diffListSnapshots(previous: ListSnapshot, next: ListSnapshot): ListSnapshotDiff {
-  const previousItems = new Map(previous.items.map((item) => [item.id, item]));
-  const nextItems = new Map(next.items.map((item) => [item.id, item]));
-  const previousDeletedItems = new Map(previous.deletedItems.map((item) => [item.archiveId, item]));
-  const nextDeletedItems = new Map(next.deletedItems.map((item) => [item.archiveId, item]));
-
-  return {
-    upsertItems: next.items.filter((item) => {
-      const prior = previousItems.get(item.id);
-      return !prior || !listItemsEqual(prior, item);
-    }),
-    deleteItemIds: previous.items.filter((item) => !nextItems.has(item.id)).map((item) => item.id),
-    upsertDeletedItems: next.deletedItems.filter((item) => {
-      const prior = previousDeletedItems.get(item.archiveId);
-      return !prior || !deletedListItemsEqual(prior, item);
-    }),
-    deleteArchiveIds: previous.deletedItems
-      .filter((item) => !nextDeletedItems.has(item.archiveId))
-      .map((item) => item.archiveId),
-  };
 }
 
 export function parseListMutation(value: z.input<typeof listMutationSchema>): ListMutation {

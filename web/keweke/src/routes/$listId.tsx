@@ -1,5 +1,11 @@
 import type { ListIdentity } from "@jfa.dev/common/identities";
-import type { DeletedListItem, ListCommand, ListItem, ListSnapshot } from "@jfa.dev/common/lists";
+import {
+  applyListMutation,
+  type DeletedListItem,
+  type ListCommand,
+  type ListItem,
+  type ListSnapshot,
+} from "@jfa.dev/common/lists";
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import {
@@ -185,6 +191,18 @@ function ListPage() {
               return current;
             }
             return { backend: "remote", snapshot: nextSnapshot };
+          });
+        },
+        onMutation: (mutation, appliedAt) => {
+          if (cancelled) {
+            return;
+          }
+          setLoadedList((current) => {
+            if (!current || current.backend !== "remote") {
+              return current;
+            }
+            const next = applyListMutation(current.snapshot, mutation, appliedAt);
+            return next ? { backend: "remote", snapshot: next } : current;
           });
         },
         onDeleted: () => {

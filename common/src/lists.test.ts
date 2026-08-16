@@ -3,10 +3,12 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  MAX_DELETED_ITEMS,
   applyListMutation,
+  applyListMutationWithDiff,
   createStarterListSnapshot,
-  diffListSnapshots,
   parseListSnapshot,
+  type AppliedListMutation,
   type ListMutation,
   type ListSnapshot,
 } from "./lists";
@@ -371,36 +373,33 @@ describe("list contract", () => {
   });
 });
 
-function apply(snapshot: ListSnapshot, command: ListMutation["command"], now = NOW): ListSnapshot {
-  return applyListMutation(
+function applyWithDiff(
+  snapshot: ListSnapshot,
+  command: ListMutation["command"],
+  now = NOW,
+): AppliedListMutation {
+  const result = applyListMutationWithDiff(
     snapshot,
     { id: crypto.randomUUID(), baseRevision: snapshot.revision, command },
     now,
-  )!;
+  );
+  if (!result) {
+    throw new Error("Mutation did not apply");
+  }
+  return result;
 }
 
-describe("list snapshot diff", () => {
-  test("is empty between identical snapshots", () => {
-    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-
-    expect(diffListSnapshots(snapshot, snapshot)).toEqual({
-      upsertItems: [],
-      deleteItemIds: [],
-      upsertDeletedItems: [],
-      deleteArchiveIds: [],
-    });
-  });
-
+describe("list mutation diff", () => {
   test("touches one item row for a checked toggle", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const next = apply(snapshot, {
+    const applied = applyWithDiff(snapshot, {
       type: "set-item-checked",
       itemId: "starter-bread",
       checked: true,
     });
 
-    expect(diffListSnapshots(snapshot, next)).toEqual({
-      upsertItems: [next.items[0]],
+    expect(applied.diff).toEqual({
+      upsertItems: [applied.snapshot.items[0]],
       deleteItemIds: [],
       upsertDeletedItems: [],
       deleteArchiveIds: [],
@@ -409,7 +408,7 @@ describe("list snapshot diff", () => {
 
   test("inserts one item row for an added item", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const next = apply(snapshot, {
+    const applied = applyWithDiff(snapshot, {
       type: "add-item",
       item: {
         id: "added-milk",
@@ -421,8 +420,8 @@ describe("list snapshot diff", () => {
       },
     });
 
-    expect(diffListSnapshots(snapshot, next)).toEqual({
-      upsertItems: [next.items[next.items.length - 1]],
+    expect(applied.diff).toEqual({
+      upsertItems: [applied.snapshot.items[applied.snapshot.items.length - 1]],
       deleteItemIds: [],
       upsertDeletedItems: [],
       deleteArchiveIds: [],
@@ -431,14 +430,14 @@ describe("list snapshot diff", () => {
 
   test("touches one item row for an edited item", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const next = apply(snapshot, {
+    const applied = applyWithDiff(snapshot, {
       type: "update-item",
       itemId: "starter-bread",
       changes: { name: "Sourdough", quantity: 2 },
     });
 
-    expect(diffListSnapshots(snapshot, next)).toEqual({
-      upsertItems: [next.items[0]],
+    expect(applied.diff).toEqual({
+      upsertItems: [applied.snapshot.items[0]],
       deleteItemIds: [],
       upsertDeletedItems: [],
       deleteArchiveIds: [],
@@ -447,51 +446,49 @@ describe("list snapshot diff", () => {
 
   test("deletes the removed row and archives it without touching survivor positions", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const next = apply(snapshot, { type: "remove-item", itemId: "starter-tomatoes" });
+    const applied = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-tomatoes" });
 
-    const diff = diffListSnapshots(snapshot, next);
-    expect(diff.deleteItemIds).toEqual(["starter-tomatoes"]);
-    expect(diff.upsertDeletedItems).toEqual(next.deletedItems);
-    expect(diff.deleteArchiveIds).toEqual([]);
-    expect(diff.upsertItems).toEqual([]);
-    expect(next.items.map((item) => item.position)).toEqual([0, 2]);
+    expect(applied.diff.deleteItemIds).toEqual(["starter-tomatoes"]);
+    expect(applied.diff.upsertDeletedItems).toEqual(applied.snapshot.deletedItems);
+    expect(applied.diff.deleteArchiveIds).toEqual([]);
+    expect(applied.diff.upsertItems).toEqual([]);
+    expect(applied.snapshot.items.map((item) => item.position)).toEqual([0, 2]);
   });
 
   test("remove first item still leaves survivor positions untouched in the diff", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const next = apply(snapshot, { type: "remove-item", itemId: "starter-bread" });
+    const applied = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-bread" });
 
-    expect(diffListSnapshots(snapshot, next)).toEqual({
+    expect(applied.diff).toEqual({
       upsertItems: [],
       deleteItemIds: ["starter-bread"],
-      upsertDeletedItems: next.deletedItems,
+      upsertDeletedItems: applied.snapshot.deletedItems,
       deleteArchiveIds: [],
     });
-    expect(next.items.map((item) => item.position)).toEqual([1, 2]);
+    expect(applied.snapshot.items.map((item) => item.position)).toEqual([1, 2]);
   });
 
   test("restores a deleted item by upserting the row and dropping the archive", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const removed = apply(snapshot, { type: "remove-item", itemId: "starter-bread" });
-    const next = apply(removed, {
+    const removed = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-bread" });
+    const applied = applyWithDiff(removed.snapshot, {
       type: "restore-item",
-      archiveId: removed.deletedItems[0]!.archiveId,
+      archiveId: removed.snapshot.deletedItems[0]!.archiveId,
     });
 
-    const diff = diffListSnapshots(removed, next);
-    expect(diff.upsertItems.map((item) => item.id)).toEqual(["starter-bread"]);
-    expect(diff.deleteArchiveIds).toEqual([removed.deletedItems[0]!.archiveId]);
-    expect(diff.upsertDeletedItems).toEqual([]);
-    expect(diff.deleteItemIds).toEqual([]);
+    expect(applied.diff.upsertItems.map((item) => item.id)).toEqual(["starter-bread"]);
+    expect(applied.diff.deleteArchiveIds).toEqual([removed.snapshot.deletedItems[0]!.archiveId]);
+    expect(applied.diff.upsertDeletedItems).toEqual([]);
+    expect(applied.diff.deleteItemIds).toEqual([]);
   });
 
   test("purges a deleted item by dropping only its archive row", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const removed = apply(snapshot, { type: "remove-item", itemId: "starter-bread" });
-    const archiveId = removed.deletedItems[0]!.archiveId;
-    const next = apply(removed, { type: "purge-deleted-item", archiveId });
+    const removed = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-bread" });
+    const archiveId = removed.snapshot.deletedItems[0]!.archiveId;
+    const applied = applyWithDiff(removed.snapshot, { type: "purge-deleted-item", archiveId });
 
-    expect(diffListSnapshots(removed, next)).toEqual({
+    expect(applied.diff).toEqual({
       upsertItems: [],
       deleteItemIds: [],
       upsertDeletedItems: [],
@@ -501,13 +498,38 @@ describe("list snapshot diff", () => {
 
   test("touches no item rows for a rename", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const next = apply(snapshot, { type: "rename-list", title: "Saturday market" });
+    const applied = applyWithDiff(snapshot, { type: "rename-list", title: "Saturday market" });
 
-    expect(diffListSnapshots(snapshot, next)).toEqual({
+    expect(applied.diff).toEqual({
       upsertItems: [],
       deleteItemIds: [],
       upsertDeletedItems: [],
       deleteArchiveIds: [],
     });
+  });
+
+  test("caps deleted-item history at MAX_DELETED_ITEMS", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    let current = snapshot;
+
+    for (let i = 0; i < MAX_DELETED_ITEMS + 5; i += 1) {
+      const itemId = `bulk-${i}`;
+      current = applyWithDiff(current, {
+        type: "add-item",
+        item: {
+          id: itemId,
+          name: `Item ${i}`,
+          quantity: 1,
+          unit: "EA",
+          amount: "",
+          category: "MISC",
+        },
+      }).snapshot;
+      current = applyWithDiff(current, { type: "remove-item", itemId }).snapshot;
+    }
+
+    expect(current.deletedItems).toHaveLength(MAX_DELETED_ITEMS);
+    expect(current.deletedItems[0]?.id).toBe("bulk-5");
+    expect(current.deletedItems.at(-1)?.id).toBe(`bulk-${MAX_DELETED_ITEMS + 4}`);
   });
 });

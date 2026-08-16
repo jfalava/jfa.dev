@@ -9,8 +9,8 @@ import {
 } from "@jfa.dev/common/identities";
 import {
   LIST_SCHEMA_VERSION,
-  applyListMutation,
-  diffListSnapshots,
+  MAX_DELETED_ITEMS,
+  applyListMutationWithDiff,
   listIdSchema,
   parseListMutation,
   parseListSnapshot,
@@ -21,6 +21,8 @@ import {
   type ListLiveMessage,
   type ListMutation,
   type ListSnapshot,
+  type ListSnapshotDiff,
+  type LiveListMutation,
 } from "@jfa.dev/common/lists";
 import { DurableObject } from "cloudflare:workers";
 
@@ -77,6 +79,9 @@ interface DeletedListItemRow {
 
 type WebSocketPairConstructor = new () => { 0: WebSocket; 1: WebSocket };
 declare const WebSocketPair: WebSocketPairConstructor;
+
+/** Number of recent mutation ids retained for idempotent dedupe before pruning. */
+const APPLIED_MUTATION_RETENTION = 100;
 
 export type ListDeletionResult =
   | { status: "deleted"; alias: string | null }
@@ -200,20 +205,33 @@ export class KewekeList extends DurableObject {
       return { status: "ok", snapshot: current };
     }
 
-    const next = applyListMutation(current, authorizedMutation);
-    if (!next) {
+    const now = new Date().toISOString();
+    const applied = applyListMutationWithDiff(current, authorizedMutation, now);
+    if (!applied) {
       return { status: "conflict", snapshot: current };
     }
+    const next = applied.snapshot;
 
     this.ctx.storage.transactionSync(() => {
-      this.writeMutationDelta(current, next);
+      this.writeMutationDelta(next, applied.diff);
       this.ctx.storage.sql.exec(
         "INSERT INTO applied_mutations (id, revision) VALUES (?, ?)",
         parsedMutation.id,
         next.revision,
       );
+      this.ctx.storage.sql.exec(
+        "DELETE FROM applied_mutations WHERE revision < ?",
+        next.revision - APPLIED_MUTATION_RETENTION,
+      );
     });
-    this.broadcast({ type: "snapshot", snapshot: next });
+
+    const liveMutation: LiveListMutation = {
+      id: authorizedMutation.id,
+      baseRevision: authorizedMutation.baseRevision,
+      actor: authorizedMutation.actor,
+      command: authorizedMutation.command,
+    };
+    this.broadcast({ type: "mutation", mutation: liveMutation, appliedAt: now });
     await this.recordListTouched(authorization.userId, normalizedListId);
     return { status: "ok", snapshot: next };
   }
@@ -472,25 +490,24 @@ export class KewekeList extends DurableObject {
     }
 
     this.ctx.storage.sql.exec("DELETE FROM deleted_items WHERE list_id = ?", snapshot.id);
-    for (const item of snapshot.deletedItems) {
+    for (const item of snapshot.deletedItems.slice(-MAX_DELETED_ITEMS)) {
       this.upsertDeletedItemRow(snapshot.id, item);
     }
   }
 
-  private writeMutationDelta(previous: ListSnapshot, next: ListSnapshot): void {
+  private writeMutationDelta(next: ListSnapshot, diff: ListSnapshotDiff): void {
     this.writeMetadata(next);
 
-    const delta = diffListSnapshots(previous, next);
-    for (const item of delta.upsertItems) {
+    for (const item of diff.upsertItems) {
       this.upsertItemRow(next.id, item);
     }
-    for (const id of delta.deleteItemIds) {
+    for (const id of diff.deleteItemIds) {
       this.ctx.storage.sql.exec("DELETE FROM items WHERE id = ?", id);
     }
-    for (const item of delta.upsertDeletedItems) {
+    for (const item of diff.upsertDeletedItems) {
       this.upsertDeletedItemRow(next.id, item);
     }
-    for (const archiveId of delta.deleteArchiveIds) {
+    for (const archiveId of diff.deleteArchiveIds) {
       this.ctx.storage.sql.exec("DELETE FROM deleted_items WHERE archive_id = ?", archiveId);
     }
   }
