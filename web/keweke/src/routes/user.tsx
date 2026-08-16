@@ -452,6 +452,22 @@ type SettingsSectionRow = {
 const settingsTableFeatures = tableFeatures({});
 const settingsColumnHelper = createColumnHelper<typeof settingsTableFeatures, SettingsSectionRow>();
 
+// Desktop shows Setting/Details/Action; mobile hides the Action column and renders the
+// action below the details content, spanning the full details cell width.
+const SETTINGS_COLUMN_CLASSNAMES = {
+  action: "hidden sm:table-cell",
+} satisfies Record<string, string>;
+
+type SettingsColumnId = keyof typeof SETTINGS_COLUMN_CLASSNAMES;
+
+function isSettingsColumnId(id: string): id is SettingsColumnId {
+  return Object.hasOwn(SETTINGS_COLUMN_CLASSNAMES, id);
+}
+
+function settingsColumnClassName(id: string): string | undefined {
+  return isSettingsColumnId(id) ? SETTINGS_COLUMN_CLASSNAMES[id] : undefined;
+}
+
 const settingsColumns = settingsColumnHelper.columns([
   settingsColumnHelper.display({
     id: "setting",
@@ -483,6 +499,9 @@ const settingsColumns = settingsColumnHelper.columns([
       <div>
         <p className="text-sm text-muted-foreground">{row.original.description}</p>
         <div className="mt-3">{row.original.content}</div>
+        {row.original.action ? (
+          <div className="mt-3 sm:hidden [&_button]:w-full">{row.original.action}</div>
+        ) : null}
       </div>
     ),
   }),
@@ -1061,7 +1080,11 @@ function UserRoutePage() {
                 <TableRow className="hover:bg-transparent" key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead
-                      className={header.column.id === "setting" ? "w-56 sm:w-72" : undefined}
+                      className={
+                        header.column.id === "setting"
+                          ? "w-56 sm:w-72"
+                          : settingsColumnClassName(header.column.id)
+                      }
                       key={header.id}
                     >
                       {header.isPlaceholder ? null : <table.FlexRender header={header} />}
@@ -1074,7 +1097,10 @@ function UserRoutePage() {
               {table.getRowModel().rows.map((row) => (
                 <TableRow className="hover:bg-transparent" key={row.id}>
                   {row.getAllCells().map((cell) => (
-                    <TableCell className="py-6 align-top" key={cell.id}>
+                    <TableCell
+                      className={`py-6 align-top ${settingsColumnClassName(cell.column.id) ?? ""}`}
+                      key={cell.id}
+                    >
                       <table.FlexRender cell={cell} />
                     </TableCell>
                   ))}
