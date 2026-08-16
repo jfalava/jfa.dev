@@ -4,3 +4,4 @@ node_modules
 .alchemy
 .tanstack
 .pnpm-store
+.env

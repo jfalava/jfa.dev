@@ -119,12 +119,12 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       textValue={isStringChild(children) ? children : props.textValue}
-      className={composeRenderProps(className, (className, { selectionMode }) =>
-        cn(dropdownMenuItemVariants({ selectionMode }), className),
+      className={composeRenderProps(className, (composedClassName, { selectionMode }) =>
+        cn(dropdownMenuItemVariants({ selectionMode }), composedClassName),
       )}
       {...props}
     >
-      {composeRenderProps(children, (children, { isSelected, selectionMode }) => (
+      {composeRenderProps(children, (composedChildren, { isSelected, selectionMode }) => (
         <>
           {selectionMode !== "none" ? (
             <span
@@ -138,7 +138,7 @@ function DropdownMenuItem({
               {isSelected ? <Check className="size-3.5" /> : null}
             </span>
           ) : null}
-          {children}
+          {composedChildren}
         </>
       ))}
     </MenuItemPrimitive>
@@ -166,9 +166,9 @@ function DropdownMenuSubTrigger({
       )}
       {...props}
     >
-      {composeRenderProps(children, (children) => (
+      {composeRenderProps(children, (composedChildren) => (
         <>
-          {children}
+          {composedChildren}
           <ChevronRight className="ml-auto size-4" />
         </>
       ))}
