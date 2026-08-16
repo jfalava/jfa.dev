@@ -7,6 +7,7 @@ import {
   type ListSnapshot,
 } from "@jfa.dev/common/lists";
 import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
+import NumberFlow from "@number-flow/react";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import {
   createColumnHelper,
@@ -17,6 +18,8 @@ import {
 import {
   ArrowLeftRight,
   Check,
+  ChevronDown,
+  ChevronUp,
   Copy,
   Pencil,
   Plus,
@@ -63,6 +66,7 @@ type ShoppingTableMeta = {
   editingItemId?: string;
   identity?: LocalIdentity;
   isSaving: boolean;
+  onAdjustQuantity: (itemId: string, nextQuantity: number) => void;
   onCancelEditing: () => void;
   onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
   onRemove: (id: string) => void;
@@ -484,6 +488,16 @@ function ListPage() {
     [commit],
   );
 
+  const adjustQuantity = useCallback(
+    (id: string, nextQuantity: number): void => {
+      if (!Number.isInteger(nextQuantity) || nextQuantity < 1 || nextQuantity > 100_000) {
+        return;
+      }
+      void commit({ type: "update-item", itemId: id, changes: { quantity: nextQuantity } });
+    },
+    [commit],
+  );
+
   const removeItem = useCallback(
     (id: string): void => {
       void commit({ type: "remove-item", itemId: id });
@@ -609,6 +623,7 @@ function ListPage() {
           items={visibleItems}
           newItem={newItemDraft}
           onAdd={addItem}
+          onAdjustQuantity={adjustQuantity}
           onNewItemChange={updateNewItemDraft}
           onRemove={removeItem}
           onToggle={toggleItem}
@@ -849,7 +864,7 @@ function SignedItemBadge({
 function ItemMeasure({ item }: { item: Pick<ListItem, "quantity" | "unit" | "amount"> }) {
   return (
     <>
-      <span className="font-mono">{item.quantity}</span>{" "}
+      <NumberFlow className="font-mono" format={{ useGrouping: false }} value={item.quantity} />{" "}
       <span className="font-serif">{item.unit}</span>
       {item.amount ? (
         <>
@@ -862,12 +877,52 @@ function ItemMeasure({ item }: { item: Pick<ListItem, "quantity" | "unit" | "amo
   );
 }
 
+function QuantityStepper({
+  buttonClassName,
+  item,
+  onAdjust,
+  size,
+  wrapperClassName,
+}: {
+  buttonClassName?: string;
+  item: ListItem;
+  onAdjust: (itemId: string, nextQuantity: number) => void;
+  size: "icon-sm" | "icon";
+  wrapperClassName?: string;
+}) {
+  return (
+    <span className={`flex flex-col ${wrapperClassName ?? ""}`}>
+      <Button
+        aria-label={`Increase ${item.name} quantity`}
+        className={buttonClassName}
+        isDisabled={item.quantity >= 100_000}
+        onPress={() => onAdjust(item.id, item.quantity + 1)}
+        size={size}
+        variant="ghost"
+      >
+        <ChevronUp />
+      </Button>
+      <Button
+        aria-label={`Decrease ${item.name} quantity`}
+        className={buttonClassName}
+        isDisabled={item.quantity <= 1}
+        onPress={() => onAdjust(item.id, item.quantity - 1)}
+        size={size}
+        variant="ghost"
+      >
+        <ChevronDown />
+      </Button>
+    </span>
+  );
+}
+
 function ShoppingTable({
   emptyMessage,
   identity,
   items,
   newItem,
   onAdd,
+  onAdjustQuantity,
   onNewItemChange,
   onRemove,
   onToggle,
@@ -878,6 +933,7 @@ function ShoppingTable({
   items: ListItem[];
   newItem: NewItemDraft;
   onAdd: () => void;
+  onAdjustQuantity: (itemId: string, nextQuantity: number) => void;
   onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
   onRemove: (id: string) => void;
   onToggle: (id: string, checked: boolean) => void;
@@ -941,11 +997,12 @@ function ShoppingTable({
       createMobileShoppingColumns({
         identity,
         isSaving,
+        onAdjustQuantity,
         onRemove,
         onStartEditing: startEditing,
         onToggle,
       }),
-    [identity, isSaving, onRemove, onToggle, startEditing],
+    [identity, isSaving, onAdjustQuantity, onRemove, onToggle, startEditing],
   );
   const tableMeta = useMemo<ShoppingTableMeta>(
     () => ({
@@ -953,6 +1010,7 @@ function ShoppingTable({
       editingItemId,
       identity,
       isSaving,
+      onAdjustQuantity,
       onCancelEditing: cancelEditing,
       onEditDraftChange: updateDraft,
       onRemove,
@@ -966,6 +1024,7 @@ function ShoppingTable({
       editingItemId,
       identity,
       isSaving,
+      onAdjustQuantity,
       onRemove,
       onToggle,
       saveEditing,
@@ -1010,7 +1069,7 @@ function ShoppingTable({
             <col className="w-24" />
             <col className="w-10" />
             <col />
-            <col className="w-20" />
+            <col className="w-24" />
             <col className="w-20" />
             <col className="w-28" />
             <col className="w-32" />
@@ -1199,7 +1258,7 @@ function MobileShoppingTable({
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={`h-8 bg-muted/50 px-2 text-left font-mono text-[10px] tracking-widest text-muted-foreground uppercase first:pl-3 last:pr-3 ${header.column.id === "done" ? "w-12" : header.column.id === "actions" ? "w-20 text-right" : ""}`}
+                  className={`h-8 bg-muted/50 px-2 text-left font-mono text-[10px] tracking-widest text-muted-foreground uppercase first:pl-3 last:pr-3 ${header.column.id === "done" ? "w-12" : header.column.id === "actions" ? "w-32 text-right" : ""}`}
                   scope="col"
                 >
                   {header.isPlaceholder ? null : <table.FlexRender header={header} />}
@@ -1340,7 +1399,7 @@ function MobileShoppingTable({
                         cell.column.id === "done"
                           ? "w-12 px-1"
                           : cell.column.id === "actions"
-                            ? "w-24 px-1"
+                            ? "w-32 px-1"
                             : "min-w-0 px-1"
                       }
                       key={cell.id}
@@ -1659,7 +1718,8 @@ function createShoppingColumns() {
     shoppingColumnHelper.accessor("quantity", {
       header: "qty",
       cell: ({ getValue, row, table }) => {
-        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
+        const { editDraft, editingItemId, onAdjustQuantity, onEditDraftChange } =
+          getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
             <Input
@@ -1673,7 +1733,21 @@ function createShoppingColumns() {
           );
         }
 
-        return <span className="block text-right font-mono text-[12px]">{getValue()}</span>;
+        return (
+          <span className="flex items-center justify-end gap-0.5">
+            <NumberFlow
+              className="font-mono text-[12px]"
+              format={{ useGrouping: false }}
+              value={getValue()}
+            />
+            <QuantityStepper
+              item={row.original}
+              onAdjust={onAdjustQuantity}
+              size="icon-sm"
+              wrapperClassName="transition-opacity opacity-0 group-hover:opacity-100 focus-within:opacity-100"
+            />
+          </span>
+        );
       },
     }),
     shoppingColumnHelper.accessor("unit", {
@@ -1819,12 +1893,14 @@ function createShoppingColumns() {
 function createMobileShoppingColumns({
   identity,
   isSaving,
+  onAdjustQuantity,
   onRemove,
   onStartEditing,
   onToggle,
 }: {
   identity?: LocalIdentity;
   isSaving: boolean;
+  onAdjustQuantity: (itemId: string, nextQuantity: number) => void;
   onRemove: (id: string) => void;
   onStartEditing: (item: ListItem) => void;
   onToggle: (id: string, checked: boolean) => void;
@@ -1876,6 +1952,12 @@ function createMobileShoppingColumns({
       header: "actions",
       cell: ({ row }) => (
         <div className="flex shrink-0 items-center gap-0.5">
+          <QuantityStepper
+            buttonClassName="size-11 p-0"
+            item={row.original}
+            onAdjust={onAdjustQuantity}
+            size="icon"
+          />
           <Button
             aria-label={`Edit ${row.original.name}`}
             className="size-11 p-0"
