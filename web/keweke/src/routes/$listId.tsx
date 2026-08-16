@@ -882,16 +882,14 @@ function QuantityStepper({
   item,
   onAdjust,
   size,
-  wrapperClassName,
 }: {
   buttonClassName?: string;
   item: ListItem;
   onAdjust: (itemId: string, nextQuantity: number) => void;
   size: "icon-sm" | "icon";
-  wrapperClassName?: string;
 }) {
   return (
-    <span className={`flex flex-col ${wrapperClassName ?? ""}`}>
+    <span className="flex flex-col">
       <Button
         aria-label={`Increase ${item.name} quantity`}
         className={buttonClassName}
@@ -1734,18 +1732,13 @@ function createShoppingColumns() {
         }
 
         return (
-          <span className="flex items-center justify-end gap-0.5">
+          <span className="flex items-center justify-between gap-0.5">
             <NumberFlow
               className="font-mono text-[12px]"
               format={{ useGrouping: false }}
               value={getValue()}
             />
-            <QuantityStepper
-              item={row.original}
-              onAdjust={onAdjustQuantity}
-              size="icon-sm"
-              wrapperClassName="transition-opacity opacity-0 group-hover:opacity-100 focus-within:opacity-100"
-            />
+            <QuantityStepper item={row.original} onAdjust={onAdjustQuantity} size="icon-sm" />
           </span>
         );
       },
