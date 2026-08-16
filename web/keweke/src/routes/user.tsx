@@ -9,9 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@jfa.dev/common/ui";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
-import { ArrowLeft, Check, KeyRound, Shield, Smartphone, Trash2 } from "lucide-react";
+import { Check, KeyRound, Shield, Smartphone, Trash2 } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
