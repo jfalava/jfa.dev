@@ -440,6 +440,7 @@ function PasskeysTable({ passkeys }: { passkeys: PasskeyProfile[] }) {
  * ---------------------------------------------------------------------- */
 
 type SettingsSectionRow = {
+  action?: ReactNode;
   content: ReactNode;
   description: ReactNode;
   eyebrow: string;
@@ -456,32 +457,39 @@ const settingsColumns = settingsColumnHelper.columns([
     id: "setting",
     header: "Setting",
     cell: ({ row }) => (
-      <div>
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <p
-            className={
-              row.original.eyebrowTone === "destructive"
-                ? "font-mono text-[10px] tracking-widest text-destructive uppercase"
-                : "font-mono text-[10px] tracking-widest text-primary uppercase"
-            }
-          >
-            {row.original.eyebrow}
-          </p>
-          <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-            /
-          </span>
-          <span className="text-[11px] font-normal text-muted-foreground/75">
-            {row.original.subheading}
-          </span>
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">{row.original.description}</p>
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <p
+          className={
+            row.original.eyebrowTone === "destructive"
+              ? "font-mono text-[10px] tracking-widest text-destructive uppercase"
+              : "font-mono text-[10px] tracking-widest text-primary uppercase"
+          }
+        >
+          {row.original.eyebrow}
+        </p>
+        <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+          /
+        </span>
+        <span className="text-[11px] font-normal text-muted-foreground/75">
+          {row.original.subheading}
+        </span>
       </div>
     ),
   }),
   settingsColumnHelper.display({
     id: "details",
     header: "Details",
-    cell: ({ row }) => row.original.content,
+    cell: ({ row }) => (
+      <div>
+        <p className="text-sm text-muted-foreground">{row.original.description}</p>
+        <div className="mt-3">{row.original.content}</div>
+      </div>
+    ),
+  }),
+  settingsColumnHelper.display({
+    id: "action",
+    header: "",
+    cell: ({ row }) => row.original.action ?? null,
   }),
 ]);
 
@@ -549,36 +557,37 @@ function UserRoutePage() {
       description:
         "Set the name attached to your list edits and items. Changes sync to all shared lists.",
       content: (
-        <form className="space-y-3" onSubmit={(event) => void save(event)}>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-            <div className="min-w-0 flex-1">
-              <label className="text-xs font-medium" htmlFor="user-username">
-                Username
-              </label>
-              <Input
-                autoComplete="nickname"
-                className="mt-1.5 h-10 font-serif text-base sm:text-sm"
-                disabled={!identity || isSaving || isCreatingRemoteUser}
-                id="user-username"
-                maxLength={48}
-                onChange={(event) => {
-                  setValue(event.target.value);
-                  resetFeedback();
-                }}
-                placeholder={LOCAL_IDENTITY_PLACEHOLDER}
-                value={value}
-              />
-            </div>
-            <Button
-              className="h-10 min-w-24 px-5 text-sm"
-              isDisabled={!identity || isSaving || isCreatingRemoteUser}
-              type="submit"
-            >
-              {isSaving ? "Saving…" : "Save"}
-            </Button>
-          </div>
+        <div>
+          <form id="username-form" onSubmit={(event) => void save(event)}>
+            <label className="text-xs font-medium" htmlFor="user-username">
+              Username
+            </label>
+            <Input
+              autoComplete="nickname"
+              className="mt-1.5 h-10 font-serif text-base sm:text-sm"
+              disabled={!identity || isSaving || isCreatingRemoteUser}
+              id="user-username"
+              maxLength={48}
+              onChange={(event) => {
+                setValue(event.target.value);
+                resetFeedback();
+              }}
+              placeholder={LOCAL_IDENTITY_PLACEHOLDER}
+              value={value}
+            />
+          </form>
           <FeedbackMessage feedback={feedback} section="username" />
-        </form>
+        </div>
+      ),
+      action: (
+        <Button
+          className="h-10 min-w-24 px-5 text-sm"
+          form="username-form"
+          isDisabled={!identity || isSaving || isCreatingRemoteUser}
+          type="submit"
+        >
+          {isSaving ? "Saving…" : "Save"}
+        </Button>
       ),
     });
 
@@ -589,17 +598,15 @@ function UserRoutePage() {
         subheading: "Use this user across browsers",
         description:
           "Create a remote user with this username so you can pair other browsers and publish lists without creating a list first.",
-        content: (
-          <div>
-            <Button
-              className="h-10 min-w-24 px-5 text-sm"
-              isDisabled={isCreatingRemoteUser || isSaving}
-              onPress={() => void createRemoteAccount()}
-            >
-              {isCreatingRemoteUser ? "Creating…" : "Create remote user"}
-            </Button>
-            <FeedbackMessage feedback={feedback} section="account" />
-          </div>
+        content: <FeedbackMessage feedback={feedback} section="account" />,
+        action: (
+          <Button
+            className="h-10 min-w-24 px-5 text-sm"
+            isDisabled={isCreatingRemoteUser || isSaving}
+            onPress={() => void createRemoteAccount()}
+          >
+            {isCreatingRemoteUser ? "Creating…" : "Create remote user"}
+          </Button>
         ),
       });
     }
@@ -610,18 +617,16 @@ function UserRoutePage() {
         eyebrow: "pair with a passkey",
         subheading: "Connect this browser without a code",
         description: "Use a saved passkey to connect this browser to your existing remote user.",
-        content: (
-          <div>
-            <Button
-              className="h-10 gap-1.5 px-5 text-sm"
-              isDisabled={isAdoptingPasskey}
-              onPress={() => void adoptWithPasskey()}
-            >
-              <KeyRound aria-hidden="true" className="size-3.5" />
-              {isAdoptingPasskey ? "Waiting…" : "Pair with passkey"}
-            </Button>
-            <FeedbackMessage feedback={feedback} section="passkey-adoption" />
-          </div>
+        content: <FeedbackMessage feedback={feedback} section="passkey-adoption" />,
+        action: (
+          <Button
+            className="h-10 gap-1.5 px-5 text-sm"
+            isDisabled={isAdoptingPasskey}
+            onPress={() => void adoptWithPasskey()}
+          >
+            <KeyRound aria-hidden="true" className="size-3.5" />
+            {isAdoptingPasskey ? "Waiting…" : "Pair with passkey"}
+          </Button>
         ),
       });
     }
@@ -635,13 +640,6 @@ function UserRoutePage() {
           "Generate a pairing code in this browser and approve it from an existing accepted device.",
         content: (
           <div>
-            <Button
-              className="h-10 min-w-24 px-5 text-sm"
-              isDisabled={!identity || isStartingPairing}
-              onPress={() => void startPairing()}
-            >
-              {isStartingPairing ? "Creating…" : "Show pairing code"}
-            </Button>
             <FeedbackMessage feedback={feedback} section="pairing" />
 
             {pairingCode ? (
@@ -673,6 +671,15 @@ function UserRoutePage() {
             ) : null}
           </div>
         ),
+        action: (
+          <Button
+            className="h-10 min-w-24 px-5 text-sm"
+            isDisabled={!identity || isStartingPairing}
+            onPress={() => void startPairing()}
+          >
+            {isStartingPairing ? "Creating…" : "Show pairing code"}
+          </Button>
+        ),
       });
     }
 
@@ -685,23 +692,16 @@ function UserRoutePage() {
           "Enter the ten-character pairing code shown on another device to authorize it.",
         content: (
           <div>
-            <form className="flex max-w-md gap-2" onSubmit={(event) => void findDevice(event)}>
+            <form id="approval-form" onSubmit={(event) => void findDevice(event)}>
               <Input
                 aria-label="Pairing code"
-                className="h-10 font-mono tracking-widest uppercase"
+                className="h-10 max-w-48 font-mono tracking-widest uppercase"
                 maxLength={10}
                 onChange={(event) => setApprovalCode(event.target.value)}
                 placeholder="CODE"
                 spellCheck={false}
                 value={approvalCode}
               />
-              <Button
-                className="h-10 min-w-24 px-5 text-sm"
-                isDisabled={isFindingDevice || !identity}
-                type="submit"
-              >
-                {isFindingDevice ? "Finding…" : "Find"}
-              </Button>
             </form>
             <FeedbackMessage feedback={feedback} section="approval" />
 
@@ -718,6 +718,16 @@ function UserRoutePage() {
               </div>
             ) : null}
           </div>
+        ),
+        action: (
+          <Button
+            className="h-10 min-w-24 px-5 text-sm"
+            form="approval-form"
+            isDisabled={isFindingDevice || !identity}
+            type="submit"
+          >
+            {isFindingDevice ? "Finding…" : "Find"}
+          </Button>
         ),
       });
     }
@@ -758,22 +768,11 @@ function UserRoutePage() {
           "Add passkeys to this user. Each passkey can instantly adopt a new browser without generating pairing codes.",
         content: (
           <div>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              {passkeyAvailable ? (
-                <Button
-                  className="h-9 shrink-0 gap-1.5 px-3 text-sm"
-                  isDisabled={isRegisteringPasskey}
-                  onPress={() => void addPasskey()}
-                >
-                  <KeyRound aria-hidden="true" className="size-3.5" />
-                  {isRegisteringPasskey ? "Waiting…" : "Add passkey"}
-                </Button>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Passkeys are not available in this browser.
-                </p>
-              )}
-            </div>
+            {!passkeyAvailable ? (
+              <p className="text-sm text-muted-foreground">
+                Passkeys are not available in this browser.
+              </p>
+            ) : null}
             <FeedbackMessage feedback={feedback} section="passkeys" />
 
             {isLoadingPasskeys ? (
@@ -789,6 +788,16 @@ function UserRoutePage() {
             )}
           </div>
         ),
+        action: passkeyAvailable ? (
+          <Button
+            className="h-9 shrink-0 gap-1.5 px-3 text-sm"
+            isDisabled={isRegisteringPasskey}
+            onPress={() => void addPasskey()}
+          >
+            <KeyRound aria-hidden="true" className="size-3.5" />
+            {isRegisteringPasskey ? "Waiting…" : "Add passkey"}
+          </Button>
+        ) : undefined,
       });
     }
 
@@ -823,17 +832,18 @@ function UserRoutePage() {
                   Cancel
                 </Button>
               </div>
-            ) : (
-              <Button
-                className="h-10 min-w-24 px-5 text-sm"
-                onPress={() => setIsConfirmingLogOut(true)}
-                variant="outline"
-              >
-                Log out
-              </Button>
-            )}
+            ) : null}
             <FeedbackMessage feedback={feedback} section="logout" />
           </div>
+        ),
+        action: isConfirmingLogOut ? undefined : (
+          <Button
+            className="h-10 min-w-24 px-5 text-sm"
+            onPress={() => setIsConfirmingLogOut(true)}
+            variant="outline"
+          >
+            Log out
+          </Button>
         ),
       });
     }
@@ -897,17 +907,18 @@ function UserRoutePage() {
                   </Button>
                 </div>
               </div>
-            ) : (
-              <Button
-                className="h-10 min-w-24 px-5 text-sm"
-                onPress={() => setIsConfirmingDeleteAccount(true)}
-                variant="destructive"
-              >
-                Delete remote user
-              </Button>
-            )}
+            ) : null}
             <FeedbackMessage feedback={feedback} section="account" />
           </div>
+        ),
+        action: isConfirmingDeleteAccount ? undefined : (
+          <Button
+            className="h-10 min-w-24 px-5 text-sm"
+            onPress={() => setIsConfirmingDeleteAccount(true)}
+            variant="destructive"
+          >
+            Delete remote user
+          </Button>
         ),
       });
     }
@@ -943,17 +954,18 @@ function UserRoutePage() {
                 Cancel
               </Button>
             </div>
-          ) : (
-            <Button
-              className="h-10 min-w-24 px-5 text-sm"
-              onPress={() => setIsConfirmingClearData(true)}
-              variant="destructive"
-            >
-              Clear data
-            </Button>
-          )}
+          ) : null}
           <FeedbackMessage feedback={feedback} section="data" />
         </div>
+      ),
+      action: isConfirmingClearData ? undefined : (
+        <Button
+          className="h-10 min-w-24 px-5 text-sm"
+          onPress={() => setIsConfirmingClearData(true)}
+          variant="destructive"
+        >
+          Clear data
+        </Button>
       ),
     });
 
