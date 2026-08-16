@@ -17,7 +17,7 @@
     "effect": "catalog:iac"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@cloudflare/workers-types": "catalog:types",
     "@types/bun": "catalog:types",
     "@types/node": "catalog:types",
     "oxfmt": "catalog:build",

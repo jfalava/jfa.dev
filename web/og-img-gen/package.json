@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@base-ui/react": "catalog:react-ui",
+    "@base-ui/react": "catalog:react",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/utilities": "3.2.2",
     "@jfa.dev/common": "workspace:*",
@@ -23,16 +23,16 @@
     "class-variance-authority": "catalog:styling",
     "clsx": "catalog:styling",
     "html-to-image": "1.11.13",
-    "lucide-react": "catalog:react-ui",
+    "lucide-react": "catalog:ui",
     "nanoid": "6.0.0",
-    "react": "catalog:react-ui",
-    "react-dom": "catalog:react-ui",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
     "tailwind-merge": "catalog:styling",
     "tw-animate-css": "catalog:styling",
     "zustand": "5.0.14"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@cloudflare/workers-types": "catalog:types",
     "@tailwindcss/vite": "catalog:styling",
     "@tanstack/router-plugin": "catalog:tanstack",
     "@types/node": "catalog:types",
@@ -40,7 +40,7 @@
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
     "jsdom": "29.1.1",
-    "shadcn": "catalog:react-ui",
+    "shadcn": "catalog:ui",
     "tailwindcss": "catalog:styling",
     "typescript": "catalog:build",
     "vite": "catalog:build",

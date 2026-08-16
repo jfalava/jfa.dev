@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@base-ui/react": "catalog:react-ui",
+    "@base-ui/react": "catalog:react",
     "@jfa.dev/common": "workspace:*",
     "@tailwindcss/vite": "catalog:styling",
     "@tanstack/react-router": "catalog:tanstack",
@@ -23,17 +23,17 @@
     "@tanstack/router-plugin": "catalog:tanstack",
     "class-variance-authority": "catalog:styling",
     "clsx": "catalog:styling",
-    "lucide-react": "catalog:react-ui",
+    "lucide-react": "catalog:ui",
     "ogl": "1.0.11",
-    "react": "catalog:react-ui",
-    "react-dom": "catalog:react-ui",
-    "shadcn": "catalog:react-ui",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "shadcn": "catalog:ui",
     "tailwind-merge": "catalog:styling",
     "tailwindcss": "catalog:styling",
     "tw-animate-css": "catalog:styling"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@cloudflare/workers-types": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
