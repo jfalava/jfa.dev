@@ -180,7 +180,8 @@ export function UserDialog({
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Create a remote user with this username so you can pair other browsers and publish lists without creating a list first.
+                Create a remote user with this username so you can pair other browsers and publish
+                lists without creating a list first.
               </p>
               <Button
                 className="h-10 min-w-24 px-5 text-sm"
