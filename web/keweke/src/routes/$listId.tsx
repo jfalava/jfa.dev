@@ -861,6 +861,51 @@ function SignedItemBadge({
   );
 }
 
+function MobileEditQuantityStepper({
+  editDraft,
+  item,
+  onAdjust,
+}: {
+  editDraft?: ItemEditDraft;
+  item: ListItem;
+  onAdjust: (nextQuantity: number) => void;
+}) {
+  const draftQuantity = Number(editDraft?.quantity ?? item.quantity);
+  const isValid =
+    Number.isInteger(draftQuantity) && draftQuantity >= 1 && draftQuantity <= 100_000;
+  return (
+    <QuantityStepper
+      buttonClassName="size-6 p-0"
+      isDisabled={!isValid}
+      itemName={item.name}
+      onAdjust={onAdjust}
+      quantity={isValid ? draftQuantity : 1}
+      size="icon-sm"
+    />
+  );
+}
+
+function NewQuantityStepper({
+  newItem,
+  onAdjust,
+}: {
+  newItem: NewItemDraft;
+  onAdjust: (nextQuantity: number) => void;
+}) {
+  const quantity = Number(newItem.quantity);
+  const isValid = Number.isInteger(quantity) && quantity >= 1 && quantity <= 100_000;
+  return (
+    <QuantityStepper
+      buttonClassName="size-6 p-0"
+      isDisabled={!isValid}
+      itemName="New item"
+      onAdjust={onAdjust}
+      quantity={isValid ? quantity : 1}
+      size="icon-sm"
+    />
+  );
+}
+
 function ItemMeasure({ item }: { item: Pick<ListItem, "quantity" | "unit" | "amount"> }) {
   return (
     <>
@@ -879,32 +924,36 @@ function ItemMeasure({ item }: { item: Pick<ListItem, "quantity" | "unit" | "amo
 
 function QuantityStepper({
   buttonClassName,
-  item,
+  isDisabled,
+  itemName,
   onAdjust,
+  quantity,
   size,
 }: {
   buttonClassName?: string;
-  item: ListItem;
-  onAdjust: (itemId: string, nextQuantity: number) => void;
+  isDisabled?: boolean;
+  itemName: string;
+  onAdjust: (nextQuantity: number) => void;
+  quantity: number;
   size: "icon-sm" | "icon";
 }) {
   return (
     <span className="flex flex-col">
       <Button
-        aria-label={`Increase ${item.name} quantity`}
+        aria-label={`Increase ${itemName} quantity`}
         className={buttonClassName}
-        isDisabled={item.quantity >= 100_000}
-        onPress={() => onAdjust(item.id, item.quantity + 1)}
+        isDisabled={isDisabled || quantity >= 100_000}
+        onPress={() => onAdjust(quantity + 1)}
         size={size}
         variant="ghost"
       >
         <ChevronUp />
       </Button>
       <Button
-        aria-label={`Decrease ${item.name} quantity`}
+        aria-label={`Decrease ${itemName} quantity`}
         className={buttonClassName}
-        isDisabled={item.quantity <= 1}
-        onPress={() => onAdjust(item.id, item.quantity - 1)}
+        isDisabled={isDisabled || quantity <= 1}
+        onPress={() => onAdjust(quantity - 1)}
         size={size}
         variant="ghost"
       >
@@ -1159,15 +1208,18 @@ function DesktopNewItemRow({
         />
       </TableCell>
       <TableCell className="px-3 py-3">
-        <Input
-          aria-label="New item quantity"
-          className="h-9 w-16 text-right font-mono text-base sm:text-xs"
-          inputMode="numeric"
-          maxLength={6}
-          onChange={(event) => onChange("quantity", event.target.value)}
-          onKeyDown={onKeyDown}
-          value={newItem.quantity}
-        />
+        <span className="flex items-center justify-between gap-0.5">
+          <Input
+            aria-label="New item quantity"
+            className="h-9 w-16 text-right font-mono text-base sm:text-xs"
+            inputMode="numeric"
+            maxLength={6}
+            onChange={(event) => onChange("quantity", event.target.value)}
+            onKeyDown={onKeyDown}
+            value={newItem.quantity}
+          />
+          <NewQuantityStepper newItem={newItem} onAdjust={(q) => onChange("quantity", String(q))} />
+        </span>
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
@@ -1295,23 +1347,34 @@ function MobileShoppingTable({
                             value={editDraft?.name ?? row.original.name}
                           />
                         </label>
-                        <label
-                          className="col-span-2 flex min-w-0 flex-col gap-1"
-                          htmlFor={`mobile-edit-quantity-${row.original.id}`}
-                        >
-                          <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                            qty
-                          </span>
-                          <Input
-                            id={`mobile-edit-quantity-${row.original.id}`}
-                            aria-label={`Edit ${row.original.name} quantity`}
-                            className="h-9 min-w-0 text-right font-mono text-base"
-                            inputMode="numeric"
-                            maxLength={6}
-                            onChange={(event) => onEditDraftChange("quantity", event.target.value)}
-                            value={editDraft?.quantity ?? String(row.original.quantity)}
-                          />
-                        </label>
+                         <label
+                           className="col-span-2 flex min-w-0 flex-col gap-1"
+                           htmlFor={`mobile-edit-quantity-${row.original.id}`}
+                         >
+                           <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                             qty
+                           </span>
+                           <span className="flex min-w-0 items-center gap-1">
+                              <Input
+                                id={`mobile-edit-quantity-${row.original.id}`}
+                                aria-label={`Edit ${row.original.name} quantity`}
+                                className="h-9 min-w-0 flex-1 text-right font-mono text-base"
+                                inputMode="numeric"
+                                maxLength={6}
+                                onChange={(event) =>
+                                  onEditDraftChange("quantity", event.target.value)
+                                }
+                                value={editDraft?.quantity ?? String(row.original.quantity)}
+                              />
+                              <MobileEditQuantityStepper
+                                editDraft={editDraft}
+                                item={row.original}
+                                onAdjust={(nextQuantity) =>
+                                  onEditDraftChange("quantity", String(nextQuantity))
+                                }
+                              />
+                            </span>
+                         </label>
                         <label
                           className="col-span-2 flex min-w-0 flex-col gap-1"
                           htmlFor={`mobile-edit-unit-${row.original.id}`}
@@ -1330,11 +1393,11 @@ function MobileShoppingTable({
                         </label>
                         <label
                           className="col-span-2 flex min-w-0 flex-col gap-1"
-                          htmlFor={`mobile-edit-amount-${row.original.id}`}
-                        >
-                          <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                            amount each
-                          </span>
+                           htmlFor={`mobile-edit-amount-${row.original.id}`}
+                         >
+                           <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                             each
+                           </span>
                           <Input
                             id={`mobile-edit-amount-${row.original.id}`}
                             aria-label={`Edit ${row.original.name} amount each`}
@@ -1443,14 +1506,12 @@ function MobileNewItemRow({
 }) {
   return (
     <tr className="border-b-2 border-primary/20 bg-primary/5 align-top">
-      <TableCell className="w-12 px-1 py-3 text-center">
-        <span className="font-mono text-[10px] font-semibold tracking-[0.08em] text-primary uppercase">
-          new
-        </span>
-      </TableCell>
-      <TableCell className="min-w-0 px-2 py-3">
-        <div className="grid grid-cols-6 gap-x-2 gap-y-2">
-          <label className="col-span-6 flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
+      <TableCell className="px-2 py-3" colSpan={3}>
+        <div className="flex flex-col gap-2">
+          <span className="font-mono text-[10px] font-semibold tracking-[0.08em] text-primary uppercase">
+            new
+          </span>
+          <label className="flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
               item
             </span>
@@ -1465,51 +1526,45 @@ function MobileNewItemRow({
               value={newItem.name}
             />
           </label>
-          <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-quantity-mobile">
+          <div className="flex min-w-0 flex-col gap-1">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-              qty
+              qty · unit · each
             </span>
-            <Input
-              id="new-quantity-mobile"
-              aria-label="New item quantity"
-              className="h-9 text-right font-mono text-base"
-              inputMode="numeric"
-              maxLength={6}
-              onChange={(event) => onChange("quantity", event.target.value)}
-              onKeyDown={onKeyDown}
-              value={newItem.quantity}
-            />
-          </label>
-          <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-unit-mobile">
-            <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-              unit
-            </span>
-            <Input
-              id="new-unit-mobile"
-              aria-label="New item unit"
-              className="h-9 font-serif text-base"
-              maxLength={32}
-              onChange={(event) => onChange("unit", event.target.value)}
-              onKeyDown={onKeyDown}
-              value={newItem.unit}
-            />
-          </label>
-          <label className="col-span-2 flex min-w-0 flex-col gap-1" htmlFor="new-amount-mobile">
-            <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-              amount each
-            </span>
-            <Input
-              id="new-amount-mobile"
-              aria-label="New item amount each"
-              className="h-9 font-serif text-base"
-              maxLength={64}
-              onChange={(event) => onChange("amount", event.target.value)}
-              onKeyDown={onKeyDown}
-              placeholder="Optional"
-              value={newItem.amount}
-            />
-          </label>
-          <label className="col-span-6 flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
+            <div className="flex min-w-0 items-center gap-1">
+              <Input
+                aria-label="New item quantity"
+                className="h-9 w-16 shrink-0 text-right font-mono text-base"
+                inputMode="numeric"
+                maxLength={6}
+                onChange={(event) => onChange("quantity", event.target.value)}
+                onKeyDown={onKeyDown}
+                value={newItem.quantity}
+              />
+              <NewQuantityStepper
+                newItem={newItem}
+                onAdjust={(nextQuantity) => onChange("quantity", String(nextQuantity))}
+              />
+              <Input
+                aria-label="New item unit"
+                className="h-9 min-w-0 flex-1 font-serif text-base"
+                maxLength={32}
+                onChange={(event) => onChange("unit", event.target.value)}
+                onKeyDown={onKeyDown}
+                placeholder="Unit"
+                value={newItem.unit}
+              />
+              <Input
+                aria-label="New item amount each"
+                className="h-9 min-w-0 flex-1 font-serif text-base"
+                maxLength={64}
+                onChange={(event) => onChange("amount", event.target.value)}
+                onKeyDown={onKeyDown}
+                placeholder="Each"
+                value={newItem.amount}
+              />
+            </div>
+          </div>
+          <label className="flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
               category
             </span>
@@ -1523,12 +1578,10 @@ function MobileNewItemRow({
               value={newItem.category}
             />
           </label>
+          <Button aria-label="Add item" className="h-11 w-full" onPress={onAdd}>
+            <Plus />
+          </Button>
         </div>
-      </TableCell>
-      <TableCell className="w-20 px-1 py-3 text-right align-top">
-        <Button aria-label="Add item" className="size-9" onPress={onAdd} size="icon">
-          <Plus />
-        </Button>
       </TableCell>
     </tr>
   );
@@ -1719,15 +1772,27 @@ function createShoppingColumns() {
         const { editDraft, editingItemId, onAdjustQuantity, onEditDraftChange } =
           getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
+          const draftQuantity = Number(editDraft?.quantity);
+          const isDraftQuantityValid =
+            Number.isInteger(draftQuantity) && draftQuantity >= 1 && draftQuantity <= 100_000;
           return (
-            <Input
-              aria-label={`Edit ${row.original.name} quantity`}
-              className="w-16 text-right font-mono"
-              inputMode="numeric"
-              maxLength={6}
-              onChange={(event) => onEditDraftChange("quantity", event.target.value)}
-              value={editDraft?.quantity ?? String(getValue())}
-            />
+            <span className="flex items-center justify-between gap-0.5">
+              <Input
+                aria-label={`Edit ${row.original.name} quantity`}
+                className="w-16 text-right font-mono"
+                inputMode="numeric"
+                maxLength={6}
+                onChange={(event) => onEditDraftChange("quantity", event.target.value)}
+                value={editDraft?.quantity ?? String(getValue())}
+              />
+              <QuantityStepper
+                isDisabled={!isDraftQuantityValid}
+                itemName={row.original.name}
+                onAdjust={(nextQuantity) => onEditDraftChange("quantity", String(nextQuantity))}
+                quantity={isDraftQuantityValid ? draftQuantity : 1}
+                size="icon-sm"
+              />
+            </span>
           );
         }
 
@@ -1738,7 +1803,12 @@ function createShoppingColumns() {
               format={{ useGrouping: false }}
               value={getValue()}
             />
-            <QuantityStepper item={row.original} onAdjust={onAdjustQuantity} size="icon-sm" />
+            <QuantityStepper
+              itemName={row.original.name}
+              onAdjust={(nextQuantity) => onAdjustQuantity(row.original.id, nextQuantity)}
+              quantity={row.original.quantity}
+              size="icon-sm"
+            />
           </span>
         );
       },
@@ -1947,8 +2017,9 @@ function createMobileShoppingColumns({
         <div className="flex shrink-0 items-center gap-0.5">
           <QuantityStepper
             buttonClassName="size-11 p-0"
-            item={row.original}
-            onAdjust={onAdjustQuantity}
+            itemName={row.original.name}
+            onAdjust={(nextQuantity) => onAdjustQuantity(row.original.id, nextQuantity)}
+            quantity={row.original.quantity}
             size="icon"
           />
           <Button
