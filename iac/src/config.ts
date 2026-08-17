@@ -165,19 +165,19 @@ export function getStageConfig(stage: string | undefined): StageConfig {
         workersDev: true,
       }),
       hyperscalerMounted: worker(
-        "hyperscaler-services-mounted",
+        "jfa-dev-hyperscaler-services",
         normalizedStage,
         {
           compatibilityDate: compatibilityDate(normalizedStage, "2026-08-13"),
-          observability: false,
+          observability: true,
           workersDev: normalizedStage !== "production",
           basePath: "/hyperscaler-services",
           assetBasePath: "/hyperscaler-services",
         },
       ),
-      kewekeMounted: worker("keweke-mounted", normalizedStage, {
+      kewekeMounted: worker("jfa-dev-keweke", normalizedStage, {
         compatibilityDate: compatibilityDate(normalizedStage, "2026-08-13"),
-        observability: false,
+        observability: true,
         workersDev: normalizedStage !== "production",
         basePath: "/keweke",
         assetBasePath: "/keweke",
