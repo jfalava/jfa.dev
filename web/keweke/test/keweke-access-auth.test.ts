@@ -16,7 +16,7 @@ interface TestJwk {
 }
 
 interface TestPayload {
-  aud: string;
+  aud: string | string[];
   iss: string;
   sub: string;
   iat: number;
@@ -24,7 +24,7 @@ interface TestPayload {
 }
 
 interface PayloadOverrides {
-  aud?: string;
+  aud?: string | string[];
   iss?: string;
   exp?: number;
 }
@@ -112,10 +112,24 @@ describe("verifyAccessAssertion", () => {
     ).toBe(true);
   });
 
+  it("accepts an assertion whose audience claim is an array", async () => {
+    const jwk = await createEs256Jwk("test-key-1");
+    const assertion = await signAssertion(jwk, futurePayload({ aud: [AUD, "another-aud"] }));
+
+    expect(
+      await verifyAccessAssertion(assertion, {
+        teamDomain: TEAM_DOMAIN,
+        aud: AUD,
+        certs: certsFor(jwk),
+      }),
+    ).toBe(true);
+  });
+
   it("rejects assertions for another audience, issuer, or expired tokens", async () => {
     const jwk = await createEs256Jwk("test-key-2");
     const valid = await signAssertion(jwk, futurePayload());
     const wrongAudience = await signAssertion(jwk, futurePayload({ aud: "other-aud" }));
+    const wrongArrayAudience = await signAssertion(jwk, futurePayload({ aud: ["other-aud"] }));
     const wrongIssuer = await signAssertion(
       jwk,
       futurePayload({ iss: "https://evil.cloudflareaccess.com" }),
@@ -128,6 +142,7 @@ describe("verifyAccessAssertion", () => {
 
     expect(await verifyAccessAssertion(valid, input)).toBe(true);
     expect(await verifyAccessAssertion(wrongAudience, input)).toBe(false);
+    expect(await verifyAccessAssertion(wrongArrayAudience, input)).toBe(false);
     expect(await verifyAccessAssertion(wrongIssuer, input)).toBe(false);
     expect(await verifyAccessAssertion(expired, input)).toBe(false);
   });

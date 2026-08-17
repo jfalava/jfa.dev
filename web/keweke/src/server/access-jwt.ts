@@ -21,7 +21,7 @@ const assertionHeaderSchema = z.object({
 });
 
 const assertionPayloadSchema = z.object({
-  aud: z.string().min(1),
+  aud: z.union([z.string().min(1), z.array(z.string().min(1)).min(1)]),
   iss: z.string().min(1),
   exp: z.number().finite(),
 });
@@ -127,7 +127,13 @@ export async function verifyAccessAssertion(
   if (!header || !payload) {
     return false;
   }
-  if (payload.iss !== `https://${input.teamDomain}` || payload.aud !== input.aud) {
+  if (payload.iss !== `https://${input.teamDomain}`) {
+    return false;
+  }
+  const audMatches = Array.isArray(payload.aud)
+    ? payload.aud.includes(input.aud)
+    : payload.aud === input.aud;
+  if (!audMatches) {
     return false;
   }
   if (payload.exp * 1000 <= Date.now()) {
