@@ -6,7 +6,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
-import { readRemoteList, resolveActorNames } from "./remote-list";
+import { readRemoteList, resolveActorNames, resolveHistoryActorNames } from "./remote-list";
 
 const ALIAS_DIRECTORY_NAME = "directory";
 
@@ -27,6 +27,13 @@ const remoteAliasInputSchema = z.object({
   auth: identityAuthSchema,
 });
 
+const remoteItemHistoryInputSchema = z.object({
+  listId: listIdSchema,
+  itemId: z.string().min(1).max(128),
+  limit: z.number().int().min(1).max(100).optional(),
+  beforeRevision: z.number().int().min(0).optional(),
+});
+
 export const getRemoteList = createServerFn()
   .validator(listIdSchema)
   .handler(async ({ data }) => readRemoteList(data));
@@ -36,6 +43,20 @@ export const getRemoteListByAlias = createServerFn()
   .handler(async ({ data }) => {
     const listId = await env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME).getListId(data);
     return listId ? readRemoteList(listId) : null;
+  });
+
+export const getRemoteItemHistory = createServerFn()
+  .validator(remoteItemHistoryInputSchema)
+  .handler(async ({ data }) => {
+    const result = await env.KEWEKE_LISTS.getByName(data.listId).getItemHistory(data.listId, {
+      itemId: data.itemId,
+      limit: data.limit,
+      beforeRevision: data.beforeRevision,
+    });
+    if (result.status === "missing") {
+      return { status: "missing" as const };
+    }
+    return { status: "ok" as const, page: await resolveHistoryActorNames(result.page) };
   });
 
 export const ensureRemoteListAlias = createServerFn({ method: "POST" })

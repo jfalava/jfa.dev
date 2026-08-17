@@ -871,8 +871,7 @@ function MobileEditQuantityStepper({
   onAdjust: (nextQuantity: number) => void;
 }) {
   const draftQuantity = Number(editDraft?.quantity ?? item.quantity);
-  const isValid =
-    Number.isInteger(draftQuantity) && draftQuantity >= 1 && draftQuantity <= 100_000;
+  const isValid = Number.isInteger(draftQuantity) && draftQuantity >= 1 && draftQuantity <= 100_000;
   return (
     <QuantityStepper
       buttonClassName="size-6 p-0"
@@ -1324,108 +1323,108 @@ function MobileShoppingTable({
                 return (
                   <tr key={row.id}>
                     <TableCell className="px-4 py-3" colSpan={row.getAllCells().length}>
-                       <form
-                         className="flex flex-col gap-2"
-                         onSubmit={(event) => {
-                           event.preventDefault();
-                           onSaveEditing();
-                         }}
-                       >
-                         <label
-                           className="flex min-w-0 flex-col gap-1"
-                           htmlFor={`mobile-edit-name-${row.original.id}`}
-                         >
-                           <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                             item
-                           </span>
-                           <Input
-                             id={`mobile-edit-name-${row.original.id}`}
-                             aria-label={`Edit ${row.original.name} name`}
-                             className="h-9 min-w-0 font-serif text-base"
-                             maxLength={200}
-                             onChange={(event) => onEditDraftChange("name", event.target.value)}
-                             value={editDraft?.name ?? row.original.name}
-                           />
-                         </label>
-                         <div className="flex min-w-0 flex-col gap-1">
-                           <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                             qty · unit · each
-                           </span>
-                           <div className="flex min-w-0 items-center gap-1">
-                             <Input
-                               aria-label={`Edit ${row.original.name} quantity`}
-                               className="h-9 w-16 shrink-0 text-right font-mono text-base"
-                               inputMode="numeric"
-                               maxLength={6}
-                               onChange={(event) =>
-                                 onEditDraftChange("quantity", event.target.value)
-                               }
-                               value={editDraft?.quantity ?? String(row.original.quantity)}
-                             />
-                             <MobileEditQuantityStepper
-                               editDraft={editDraft}
-                               item={row.original}
-                               onAdjust={(nextQuantity) =>
-                                 onEditDraftChange("quantity", String(nextQuantity))
-                               }
-                             />
-                             <Input
-                               aria-label={`Edit ${row.original.name} unit`}
-                               className="h-9 min-w-0 flex-1 font-serif text-base"
-                               maxLength={32}
-                               onChange={(event) => onEditDraftChange("unit", event.target.value)}
-                               placeholder="Unit"
-                               value={editDraft?.unit ?? row.original.unit}
-                             />
-                             <Input
-                               aria-label={`Edit ${row.original.name} amount each`}
-                               className="h-9 min-w-0 flex-1 font-serif text-base"
-                               maxLength={64}
-                               onChange={(event) => onEditDraftChange("amount", event.target.value)}
-                               placeholder="Each"
-                               value={editDraft?.amount ?? row.original.amount}
-                             />
-                           </div>
-                         </div>
-                         <label
-                           className="flex min-w-0 flex-col gap-1"
-                           htmlFor={`mobile-edit-category-${row.original.id}`}
-                         >
-                           <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                             category
-                           </span>
-                           <Input
-                             id={`mobile-edit-category-${row.original.id}`}
-                             aria-label={`Edit ${row.original.name} category`}
-                             className="h-9 min-w-0 font-serif text-base"
-                             maxLength={64}
-                             onChange={(event) => onEditDraftChange("category", event.target.value)}
-                             value={editDraft?.category ?? row.original.category}
-                           />
-                         </label>
-                         <div className="flex gap-2 pt-1">
-                           <Button
-                             aria-label={
-                               isSaving ? "Saving" : `Save changes to ${row.original.name}`
-                             }
-                             className="h-11 flex-1"
-                             isDisabled={isSaving}
-                             type="submit"
-                           >
-                             <Save />
-                           </Button>
-                           <Button
-                             aria-label={`Cancel editing ${row.original.name}`}
-                             className="size-11"
-                             isDisabled={isSaving}
-                             onPress={onCancelEditing}
-                             type="button"
-                             variant="ghost"
-                           >
-                             <X />
-                           </Button>
-                         </div>
-                       </form>
+                      <form
+                        className="flex flex-col gap-2"
+                        onSubmit={(event) => {
+                          event.preventDefault();
+                          onSaveEditing();
+                        }}
+                      >
+                        <label
+                          className="flex min-w-0 flex-col gap-1"
+                          htmlFor={`mobile-edit-name-${row.original.id}`}
+                        >
+                          <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                            item
+                          </span>
+                          <Input
+                            id={`mobile-edit-name-${row.original.id}`}
+                            aria-label={`Edit ${row.original.name} name`}
+                            className="h-9 min-w-0 font-serif text-base"
+                            maxLength={200}
+                            onChange={(event) => onEditDraftChange("name", event.target.value)}
+                            value={editDraft?.name ?? row.original.name}
+                          />
+                        </label>
+                        <div className="flex min-w-0 flex-col gap-1">
+                          <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                            qty · unit · each
+                          </span>
+                          <div className="flex min-w-0 items-center gap-1">
+                            <Input
+                              aria-label={`Edit ${row.original.name} quantity`}
+                              className="h-9 w-16 shrink-0 text-right font-mono text-base"
+                              inputMode="numeric"
+                              maxLength={6}
+                              onChange={(event) =>
+                                onEditDraftChange("quantity", event.target.value)
+                              }
+                              value={editDraft?.quantity ?? String(row.original.quantity)}
+                            />
+                            <MobileEditQuantityStepper
+                              editDraft={editDraft}
+                              item={row.original}
+                              onAdjust={(nextQuantity) =>
+                                onEditDraftChange("quantity", String(nextQuantity))
+                              }
+                            />
+                            <Input
+                              aria-label={`Edit ${row.original.name} unit`}
+                              className="h-9 min-w-0 flex-1 font-serif text-base"
+                              maxLength={32}
+                              onChange={(event) => onEditDraftChange("unit", event.target.value)}
+                              placeholder="Unit"
+                              value={editDraft?.unit ?? row.original.unit}
+                            />
+                            <Input
+                              aria-label={`Edit ${row.original.name} amount each`}
+                              className="h-9 min-w-0 flex-1 font-serif text-base"
+                              maxLength={64}
+                              onChange={(event) => onEditDraftChange("amount", event.target.value)}
+                              placeholder="Each"
+                              value={editDraft?.amount ?? row.original.amount}
+                            />
+                          </div>
+                        </div>
+                        <label
+                          className="flex min-w-0 flex-col gap-1"
+                          htmlFor={`mobile-edit-category-${row.original.id}`}
+                        >
+                          <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                            category
+                          </span>
+                          <Input
+                            id={`mobile-edit-category-${row.original.id}`}
+                            aria-label={`Edit ${row.original.name} category`}
+                            className="h-9 min-w-0 font-serif text-base"
+                            maxLength={64}
+                            onChange={(event) => onEditDraftChange("category", event.target.value)}
+                            value={editDraft?.category ?? row.original.category}
+                          />
+                        </label>
+                        <div className="flex gap-2 pt-1">
+                          <Button
+                            aria-label={
+                              isSaving ? "Saving" : `Save changes to ${row.original.name}`
+                            }
+                            className="h-11 flex-1"
+                            isDisabled={isSaving}
+                            type="submit"
+                          >
+                            <Save />
+                          </Button>
+                          <Button
+                            aria-label={`Cancel editing ${row.original.name}`}
+                            className="size-11"
+                            isDisabled={isSaving}
+                            onPress={onCancelEditing}
+                            type="button"
+                            variant="ghost"
+                          >
+                            <X />
+                          </Button>
+                        </div>
+                      </form>
                     </TableCell>
                   </tr>
                 );

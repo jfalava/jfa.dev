@@ -10,6 +10,12 @@ export const LIST_SCHEMA_VERSION = 3 as const;
 /** Cap on retained deleted-item history; the oldest entries are dropped past this. */
 export const MAX_DELETED_ITEMS = 100 as const;
 
+/**
+ * Cap on retained item mutation history per list, as a revision window: events
+ * for mutations older than the newest revision minus this value are pruned.
+ */
+export const MAX_ITEM_HISTORY_REVISIONS = 1000 as const;
+
 export const listIdSchema = z
   .string()
   .regex(UUID_V7_PATTERN, "Expected a UUID7 list identifier")
@@ -157,6 +163,67 @@ export interface ListSnapshotDiff {
 export interface AppliedListMutation {
   snapshot: ListSnapshot;
   diff: ListSnapshotDiff;
+}
+
+export const listItemHistoryEventSchema = z.object({
+  id: z.string().min(1).max(160),
+  mutationId: z.string().min(1).max(128),
+  itemId: itemIdSchema,
+  revision: z.number().int().min(1),
+  actor: listIdentitySchema.nullable(),
+  command: listCommandSchema,
+  appliedAt: timestampSchema,
+});
+
+export const listItemHistoryPageSchema = z.object({
+  events: z.array(listItemHistoryEventSchema),
+  /** Revision of the oldest returned event; pass as `beforeRevision` for the next page. */
+  nextCursor: z.number().int().min(1).nullable(),
+});
+
+export const listItemHistoryQuerySchema = z.object({
+  itemId: itemIdSchema,
+  limit: z.number().int().min(1).max(100).default(50),
+  beforeRevision: z.number().int().min(0).nullish(),
+});
+
+export type ListItemHistoryEvent = z.infer<typeof listItemHistoryEventSchema>;
+export type ListItemHistoryPage = z.infer<typeof listItemHistoryPageSchema>;
+export type ListItemHistoryQuery = z.input<typeof listItemHistoryQuerySchema>;
+
+export type ListItemHistoryResult =
+  | { status: "ok"; page: ListItemHistoryPage }
+  | { status: "missing" };
+
+/**
+ * Item ids a command's history events should be recorded for, derived from the
+ * command itself plus the snapshot it was applied to and the resulting diff.
+ */
+export function itemHistoryItemIds(
+  command: ListCommand,
+  snapshotBefore: ListSnapshot,
+  diff: ListSnapshotDiff,
+): string[] {
+  switch (command.type) {
+    case "add-item":
+      return [command.item.id];
+    case "update-item":
+    case "set-item-checked":
+    case "remove-item":
+      return [command.itemId];
+    case "restore-item":
+      return diff.upsertItems.map((item) => item.id);
+    case "purge-deleted-item": {
+      const purged = snapshotBefore.deletedItems.find(
+        (item) => item.archiveId === command.archiveId,
+      );
+      return purged ? [purged.id] : [];
+    }
+    case "rename-list":
+      return [];
+    default:
+      return [];
+  }
 }
 
 export function createListSnapshot(

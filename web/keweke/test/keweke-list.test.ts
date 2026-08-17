@@ -38,6 +38,7 @@ const TENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000029";
 const ELEVENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000030";
 const TWELFTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000031";
 const THIRTEENTH_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000032";
+const HISTORY_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000033";
 const NOW = "2026-08-14T10:00:00.000Z";
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 
@@ -696,5 +697,122 @@ describe("public-key list authorization", () => {
       payload: transitivePayload,
     });
     expect(transitivelyApproved.status).toBe("approved");
+  });
+});
+
+describe("item mutation history", () => {
+  it("records events per item, excludes list-level commands, and paginates newest-first", async () => {
+    const identity = await createIdentity("Historian");
+    const { listStub, snapshot } = await publish(identity, HISTORY_LIST_ID);
+    let revision = snapshot.revision;
+
+    const mutate = async (command: ListCommand) => {
+      const mutation = await signedMutation(identity, { id: HISTORY_LIST_ID, revision }, command);
+      const result = await listStub.applyMutation(HISTORY_LIST_ID, mutation);
+      expect(result.status).toBe("ok");
+      revision += 1;
+      return mutation;
+    };
+
+    await mutate({
+      type: "add-item",
+      item: {
+        id: "history-milk",
+        name: "Milk",
+        quantity: 1,
+        unit: "EA",
+        amount: "",
+        category: "DAIRY",
+      },
+    });
+    await mutate({ type: "update-item", itemId: "history-milk", changes: { quantity: 2 } });
+    await mutate({ type: "set-item-checked", itemId: "history-milk", checked: true });
+    await mutate({ type: "rename-list", title: "History list" });
+    await mutate({ type: "remove-item", itemId: "history-milk" });
+
+    const afterRemove = await listStub.getSnapshot(HISTORY_LIST_ID);
+    expect(afterRemove?.items.find((item) => item.id === "history-milk")).toBeUndefined();
+    const archiveId = afterRemove?.deletedItems.find(
+      (item) => item.id === "history-milk",
+    )?.archiveId;
+    expect(archiveId).toBeDefined();
+    await mutate({ type: "restore-item", archiveId: archiveId! });
+
+    const missing = await listStub.getItemHistory("019c5f7e-7b7b-7000-8000-000000000099", {
+      itemId: "history-milk",
+    });
+    expect(missing).toEqual({ status: "missing" });
+
+    const full = await listStub.getItemHistory(HISTORY_LIST_ID, { itemId: "history-milk" });
+    expect(full.status).toBe("ok");
+    if (full.status !== "ok") {
+      return;
+    }
+    // rename-list (revision 4) never touches an item, so no event exists for it.
+    expect(full.page.events.map((event) => event.revision)).toEqual([6, 5, 3, 2, 1]);
+    expect(full.page.events.map((event) => event.command.type)).toEqual([
+      "restore-item",
+      "remove-item",
+      "set-item-checked",
+      "update-item",
+      "add-item",
+    ]);
+    expect(full.page.nextCursor).toBeNull();
+    for (const event of full.page.events) {
+      expect(event.actor).toMatchObject({ id: identity.userId, username: "Historian" });
+      expect(event.mutationId).toEqual(expect.any(String));
+      expect(event.appliedAt).toEqual(expect.any(String));
+    }
+
+    const firstPage = await listStub.getItemHistory(HISTORY_LIST_ID, {
+      itemId: "history-milk",
+      limit: 2,
+    });
+    expect(firstPage.status).toBe("ok");
+    if (firstPage.status !== "ok") {
+      return;
+    }
+    expect(firstPage.page.events.map((event) => event.revision)).toEqual([6, 5]);
+    expect(firstPage.page.nextCursor).toBe(5);
+
+    const secondPage = await listStub.getItemHistory(HISTORY_LIST_ID, {
+      itemId: "history-milk",
+      limit: 2,
+      beforeRevision: firstPage.page.nextCursor ?? undefined,
+    });
+    expect(secondPage.status).toBe("ok");
+    if (secondPage.status !== "ok") {
+      return;
+    }
+    expect(secondPage.page.events.map((event) => event.revision)).toEqual([3, 2]);
+    expect(secondPage.page.nextCursor).toBe(2);
+
+    const lastPage = await listStub.getItemHistory(HISTORY_LIST_ID, {
+      itemId: "history-milk",
+      limit: 2,
+      beforeRevision: secondPage.page.nextCursor ?? undefined,
+    });
+    expect(lastPage.status).toBe("ok");
+    if (lastPage.status !== "ok") {
+      return;
+    }
+    expect(lastPage.page.events.map((event) => event.revision)).toEqual([1]);
+    expect(lastPage.page.nextCursor).toBeNull();
+  });
+
+  it("keeps history for other items isolated", async () => {
+    const identity = await createIdentity("Isolated");
+    const { listStub } = await publish(identity, "019c5f7e-7b7b-7000-8000-000000000034");
+
+    const result = await listStub.getItemHistory("019c5f7e-7b7b-7000-8000-000000000034", {
+      itemId: "starter-bread",
+    });
+    expect(result.status).toBe("ok");
+    if (result.status !== "ok") {
+      return;
+    }
+    // Starter items arrive via import, not mutations, so no events exist yet.
+    expect(result.page.events).toEqual([]);
+    expect(result.page.nextCursor).toBeNull();
   });
 });

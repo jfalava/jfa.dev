@@ -10,14 +10,22 @@ import {
 import {
   LIST_SCHEMA_VERSION,
   MAX_DELETED_ITEMS,
+  MAX_ITEM_HISTORY_REVISIONS,
   applyListMutationWithDiff,
+  itemHistoryItemIds,
+  listCommandSchema,
   listIdSchema,
+  listItemHistoryEventSchema,
+  listItemHistoryQuerySchema,
   parseListMutation,
   parseListSnapshot,
   type ApplyMutationResult,
   type DeletedListItem,
   type ImportSnapshotResult,
   type ListItem,
+  type ListItemHistoryQuery,
+  type ListItemHistoryResult,
+  type ListCommand,
   type ListLiveMessage,
   type ListMutation,
   type ListSnapshot,
@@ -25,6 +33,7 @@ import {
   type LiveListMutation,
 } from "@jfa.dev/common/lists";
 import { DurableObject } from "cloudflare:workers";
+import { uuidv7 } from "uuidv7";
 
 interface ListMetadataRow {
   [key: string]: string | number | null;
@@ -83,6 +92,26 @@ declare const WebSocketPair: WebSocketPairConstructor;
 /** Number of recent mutation ids retained for idempotent dedupe before pruning. */
 const APPLIED_MUTATION_RETENTION = 100;
 
+interface ItemHistoryWrite {
+  mutationId: string;
+  actor: ListIdentity | null;
+  command: ListCommand;
+  appliedAt: string;
+  itemIds: readonly string[];
+}
+
+interface ItemHistoryRow {
+  [key: string]: string | number | null;
+  id: string;
+  mutation_id: string;
+  item_id: string;
+  revision: number;
+  actor_id: string | null;
+  actor_username: string | null;
+  command: string;
+  applied_at: string;
+}
+
 export type ListDeletionResult =
   | { status: "deleted"; alias: string | null }
   | { status: "missing"; alias: null }
@@ -125,6 +154,56 @@ export class KewekeList extends DurableObject {
     return snapshot;
   }
 
+  async getItemHistory(
+    listId: string,
+    query: ListItemHistoryQuery,
+  ): Promise<ListItemHistoryResult> {
+    const normalizedListId = listIdSchema.parse(listId);
+    const parsedQuery = listItemHistoryQuerySchema.parse(query);
+    const metadata = this.readMetadata();
+    if (!metadata || metadata.list_id !== normalizedListId) {
+      return { status: "missing" };
+    }
+
+    const beforeRevision = parsedQuery.beforeRevision ?? null;
+    const rows = this.ctx.storage.sql
+      .exec<ItemHistoryRow>(
+        `SELECT id, mutation_id, item_id, revision, actor_id, actor_username, command, applied_at
+         FROM item_history
+         WHERE list_id = ? AND item_id = ? AND (? IS NULL OR revision < ?)
+         ORDER BY revision DESC, id DESC
+         LIMIT ?`,
+        normalizedListId,
+        parsedQuery.itemId,
+        beforeRevision,
+        beforeRevision,
+        parsedQuery.limit + 1,
+      )
+      .toArray();
+
+    const hasMore = rows.length > parsedQuery.limit;
+    const events = rows.slice(0, parsedQuery.limit).flatMap((row) => {
+      const parsed = listItemHistoryEventSchema.safeParse({
+        id: row.id,
+        mutationId: row.mutation_id,
+        itemId: row.item_id,
+        revision: row.revision,
+        actor: readIdentity(row.actor_id, row.actor_username),
+        command: parseStoredCommand(row.command),
+        appliedAt: row.applied_at,
+      });
+      return parsed.success ? [parsed.data] : [];
+    });
+
+    return {
+      status: "ok",
+      page: {
+        events,
+        nextCursor: hasMore && events.length > 0 ? events[events.length - 1].revision : null,
+      },
+    };
+  }
+
   async deleteOwnedList(ownerUserId: string): Promise<ListDeletionResult> {
     const normalizedOwnerUserId = identityIdSchema.parse(ownerUserId);
     const metadata = this.readMetadata();
@@ -141,6 +220,7 @@ export class KewekeList extends DurableObject {
       this.ctx.storage.sql.exec("DELETE FROM items");
       this.ctx.storage.sql.exec("DELETE FROM deleted_items");
       this.ctx.storage.sql.exec("DELETE FROM applied_mutations");
+      this.ctx.storage.sql.exec("DELETE FROM item_history");
       this.ctx.storage.sql.exec("DELETE FROM imports");
       this.ctx.storage.sql.exec("DELETE FROM metadata");
     });
@@ -212,8 +292,16 @@ export class KewekeList extends DurableObject {
       }
       const next = applied.snapshot;
 
+      const history: ItemHistoryWrite = {
+        mutationId: authorizedMutation.id,
+        actor: authorizedMutation.actor ?? null,
+        command: authorizedMutation.command,
+        appliedAt: now,
+        itemIds: itemHistoryItemIds(authorizedMutation.command, current, applied.diff),
+      };
+
       this.ctx.storage.transactionSync(() => {
-        this.writeMutationDelta(next, applied.diff);
+        this.writeMutationDelta(next, applied.diff, history);
         this.ctx.storage.sql.exec(
           "INSERT INTO applied_mutations (id, revision) VALUES (?, ?)",
           parsedMutation.id,
@@ -394,6 +482,27 @@ export class KewekeList extends DurableObject {
       this.ctx.storage.sql.exec("ALTER TABLE metadata ADD COLUMN owner_user_id TEXT");
       this.ctx.storage.sql.exec("INSERT INTO _sql_schema_migrations (id) VALUES (5)");
     }
+
+    if (currentVersion < 6) {
+      this.ctx.storage.sql.exec(`
+        CREATE TABLE IF NOT EXISTS item_history (
+          id TEXT PRIMARY KEY,
+          list_id TEXT NOT NULL,
+          mutation_id TEXT NOT NULL,
+          item_id TEXT NOT NULL,
+          revision INTEGER NOT NULL,
+          actor_id TEXT,
+          actor_username TEXT,
+          command TEXT NOT NULL,
+          applied_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS item_history_by_item
+          ON item_history(list_id, item_id, revision DESC, id DESC);
+        CREATE INDEX IF NOT EXISTS item_history_by_list_revision
+          ON item_history(list_id, revision);
+        INSERT INTO _sql_schema_migrations (id) VALUES (6);
+      `);
+    }
   }
 
   private readSnapshot(): ListSnapshot | null {
@@ -500,7 +609,11 @@ export class KewekeList extends DurableObject {
     }
   }
 
-  private writeMutationDelta(next: ListSnapshot, diff: ListSnapshotDiff): void {
+  private writeMutationDelta(
+    next: ListSnapshot,
+    diff: ListSnapshotDiff,
+    history: ItemHistoryWrite,
+  ): void {
     this.writeMetadata(next);
 
     for (const item of diff.upsertItems) {
@@ -515,6 +628,27 @@ export class KewekeList extends DurableObject {
     for (const archiveId of diff.deleteArchiveIds) {
       this.ctx.storage.sql.exec("DELETE FROM deleted_items WHERE archive_id = ?", archiveId);
     }
+    for (const itemId of history.itemIds) {
+      this.ctx.storage.sql.exec(
+        `INSERT INTO item_history
+          (id, list_id, mutation_id, item_id, revision, actor_id, actor_username, command, applied_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        uuidv7(),
+        next.id,
+        history.mutationId,
+        itemId,
+        next.revision,
+        history.actor?.id ?? null,
+        history.actor?.username ?? null,
+        JSON.stringify(history.command),
+        history.appliedAt,
+      );
+    }
+    this.ctx.storage.sql.exec(
+      "DELETE FROM item_history WHERE list_id = ? AND revision < ?",
+      next.id,
+      next.revision - MAX_ITEM_HISTORY_REVISIONS,
+    );
   }
 
   private writeMetadata(snapshot: ListSnapshot, ownerUserId?: string): void {
@@ -630,4 +764,13 @@ function readIdentity(id: string | null, username: string | null): ListIdentity 
 
   const result = listIdentitySchema.safeParse({ id, username });
   return result.success ? result.data : null;
+}
+
+function parseStoredCommand(value: string): ListCommand | null {
+  try {
+    const parsed = listCommandSchema.safeParse(JSON.parse(value));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
 }

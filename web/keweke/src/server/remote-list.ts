@@ -1,4 +1,4 @@
-import { listSnapshotSchema } from "@jfa.dev/common/lists";
+import { listSnapshotSchema, type ListItemHistoryPage } from "@jfa.dev/common/lists";
 import { env } from "cloudflare:workers";
 
 const ALIAS_DIRECTORY_NAME = "directory";
@@ -66,4 +66,36 @@ export async function resolveActorNames(snapshot: ReturnType<typeof listSnapshot
       deletedBy: currentIdentity(item.deletedBy),
     })),
   });
+}
+
+export async function resolveHistoryActorNames(page: ListItemHistoryPage) {
+  const userIds = new Set<string>();
+  for (const event of page.events) {
+    if (event.actor) {
+      userIds.add(event.actor.id);
+    }
+  }
+
+  const profiles = await Promise.all(
+    [...userIds].map(
+      async (userId) =>
+        [userId, await env.KEWEKE_USERS.getByName(userId).getProfile(userId)] as const,
+    ),
+  );
+  const usernames = new Map<string, string>();
+  for (const [userId, profile] of profiles) {
+    if (profile) {
+      usernames.set(userId, profile.username);
+    }
+  }
+
+  return {
+    ...page,
+    events: page.events.map((event) => ({
+      ...event,
+      actor: event.actor
+        ? { ...event.actor, username: usernames.get(event.actor.id) ?? event.actor.username }
+        : null,
+    })),
+  };
 }
