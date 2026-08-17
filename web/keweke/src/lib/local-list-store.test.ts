@@ -73,6 +73,30 @@ describe("local list store", () => {
     }
   });
 
+  test("leaves the stored snapshot untouched for a duplicate check", async () => {
+    await saveLocalList(createStarterListSnapshot(LIST_ID, { now: NOW }));
+
+    const result = await applyLocalMutation(LIST_ID, {
+      id: "019c5f7e-7b7b-7000-8000-000000000014",
+      baseRevision: 0,
+      command: {
+        type: "set-item-checked",
+        itemId: "starter-coffee",
+        checked: true,
+      },
+    });
+
+    expect(result.status).toBe("ok");
+    if (result.status === "ok") {
+      expect(result.snapshot.revision).toBe(0);
+      expect(result.snapshot.updatedAt).toBe(NOW);
+      expect(result.snapshot.items.find((item) => item.id === "starter-coffee")?.checked).toBe(
+        true,
+      );
+      expect((await getLocalListRecord(LIST_ID))?.snapshot.updatedAt).toBe(NOW);
+    }
+  });
+
   test("keeps remote-backed snapshots in the same local cache", async () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
     await markListRemote(snapshot);

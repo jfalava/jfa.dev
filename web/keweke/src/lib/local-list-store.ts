@@ -199,7 +199,9 @@ export async function applyLocalMutation(
       return { status: "conflict", snapshot: record.snapshot };
     }
 
-    await saveLocalList(nextSnapshot);
+    if (nextSnapshot.revision !== record.snapshot.revision) {
+      await saveLocalList(nextSnapshot);
+    }
     return { status: "ok", snapshot: nextSnapshot };
   };
   const currentMutation = (previousMutation ?? Promise.resolve()).then(runMutation, runMutation);

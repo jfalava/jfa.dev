@@ -334,6 +334,21 @@ export class KewekeList extends DurableObject {
       }
       const next = applied.snapshot;
 
+      if (applied.noop) {
+        this.ctx.storage.transactionSync(() => {
+          this.ctx.storage.sql.exec(
+            "INSERT INTO applied_mutations (id, revision) VALUES (?, ?)",
+            parsedMutation.id,
+            next.revision,
+          );
+          this.ctx.storage.sql.exec(
+            "DELETE FROM applied_mutations WHERE revision < ?",
+            next.revision - APPLIED_MUTATION_RETENTION,
+          );
+        });
+        return { status: "ok", snapshot: current };
+      }
+
       const history: ItemHistoryWrite = {
         mutationId: authorizedMutation.id,
         actor: authorizedMutation.actor ?? null,

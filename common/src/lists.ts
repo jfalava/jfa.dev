@@ -163,6 +163,7 @@ export interface ListSnapshotDiff {
 export interface AppliedListMutation {
   snapshot: ListSnapshot;
   diff: ListSnapshotDiff;
+  noop: boolean;
 }
 
 export const listItemHistoryEventSchema = z.object({
@@ -371,31 +372,14 @@ export function applyListMutationWithDiff(
       break;
     }
     case "update-item":
-      nextItems = mapUpdatedItem(
-        snapshot.items,
-        command.itemId,
-        (item) => ({
-          ...item,
-          ...command.changes,
-          updatedAt: now,
-          updatedBy: actor ?? item.updatedBy,
-        }),
-        diff,
-      );
+    case "set-item-checked": {
+      const mapped = mapCheckedOrUpdatedItem(snapshot.items, command, actor, now, diff);
+      if (mapped === null) {
+        return { snapshot, diff, noop: true };
+      }
+      nextItems = mapped;
       break;
-    case "set-item-checked":
-      nextItems = mapUpdatedItem(
-        snapshot.items,
-        command.itemId,
-        (item) => ({
-          ...item,
-          checked: command.checked,
-          updatedAt: now,
-          updatedBy: actor ?? item.updatedBy,
-        }),
-        diff,
-      );
-      break;
+    }
     case "remove-item": {
       const removedItem = snapshot.items.find((item) => item.id === command.itemId);
       // Sparse positions: survivors keep their ranks so remove is O(1) row writes.
@@ -458,11 +442,59 @@ export function applyListMutationWithDiff(
       updatedAt: now,
     },
     diff,
+    noop: false,
   };
 }
 
 export function parseListSnapshot(value: z.input<typeof listSnapshotSchema>): ListSnapshot {
   return listSnapshotSchema.parse(value);
+}
+
+type ItemFieldCommand = Extract<ListCommand, { type: "update-item" | "set-item-checked" }>;
+
+function mapCheckedOrUpdatedItem(
+  items: ListItem[],
+  command: ItemFieldCommand,
+  actor: ListIdentity | null,
+  now: string,
+  diff: ListSnapshotDiff,
+): ListItem[] | null {
+  const current = items.find((item) => item.id === command.itemId);
+  if (!current) {
+    return null;
+  }
+
+  if (
+    command.type === "set-item-checked"
+      ? current.checked === command.checked
+      : !itemChangesDiffer(current, command.changes)
+  ) {
+    return null;
+  }
+
+  const changes =
+    command.type === "set-item-checked" ? { checked: command.checked } : command.changes;
+  return mapUpdatedItem(
+    items,
+    command.itemId,
+    (item) => ({
+      ...item,
+      ...changes,
+      updatedAt: now,
+      updatedBy: actor ?? item.updatedBy,
+    }),
+    diff,
+  );
+}
+
+function itemChangesDiffer(item: ListItem, changes: z.infer<typeof itemChangesSchema>): boolean {
+  return (
+    (changes.name !== undefined && changes.name !== item.name) ||
+    (changes.quantity !== undefined && changes.quantity !== item.quantity) ||
+    (changes.unit !== undefined && changes.unit !== item.unit) ||
+    (changes.amount !== undefined && changes.amount !== item.amount) ||
+    (changes.category !== undefined && changes.category !== item.category)
+  );
 }
 
 function mapUpdatedItem(

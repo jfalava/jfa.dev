@@ -815,4 +815,45 @@ describe("item mutation history", () => {
     expect(result.page.events).toEqual([]);
     expect(result.page.nextCursor).toBeNull();
   });
+
+  it("ignores a duplicate check without bumping the revision or writing history", async () => {
+    const identity = await createIdentity("Deduper");
+    const listId = "019c5f7e-7b7b-7000-8000-000000000035";
+    const { listStub, snapshot } = await publish(identity, listId);
+
+    const duplicate = await listStub.applyMutation(
+      listId,
+      await signedMutation(identity, snapshot, {
+        type: "set-item-checked",
+        itemId: "starter-coffee",
+        checked: true,
+      }),
+    );
+    expect(duplicate.status).toBe("ok");
+    if (duplicate.status !== "ok") {
+      return;
+    }
+    expect(duplicate.snapshot).toEqual(snapshot);
+
+    const history = await listStub.getItemHistory(listId, { itemId: "starter-coffee" });
+    expect(history.status).toBe("ok");
+    if (history.status !== "ok") {
+      return;
+    }
+    expect(history.page.events).toEqual([]);
+
+    const real = await listStub.applyMutation(
+      listId,
+      await signedMutation(identity, duplicate.snapshot, {
+        type: "set-item-checked",
+        itemId: "starter-bread",
+        checked: true,
+      }),
+    );
+    expect(real.status).toBe("ok");
+    if (real.status !== "ok") {
+      return;
+    }
+    expect(real.snapshot.revision).toBe(snapshot.revision + 1);
+  });
 });

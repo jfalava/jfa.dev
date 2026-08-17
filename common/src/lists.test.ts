@@ -404,6 +404,45 @@ describe("list mutation diff", () => {
       upsertDeletedItems: [],
       deleteArchiveIds: [],
     });
+    expect(applied.noop).toBe(false);
+  });
+
+  test("keeps the snapshot unchanged for a duplicate checked toggle", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const applied = applyWithDiff(snapshot, {
+      type: "set-item-checked",
+      itemId: "starter-coffee",
+      checked: true,
+    });
+
+    expect(applied.noop).toBe(true);
+    expect(applied.snapshot).toBe(snapshot);
+    expect(applied.diff).toEqual({
+      upsertItems: [],
+      deleteItemIds: [],
+      upsertDeletedItems: [],
+      deleteArchiveIds: [],
+    });
+    expect(applied.snapshot.revision).toBe(snapshot.revision);
+  });
+
+  test("keeps the snapshot unchanged when an edit matches the stored values", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const applied = applyWithDiff(snapshot, {
+      type: "update-item",
+      itemId: "starter-bread",
+      changes: { name: "Bread", quantity: 1 },
+    });
+
+    expect(applied.noop).toBe(true);
+    expect(applied.snapshot).toBe(snapshot);
+    expect(applied.diff).toEqual({
+      upsertItems: [],
+      deleteItemIds: [],
+      upsertDeletedItems: [],
+      deleteArchiveIds: [],
+    });
+    expect(applied.snapshot.revision).toBe(snapshot.revision);
   });
 
   test("inserts one item row for an added item", () => {
@@ -442,6 +481,7 @@ describe("list mutation diff", () => {
       upsertDeletedItems: [],
       deleteArchiveIds: [],
     });
+    expect(applied.noop).toBe(false);
   });
 
   test("deletes the removed row and archives it without touching survivor positions", () => {
