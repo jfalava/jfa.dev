@@ -2,6 +2,7 @@ import { resolve } from "node:path";
 
 import { adopt } from "alchemy/AdoptPolicy";
 import * as Cloudflare from "alchemy/Cloudflare";
+import type { Output } from "alchemy/Output";
 import * as Effect from "effect/Effect";
 
 import type { StageConfig, WorkerConfig } from "./config";
@@ -146,7 +147,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     VITE_BASE_PATH?: string;
     VITE_ASSET_BASE_PATH?: string;
     KEWEKE_ACCESS_TEAM_DOMAIN?: string;
-    KEWEKE_ACCESS_ADMIN_AUD?: string;
+    KEWEKE_ACCESS_ADMIN_AUD?: string | Output<string>;
   };
 
   const kewekeEnv: KewekeEnvironment = {
@@ -165,7 +166,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   }
   if (kewekeAdminAccess !== undefined) {
     kewekeEnv.KEWEKE_ACCESS_TEAM_DOMAIN = "jfa-d.cloudflareaccess.com";
-    kewekeEnv.KEWEKE_ACCESS_ADMIN_AUD = yield* yield* kewekeAdminAccess.aud;
+    kewekeEnv.KEWEKE_ACCESS_ADMIN_AUD = kewekeAdminAccess.aud;
   }
   const kewekeOptions = {
     ...workerDefaults(config.workers.kewekeMounted),
