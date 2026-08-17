@@ -7,7 +7,7 @@ export async function assertKewekeAdminAccess(): Promise<void> {
   const teamDomain = env.KEWEKE_ACCESS_TEAM_DOMAIN;
   const aud = env.KEWEKE_ACCESS_ADMIN_AUD;
   if (!teamDomain || !aud) {
-    return;
+    throw new Error("Keweke admin access is misconfigured");
   }
 
   const request = getRequest();
