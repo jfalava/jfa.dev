@@ -18,12 +18,14 @@ export const accessCertsSchema = z.object({
 const assertionHeaderSchema = z.object({
   alg: z.string().min(1),
   kid: z.string().min(1),
+  typ: z.string().optional(),
 });
 
 const assertionPayloadSchema = z.object({
   aud: z.union([z.string().min(1), z.array(z.string().min(1)).min(1)]),
   iss: z.string().min(1),
   exp: z.number().finite(),
+  nbf: z.number().finite().optional(),
 });
 
 type AccessJwk = z.infer<typeof accessJwkSchema>;
@@ -31,6 +33,8 @@ type AccessJwk = z.infer<typeof accessJwkSchema>;
 export type AccessCerts = z.infer<typeof accessCertsSchema>;
 
 const CERTS_CACHE_TTL_MS = 5 * 60 * 1000;
+const CLOCK_SKEW_TOLERANCE_MS = 60 * 1000;
+const SUPPORTED_ALGORITHMS = new Set(["RS256", "ES256"]);
 const certsCache = new Map<string, { certs: AccessCerts; expiresAt: number }>();
 
 function decodeBase64Url(value: string): Uint8Array<ArrayBuffer> {
@@ -117,14 +121,21 @@ export async function verifyAccessAssertion(
   assertion: string,
   input: { teamDomain: string; aud: string; certs: AccessCerts },
 ): Promise<boolean> {
-  const [headerSegment, payloadSegment, signatureSegment] = assertion.split(".");
-  if (!headerSegment || !payloadSegment || !signatureSegment) {
+  const segments = assertion.split(".");
+  if (segments.length !== 3) {
     return false;
   }
+  const [headerSegment, payloadSegment, signatureSegment] = segments;
 
   const header = decodeSegment(headerSegment, assertionHeaderSchema);
   const payload = decodeSegment(payloadSegment, assertionPayloadSchema);
   if (!header || !payload) {
+    return false;
+  }
+  if (!SUPPORTED_ALGORITHMS.has(header.alg)) {
+    return false;
+  }
+  if (header.typ !== undefined && header.typ !== "JWT") {
     return false;
   }
   if (payload.iss !== `https://${input.teamDomain}`) {
@@ -136,7 +147,10 @@ export async function verifyAccessAssertion(
   if (!audMatches) {
     return false;
   }
-  if (payload.exp * 1000 <= Date.now()) {
+  if (payload.exp * 1000 + CLOCK_SKEW_TOLERANCE_MS <= Date.now()) {
+    return false;
+  }
+  if (payload.nbf !== undefined && payload.nbf * 1000 > Date.now() + CLOCK_SKEW_TOLERANCE_MS) {
     return false;
   }
 

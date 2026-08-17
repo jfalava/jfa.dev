@@ -21,6 +21,22 @@ import {
 } from "@/server/admin";
 
 export const Route = createFileRoute("/admin")({
+  beforeLoad: async () => {
+    if (globalThis.window === undefined) {
+      return;
+    }
+    const hostname = window.location.hostname;
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return;
+    }
+    const identity = await fetch("/cdn-cgi/access/get-identity", {
+      credentials: "include",
+    }).catch(() => null);
+    if (!identity || !identity.ok) {
+      window.location.href = window.location.pathname + window.location.search;
+      throw new Error("Cloudflare Access session is required");
+    }
+  },
   loader: async () => ({ overview: await getAdminOverview() }),
   component: AdminRoutePage,
 });
