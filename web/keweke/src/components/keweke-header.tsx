@@ -3,16 +3,19 @@ import { Button, buttonVariants } from "@jfa.dev/common/ui";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Check, CloudUpload, Copy, Plus, UserRound } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { HotkeyKbd } from "@/components/hotkey-kbd";
 import { OpenListCommand } from "@/components/open-list-command";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserDialog } from "@/components/user-dialog";
 import { createLocalList } from "@/lib/local-list-store";
+import { appPath } from "@/lib/site-paths";
 
 const NEW_LIST_HOTKEY = "Mod+E";
 const PUBLISH_HOTKEY = "Mod+U";
+const ADMIN_HOTKEY_MAC = "Control+Meta+A";
+const ADMIN_HOTKEY_WINDOWS = "Control+Alt+A";
 
 interface KewekeHeaderProps {
   listId?: string;
@@ -40,6 +43,10 @@ export function KewekeHeader({
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const openAdmin = useCallback((): void => {
+    window.location.assign(appPath("/admin"));
+  }, []);
 
   const createList = async (): Promise<void> => {
     setIsCreating(true);
@@ -70,6 +77,8 @@ export function KewekeHeader({
         enabled: backend === "local" && Boolean(onMigrate) && !isMigrating,
       },
     },
+    { hotkey: ADMIN_HOTKEY_MAC, callback: openAdmin },
+    { hotkey: ADMIN_HOTKEY_WINDOWS, callback: openAdmin },
   ]);
 
   return (

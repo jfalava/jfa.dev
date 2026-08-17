@@ -52,9 +52,10 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   if (isLocal) {
     Object.assign(landingOptions, { dev: localDev(3100) });
   }
-  const landing = yield* Cloudflare.Website.Vite("LandingWorker", landingOptions).pipe(
-    adopt(true),
-  );
+  const landing = yield* Cloudflare.Website.Vite(
+    "LandingWorker",
+    landingOptions,
+  ).pipe(adopt(true));
 
   const ogImgGenOptions = {
     ...workerDefaults(config.workers.ogImgGen),
@@ -70,9 +71,10 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   if (isLocal) {
     Object.assign(ogImgGenOptions, { dev: localDev(3101) });
   }
-  const ogImgGen = yield* Cloudflare.Website.Vite("OgImgGenWorker", ogImgGenOptions).pipe(
-    adopt(true),
-  );
+  const ogImgGen = yield* Cloudflare.Website.Vite(
+    "OgImgGenWorker",
+    ogImgGenOptions,
+  ).pipe(adopt(true));
 
   const hyperscalerOptions = {
     ...workerDefaults(config.workers.hyperscalerMounted),
@@ -87,7 +89,8 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
       VITE_BASE_PATH: config.workers.hyperscalerMounted.basePath,
     };
     if (config.workers.hyperscalerMounted.assetBasePath !== undefined) {
-      env.VITE_ASSET_BASE_PATH = config.workers.hyperscalerMounted.assetBasePath;
+      env.VITE_ASSET_BASE_PATH =
+        config.workers.hyperscalerMounted.assetBasePath;
     }
     Object.assign(hyperscalerOptions, { env });
   }
@@ -113,12 +116,26 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   const kewekePairing = Cloudflare.DurableObject("KewekePairingSession", {
     className: "KewekePairingSession",
   });
-  const kewekePasskeySessions = Cloudflare.DurableObject("KewekePasskeySession", {
-    className: "KewekePasskeySession",
-  });
+  const kewekePasskeySessions = Cloudflare.DurableObject(
+    "KewekePasskeySession",
+    {
+      className: "KewekePasskeySession",
+    },
+  );
   const kewekeUsers = Cloudflare.DurableObject("KewekeUserDirectory", {
     className: "KewekeUserDirectory",
   });
+
+  const kewekeAdminAccess =
+    config.stage === "production"
+      ? yield* Cloudflare.Access.Application("KewekeAdminAccessApp", {
+          type: "self_hosted",
+          name: "Keweke Admin",
+          domain: "jfa.dev/keweke/admin",
+          sessionDuration: "24h",
+          policies: ["6a8e2dfe-13b4-47f5-a954-94ff71425465"],
+        }).pipe(adopt(true))
+      : undefined;
 
   type KewekeEnvironment = {
     KEWEKE_LISTS: typeof kewekeLists;
@@ -128,6 +145,8 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     KEWEKE_USERS: typeof kewekeUsers;
     VITE_BASE_PATH?: string;
     VITE_ASSET_BASE_PATH?: string;
+    KEWEKE_ACCESS_TEAM_DOMAIN?: string;
+    KEWEKE_ACCESS_ADMIN_AUD?: string;
   };
 
   const kewekeEnv: KewekeEnvironment = {
@@ -140,8 +159,13 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   if (config.workers.kewekeMounted.basePath !== undefined) {
     kewekeEnv.VITE_BASE_PATH = config.workers.kewekeMounted.basePath;
     if (config.workers.kewekeMounted.assetBasePath !== undefined) {
-      kewekeEnv.VITE_ASSET_BASE_PATH = config.workers.kewekeMounted.assetBasePath;
+      kewekeEnv.VITE_ASSET_BASE_PATH =
+        config.workers.kewekeMounted.assetBasePath;
     }
+  }
+  if (kewekeAdminAccess !== undefined) {
+    kewekeEnv.KEWEKE_ACCESS_TEAM_DOMAIN = "jfa-d.cloudflareaccess.com";
+    kewekeEnv.KEWEKE_ACCESS_ADMIN_AUD = yield* yield* kewekeAdminAccess.aud;
   }
   const kewekeOptions = {
     ...workerDefaults(config.workers.kewekeMounted),
@@ -205,7 +229,9 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   if (isLocal) {
     Object.assign(routerOptions, { dev: localDev(8795) });
   }
-  const router = yield* Cloudflare.Worker("RouterWorker", routerOptions).pipe(adopt(true));
+  const router = yield* Cloudflare.Worker("RouterWorker", routerOptions).pipe(
+    adopt(true),
+  );
 
   const redirectsOptions = {
     ...workerDefaults(config.workers.redirects),
@@ -220,9 +246,10 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   if (isLocal) {
     Object.assign(redirectsOptions, { dev: localDev(8781) });
   }
-  const redirects = yield* Cloudflare.Worker("RedirectsWorker", redirectsOptions).pipe(
-    adopt(true),
-  );
+  const redirects = yield* Cloudflare.Worker(
+    "RedirectsWorker",
+    redirectsOptions,
+  ).pipe(adopt(true));
 
   return {
     landing,

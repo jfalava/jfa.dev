@@ -10,7 +10,7 @@ import {
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
 import { RefreshCw } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { KewekeHeader } from "@/components/keweke-header";
 import {
@@ -21,6 +21,7 @@ import {
 } from "@/server/admin";
 
 export const Route = createFileRoute("/admin")({
+  loader: async () => ({ overview: await getAdminOverview() }),
   component: AdminRoutePage,
 });
 
@@ -292,25 +293,8 @@ function ListsTable({ lists }: { lists: AdminListSummary[] }) {
  * ---------------------------------------------------------------------- */
 
 function AdminRoutePage() {
-  const [overview, setOverview] = useState<AdminOverview>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string>();
-
-  const loadOverview = useCallback(async (): Promise<void> => {
-    setIsLoading(true);
-    try {
-      setOverview(await getAdminOverview());
-      setError(undefined);
-    } catch {
-      setError("Could not read the directory.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void loadOverview();
-  }, [loadOverview]);
+  const loaderData = Route.useLoaderData();
+  const overview: AdminOverview | null = loaderData.overview;
 
   const users = overview?.users ?? [];
   const lists = overview?.lists ?? [];
@@ -336,30 +320,22 @@ function AdminRoutePage() {
             </p>
             <Button
               className="h-8 gap-1.5 px-3 text-sm"
-              isDisabled={isLoading}
-              onPress={() => void loadOverview()}
+              onPress={() => window.location.reload()}
               variant="outline"
             >
-              <RefreshCw
-                aria-hidden="true"
-                className={isLoading ? "size-3.5 animate-spin" : "size-3.5"}
-              />
+              <RefreshCw aria-hidden="true" className="size-3.5" />
               Refresh
             </Button>
           </div>
         </div>
 
-        {error ? (
+        {overview === null ? (
           <p className="border-b border-destructive/40 px-4 py-3 font-mono text-[10px] tracking-wide text-destructive uppercase sm:px-6 lg:px-8">
-            {error}
+            Could not read the directory.
           </p>
         ) : null}
 
-        {isLoading && !overview ? (
-          <p className="px-4 py-10 font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase sm:px-6 lg:px-8">
-            reading directory…
-          </p>
-        ) : (
+        {overview === null ? null : (
           <>
             <section aria-label="Users">
               <div className="flex items-baseline justify-between gap-4 px-4 pt-8 pb-3 sm:px-6 lg:px-8">

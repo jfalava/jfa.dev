@@ -37,6 +37,11 @@ export const infrastructureInventory = {
     publicRoutes: ["/keweke/*"],
     basePath: "/keweke",
   },
+  kewekeAdminAccess: {
+    application: "Keweke Admin",
+    domain: "jfa.dev/keweke/admin",
+    policyIds: ["6a8e2dfe-13b4-47f5-a954-94ff71425465"],
+  },
   redirects: {
     worker: "jfa-redirects",
     domains: [
@@ -57,6 +62,6 @@ export const infrastructureInventory = {
       "link.jfa.dev",
       "hyperscalers.jfa.dev",
       "hyperscaler-services.jfa.dev",
-    ]
+    ],
   },
 } as const;

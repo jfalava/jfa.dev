@@ -14,6 +14,8 @@ declare global {
       KEWEKE_PAIRING: DurableObjectNamespace<KewekePairingSession>;
       KEWEKE_PASSKEY_SESSIONS: DurableObjectNamespace<KewekePasskeySession>;
       KEWEKE_USERS: DurableObjectNamespace<KewekeUserDirectory>;
+      KEWEKE_ACCESS_TEAM_DOMAIN?: string;
+      KEWEKE_ACCESS_ADMIN_AUD?: string;
     }
   }
 }
