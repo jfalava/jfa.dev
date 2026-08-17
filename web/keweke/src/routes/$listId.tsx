@@ -21,6 +21,7 @@ import {
   ChevronDown,
   ChevronUp,
   Copy,
+  History,
   Pencil,
   Plus,
   RotateCcw,
@@ -32,6 +33,7 @@ import {
 import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { uuidv7 } from "uuidv7";
 
+import { ItemHistoryDialog } from "@/components/item-history-dialog";
 import { KewekeHeader } from "@/components/keweke-header";
 import { PublishListDialog } from "@/components/publish-list-dialog";
 import { isListAddress } from "@/lib/list-id";
@@ -71,9 +73,12 @@ type ShoppingTableMeta = {
   onEditDraftChange: (field: keyof ItemEditDraft, value: string) => void;
   onRemove: (id: string) => void;
   onSaveEditing: () => void;
+  onShowHistory?: (item: ListItem) => void;
   onStartEditing: (item: ListItem) => void;
   onToggle: (id: string, checked: boolean) => void;
 };
+
+type HistoryTarget = { itemId: string; itemName: string };
 
 const shoppingTableFeatures = tableFeatures({
   // SAFETY: TanStack consumes this metadata through the declared table feature contract.
@@ -106,6 +111,7 @@ function ListPage() {
   const [userDialogMessage, setUserDialogMessage] = useState<string>();
   const [isRenaming, setIsRenaming] = useState(false);
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
+  const [historyTarget, setHistoryTarget] = useState<HistoryTarget>();
   const [error, setError] = useState<string>();
   const [filter, setFilter] = useState("");
   const [newItemDraft, setNewItemDraft] = useState<NewItemDraft>({
@@ -421,6 +427,14 @@ function ListPage() {
     [commit],
   );
 
+  const showHistory = useCallback((item: Pick<ListItem, "id" | "name">): void => {
+    setHistoryTarget({ itemId: item.id, itemName: item.name });
+  }, []);
+
+  const hideHistory = useCallback((): void => {
+    setHistoryTarget(undefined);
+  }, []);
+
   const updateDeletedItem = useCallback(
     async (command: ListCommand, archiveId: string): Promise<void> => {
       setBusyArchiveId(archiveId);
@@ -580,6 +594,20 @@ function ListPage() {
         onConfirm={confirmMigration}
         onOpenChange={setIsPublishConfirmOpen}
       />
+      {historyTarget ? (
+        <ItemHistoryDialog
+          isOpen
+          itemId={historyTarget.itemId}
+          itemName={historyTarget.itemName}
+          key={historyTarget.itemId}
+          listId={snapshot.id}
+          onOpenChange={(nextIsOpen) => {
+            if (!nextIsOpen) {
+              hideHistory();
+            }
+          }}
+        />
+      ) : null}
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
           <div>
@@ -626,6 +654,7 @@ function ListPage() {
           onAdjustQuantity={adjustQuantity}
           onNewItemChange={updateNewItemDraft}
           onRemove={removeItem}
+          onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
           onToggle={toggleItem}
           onUpdate={updateItem}
         />
@@ -639,6 +668,7 @@ function ListPage() {
           onRestore={(archiveId) => {
             void updateDeletedItem({ type: "restore-item", archiveId }, archiveId);
           }}
+          onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
         />
       </main>
     </div>
@@ -971,6 +1001,7 @@ function ShoppingTable({
   onAdjustQuantity,
   onNewItemChange,
   onRemove,
+  onShowHistory,
   onToggle,
   onUpdate,
 }: {
@@ -982,6 +1013,7 @@ function ShoppingTable({
   onAdjustQuantity: (itemId: string, nextQuantity: number) => void;
   onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
   onRemove: (id: string) => void;
+  onShowHistory?: (item: ListItem) => void;
   onToggle: (id: string, checked: boolean) => void;
   onUpdate: (itemId: string, draft: ItemEditDraft) => Promise<boolean>;
 }) {
@@ -1045,10 +1077,11 @@ function ShoppingTable({
         isSaving,
         onAdjustQuantity,
         onRemove,
+        onShowHistory,
         onStartEditing: startEditing,
         onToggle,
       }),
-    [identity, isSaving, onAdjustQuantity, onRemove, onToggle, startEditing],
+    [identity, isSaving, onAdjustQuantity, onRemove, onShowHistory, onToggle, startEditing],
   );
   const tableMeta = useMemo<ShoppingTableMeta>(
     () => ({
@@ -1061,6 +1094,7 @@ function ShoppingTable({
       onEditDraftChange: updateDraft,
       onRemove,
       onSaveEditing: saveEditing,
+      onShowHistory,
       onStartEditing: startEditing,
       onToggle,
     }),
@@ -1072,6 +1106,7 @@ function ShoppingTable({
       isSaving,
       onAdjustQuantity,
       onRemove,
+      onShowHistory,
       onToggle,
       saveEditing,
       startEditing,
@@ -1571,12 +1606,14 @@ function DeletedItemsHistory({
   items,
   onPurge,
   onRestore,
+  onShowHistory,
 }: {
   busyArchiveId?: string;
   identity?: LocalIdentity;
   items: DeletedListItem[];
   onPurge: (archiveId: string) => void;
   onRestore: (archiveId: string) => void;
+  onShowHistory?: (item: Pick<ListItem, "id" | "name">) => void;
 }) {
   const [confirmingArchiveId, setConfirmingArchiveId] = useState<string>();
 
@@ -1654,6 +1691,18 @@ function DeletedItemsHistory({
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
+                  {onShowHistory ? (
+                    <Button
+                      aria-label={`Show history for ${item.name}`}
+                      isDisabled={isBusy}
+                      onPress={() => onShowHistory(item)}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      <History />
+                      History
+                    </Button>
+                  ) : null}
                   <Button
                     aria-label={`Restore ${item.name}`}
                     isDisabled={isBusy}
@@ -1882,6 +1931,7 @@ function createShoppingColumns() {
           onCancelEditing,
           onRemove,
           onSaveEditing,
+          onShowHistory,
           onStartEditing,
         } = getShoppingTableMeta(table);
         return editingItemId === row.original.id ? (
@@ -1906,6 +1956,16 @@ function createShoppingColumns() {
           </div>
         ) : (
           <div className="flex items-center gap-1">
+            {onShowHistory ? (
+              <Button
+                aria-label={`Show history for ${row.original.name}`}
+                className="size-7 px-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+                onPress={() => onShowHistory(row.original)}
+                variant="ghost"
+              >
+                <History className="size-3.5" />
+              </Button>
+            ) : null}
             <Button
               aria-label={`Edit ${row.original.name}`}
               className="size-7 px-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
@@ -1936,6 +1996,7 @@ function createMobileShoppingColumns({
   isSaving,
   onAdjustQuantity,
   onRemove,
+  onShowHistory,
   onStartEditing,
   onToggle,
 }: {
@@ -1943,6 +2004,7 @@ function createMobileShoppingColumns({
   isSaving: boolean;
   onAdjustQuantity: (itemId: string, nextQuantity: number) => void;
   onRemove: (id: string) => void;
+  onShowHistory?: (item: ListItem) => void;
   onStartEditing: (item: ListItem) => void;
   onToggle: (id: string, checked: boolean) => void;
 }) {
@@ -1994,7 +2056,17 @@ function createMobileShoppingColumns({
       id: "actions",
       header: "actions",
       cell: ({ row }) => (
-        <div className="flex shrink-0 items-center gap-0.5">
+        <div className="flex shrink-0 flex-wrap items-center gap-0.5">
+          {onShowHistory ? (
+            <Button
+              aria-label={`Show history for ${row.original.name}`}
+              className="size-11 p-0"
+              onPress={() => onShowHistory(row.original)}
+              variant="ghost"
+            >
+              <History className="size-4" />
+            </Button>
+          ) : null}
           <QuantityStepper
             buttonClassName="size-11 p-0"
             itemName={row.original.name}

@@ -10,6 +10,7 @@ import type {
   ImportSnapshotResult,
   ListBackend,
   ListCommand,
+  ListItemHistoryPage,
   ListMutation,
   ListSnapshot,
 } from "@jfa.dev/common/lists";
@@ -35,6 +36,7 @@ import {
 import {
   applyRemoteMutation,
   ensureRemoteListAlias,
+  getRemoteItemHistory,
   getRemoteList,
   getRemoteListByAlias,
   importRemoteList,
@@ -160,6 +162,20 @@ export async function applyMutation(
   }
 
   return applyRemoteMutation({ data: { listId, mutation } });
+}
+
+export async function getItemHistory(
+  listId: string,
+  itemId: string,
+  options: { beforeRevision?: number; limit?: number } = {},
+): Promise<ListItemHistoryPage> {
+  const result = await getRemoteItemHistory({
+    data: { listId, itemId, beforeRevision: options.beforeRevision, limit: options.limit },
+  });
+  if (result.status === "missing") {
+    throw new Error("This list no longer exists");
+  }
+  return result.page;
 }
 
 export async function migrateList(snapshot: ListSnapshot): Promise<ImportSnapshotResult> {
