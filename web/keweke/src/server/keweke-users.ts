@@ -225,6 +225,7 @@ export class KewekeUserDirectory extends DurableObject {
           new Date().toISOString(),
         );
       });
+      await this.unregisterFromDirectory(authorization.userId);
       return { status: "deleted" };
     } catch (error) {
       console.error("Keweke remote account deletion failed", {
@@ -353,6 +354,7 @@ export class KewekeUserDirectory extends DurableObject {
       if (!device || !(await verifyPayload(device.publicKey, auth.data.signature, input.payload))) {
         return { status: "unauthorized" };
       }
+      await this.registerWithDirectory(auth.data.userId);
       return { status: "existing", profile: current };
     }
 
@@ -384,6 +386,9 @@ export class KewekeUserDirectory extends DurableObject {
     });
 
     const profile = await this.readProfile(auth.data.userId);
+    if (profile) {
+      await this.registerWithDirectory(auth.data.userId);
+    }
     return profile ? { status: "created", profile } : { status: "unauthorized" };
   }
 
@@ -750,6 +755,22 @@ export class KewekeUserDirectory extends DurableObject {
       deviceId: device.deviceId,
       devicePublicKey: device.publicKey,
     };
+  }
+
+  private async registerWithDirectory(userId: string): Promise<void> {
+    try {
+      await this.env.KEWEKE_ALIASES.getByName("directory").registerUser(userId);
+    } catch (error) {
+      console.error("Keweke directory user registration failed", { error, userId });
+    }
+  }
+
+  private async unregisterFromDirectory(userId: string): Promise<void> {
+    try {
+      await this.env.KEWEKE_ALIASES.getByName("directory").unregisterUser(userId);
+    } catch (error) {
+      console.error("Keweke directory user removal failed", { error, userId });
+    }
   }
 
   private async deleteCreatedLists(userId: string): Promise<void> {

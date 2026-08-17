@@ -117,6 +117,18 @@ export type ListDeletionResult =
   | { status: "missing"; alias: null }
   | { status: "unauthorized"; alias: null };
 
+export type AdminListSummary = {
+  listId: string;
+  alias: string | null;
+  title: string;
+  revision: number;
+  createdAt: string;
+  updatedAt: string;
+  ownerUserId: string | null;
+  itemCount: number;
+  completedCount: number;
+};
+
 export class KewekeList extends DurableObject {
   constructor(ctx: DurableObjectState, env: Cloudflare.Env) {
     super(ctx, env);
@@ -152,6 +164,35 @@ export class KewekeList extends DurableObject {
       return null;
     }
     return snapshot;
+  }
+
+  async getAdminSummary(listId: string): Promise<AdminListSummary | null> {
+    const normalizedListId = listIdSchema.parse(listId);
+    const metadata = this.readMetadata();
+    if (!metadata || metadata.list_id !== normalizedListId) {
+      return null;
+    }
+
+    const counts = this.ctx.storage.sql
+      .exec<{ item_count: number; completed_count: number }>(
+        `SELECT COUNT(*) AS item_count,
+                COALESCE(SUM(CASE WHEN checked = 1 THEN 1 ELSE 0 END), 0) AS completed_count
+         FROM items WHERE list_id = ?`,
+        metadata.list_id,
+      )
+      .toArray()[0];
+
+    return {
+      listId: metadata.list_id,
+      alias: metadata.alias,
+      title: metadata.title,
+      revision: metadata.revision,
+      createdAt: metadata.created_at,
+      updatedAt: metadata.updated_at,
+      ownerUserId: metadata.owner_user_id,
+      itemCount: counts?.item_count ?? 0,
+      completedCount: counts?.completed_count ?? 0,
+    };
   }
 
   async getItemHistory(
@@ -228,6 +269,7 @@ export class KewekeList extends DurableObject {
     for (const webSocket of this.ctx.getWebSockets("list")) {
       webSocket.close(1000, "List deleted");
     }
+    await this.unregisterFromDirectory(normalizedListId);
     return { status: "deleted", alias };
   }
 
@@ -370,8 +412,25 @@ export class KewekeList extends DurableObject {
       this.writeSnapshot(snapshot, authorization.authorization.userId);
       this.ctx.storage.sql.exec("INSERT INTO imports (id) VALUES (?)", migrationId);
     });
+    await this.registerWithDirectory(normalizedListId);
     this.broadcast({ type: "snapshot", snapshot });
     return { status: "imported", snapshot };
+  }
+
+  private async registerWithDirectory(listId: string): Promise<void> {
+    try {
+      await this.env.KEWEKE_ALIASES.getByName("directory").registerList(listId);
+    } catch (error) {
+      console.error("Keweke directory list registration failed", { error, listId });
+    }
+  }
+
+  private async unregisterFromDirectory(listId: string): Promise<void> {
+    try {
+      await this.env.KEWEKE_ALIASES.getByName("directory").unregisterList(listId);
+    } catch (error) {
+      console.error("Keweke directory list removal failed", { error, listId });
+    }
   }
 
   private async recordListCreated(userId: string, listId: string): Promise<void> {

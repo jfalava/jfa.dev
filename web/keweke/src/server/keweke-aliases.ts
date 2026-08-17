@@ -4,12 +4,23 @@ import {
   normalizeListAlias,
   normalizeListAliasBase,
 } from "@jfa.dev/common/aliases";
+import { identityIdSchema } from "@jfa.dev/common/identities";
 import { listIdSchema } from "@jfa.dev/common/lists";
 import { DurableObject } from "cloudflare:workers";
 
 interface AliasRow {
   [key: string]: string;
   alias: string;
+  list_id: string;
+}
+
+interface RegisteredUserRow {
+  [key: string]: string;
+  user_id: string;
+}
+
+interface RegisteredListRow {
+  [key: string]: string;
   list_id: string;
 }
 
@@ -104,11 +115,65 @@ export class KewekeAliasDirectory extends DurableObject {
     this.ctx.storage.sql.exec("DELETE FROM aliases WHERE list_id = ?", normalizedListId);
   }
 
+  async registerUser(userId: string): Promise<void> {
+    const normalizedUserId = identityIdSchema.parse(userId);
+    this.ctx.storage.sql.exec(
+      "INSERT INTO registered_users (user_id, registered_at) VALUES (?, ?) ON CONFLICT(user_id) DO NOTHING",
+      normalizedUserId,
+      new Date().toISOString(),
+    );
+  }
+
+  async unregisterUser(userId: string): Promise<void> {
+    const normalizedUserId = identityIdSchema.parse(userId);
+    this.ctx.storage.sql.exec("DELETE FROM registered_users WHERE user_id = ?", normalizedUserId);
+  }
+
+  async listUserIds(): Promise<string[]> {
+    return this.ctx.storage.sql
+      .exec<RegisteredUserRow>(
+        "SELECT user_id FROM registered_users ORDER BY registered_at ASC, user_id ASC",
+      )
+      .toArray()
+      .map((row) => row.user_id);
+  }
+
+  async registerList(listId: string): Promise<void> {
+    const normalizedListId = listIdSchema.parse(listId);
+    this.ctx.storage.sql.exec(
+      "INSERT INTO registered_lists (list_id, registered_at) VALUES (?, ?) ON CONFLICT(list_id) DO NOTHING",
+      normalizedListId,
+      new Date().toISOString(),
+    );
+  }
+
+  async unregisterList(listId: string): Promise<void> {
+    const normalizedListId = listIdSchema.parse(listId);
+    this.ctx.storage.sql.exec("DELETE FROM registered_lists WHERE list_id = ?", normalizedListId);
+  }
+
+  async listListIds(): Promise<string[]> {
+    return this.ctx.storage.sql
+      .exec<RegisteredListRow>(
+        "SELECT list_id FROM registered_lists ORDER BY registered_at ASC, list_id ASC",
+      )
+      .toArray()
+      .map((row) => row.list_id);
+  }
+
   private migrate(): void {
     this.ctx.storage.sql.exec(`
       CREATE TABLE IF NOT EXISTS aliases (
         alias TEXT PRIMARY KEY,
         list_id TEXT NOT NULL UNIQUE
+      );
+      CREATE TABLE IF NOT EXISTS registered_users (
+        user_id TEXT PRIMARY KEY,
+        registered_at TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS registered_lists (
+        list_id TEXT PRIMARY KEY,
+        registered_at TEXT NOT NULL
       );
     `);
   }
