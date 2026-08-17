@@ -26,13 +26,13 @@ export const infrastructureInventory = {
     publicRoutes: ["/og-img-gen"],
   },
   hyperscalerMounted: {
-    worker: "hyperscaler-services-mounted",
+    worker: "jfa-dev-hyperscaler-services",
     domains: [],
     publicRoutes: ["/hyperscaler-services/*"],
     basePath: "/hyperscaler-services",
   },
   kewekeMounted: {
-    worker: "keweke-mounted",
+    worker: "jfa-dev-keweke",
     domains: [],
     publicRoutes: ["/keweke/*"],
     basePath: "/keweke",
