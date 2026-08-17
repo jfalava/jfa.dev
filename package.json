@@ -77,14 +77,14 @@
   },
   "type": "module",
   "scripts": {
-    "check:global": "bun run --filter @jfa.dev/landing check && bun run --filter @jfa.dev/og-img-gen check && bun run --filter @jfa.dev/hyperscaler-services check && bun run --filter @jfa.dev/keweke check && bun run --filter @jfa.dev/common check && bun run --filter @jfa.dev/router check && bun run --filter @jfa.dev/redirects check",
+    "check:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/og-img-gen --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects check",
     "deploy": "bun run --filter @jfa.dev/iac deploy",
     "dev": "bun run --filter @jfa.dev/iac dev",
-    "format:global": "bun run --filter @jfa.dev/landing format && bun run --filter @jfa.dev/og-img-gen format && bun run --filter @jfa.dev/hyperscaler-services format && bun run --filter @jfa.dev/keweke format && bun run --filter @jfa.dev/common format && bun run --filter @jfa.dev/router format && bun run --filter @jfa.dev/redirects format",
+    "format:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/og-img-gen --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects format",
     "iac:plan": "bun run --filter @jfa.dev/iac plan",
-    "lint:global": "bun run --filter @jfa.dev/landing lint && bun run --filter @jfa.dev/og-img-gen lint && bun run --filter @jfa.dev/hyperscaler-services lint && bun run --filter @jfa.dev/keweke lint && bun run --filter @jfa.dev/common lint && bun run --filter @jfa.dev/router lint && bun run --filter @jfa.dev/redirects lint",
+    "lint:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/og-img-gen --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects lint",
     "predeploy": "bun run lint:global && bun run test:global",
-    "test:global": "bun run --filter @jfa.dev/keweke test && bun run --filter @jfa.dev/common test && bun run --filter @jfa.dev/router test"
+    "test:global": "bun run --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router test"
   },
   "dependencies": {
     "jsdom": "30.0.1"
