@@ -2,7 +2,7 @@ import { Button, Input } from "@jfa.dev/common/ui";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpRight, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Autocomplete,
   Dialog,
@@ -24,10 +24,17 @@ export function OpenListCommand() {
   const [value, setValue] = useState("");
   const [error, setError] = useState<string>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useHotkey(OPEN_LIST_HOTKEY, () => {
     setIsDialogOpen((isOpen) => !isOpen);
   });
+
+  useEffect(() => {
+    if (isDialogOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isDialogOpen]);
 
   const openList = async (): Promise<void> => {
     const normalizedValue = value.trim().toLowerCase();
@@ -86,6 +93,7 @@ export function OpenListCommand() {
                   autoComplete="off"
                   className="h-12 rounded-none border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0 md:text-base"
                   enterKeyHint="go"
+                  ref={inputRef}
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
                       event.preventDefault();
