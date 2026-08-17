@@ -2,7 +2,7 @@ import { Button, Input } from "@jfa.dev/common/ui";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpRight, Search } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Autocomplete,
   Dialog,
@@ -16,14 +16,18 @@ import {
 
 import { HotkeyKbd } from "@/components/hotkey-kbd";
 import { isListAddress, normalizeListAddress } from "@/lib/list-id";
+import { buildListSearchIndex, searchListIndex, type ListSearchIndex } from "@/lib/list-search";
+import { listLocalLists } from "@/lib/local-list-store";
 
 const OPEN_LIST_HOTKEY = "Mod+K";
+const SUGGESTION_LIMIT = 6;
 
 export function OpenListCommand() {
   const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [error, setError] = useState<string>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [savedLists, setSavedLists] = useState<ListSearchIndex | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useHotkey(OPEN_LIST_HOTKEY, () => {
@@ -33,10 +37,21 @@ export function OpenListCommand() {
   useEffect(() => {
     if (isDialogOpen) {
       inputRef.current?.focus();
+      void listLocalLists().then((lists) => setSavedLists(buildListSearchIndex(lists)));
     }
   }, [isDialogOpen]);
 
-  const openList = async (): Promise<void> => {
+  const suggestions = useMemo(
+    () => (savedLists ? searchListIndex(savedLists, value).slice(0, SUGGESTION_LIMIT) : []),
+    [savedLists, value],
+  );
+
+  const openList = async (listId?: string): Promise<void> => {
+    if (listId) {
+      await navigate({ to: "/$listId", params: { listId } });
+      return;
+    }
+
     const normalizedValue = value.trim().toLowerCase();
     if (!isListAddress(normalizedValue)) {
       setError("Please enter a list ID or alias.");
@@ -49,10 +64,27 @@ export function OpenListCommand() {
     });
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (event.key !== "Enter") {
+      return;
+    }
+    event.preventDefault();
+
+    const activeDescendant = inputRef.current?.getAttribute("aria-activedescendant");
+    const activeSuggestion = suggestions.find(
+      (suggestion) => `list-${suggestion.list.id}` === activeDescendant,
+    );
+
+    void openList(activeSuggestion?.list.id);
+  };
+
   const reset = (): void => {
     setValue("");
     setError(undefined);
   };
+
+  const normalizedValue = value.trim().toLowerCase();
+  const showOpenItem = suggestions.length === 0 && isListAddress(normalizedValue);
 
   return (
     <DialogTrigger
@@ -94,17 +126,12 @@ export function OpenListCommand() {
                   className="h-12 rounded-none border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0 md:text-base"
                   enterKeyHint="go"
                   ref={inputRef}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      void openList();
-                    }
-                  }}
-                  placeholder="Enter a list ID or alias"
+                  onKeyDown={handleKeyDown}
+                  placeholder="Search your lists"
                 />
               </SearchField>
               <div className="space-y-1 border-b border-border px-4 py-3 text-sm text-muted-foreground">
-                <p>Enter the list ID or alias someone shared with you.</p>
+                <p>Search your saved lists by alias or title, or enter a shared list ID.</p>
                 <p>
                   Example: <span className="font-mono text-xs">groceries-apple</span>
                 </p>
@@ -119,15 +146,31 @@ export function OpenListCommand() {
                 className="p-2 outline-none"
                 renderEmptyState={() => null}
               >
-                <MenuItem
-                  className="flex items-center justify-between rounded-md px-3 py-2 text-sm outline-none data-focused:bg-muted"
-                  id="open-list"
-                  onAction={() => void openList()}
-                  textValue="Open list"
-                >
-                  <span>Open list</span>
-                  <span className="text-xs text-muted-foreground">↵</span>
-                </MenuItem>
+                {suggestions.map(({ list }) => (
+                  <MenuItem
+                    key={list.id}
+                    id={`list-${list.id}`}
+                    className="flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm outline-none data-focused:bg-muted"
+                    onAction={() => void openList(list.id)}
+                    textValue={list.alias ?? list.title}
+                  >
+                    <span className="truncate">{list.alias ?? list.title}</span>
+                    <span className="shrink-0 truncate text-xs text-muted-foreground">
+                      {list.alias && list.title !== list.alias ? list.title : ""}
+                    </span>
+                  </MenuItem>
+                ))}
+                {showOpenItem ? (
+                  <MenuItem
+                    className="flex items-center justify-between rounded-md px-3 py-2 text-sm outline-none data-focused:bg-muted"
+                    id="open-list"
+                    onAction={() => void openList()}
+                    textValue="Open list"
+                  >
+                    <span>Open list</span>
+                    <span className="text-xs text-muted-foreground">↵</span>
+                  </MenuItem>
+                ) : null}
               </Menu>
             </Autocomplete>
           </Dialog>

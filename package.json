@@ -10,7 +10,8 @@
     ],
     "catalogs": {
       "backend": {
-        "hono": "4.13.2"
+        "hono": "4.13.2",
+        "fuse.js": "7.5.0"
       },
       "ui": {
         "lucide-react": "1.31.0",

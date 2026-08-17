@@ -99,7 +99,7 @@
         "@tanstack/react-router": "catalog:tanstack",
         "@tanstack/react-start": "catalog:tanstack",
         "@tanstack/react-table": "catalog:tanstack",
-        "fuse.js": "7.5.0",
+        "fuse.js": "catalog:backend",
         "lucide-react": "catalog:ui",
         "react": "catalog:react",
         "react-dom": "catalog:react",
@@ -131,6 +131,7 @@
         "@tanstack/react-router": "catalog:tanstack",
         "@tanstack/react-start": "catalog:tanstack",
         "@tanstack/react-table": "catalog:tanstack",
+        "fuse.js": "catalog:backend",
         "idb": "8.0.3",
         "lucide-react": "catalog:ui",
         "react": "catalog:react",
@@ -232,6 +233,7 @@
   },
   "catalogs": {
     "backend": {
+      "fuse.js": "7.5.0",
       "hono": "4.13.2",
     },
     "build": {
