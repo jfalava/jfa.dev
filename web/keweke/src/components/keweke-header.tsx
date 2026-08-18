@@ -12,7 +12,7 @@ import { UserDialog } from "@/components/user-dialog";
 import { createLocalList } from "@/lib/local-list-store";
 import { appPath } from "@/lib/site-paths";
 
-const NEW_LIST_HOTKEY = "Mod+E";
+export const NEW_LIST_HOTKEY = "Mod+E";
 const PUBLISH_HOTKEY = "Mod+U";
 const ADMIN_HOTKEY_MAC = "Control+Meta+A";
 const ADMIN_HOTKEY_WINDOWS = "Control+Alt+A";
@@ -26,12 +26,12 @@ interface KewekeHeaderProps {
   userDialogMessage?: string;
   onUserDialogOpenChange?: (isOpen: boolean) => void;
   onUserDialogSaved?: () => void;
-  hideMobileNewListButton?: boolean;
+  hideNewListButton?: boolean;
 }
 
 export function KewekeHeader({
   backend,
-  hideMobileNewListButton = false,
+  hideNewListButton = false,
   isMigrating,
   listId,
   onMigrate,
@@ -149,19 +149,21 @@ export function KewekeHeader({
               <span className="hidden sm:inline">{copied ? "Copied" : "Share"}</span>
             </Button>
           ) : null}
-          <Button
-            aria-label="Create new list"
-            className={`${hideMobileNewListButton ? "hidden sm:inline-flex" : "inline-flex"} w-7 sm:w-auto sm:gap-1 sm:px-2`}
-            isDisabled={isCreating}
-            onPress={() => void createList()}
-            size="icon"
-          >
-            <Plus className="size-3.5" />
-            <span className="hidden sm:inline">New list</span>
-            {!isCreating ? (
-              <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />
-            ) : null}
-          </Button>
+          {!hideNewListButton ? (
+            <Button
+              aria-label="Create new list"
+              className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
+              isDisabled={isCreating}
+              onPress={() => void createList()}
+              size="icon"
+            >
+              <Plus className="size-3.5" />
+              <span className="hidden sm:inline">New list</span>
+              {!isCreating ? (
+                <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />
+              ) : null}
+            </Button>
+          ) : null}
         </nav>
       </div>
     </header>

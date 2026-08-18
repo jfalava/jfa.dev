@@ -10,10 +10,11 @@ import {
 } from "@jfa.dev/common/ui";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
-import { ChevronRight, Cloud, House, List, ListChecks, Plus, Trash2 } from "lucide-react";
+import { ChevronRight, Cloud, House, Inbox, List, ListChecks, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { KewekeHeader } from "@/components/keweke-header";
+import { HotkeyKbd } from "@/components/hotkey-kbd";
+import { KewekeHeader, NEW_LIST_HOTKEY } from "@/components/keweke-header";
 import { removeRemoteList } from "@/lib/list-repository";
 import { ensureLocalIdentity } from "@/lib/local-identity";
 import {
@@ -395,8 +396,8 @@ function EmptyState() {
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
-      <KewekeHeader hideMobileNewListButton={!isLoading && lists.length === 0} />
-      <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+      <KewekeHeader hideNewListButton={!isLoading && lists.length === 0} />
+      <main className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5 sm:px-6 lg:px-8">
           <div>
             <h1 className="mt-2 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
@@ -434,17 +435,25 @@ function EmptyState() {
             />
           </>
         ) : (
-          <div className="px-4 py-10 sm:px-6 lg:px-8">
-            <p className="text-base text-muted-foreground">
+          <div className="flex grow flex-col items-center justify-center gap-6 px-4 text-center sm:px-6 lg:px-8">
+            <Inbox
+              aria-hidden="true"
+              className="size-24 text-muted-foreground/60"
+              strokeWidth={1.25}
+            />
+            <p className="max-w-sm text-base text-muted-foreground">
               No lists yet. Create one to get started.
             </p>
             <Button
-              className="mt-6 h-11 w-full text-base sm:hidden"
+              className="h-11 w-full text-base sm:w-auto sm:px-8"
               isDisabled={isCreating}
               onPress={() => void createList()}
             >
               <Plus className="size-4" />
               {isCreating ? "Creating…" : "Create a new list"}
+              {!isCreating ? (
+                <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />
+              ) : null}
             </Button>
           </div>
         )}
