@@ -640,7 +640,6 @@ function UserRoutePage() {
             isDisabled={isAdoptingPasskey}
             onPress={() => void adoptWithPasskey()}
           >
-            <KeyRound aria-hidden="true" className="size-3.5" />
             {isAdoptingPasskey ? "Waiting…" : "Pair with passkey"}
           </Button>
         ),
