@@ -22,6 +22,7 @@ import {
   ChevronUp,
   Copy,
   History,
+  Info,
   Pencil,
   Plus,
   RotateCcw,
@@ -33,6 +34,7 @@ import {
 import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { uuidv7 } from "uuidv7";
 
+import { ItemEntryHelpDialog } from "@/components/item-entry-help-dialog";
 import { ItemHistoryDialog } from "@/components/item-history-dialog";
 import { KewekeHeader } from "@/components/keweke-header";
 import { PublishListDialog } from "@/components/publish-list-dialog";
@@ -109,6 +111,7 @@ function ListPage() {
   const [isPublishConfirmOpen, setIsPublishConfirmOpen] = useState(false);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const [userDialogMessage, setUserDialogMessage] = useState<string>();
+  const [isItemEntryHelpOpen, setIsItemEntryHelpOpen] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [historyTarget, setHistoryTarget] = useState<HistoryTarget>();
@@ -594,6 +597,7 @@ function ListPage() {
         onConfirm={confirmMigration}
         onOpenChange={setIsPublishConfirmOpen}
       />
+      <ItemEntryHelpDialog isOpen={isItemEntryHelpOpen} onOpenChange={setIsItemEntryHelpOpen} />
       {historyTarget ? (
         <ItemHistoryDialog
           isOpen
@@ -630,19 +634,30 @@ function ListPage() {
         ) : null}
 
         <div className="invoice-rule border-b px-4 py-3 sm:px-6 lg:px-8">
-          <div className="relative w-full">
-            <Search
-              aria-hidden="true"
-              className="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              id="filter-items"
-              aria-label="Search items"
-              className="w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
-              onChange={(event) => setFilter(event.target.value)}
-              placeholder="Search items"
-              value={filter}
-            />
+          <div className="flex items-center gap-1.5">
+            <div className="relative min-w-0 flex-1">
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground"
+              />
+              <Input
+                id="filter-items"
+                aria-label="Search items"
+                className="w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
+                onChange={(event) => setFilter(event.target.value)}
+                placeholder="Search items"
+                value={filter}
+              />
+            </div>
+            <Button
+              aria-label="How to add items"
+              className="shrink-0"
+              onPress={() => setIsItemEntryHelpOpen(true)}
+              size="icon"
+              variant="ghost"
+            >
+              <Info aria-hidden="true" />
+            </Button>
           </div>
         </div>
         <ShoppingTable
@@ -1237,7 +1252,7 @@ function DesktopNewItemRow({
           maxLength={200}
           onChange={(event) => onChange("name", event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Item"
+          placeholder="microwave popcorn"
           value={newItem.name}
         />
       </TableCell>
@@ -1262,6 +1277,7 @@ function DesktopNewItemRow({
           maxLength={32}
           onChange={(event) => onChange("unit", event.target.value)}
           onKeyDown={onKeyDown}
+          placeholder="box"
           value={newItem.unit}
         />
       </TableCell>
@@ -1272,7 +1288,7 @@ function DesktopNewItemRow({
           maxLength={64}
           onChange={(event) => onChange("amount", event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Each"
+          placeholder="3 bags"
           value={newItem.amount}
         />
       </TableCell>
@@ -1535,7 +1551,7 @@ function MobileNewItemRow({
               maxLength={200}
               onChange={(event) => onChange("name", event.target.value)}
               onKeyDown={onKeyDown}
-              placeholder="New item"
+              placeholder="microwave popcorn"
               value={newItem.name}
             />
           </label>
@@ -1563,7 +1579,7 @@ function MobileNewItemRow({
                 maxLength={32}
                 onChange={(event) => onChange("unit", event.target.value)}
                 onKeyDown={onKeyDown}
-                placeholder="Unit"
+                placeholder="box"
                 value={newItem.unit}
               />
               <Input
@@ -1572,7 +1588,7 @@ function MobileNewItemRow({
                 maxLength={64}
                 onChange={(event) => onChange("amount", event.target.value)}
                 onKeyDown={onKeyDown}
-                placeholder="Each"
+                placeholder="3 bags"
                 value={newItem.amount}
               />
             </div>
