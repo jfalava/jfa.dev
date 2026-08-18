@@ -489,7 +489,7 @@ function ListPage() {
         setNewItemDraft({
           name: "",
           quantity: "1",
-          unit: "EA",
+          unit: "",
           amount: "",
           category: "GENERAL",
         });
