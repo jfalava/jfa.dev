@@ -11,7 +11,7 @@ export type RemoteListLiveHandlers = {
   onMutation: (mutation: LiveListMutation, appliedAt: string) => void;
   onDeleted: () => void;
   onOpen?: () => void;
-  onClose?: () => void;
+  onClose?: (event: CloseEvent) => void;
 };
 
 export function openRemoteListLiveSession(
@@ -26,7 +26,7 @@ export function openRemoteListLiveSession(
   const webSocket = new WebSocket(url);
 
   webSocket.addEventListener("open", () => handlers.onOpen?.());
-  webSocket.addEventListener("close", () => handlers.onClose?.());
+  webSocket.addEventListener("close", (event) => handlers.onClose?.(event));
   webSocket.addEventListener("message", (event) => {
     if (Object.prototype.toString.call(event.data) !== "[object String]") {
       return;

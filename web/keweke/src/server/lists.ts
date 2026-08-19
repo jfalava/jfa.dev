@@ -6,6 +6,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
+import { isUuidV7, normalizeListAddress } from "@/lib/list-id";
+import { listShareMetaFromSnapshot, type ListShareMeta } from "@/lib/share-meta";
+
 import { readRemoteList, resolveActorNames, resolveHistoryActorNames } from "./remote-list";
 
 const ALIAS_DIRECTORY_NAME = "directory";
@@ -57,6 +60,23 @@ export const getRemoteItemHistory = createServerFn()
       return { status: "missing" as const };
     }
     return { status: "ok" as const, page: await resolveHistoryActorNames(result.page) };
+  });
+
+const listShareMetaInputSchema = z.string().trim().min(1).max(200);
+
+export const getListShareMeta = createServerFn()
+  .validator(listShareMetaInputSchema)
+  .handler(async ({ data }): Promise<ListShareMeta | null> => {
+    const normalizedAddress = normalizeListAddress(data);
+    const listId = isUuidV7(normalizedAddress)
+      ? normalizedAddress
+      : await env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME).getListId(normalizedAddress);
+    if (!listId) {
+      return null;
+    }
+
+    const snapshot = await env.KEWEKE_LISTS.getByName(listId).getSnapshot(listId);
+    return snapshot ? listShareMetaFromSnapshot(snapshot) : null;
   });
 
 export const ensureRemoteListAlias = createServerFn({ method: "POST" })

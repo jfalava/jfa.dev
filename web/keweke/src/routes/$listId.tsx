@@ -25,6 +25,7 @@ import {
   Info,
   Pencil,
   Plus,
+  RefreshCw,
   RotateCcw,
   Save,
   Search,
@@ -39,6 +40,7 @@ import { ItemEntryHelpDialog } from "@/components/item-entry-help-dialog";
 import { ItemHistoryDialog } from "@/components/item-history-dialog";
 import { KewekeHeader } from "@/components/keweke-header";
 import { PublishListDialog } from "@/components/publish-list-dialog";
+import { useRemoteListLiveSession } from "@/hooks/use-remote-list-live";
 import { isListAddress } from "@/lib/list-id";
 import {
   applyMutation,
@@ -53,8 +55,10 @@ import {
   subscribeToLocalIdentity,
   type LocalIdentity,
 } from "@/lib/local-identity";
-import { openRemoteListLiveSession } from "@/lib/remote-list-live";
+import { deleteLocalList } from "@/lib/local-list-store";
+import { listShareDescription, type ListShareMeta } from "@/lib/share-meta";
 import { appPath } from "@/lib/site-paths";
+import { getListShareMeta, getRemoteList } from "@/server/lists";
 
 type ItemEditDraft = {
   name: string;
@@ -98,6 +102,32 @@ export const Route = createFileRoute("/$listId")({
       throw notFound();
     }
   },
+  loader: async ({ params }): Promise<ListShareMeta | null> => {
+    try {
+      return await getListShareMeta({ data: params.listId });
+    } catch {
+      return null;
+    }
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {};
+    }
+    const title = `${loaderData.title} - KEWEKE`;
+    const description = listShareDescription(loaderData);
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+    };
+  },
   component: ListPage,
 });
 
@@ -117,6 +147,7 @@ function ListPage() {
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [historyTarget, setHistoryTarget] = useState<HistoryTarget>();
   const [unavailableReason, setUnavailableReason] = useState<string>();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [filter, setFilter] = useState("");
   const [newItemDraft, setNewItemDraft] = useState<NewItemDraft>({
     name: "",
@@ -171,79 +202,72 @@ function ListPage() {
 
   const remoteListId = loadedList?.backend === "remote" ? loadedList.snapshot.id : undefined;
 
-  useEffect(() => {
-    if (!remoteListId) {
-      return undefined;
+  const { refresh: refreshLiveSession, status: liveStatus } = useRemoteListLiveSession(
+    remoteListId,
+    {
+      onSnapshot: (nextSnapshot) => {
+        setLoadedList((current) => {
+          if (
+            !current ||
+            current.backend !== "remote" ||
+            current.snapshot.id !== nextSnapshot.id ||
+            nextSnapshot.revision < current.snapshot.revision
+          ) {
+            return current;
+          }
+          return { backend: "remote", snapshot: nextSnapshot };
+        });
+      },
+      onMutation: (mutation, appliedAt) => {
+        setLoadedList((current) => {
+          if (!current || current.backend !== "remote") {
+            return current;
+          }
+          const next = applyListMutation(current.snapshot, mutation, appliedAt);
+          return next ? { backend: "remote", snapshot: next } : current;
+        });
+      },
+      onDeleted: () => {
+        toast.info("This list no longer exists.");
+        void navigate({ to: "/" });
+      },
+    },
+  );
+
+  const isLiveDropped = liveStatus === "disconnected" && loadedList?.backend === "remote";
+
+  const handleRefreshLive = useCallback(async (): Promise<void> => {
+    if (!remoteListId || isRefreshing) {
+      return;
     }
-
-    let cancelled = false;
-    let reconnectTimer: number | undefined;
-    let reconnectAttempt = 0;
-    let webSocket: WebSocket | undefined;
-
-    const connect = (): void => {
-      if (cancelled) {
+    setIsRefreshing(true);
+    try {
+      const outcome = await refreshLiveSession();
+      if (outcome === "reconnected") {
+        toast.success("Live updates reconnected.");
         return;
       }
 
-      webSocket = openRemoteListLiveSession(remoteListId, {
-        onOpen: () => {
-          reconnectAttempt = 0;
-        },
-        onSnapshot: (nextSnapshot) => {
-          if (cancelled) {
-            return;
-          }
-          setLoadedList((current) => {
-            if (
-              !current ||
-              current.backend !== "remote" ||
-              current.snapshot.id !== nextSnapshot.id ||
-              nextSnapshot.revision < current.snapshot.revision
-            ) {
-              return current;
-            }
-            return { backend: "remote", snapshot: nextSnapshot };
-          });
-        },
-        onMutation: (mutation, appliedAt) => {
-          if (cancelled) {
-            return;
-          }
-          setLoadedList((current) => {
-            if (!current || current.backend !== "remote") {
-              return current;
-            }
-            const next = applyListMutation(current.snapshot, mutation, appliedAt);
-            return next ? { backend: "remote", snapshot: next } : current;
-          });
-        },
-        onDeleted: () => {
-          if (!cancelled) {
-            setLoadedList(undefined);
-            setUnavailableReason("This list no longer exists.");
-          }
-        },
-        onClose: () => {
-          if (cancelled) {
-            return;
-          }
-          const delay = Math.min(30_000, 1_000 * 2 ** reconnectAttempt);
-          reconnectAttempt += 1;
-          reconnectTimer = window.setTimeout(connect, delay);
-        },
-      });
-    };
-
-    connect();
-    return () => {
-      cancelled = true;
-      if (reconnectTimer !== undefined) {
-        window.clearTimeout(reconnectTimer);
+      // A dropped socket alone does not say why. Ask the server whether the
+      // list still exists before deciding how to guide the user.
+      let listStillExists = true;
+      try {
+        listStillExists = (await getRemoteList({ data: remoteListId })) !== null;
+      } catch {
+        // The remote service could not answer; treat the failure as unrecoverable.
       }
-      webSocket?.close(1000, "Leaving list");
-    };
-  }, [remoteListId]);
+      if (!listStillExists) {
+        await deleteLocalList(remoteListId);
+        toast.info("This list no longer exists.");
+        await navigate({ to: "/" });
+        return;
+      }
+      toast.error("Could not restore live updates for this list.");
+      await navigate({ to: "/" });
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [isRefreshing, navigate, refreshLiveSession, remoteListId]);
 
   const commit = useCallback(
     async (command: ListCommand): Promise<ListSnapshot | null> => {
@@ -523,6 +547,10 @@ function ListPage() {
   const activeCount = items.filter((item) => !item.checked).length;
   const completedCount = items.length - activeCount;
 
+  useEffect(() => {
+    document.title = snapshot ? `${snapshot.title} - KEWEKE` : "keweke";
+  }, [snapshot]);
+
   const visibleItems = useMemo(() => {
     const normalizedFilter = filter.trim().toLowerCase();
     if (!normalizedFilter) {
@@ -638,6 +666,21 @@ function ListPage() {
                 value={filter}
               />
             </div>
+            {isLiveDropped ? (
+              <Button
+                aria-label="Reconnect live updates"
+                className="shrink-0"
+                isDisabled={isRefreshing}
+                onPress={() => void handleRefreshLive()}
+                size="icon"
+                variant="ghost"
+              >
+                <RefreshCw
+                  aria-hidden="true"
+                  className={isRefreshing ? "animate-spin" : undefined}
+                />
+              </Button>
+            ) : null}
             <Button
               aria-label="How to add items"
               className="shrink-0"
