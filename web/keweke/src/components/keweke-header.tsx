@@ -92,7 +92,7 @@ export function KewekeHeader({
             </span>
             <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
             <span className="hidden truncate text-[11px] text-muted-foreground sm:inline">
-              Yet another shopping list
+              Yet another collaborative shopping list
             </span>
           </div>
         </Link>

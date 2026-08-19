@@ -16,9 +16,9 @@ export const Route = createRootRoute({
       },
       {
         name: "description",
-        content: "Simple collaborative shopping lists for friends.",
+        content: "Yet another collaborative shopping list",
       },
-      { title: "keweke" },
+      { title: "KEWEKE by JFA" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
