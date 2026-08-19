@@ -13,9 +13,12 @@ tanstack ecosystem --category auth --json
 ## Project memory
 
 This project uses `machine-memory` with a shared remote Worker-backed database.
-Remote credentials are stored in the OS keychain. To change them, use `machine-memory remote setup`; to provision a new Alchemy D1 stack, use `machine-memory remote provision` with optional `--stack-name`, `--database-name`, and `--api-name`.
-Every database-backed command requires exactly one backend flag. Use `--remote` for this repository and do not pass both flags.
+Every database-backed command requires exactly one backend flag: use `--remote` for this repository.
 Run `machine-memory doctor` during maintenance, not every task. Do not create or rely on a local `machine-memory.db` for this repository.
+Search policy: use `machine-memory query "<term>" --remote` for exact names, paths, commands, and identifiers; use `--semantic --remote` when the same concept may use different wording; use `--hybrid --remote` for broad investigation or when recall matters more than exact matching.
+When unsure, start with `--hybrid`; add `--explain-score` when ranking needs inspection. D1 records are canonical and Vectorize is only a retrieval index.
+After adding or updating a memory, its Vectorize embedding is synchronized automatically. Run `machine-memory reindex --remote` only after provisioning, changing the embedding index or model, or repairing missing vectors.
+Memory size: keep every memory below 512 tokens, including its content, tags, context, and metadata, so the embedding service can accept it. `add` and `update` fail before writing when the composed embedding text exceeds the limit (or the embedding service's conservative byte+2 estimate); pass `--token-report` to include the per-part token breakdown in the response.
 
 ⚠️ MANDATORY: Complete the memory scan BEFORE any code changes. Skipping it causes rework, regressions, and duplicated decisions.
 
