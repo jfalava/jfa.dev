@@ -23,6 +23,7 @@
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/react-table": "catalog:tanstack",
+    "blobatar": "^0.1.0",
     "fuse.js": "catalog:backend",
     "idb": "8.0.3",
     "lucide-react": "catalog:ui",

@@ -15,6 +15,7 @@ import {
   useTable,
   type ReactTable,
 } from "@tanstack/react-table";
+import { Blobatar } from "blobatar/react";
 import {
   ArrowLeftRight,
   Check,
@@ -41,6 +42,7 @@ import { ItemHistoryDialog } from "@/components/item-history-dialog";
 import { KewekeHeader } from "@/components/keweke-header";
 import { PublishListDialog } from "@/components/publish-list-dialog";
 import { useRemoteListLiveSession } from "@/hooks/use-remote-list-live";
+import { userAvatarSeed } from "@/lib/blobatar";
 import { isListAddress } from "@/lib/list-id";
 import {
   applyMutation,
@@ -865,23 +867,6 @@ function ListAlias({ alias, listId }: { alias: string | null; listId: string }) 
   );
 }
 
-const IDENTITY_COLORS = [
-  "bg-primary",
-  "bg-emerald-500",
-  "bg-amber-500",
-  "bg-rose-500",
-  "bg-sky-500",
-  "bg-violet-500",
-] as const;
-
-function identityColor(identityId: string): (typeof IDENTITY_COLORS)[number] {
-  const hash = Array.from(identityId).reduce(
-    (value, character) => value + character.charCodeAt(0),
-    0,
-  );
-  return IDENTITY_COLORS[hash % IDENTITY_COLORS.length];
-}
-
 function identityDisplayName(actor: ListIdentity, currentIdentity?: LocalIdentity): string {
   if (currentIdentity?.userId === actor.id) {
     const currentUsername = currentIdentity.remoteUsername ?? currentIdentity.username;
@@ -928,11 +913,17 @@ function SignedItemBadge({
       className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
       title={title}
     >
-      <span
-        aria-hidden="true"
-        className={`size-1.5 shrink-0 rounded-full ${identityColor(actor.id)}`}
+      {wasEdited ? (
+        <Pencil aria-hidden="true" className="size-3 shrink-0" />
+      ) : (
+        <Plus aria-hidden="true" className="size-3 shrink-0" />
+      )}
+      <Blobatar
+        alt=""
+        className="size-4 shrink-0"
+        name={userAvatarSeed(actor.id, actor.username)}
+        size={16}
       />
-      <span className="truncate font-mono uppercase">{action}</span>
       <span className="truncate font-serif">{actorName}</span>
     </span>
   );

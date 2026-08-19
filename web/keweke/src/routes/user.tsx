@@ -11,6 +11,7 @@ import {
 } from "@jfa.dev/common/ui";
 import { createFileRoute } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
+import { Blobatar } from "blobatar/react";
 import { Check, KeyRound, Shield, Smartphone, Trash2 } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
@@ -20,6 +21,7 @@ import {
   type DialogFeedback,
   type FeedbackSection,
 } from "@/hooks/use-user-manager";
+import { userAvatarSeed } from "@/lib/blobatar";
 import { LOCAL_IDENTITY_PLACEHOLDER, type LocalIdentity } from "@/lib/local-identity";
 
 export const Route = createFileRoute("/user")({
@@ -1055,17 +1057,27 @@ function UserRoutePage() {
               User settings
             </h1>
           </div>
-          <div className="sm:text-right">
-            <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-              {identity?.remoteUsername
-                ? "Remote user"
-                : identity?.username
-                  ? "Local user"
-                  : "Anonymous"}
-            </p>
-            <p className="mt-0.5 font-serif text-base font-medium text-foreground sm:text-lg">
-              {identity?.username ?? "Anonymous"}
-            </p>
+          <div className="flex items-center gap-4">
+            {identity ? (
+              <Blobatar
+                alt=""
+                className="size-12 shrink-0 sm:size-14"
+                name={userAvatarSeed(identity.userId, identity.username)}
+                size={64}
+              />
+            ) : null}
+            <div className="min-w-0 sm:text-right">
+              <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                {identity?.remoteUsername
+                  ? "Remote user"
+                  : identity?.username
+                    ? "Local user"
+                    : "Anonymous"}
+              </p>
+              <p className="mt-0.5 font-serif text-base font-medium text-foreground sm:text-lg">
+                {identity?.username ?? "Anonymous"}
+              </p>
+            </div>
           </div>
         </div>
 
