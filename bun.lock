@@ -132,7 +132,7 @@
         "@tanstack/react-router": "catalog:tanstack",
         "@tanstack/react-start": "catalog:tanstack",
         "@tanstack/react-table": "catalog:tanstack",
-        "blobatar": "^0.1.0",
+        "blobatar": "2.1.0",
         "fuse.js": "catalog:backend",
         "idb": "8.0.3",
         "lucide-react": "catalog:ui",
@@ -1259,7 +1259,7 @@
 
     "blake3-wasm": ["blake3-wasm@2.1.5", "", {}, "sha512-F1+K8EbfOZE49dtoPtmxUQrpXaBIl3ICvasLh+nJta0xkz+9kF/7uet9fLnwKqhDrmj6g+6K3Tw9yQPUg2ka5g=="],
 
-    "blobatar": ["blobatar@0.1.0", "", { "peerDependencies": { "react": ">=18" }, "optionalPeers": ["react"] }, "sha512-Di/PuTYEw3vJXpelNF7HzEQVFGBeNiUQG17EC7QMceqCJkcXsbxxUu0qCLybTE1O21A0bLB+ef+PjUY0ClDcVw=="],
+    "blobatar": ["blobatar@2.1.0", "", { "peerDependencies": { "react": ">=18", "vue": ">=3" }, "optionalPeers": ["react", "vue"] }, "sha512-YEHH9fZ3ckYg7PhVeg+zs0sOrGMhbI5LVhOOGW9QuBLRlVzgczSYnv8g0tT1U8ViYPb0HMrDnoD/i16u/BurDg=="],
 
     "body-parser": ["body-parser@2.3.0", "", { "dependencies": { "bytes": "^3.1.2", "content-type": "^2.0.0", "debug": "^4.4.3", "http-errors": "^2.0.1", "iconv-lite": "^0.7.2", "on-finished": "^2.4.1", "qs": "^6.15.2", "raw-body": "^3.0.2", "type-is": "^2.1.0" } }, "sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw=="],
 
