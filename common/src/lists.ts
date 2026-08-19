@@ -58,13 +58,17 @@ export const listSnapshotSchema = z.object({
   updatedAt: timestampSchema,
 });
 
-const itemInputSchema = z.object({
-  id: itemIdSchema,
+/** Editable item fields, shared by add/update commands and client-side draft validation. */
+export const listItemFieldsSchema = z.object({
   name: z.string().trim().min(1).max(200),
   quantity: z.number().int().min(1).max(100_000),
   unit: z.string().trim().min(1).max(32),
   amount: z.string().trim().max(64),
   category: z.string().trim().min(1).max(64),
+});
+
+const itemInputSchema = listItemFieldsSchema.extend({
+  id: itemIdSchema,
 });
 
 const itemChangesSchema = itemInputSchema.omit({ id: true }).partial();

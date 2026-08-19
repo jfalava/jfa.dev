@@ -43,6 +43,7 @@ import { KewekeHeader } from "@/components/keweke-header";
 import { PublishListDialog } from "@/components/publish-list-dialog";
 import { useRemoteListLiveSession } from "@/hooks/use-remote-list-live";
 import { userAvatarSeed } from "@/lib/blobatar";
+import { hasItemDraftErrors, validateItemDraft, type ItemDraftErrors } from "@/lib/item-draft";
 import { isListAddress } from "@/lib/list-id";
 import {
   applyMutation,
@@ -74,6 +75,7 @@ type NewItemDraft = ItemEditDraft;
 
 type ShoppingTableMeta = {
   editDraft?: ItemEditDraft;
+  editErrors?: ItemDraftErrors;
   editingItemId?: string;
   identity?: LocalIdentity;
   isSaving: boolean;
@@ -158,6 +160,8 @@ function ListPage() {
     amount: "",
     category: "GENERAL",
   });
+  const [newItemAttempted, setNewItemAttempted] = useState(false);
+  const [newItemErrors, setNewItemErrors] = useState<ItemDraftErrors>({});
   const [identity, setIdentity] = useState<LocalIdentity>();
 
   useEffect(() => {
@@ -201,6 +205,13 @@ function ListPage() {
       cancelled = true;
     };
   }, [listId]);
+
+  useEffect(() => {
+    if (!newItemAttempted) {
+      return;
+    }
+    setNewItemErrors(validateItemDraft(newItemDraft));
+  }, [newItemAttempted, newItemDraft]);
 
   const remoteListId = loadedList?.backend === "remote" ? loadedList.snapshot.id : undefined;
 
@@ -419,22 +430,14 @@ function ListPage() {
 
   const updateItem = useCallback(
     async (itemId: string, draft: ItemEditDraft): Promise<boolean> => {
+      if (hasItemDraftErrors(validateItemDraft(draft))) {
+        return false;
+      }
       const name = draft.name.trim();
       const quantity = Number(draft.quantity);
       const unit = draft.unit.trim();
       const amount = draft.amount.trim();
       const category = draft.category.trim();
-      if (
-        !name ||
-        !Number.isInteger(quantity) ||
-        quantity < 1 ||
-        !unit ||
-        amount.length > 64 ||
-        !category
-      ) {
-        toast.error("Enter a name, whole quantity, unit, and category.");
-        return false;
-      }
 
       try {
         return (
@@ -479,22 +482,18 @@ function ListPage() {
   }, []);
 
   const addItem = useCallback((): void => {
+    const draftErrors = validateItemDraft(newItemDraft);
+    if (hasItemDraftErrors(draftErrors)) {
+      setNewItemAttempted(true);
+      setNewItemErrors(draftErrors);
+      return;
+    }
+
     const name = newItemDraft.name.trim();
-    const quantity = Number.parseInt(newItemDraft.quantity, 10);
+    const quantity = Number(newItemDraft.quantity);
     const unit = newItemDraft.unit.trim();
     const amount = newItemDraft.amount.trim();
     const category = newItemDraft.category.trim();
-    if (
-      !name ||
-      !Number.isFinite(quantity) ||
-      quantity < 1 ||
-      !unit ||
-      unit.length > 32 ||
-      amount.length > 64 ||
-      !category
-    ) {
-      return;
-    }
 
     void commit({
       type: "add-item",
@@ -508,6 +507,8 @@ function ListPage() {
       },
     }).then((committed) => {
       if (committed) {
+        setNewItemAttempted(false);
+        setNewItemErrors({});
         setNewItemDraft({
           name: "",
           quantity: "1",
@@ -699,6 +700,7 @@ function ListPage() {
           identity={identity}
           items={visibleItems}
           newItem={newItemDraft}
+          newItemErrors={newItemErrors}
           onAdd={addItem}
           onAdjustQuantity={adjustQuantity}
           onNewItemChange={updateNewItemDraft}
@@ -989,6 +991,17 @@ function ItemMeasure({ item }: { item: Pick<ListItem, "quantity" | "unit" | "amo
   );
 }
 
+function ItemFieldError({ id, message }: { id?: string; message: string }) {
+  return (
+    <span
+      className="mt-1 block font-mono text-[9px] leading-tight tracking-widest text-destructive uppercase"
+      id={id}
+    >
+      {message}
+    </span>
+  );
+}
+
 function QuantityStepper({
   buttonClassName,
   isDisabled,
@@ -1035,6 +1048,7 @@ function ShoppingTable({
   identity,
   items,
   newItem,
+  newItemErrors,
   onAdd,
   onAdjustQuantity,
   onNewItemChange,
@@ -1047,6 +1061,7 @@ function ShoppingTable({
   identity?: LocalIdentity;
   items: ListItem[];
   newItem: NewItemDraft;
+  newItemErrors: ItemDraftErrors;
   onAdd: () => void;
   onAdjustQuantity: (itemId: string, nextQuantity: number) => void;
   onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
@@ -1058,6 +1073,8 @@ function ShoppingTable({
   const [editingItemId, setEditingItemId] = useState<string>();
   const [editDraft, setEditDraft] = useState<ItemEditDraft>();
   const [isSaving, setIsSaving] = useState(false);
+  const [editAttempted, setEditAttempted] = useState(false);
+  const [editErrors, setEditErrors] = useState<ItemDraftErrors>({});
 
   const submitNewItemOnEnter = useCallback(
     (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -1078,6 +1095,8 @@ function ShoppingTable({
       amount: item.amount,
       category: item.category,
     });
+    setEditAttempted(false);
+    setEditErrors({});
   }, []);
 
   const updateDraft = useCallback((field: keyof ItemEditDraft, value: string): void => {
@@ -1087,13 +1106,31 @@ function ShoppingTable({
   const cancelEditing = useCallback((): void => {
     setEditingItemId(undefined);
     setEditDraft(undefined);
+    setEditAttempted(false);
+    setEditErrors({});
   }, []);
+
+  useEffect(() => {
+    if (!editAttempted || !editDraft) {
+      return;
+    }
+    setEditErrors(validateItemDraft(editDraft));
+  }, [editAttempted, editDraft]);
 
   const saveEditing = useCallback(async (): Promise<void> => {
     if (!editingItemId || !editDraft || isSaving) {
       return;
     }
 
+    const draftErrors = validateItemDraft(editDraft);
+    if (hasItemDraftErrors(draftErrors)) {
+      setEditAttempted(true);
+      setEditErrors(draftErrors);
+      return;
+    }
+
+    setEditAttempted(false);
+    setEditErrors({});
     setIsSaving(true);
     try {
       if (await onUpdate(editingItemId, editDraft)) {
@@ -1124,6 +1161,7 @@ function ShoppingTable({
   const tableMeta = useMemo<ShoppingTableMeta>(
     () => ({
       editDraft,
+      editErrors,
       editingItemId,
       identity,
       isSaving,
@@ -1139,6 +1177,7 @@ function ShoppingTable({
     [
       cancelEditing,
       editDraft,
+      editErrors,
       editingItemId,
       identity,
       isSaving,
@@ -1170,9 +1209,11 @@ function ShoppingTable({
     <>
       <MobileShoppingTable
         editDraft={editDraft}
+        editErrors={editErrors}
         editingItemId={editingItemId}
         isSaving={isSaving}
         newItem={newItem}
+        newItemErrors={newItemErrors}
         emptyMessage={emptyMessage}
         table={mobileTable}
         onCancelEditing={cancelEditing}
@@ -1236,6 +1277,7 @@ function ShoppingTable({
             ) : null}
             <DesktopNewItemRow
               newItem={newItem}
+              errors={newItemErrors}
               onAdd={onAdd}
               onKeyDown={submitNewItemOnEnter}
               onChange={onNewItemChange}
@@ -1249,17 +1291,19 @@ function ShoppingTable({
 
 function DesktopNewItemRow({
   newItem,
+  errors,
   onAdd,
   onChange,
   onKeyDown,
 }: {
   newItem: NewItemDraft;
+  errors: ItemDraftErrors;
   onAdd: () => void;
   onChange: (field: keyof NewItemDraft, value: string) => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <tr className="border-b-2 border-primary/20 bg-primary/5">
+    <tr className="border-b-2 border-primary/20 bg-primary/5 align-top">
       <TableCell className="px-4 py-3">
         <span className="font-mono text-[11px] font-semibold text-primary">+</span>
       </TableCell>
@@ -1271,6 +1315,8 @@ function DesktopNewItemRow({
       <TableCell className="px-3 py-3">
         <Input
           aria-label="New item name"
+          aria-describedby={errors.name ? "new-item-name-error" : undefined}
+          aria-invalid={errors.name ? true : undefined}
           className="h-9 min-w-32 font-serif text-base sm:text-xs"
           maxLength={200}
           onChange={(event) => onChange("name", event.target.value)}
@@ -1278,11 +1324,14 @@ function DesktopNewItemRow({
           placeholder="microwave popcorn"
           value={newItem.name}
         />
+        {errors.name ? <ItemFieldError id="new-item-name-error" message={errors.name} /> : null}
       </TableCell>
       <TableCell className="px-3 py-3">
         <span className="flex items-center justify-between gap-0.5">
           <Input
             aria-label="New item quantity"
+            aria-describedby={errors.quantity ? "new-item-quantity-error" : undefined}
+            aria-invalid={errors.quantity ? true : undefined}
             className="h-9 w-16 text-right font-mono text-base sm:text-xs"
             inputMode="numeric"
             maxLength={6}
@@ -1292,10 +1341,15 @@ function DesktopNewItemRow({
           />
           <NewQuantityStepper newItem={newItem} onAdjust={(q) => onChange("quantity", String(q))} />
         </span>
+        {errors.quantity ? (
+          <ItemFieldError id="new-item-quantity-error" message={errors.quantity} />
+        ) : null}
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
           aria-label="New item unit"
+          aria-describedby={errors.unit ? "new-item-unit-error" : undefined}
+          aria-invalid={errors.unit ? true : undefined}
           className="h-9 w-20 font-serif text-base sm:text-xs"
           maxLength={32}
           onChange={(event) => onChange("unit", event.target.value)}
@@ -1303,10 +1357,13 @@ function DesktopNewItemRow({
           placeholder="box"
           value={newItem.unit}
         />
+        {errors.unit ? <ItemFieldError id="new-item-unit-error" message={errors.unit} /> : null}
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
           aria-label="New item amount each"
+          aria-describedby={errors.amount ? "new-item-amount-error" : undefined}
+          aria-invalid={errors.amount ? true : undefined}
           className="h-9 w-28 font-serif text-base sm:text-xs"
           maxLength={64}
           onChange={(event) => onChange("amount", event.target.value)}
@@ -1314,16 +1371,24 @@ function DesktopNewItemRow({
           placeholder="3 bags"
           value={newItem.amount}
         />
+        {errors.amount ? (
+          <ItemFieldError id="new-item-amount-error" message={errors.amount} />
+        ) : null}
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
           aria-label="New item category"
+          aria-describedby={errors.category ? "new-item-category-error" : undefined}
+          aria-invalid={errors.category ? true : undefined}
           className="h-9 w-28 font-serif text-base sm:text-[10px]"
           maxLength={64}
           onChange={(event) => onChange("category", event.target.value)}
           onKeyDown={onKeyDown}
           value={newItem.category}
         />
+        {errors.category ? (
+          <ItemFieldError id="new-item-category-error" message={errors.category} />
+        ) : null}
       </TableCell>
       <TableCell className="px-3 py-3">
         <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
@@ -1345,9 +1410,11 @@ function DesktopNewItemRow({
 function MobileShoppingTable({
   emptyMessage,
   editDraft,
+  editErrors,
   editingItemId,
   isSaving,
   newItem,
+  newItemErrors,
   table,
   onCancelEditing,
   onAdd,
@@ -1358,9 +1425,11 @@ function MobileShoppingTable({
 }: {
   emptyMessage?: string;
   editDraft?: ItemEditDraft;
+  editErrors?: ItemDraftErrors;
   editingItemId?: string;
   isSaving: boolean;
   newItem: NewItemDraft;
+  newItemErrors: ItemDraftErrors;
   table: ShoppingTableInstance;
   onCancelEditing: () => void;
   onAdd: () => void;
@@ -1414,11 +1483,23 @@ function MobileShoppingTable({
                           <Input
                             id={`mobile-edit-name-${row.original.id}`}
                             aria-label={`Edit ${row.original.name} name`}
+                            aria-describedby={
+                              editErrors?.name
+                                ? `mobile-edit-name-error-${row.original.id}`
+                                : undefined
+                            }
+                            aria-invalid={editErrors?.name ? true : undefined}
                             className="h-9 min-w-0 font-serif text-base"
                             maxLength={200}
                             onChange={(event) => onEditDraftChange("name", event.target.value)}
                             value={editDraft?.name ?? row.original.name}
                           />
+                          {editErrors?.name ? (
+                            <ItemFieldError
+                              id={`mobile-edit-name-error-${row.original.id}`}
+                              message={editErrors.name}
+                            />
+                          ) : null}
                         </label>
                         <div className="flex min-w-0 flex-col gap-1">
                           <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
@@ -1427,6 +1508,12 @@ function MobileShoppingTable({
                           <div className="flex min-w-0 items-center gap-1">
                             <Input
                               aria-label={`Edit ${row.original.name} quantity`}
+                              aria-describedby={
+                                editErrors?.quantity
+                                  ? `mobile-edit-quantity-error-${row.original.id}`
+                                  : undefined
+                              }
+                              aria-invalid={editErrors?.quantity ? true : undefined}
                               className="h-9 w-16 shrink-0 text-right font-mono text-base"
                               inputMode="numeric"
                               maxLength={6}
@@ -1444,6 +1531,12 @@ function MobileShoppingTable({
                             />
                             <Input
                               aria-label={`Edit ${row.original.name} unit`}
+                              aria-describedby={
+                                editErrors?.unit
+                                  ? `mobile-edit-unit-error-${row.original.id}`
+                                  : undefined
+                              }
+                              aria-invalid={editErrors?.unit ? true : undefined}
                               className="h-9 min-w-0 flex-1 font-serif text-base"
                               maxLength={32}
                               onChange={(event) => onEditDraftChange("unit", event.target.value)}
@@ -1452,6 +1545,12 @@ function MobileShoppingTable({
                             />
                             <Input
                               aria-label={`Edit ${row.original.name} amount each`}
+                              aria-describedby={
+                                editErrors?.amount
+                                  ? `mobile-edit-amount-error-${row.original.id}`
+                                  : undefined
+                              }
+                              aria-invalid={editErrors?.amount ? true : undefined}
                               className="h-9 min-w-0 flex-1 font-serif text-base"
                               maxLength={64}
                               onChange={(event) => onEditDraftChange("amount", event.target.value)}
@@ -1459,6 +1558,28 @@ function MobileShoppingTable({
                               value={editDraft?.amount ?? row.original.amount}
                             />
                           </div>
+                          {editErrors?.quantity || editErrors?.unit || editErrors?.amount ? (
+                            <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+                              {editErrors?.quantity ? (
+                                <ItemFieldError
+                                  id={`mobile-edit-quantity-error-${row.original.id}`}
+                                  message={editErrors.quantity}
+                                />
+                              ) : null}
+                              {editErrors?.unit ? (
+                                <ItemFieldError
+                                  id={`mobile-edit-unit-error-${row.original.id}`}
+                                  message={editErrors.unit}
+                                />
+                              ) : null}
+                              {editErrors?.amount ? (
+                                <ItemFieldError
+                                  id={`mobile-edit-amount-error-${row.original.id}`}
+                                  message={editErrors.amount}
+                                />
+                              ) : null}
+                            </div>
+                          ) : null}
                         </div>
                         <label
                           className="flex min-w-0 flex-col gap-1"
@@ -1470,11 +1591,23 @@ function MobileShoppingTable({
                           <Input
                             id={`mobile-edit-category-${row.original.id}`}
                             aria-label={`Edit ${row.original.name} category`}
+                            aria-describedby={
+                              editErrors?.category
+                                ? `mobile-edit-category-error-${row.original.id}`
+                                : undefined
+                            }
+                            aria-invalid={editErrors?.category ? true : undefined}
                             className="h-9 min-w-0 font-serif text-base"
                             maxLength={64}
                             onChange={(event) => onEditDraftChange("category", event.target.value)}
                             value={editDraft?.category ?? row.original.category}
                           />
+                          {editErrors?.category ? (
+                            <ItemFieldError
+                              id={`mobile-edit-category-error-${row.original.id}`}
+                              message={editErrors.category}
+                            />
+                          ) : null}
                         </label>
                         <div className="flex gap-2 pt-1">
                           <Button
@@ -1535,6 +1668,7 @@ function MobileShoppingTable({
           ) : null}
           <MobileNewItemRow
             newItem={newItem}
+            errors={newItemErrors}
             onAdd={onAdd}
             onChange={onNewItemChange}
             onKeyDown={onNewItemKeyDown}
@@ -1547,11 +1681,13 @@ function MobileShoppingTable({
 
 function MobileNewItemRow({
   newItem,
+  errors,
   onAdd,
   onChange,
   onKeyDown,
 }: {
   newItem: NewItemDraft;
+  errors: ItemDraftErrors;
   onAdd: () => void;
   onChange: (field: keyof NewItemDraft, value: string) => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
@@ -1570,6 +1706,8 @@ function MobileNewItemRow({
             <Input
               id="new-item-mobile"
               aria-label="New item name"
+              aria-describedby={errors.name ? "new-item-mobile-name-error" : undefined}
+              aria-invalid={errors.name ? true : undefined}
               className="h-9 font-serif text-base"
               maxLength={200}
               onChange={(event) => onChange("name", event.target.value)}
@@ -1577,6 +1715,9 @@ function MobileNewItemRow({
               placeholder="microwave popcorn"
               value={newItem.name}
             />
+            {errors.name ? (
+              <ItemFieldError id="new-item-mobile-name-error" message={errors.name} />
+            ) : null}
           </label>
           <div className="flex min-w-0 flex-col gap-1">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
@@ -1585,6 +1726,8 @@ function MobileNewItemRow({
             <div className="flex min-w-0 items-center gap-1">
               <Input
                 aria-label="New item quantity"
+                aria-describedby={errors.quantity ? "new-item-mobile-quantity-error" : undefined}
+                aria-invalid={errors.quantity ? true : undefined}
                 className="h-9 w-16 shrink-0 text-right font-mono text-base"
                 inputMode="numeric"
                 maxLength={6}
@@ -1598,6 +1741,8 @@ function MobileNewItemRow({
               />
               <Input
                 aria-label="New item unit"
+                aria-describedby={errors.unit ? "new-item-mobile-unit-error" : undefined}
+                aria-invalid={errors.unit ? true : undefined}
                 className="h-9 min-w-0 flex-1 font-serif text-base"
                 maxLength={32}
                 onChange={(event) => onChange("unit", event.target.value)}
@@ -1607,6 +1752,8 @@ function MobileNewItemRow({
               />
               <Input
                 aria-label="New item amount each"
+                aria-describedby={errors.amount ? "new-item-mobile-amount-error" : undefined}
+                aria-invalid={errors.amount ? true : undefined}
                 className="h-9 min-w-0 flex-1 font-serif text-base"
                 maxLength={64}
                 onChange={(event) => onChange("amount", event.target.value)}
@@ -1615,6 +1762,19 @@ function MobileNewItemRow({
                 value={newItem.amount}
               />
             </div>
+            {errors.quantity || errors.unit || errors.amount ? (
+              <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+                {errors.quantity ? (
+                  <ItemFieldError id="new-item-mobile-quantity-error" message={errors.quantity} />
+                ) : null}
+                {errors.unit ? (
+                  <ItemFieldError id="new-item-mobile-unit-error" message={errors.unit} />
+                ) : null}
+                {errors.amount ? (
+                  <ItemFieldError id="new-item-mobile-amount-error" message={errors.amount} />
+                ) : null}
+              </div>
+            ) : null}
           </div>
           <label className="flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
@@ -1623,12 +1783,17 @@ function MobileNewItemRow({
             <Input
               id="new-category-mobile"
               aria-label="New item category"
+              aria-describedby={errors.category ? "new-item-mobile-category-error" : undefined}
+              aria-invalid={errors.category ? true : undefined}
               className="h-9 font-serif text-base"
               maxLength={64}
               onChange={(event) => onChange("category", event.target.value)}
               onKeyDown={onKeyDown}
               value={newItem.category}
             />
+            {errors.category ? (
+              <ItemFieldError id="new-item-mobile-category-error" message={errors.category} />
+            ) : null}
           </label>
           <Button aria-label="Add item" className="h-11 w-full" onPress={onAdd}>
             <Plus />
@@ -1808,16 +1973,29 @@ function createShoppingColumns() {
       id: "item",
       header: "item",
       cell: ({ getValue, row, table }) => {
-        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
+        const { editDraft, editErrors, editingItemId, onEditDraftChange } =
+          getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
-            <Input
-              aria-label={`Edit ${row.original.name} name`}
-              className="min-w-32 font-serif"
-              maxLength={200}
-              onChange={(event) => onEditDraftChange("name", event.target.value)}
-              value={editDraft?.name ?? getValue()}
-            />
+            <>
+              <Input
+                aria-label={`Edit ${row.original.name} name`}
+                aria-describedby={
+                  editErrors?.name ? `desktop-edit-name-error-${row.original.id}` : undefined
+                }
+                aria-invalid={editErrors?.name ? true : undefined}
+                className="min-w-32 font-serif"
+                maxLength={200}
+                onChange={(event) => onEditDraftChange("name", event.target.value)}
+                value={editDraft?.name ?? getValue()}
+              />
+              {editErrors?.name ? (
+                <ItemFieldError
+                  id={`desktop-edit-name-error-${row.original.id}`}
+                  message={editErrors.name}
+                />
+              ) : null}
+            </>
           );
         }
 
@@ -1835,30 +2013,44 @@ function createShoppingColumns() {
     shoppingColumnHelper.accessor("quantity", {
       header: "qty",
       cell: ({ getValue, row, table }) => {
-        const { editDraft, editingItemId, onAdjustQuantity, onEditDraftChange } =
+        const { editDraft, editErrors, editingItemId, onAdjustQuantity, onEditDraftChange } =
           getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           const draftQuantity = Number(editDraft?.quantity);
           const isDraftQuantityValid =
             Number.isInteger(draftQuantity) && draftQuantity >= 1 && draftQuantity <= 100_000;
           return (
-            <span className="flex items-center justify-between gap-0.5">
-              <Input
-                aria-label={`Edit ${row.original.name} quantity`}
-                className="w-16 text-right font-mono"
-                inputMode="numeric"
-                maxLength={6}
-                onChange={(event) => onEditDraftChange("quantity", event.target.value)}
-                value={editDraft?.quantity ?? String(getValue())}
-              />
-              <QuantityStepper
-                isDisabled={!isDraftQuantityValid}
-                itemName={row.original.name}
-                onAdjust={(nextQuantity) => onEditDraftChange("quantity", String(nextQuantity))}
-                quantity={isDraftQuantityValid ? draftQuantity : 1}
-                size="icon-sm"
-              />
-            </span>
+            <>
+              <span className="flex items-center justify-between gap-0.5">
+                <Input
+                  aria-label={`Edit ${row.original.name} quantity`}
+                  aria-describedby={
+                    editErrors?.quantity
+                      ? `desktop-edit-quantity-error-${row.original.id}`
+                      : undefined
+                  }
+                  aria-invalid={editErrors?.quantity ? true : undefined}
+                  className="w-16 text-right font-mono"
+                  inputMode="numeric"
+                  maxLength={6}
+                  onChange={(event) => onEditDraftChange("quantity", event.target.value)}
+                  value={editDraft?.quantity ?? String(getValue())}
+                />
+                <QuantityStepper
+                  isDisabled={!isDraftQuantityValid}
+                  itemName={row.original.name}
+                  onAdjust={(nextQuantity) => onEditDraftChange("quantity", String(nextQuantity))}
+                  quantity={isDraftQuantityValid ? draftQuantity : 1}
+                  size="icon-sm"
+                />
+              </span>
+              {editErrors?.quantity ? (
+                <ItemFieldError
+                  id={`desktop-edit-quantity-error-${row.original.id}`}
+                  message={editErrors.quantity}
+                />
+              ) : null}
+            </>
           );
         }
 
@@ -1882,16 +2074,29 @@ function createShoppingColumns() {
     shoppingColumnHelper.accessor("unit", {
       header: "unit",
       cell: ({ getValue, row, table }) => {
-        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
+        const { editDraft, editErrors, editingItemId, onEditDraftChange } =
+          getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
-            <Input
-              aria-label={`Edit ${row.original.name} unit`}
-              className="w-20 font-serif text-[11px]"
-              maxLength={32}
-              onChange={(event) => onEditDraftChange("unit", event.target.value)}
-              value={editDraft?.unit ?? getValue()}
-            />
+            <>
+              <Input
+                aria-label={`Edit ${row.original.name} unit`}
+                aria-describedby={
+                  editErrors?.unit ? `desktop-edit-unit-error-${row.original.id}` : undefined
+                }
+                aria-invalid={editErrors?.unit ? true : undefined}
+                className="w-20 font-serif text-[11px]"
+                maxLength={32}
+                onChange={(event) => onEditDraftChange("unit", event.target.value)}
+                value={editDraft?.unit ?? getValue()}
+              />
+              {editErrors?.unit ? (
+                <ItemFieldError
+                  id={`desktop-edit-unit-error-${row.original.id}`}
+                  message={editErrors.unit}
+                />
+              ) : null}
+            </>
           );
         }
 
@@ -1901,17 +2106,30 @@ function createShoppingColumns() {
     shoppingColumnHelper.accessor("amount", {
       header: "amount each",
       cell: ({ getValue, row, table }) => {
-        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
+        const { editDraft, editErrors, editingItemId, onEditDraftChange } =
+          getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
-            <Input
-              aria-label={`Edit ${row.original.name} amount each`}
-              className="w-28 font-serif text-[11px]"
-              maxLength={64}
-              onChange={(event) => onEditDraftChange("amount", event.target.value)}
-              placeholder="optional"
-              value={editDraft?.amount ?? getValue()}
-            />
+            <>
+              <Input
+                aria-label={`Edit ${row.original.name} amount each`}
+                aria-describedby={
+                  editErrors?.amount ? `desktop-edit-amount-error-${row.original.id}` : undefined
+                }
+                aria-invalid={editErrors?.amount ? true : undefined}
+                className="w-28 font-serif text-[11px]"
+                maxLength={64}
+                onChange={(event) => onEditDraftChange("amount", event.target.value)}
+                placeholder="optional"
+                value={editDraft?.amount ?? getValue()}
+              />
+              {editErrors?.amount ? (
+                <ItemFieldError
+                  id={`desktop-edit-amount-error-${row.original.id}`}
+                  message={editErrors.amount}
+                />
+              ) : null}
+            </>
           );
         }
 
@@ -1921,16 +2139,31 @@ function createShoppingColumns() {
     shoppingColumnHelper.accessor("category", {
       header: "category",
       cell: ({ getValue, row, table }) => {
-        const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
+        const { editDraft, editErrors, editingItemId, onEditDraftChange } =
+          getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           return (
-            <Input
-              aria-label={`Edit ${row.original.name} category`}
-              className="w-28 font-serif text-[10px]"
-              maxLength={64}
-              onChange={(event) => onEditDraftChange("category", event.target.value)}
-              value={editDraft?.category ?? getValue()}
-            />
+            <>
+              <Input
+                aria-label={`Edit ${row.original.name} category`}
+                aria-describedby={
+                  editErrors?.category
+                    ? `desktop-edit-category-error-${row.original.id}`
+                    : undefined
+                }
+                aria-invalid={editErrors?.category ? true : undefined}
+                className="w-28 font-serif text-[10px]"
+                maxLength={64}
+                onChange={(event) => onEditDraftChange("category", event.target.value)}
+                value={editDraft?.category ?? getValue()}
+              />
+              {editErrors?.category ? (
+                <ItemFieldError
+                  id={`desktop-edit-category-error-${row.original.id}`}
+                  message={editErrors.category}
+                />
+              ) : null}
+            </>
           );
         }
 

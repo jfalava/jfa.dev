@@ -1058,14 +1058,6 @@ function UserRoutePage() {
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            {identity ? (
-              <Blobatar
-                alt=""
-                className="size-12 shrink-0 sm:size-14"
-                name={userAvatarSeed(identity.userId, identity.username)}
-                size={64}
-              />
-            ) : null}
             <div className="min-w-0 sm:text-right">
               <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
                 {identity?.remoteUsername
@@ -1078,6 +1070,14 @@ function UserRoutePage() {
                 {identity?.username ?? "Anonymous"}
               </p>
             </div>
+            {identity ? (
+              <Blobatar
+                alt=""
+                className="size-12 shrink-0 sm:size-14"
+                name={userAvatarSeed(identity.userId, identity.username)}
+                size={64}
+              />
+            ) : null}
           </div>
         </div>
 

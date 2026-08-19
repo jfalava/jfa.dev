@@ -7,6 +7,8 @@ import {
   applyListMutation,
   applyListMutationWithDiff,
   createStarterListSnapshot,
+  listCommandSchema,
+  listItemFieldsSchema,
   parseListSnapshot,
   type AppliedListMutation,
   type ListMutation,
@@ -571,5 +573,38 @@ describe("list mutation diff", () => {
     expect(current.deletedItems).toHaveLength(MAX_DELETED_ITEMS);
     expect(current.deletedItems[0]?.id).toBe("bulk-5");
     expect(current.deletedItems.at(-1)?.id).toBe(`bulk-${MAX_DELETED_ITEMS + 4}`);
+  });
+});
+
+describe("listItemFieldsSchema", () => {
+  test("accepts a complete item fields object with trimmed values", () => {
+    const result = listItemFieldsSchema.safeParse({
+      name: "  Milk  ",
+      quantity: 2,
+      unit: " box ",
+      amount: "",
+      category: " DAIRY ",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual({
+        name: "Milk",
+        quantity: 2,
+        unit: "box",
+        amount: "",
+        category: "DAIRY",
+      });
+    }
+  });
+
+  test("rejects a missing unit just like the item command schema", () => {
+    const input = { name: "Milk", quantity: 2, unit: "", amount: "", category: "DAIRY" };
+    expect(listItemFieldsSchema.safeParse(input).success).toBe(false);
+    expect(
+      listCommandSchema.safeParse({
+        type: "add-item",
+        item: { id: "milk", ...input },
+      }).success,
+    ).toBe(false);
   });
 });
