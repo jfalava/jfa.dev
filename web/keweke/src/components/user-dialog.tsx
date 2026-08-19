@@ -118,9 +118,6 @@ export function UserDialog({
                 Publish lists from this browser
               </h3>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Add a username to this browser so you can publish and share lists as your own.
-            </p>
             <form className="space-y-3" onSubmit={(event) => void save(event)}>
               <div className="flex items-end gap-2">
                 <div className="min-w-0 flex-1">
@@ -143,7 +140,7 @@ export function UserDialog({
                   isDisabled={!identity || isSaving}
                   type="submit"
                 >
-                  {isSaving ? "Saving…" : "Save"}
+                  {isSaving ? "Creating…" : "Create"}
                 </Button>
               </div>
               <FeedbackMessage feedback={feedback} section="username" />
@@ -173,7 +170,7 @@ export function UserDialog({
                 Already have a user on another browser? Connect this one with a passkey or a pairing
                 code.
               </p>
-              <div className="flex flex-wrap justify-between gap-2">
+              <div className="flex flex-wrap gap-x-1">
                 {passkeyAvailable ? (
                   <Button
                     className="h-10 gap-1.5 px-5 text-sm"

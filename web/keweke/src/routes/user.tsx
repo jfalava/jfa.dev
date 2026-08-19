@@ -1064,7 +1064,7 @@ function UserRoutePage() {
                   : "Anonymous"}
             </p>
             <p className="mt-0.5 font-serif text-base font-medium text-foreground sm:text-lg">
-              {identity?.username ?? LOCAL_IDENTITY_PLACEHOLDER}
+              {identity?.username ?? "Anonymous"}
             </p>
           </div>
         </div>

@@ -1,7 +1,6 @@
-import { forwardRef } from "react";
-
 import { cn } from "../../lib/utils";
 
+import { forwardRef } from "react";
 import { Input as AriaInput, type InputProps as AriaInputProps } from "react-aria-components";
 
 type InputProps = Omit<AriaInputProps, "className"> & {

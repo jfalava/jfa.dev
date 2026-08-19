@@ -120,7 +120,7 @@ function ListPage() {
   const [newItemDraft, setNewItemDraft] = useState<NewItemDraft>({
     name: "",
     quantity: "1",
-    unit: "EA",
+    unit: "",
     amount: "",
     category: "GENERAL",
   });
@@ -325,7 +325,7 @@ function ListPage() {
 
   const requestMigration = useCallback((): void => {
     if (!identity?.username) {
-      setUserDialogMessage("You must create a local user to publish remote lists.");
+      setUserDialogMessage("You must create an user to publish remote lists.");
       setIsUserDialogOpen(true);
       return;
     }
@@ -1399,7 +1399,7 @@ function MobileShoppingTable({
                         </label>
                         <div className="flex min-w-0 flex-col gap-1">
                           <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                            qty · unit · each
+                            qty · unit · amount each
                           </span>
                           <div className="flex min-w-0 items-center gap-1">
                             <Input
@@ -1557,7 +1557,7 @@ function MobileNewItemRow({
           </label>
           <div className="flex min-w-0 flex-col gap-1">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-              qty · unit · each
+              qty · unit · amount each
             </span>
             <div className="flex min-w-0 items-center gap-1">
               <Input
