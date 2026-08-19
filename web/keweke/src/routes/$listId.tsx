@@ -1876,7 +1876,7 @@ function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("amount", {
-      header: "amount",
+      header: "amount each",
       cell: ({ getValue, row, table }) => {
         const { editDraft, editingItemId, onEditDraftChange } = getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
