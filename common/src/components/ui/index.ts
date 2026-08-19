@@ -24,6 +24,7 @@ export {
 } from "./dropdown-menu";
 export { Input } from "./input";
 export { Kbd, KbdGroup } from "./kbd";
+export { Toaster } from "./sonner";
 export {
   Table,
   TableBody,

@@ -3,6 +3,7 @@ import { Button } from "@jfa.dev/common/ui";
 import { ArchiveRestore, CheckCheck, Flame, History, Pencil, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
+import { toast } from "sonner";
 
 import { describeHistoryEvent, formatRelativeTime } from "@/lib/item-history";
 import { getItemHistory } from "@/lib/list-repository";
@@ -27,7 +28,6 @@ export function ItemHistoryDialog({
   const [events, setEvents] = useState<ListItemHistoryEvent[]>([]);
   const [nextCursor, setNextCursor] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string>();
 
   useEffect(() => {
     if (!isOpen) {
@@ -36,7 +36,6 @@ export function ItemHistoryDialog({
 
     let cancelled = false;
     setIsLoading(true);
-    setError(undefined);
     void getItemHistory(listId, itemId, { limit: PAGE_SIZE })
       .then((page) => {
         if (!cancelled) {
@@ -47,7 +46,7 @@ export function ItemHistoryDialog({
       })
       .catch(() => {
         if (!cancelled) {
-          setError("History is unavailable right now.");
+          toast.error("History is unavailable right now.");
         }
       })
       .finally(() => {
@@ -80,7 +79,7 @@ export function ItemHistoryDialog({
       });
       setNextCursor(page.nextCursor);
     } catch {
-      setError("Could not load older events.");
+      toast.error("Could not load older events.");
     } finally {
       setIsLoading(false);
     }
@@ -119,11 +118,7 @@ export function ItemHistoryDialog({
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
-            {error && events.length === 0 ? (
-              <p className="py-8 text-center font-mono text-[11px] tracking-[0.12em] text-destructive uppercase">
-                {error}
-              </p>
-            ) : isLoading && events.length === 0 ? (
+            {isLoading && events.length === 0 ? (
               <p className="py-8 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
                 loading history…
               </p>
@@ -142,9 +137,6 @@ export function ItemHistoryDialog({
 
           {events.length > 0 ? (
             <div className="border-t border-border px-4 py-3">
-              {error ? (
-                <p className="mb-2 text-center text-[11px] text-destructive">{error}</p>
-              ) : null}
               {nextCursor !== null ? (
                 <Button
                   className="w-full"

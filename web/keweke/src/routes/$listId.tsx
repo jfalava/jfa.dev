@@ -32,6 +32,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
+import { toast } from "sonner";
 import { uuidv7 } from "uuidv7";
 
 import { ItemEntryHelpDialog } from "@/components/item-entry-help-dialog";
@@ -115,7 +116,7 @@ function ListPage() {
   const [isRenaming, setIsRenaming] = useState(false);
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [historyTarget, setHistoryTarget] = useState<HistoryTarget>();
-  const [error, setError] = useState<string>();
+  const [unavailableReason, setUnavailableReason] = useState<string>();
   const [filter, setFilter] = useState("");
   const [newItemDraft, setNewItemDraft] = useState<NewItemDraft>({
     name: "",
@@ -147,7 +148,6 @@ function ListPage() {
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
-    setError(undefined);
     void loadList(listId)
       .then((nextList) => {
         if (!cancelled) {
@@ -159,7 +159,7 @@ function ListPage() {
       .catch(() => {
         if (!cancelled) {
           setLoadedList(undefined);
-          setError("This list could not be opened.");
+          setUnavailableReason("This list could not be opened.");
           setIsLoading(false);
         }
       });
@@ -221,7 +221,7 @@ function ListPage() {
         onDeleted: () => {
           if (!cancelled) {
             setLoadedList(undefined);
-            setError("This list no longer exists.");
+            setUnavailableReason("This list no longer exists.");
           }
         },
         onClose: () => {
@@ -251,7 +251,7 @@ function ListPage() {
         return null;
       }
       if (!identity) {
-        setError("Your local identity is still being prepared. Try again in a moment.");
+        toast.error("Your local identity is still being prepared. Try again in a moment.");
         return null;
       }
 
@@ -263,7 +263,7 @@ function ListPage() {
           await createMutation(loadedList.snapshot, command, identity, loadedList.backend),
         );
       } catch {
-        setError(
+        toast.error(
           loadedList.backend === "remote"
             ? "Set up an accepted named user before changing a remote list."
             : "Could not prepare this change.",
@@ -271,21 +271,20 @@ function ListPage() {
         return null;
       }
       if (result.status === "missing") {
-        setError("This list no longer exists.");
+        toast.error("This list no longer exists.");
         return null;
       }
       if (result.status === "conflict") {
         setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
-        setError("This list changed elsewhere. Your view was refreshed.");
+        toast.error("This list changed elsewhere. Your view was refreshed.");
         return null;
       }
       if (result.status === "unauthorized") {
-        setError("This user is not allowed to change the remote list.");
+        toast.error("This user is not allowed to change the remote list.");
         return null;
       }
 
       setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
-      setError(undefined);
       return result.snapshot;
     },
     [identity, loadedList],
@@ -297,27 +296,25 @@ function ListPage() {
     }
 
     setIsMigrating(true);
-    setError(undefined);
     try {
       const result = await migrateList(loadedList.snapshot);
       if (result.status === "unauthorized") {
-        setError("Set up an accepted named user before publishing this list.");
+        toast.error("Set up an accepted named user before publishing this list.");
         return;
       }
       if (result.status === "conflict") {
-        setError("A remote list already exists for this identifier.");
+        toast.error("A remote list already exists for this identifier.");
         return;
       }
       if (result.status === "alias-conflict") {
-        setError("That friendly address is already in use. Choose another one.");
+        toast.error("That friendly address is already in use. Choose another one.");
         return;
       }
 
       setLoadedList({ backend: "remote", snapshot: result.snapshot });
-      setError(undefined);
       setIsPublishConfirmOpen(false);
     } catch {
-      setError("Remote migration is not available right now.");
+      toast.error("Remote migration is not available right now.");
     } finally {
       setIsMigrating(false);
     }
@@ -371,7 +368,6 @@ function ListPage() {
           try {
             const result = await ensureListAlias(loadedList.backend, renamedSnapshot);
             setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
-            setError(undefined);
             if (result.snapshot.alias) {
               await navigate({
                 to: "/$listId",
@@ -380,13 +376,13 @@ function ListPage() {
               });
             }
           } catch {
-            setError("Could not create that friendly address. Try a few letters or numbers.");
+            toast.error("Could not create that friendly address. Try a few letters or numbers.");
           }
         }
 
         return true;
       } catch {
-        setError("Could not save the list title right now.");
+        toast.error("Could not save the list title right now.");
         return false;
       } finally {
         setIsRenaming(false);
@@ -410,7 +406,7 @@ function ListPage() {
         amount.length > 64 ||
         !category
       ) {
-        setError("Enter a name, whole quantity, unit, and category.");
+        toast.error("Enter a name, whole quantity, unit, and category.");
         return false;
       }
 
@@ -423,7 +419,7 @@ function ListPage() {
           })) !== null
         );
       } catch {
-        setError("Could not save the item right now.");
+        toast.error("Could not save the item right now.");
         return false;
       }
     },
@@ -444,7 +440,7 @@ function ListPage() {
       try {
         await commit(command);
       } catch {
-        setError("Could not update deleted-item history right now.");
+        toast.error("Could not update deleted-item history right now.");
       } finally {
         setBusyArchiveId(undefined);
       }
@@ -567,7 +563,7 @@ function ListPage() {
                 Nothing here
               </h1>
               <p className="mt-6 max-w-lg text-sm text-muted-foreground">
-                {error ?? "This list is not available in local or remote storage."}
+                {unavailableReason ?? "This list is not available in local or remote storage."}
               </p>
             </div>
           </section>
@@ -590,7 +586,6 @@ function ListPage() {
       />
       <PublishListDialog
         alias={snapshot.alias}
-        error={error}
         isOpen={isPublishConfirmOpen}
         isPublishing={isMigrating}
         listId={snapshot.id}
@@ -626,12 +621,6 @@ function ListPage() {
             done
           </p>
         </div>
-
-        {error ? (
-          <div className="border-b border-destructive/40 bg-destructive/10 px-4 py-2 font-mono text-[10px] tracking-wide text-destructive uppercase sm:px-6 lg:px-8">
-            {error}
-          </div>
-        ) : null}
 
         <div className="invoice-rule border-b px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-1.5">

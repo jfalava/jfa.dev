@@ -12,6 +12,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
 import { ChevronRight, Cloud, House, List, ListChecks, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { HotkeyKbd } from "@/components/hotkey-kbd";
 import { KewekeHeader, NEW_LIST_HOTKEY } from "@/components/keweke-header";
@@ -312,7 +313,6 @@ function EmptyState() {
   const [isCreating, setIsCreating] = useState(false);
   const [confirmingListId, setConfirmingListId] = useState<string>();
   const [deletingListId, setDeletingListId] = useState<string>();
-  const [error, setError] = useState<string>();
 
   const refreshLists = useCallback(() => {
     void listLocalLists().then((nextLists) => {
@@ -368,9 +368,8 @@ function EmptyState() {
         await removeRemoteList(list.id);
       }
       setConfirmingListId(undefined);
-      setError(undefined);
     } catch {
-      setError(
+      toast.error(
         list.backend === "local"
           ? "Could not delete that local list."
           : "Could not remove that remote list.",
@@ -448,11 +447,6 @@ function EmptyState() {
             </Button>
           </div>
         )}
-        {error ? (
-          <p className="border-t border-destructive/40 px-4 py-3 font-mono text-[10px] tracking-wide text-destructive uppercase sm:px-6 lg:px-8">
-            {error}
-          </p>
-        ) : null}
       </main>
     </div>
   );

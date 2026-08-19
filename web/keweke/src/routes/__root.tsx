@@ -1,7 +1,8 @@
+import { Toaster } from "@jfa.dev/common/ui";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { ThemeProvider } from "@/hooks/use-theme";
+import { ThemeProvider, useTheme } from "@/hooks/use-theme";
 import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 
@@ -54,9 +55,17 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body className="flex h-dvh min-h-0 flex-col overflow-hidden overscroll-none bg-background font-sans text-base text-foreground transition-colors duration-200">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <ToastBridge />
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>
   );
+}
+
+function ToastBridge() {
+  const { theme } = useTheme();
+  return <Toaster theme={theme} />;
 }

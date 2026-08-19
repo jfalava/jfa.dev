@@ -4,7 +4,6 @@ import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 
 interface PublishListDialogProps {
   alias: string | null;
-  error?: string;
   isOpen: boolean;
   isPublishing: boolean;
   listId: string;
@@ -14,7 +13,6 @@ interface PublishListDialogProps {
 
 export function PublishListDialog({
   alias,
-  error,
   isOpen,
   isPublishing,
   listId,
@@ -70,8 +68,6 @@ export function PublishListDialog({
                 </div>
               ) : null}
             </div>
-
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
             <div className="flex justify-end gap-2">
               <Button isDisabled={isPublishing} onPress={() => onOpenChange(false)} variant="ghost">

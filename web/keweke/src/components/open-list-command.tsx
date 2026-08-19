@@ -13,6 +13,7 @@ import {
   ModalOverlay,
   SearchField,
 } from "react-aria-components";
+import { toast } from "sonner";
 
 import { HotkeyKbd } from "@/components/hotkey-kbd";
 import { isListAddress, normalizeListAddress } from "@/lib/list-id";
@@ -25,7 +26,6 @@ const SUGGESTION_LIMIT = 6;
 export function OpenListCommand() {
   const navigate = useNavigate();
   const [value, setValue] = useState("");
-  const [error, setError] = useState<string>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [savedLists, setSavedLists] = useState<ListSearchIndex | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +54,7 @@ export function OpenListCommand() {
 
     const normalizedValue = value.trim().toLowerCase();
     if (!isListAddress(normalizedValue)) {
-      setError("Please enter a list ID or alias.");
+      toast.error("Please enter a list ID or alias.");
       return;
     }
 
@@ -80,7 +80,6 @@ export function OpenListCommand() {
 
   const reset = (): void => {
     setValue("");
-    setError(undefined);
   };
 
   const normalizedValue = value.trim().toLowerCase();
@@ -116,7 +115,6 @@ export function OpenListCommand() {
                 className="flex items-center gap-3 border-b border-border px-4"
                 onChange={(nextValue) => {
                   setValue(nextValue);
-                  setError(undefined);
                 }}
                 value={value}
               >
@@ -136,11 +134,6 @@ export function OpenListCommand() {
                   Example: <span className="font-mono text-xs">groceries-apple</span>
                 </p>
               </div>
-              {error ? (
-                <p className="border-b border-destructive/40 bg-destructive/10 px-4 py-2 text-sm text-destructive">
-                  {error}
-                </p>
-              ) : null}
               <Menu
                 aria-label="List actions"
                 className="p-2 outline-none"

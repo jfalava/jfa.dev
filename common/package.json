@@ -30,6 +30,7 @@
     "react": "catalog:react",
     "react-aria-components": "catalog:react",
     "react-dom": "catalog:react",
+    "sonner": "catalog:ui",
     "tailwind-merge": "catalog:styling",
     "zod": "4.4.3"
   },
