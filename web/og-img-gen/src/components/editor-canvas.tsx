@@ -319,7 +319,12 @@ async function createFabricObject(
       return null;
     }
 
-    const image = await fabric.FabricImage.fromURL(assetUrl, { crossOrigin: "anonymous" });
+    let image: InstanceType<typeof fabric.FabricImage>;
+    try {
+      image = await fabric.FabricImage.fromURL(assetUrl, { crossOrigin: "anonymous" });
+    } catch {
+      return null;
+    }
     const imageWidth = image.width ?? layer.width;
     const imageHeight = image.height ?? layer.height;
     const scale =

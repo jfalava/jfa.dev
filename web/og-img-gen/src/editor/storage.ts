@@ -3,6 +3,26 @@ import DexieDatabase, { type EntityTable } from "dexie";
 import { projectSchema, type AssetMeta, type OgProject } from "@/editor/model";
 
 const PROJECT_ID = "local-project";
+const IMAGE_MIME_TYPES = new Set([
+  "image/avif",
+  "image/gif",
+  "image/jpeg",
+  "image/png",
+  "image/svg+xml",
+  "image/webp",
+]);
+const IMAGE_EXTENSION_MIME_TYPES = new Map([
+  ["avif", "image/avif"],
+  ["gif", "image/gif"],
+  ["jpeg", "image/jpeg"],
+  ["jpg", "image/jpeg"],
+  ["png", "image/png"],
+  ["svg", "image/svg+xml"],
+  ["webp", "image/webp"],
+]);
+
+export const IMAGE_FILE_ACCEPT =
+  "image/avif,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,.avif,.gif,.jpeg,.jpg,.png,.svg,.webp";
 
 interface ProjectRecord {
   id: string;
@@ -30,6 +50,55 @@ class EditorDatabase extends DexieDatabase {
 
 export const editorDatabase = new EditorDatabase();
 
+function mimeTypeFromFileName(name: string): string | null {
+  const extension = name.split(".").at(-1)?.toLowerCase();
+  return extension === undefined ? null : (IMAGE_EXTENSION_MIME_TYPES.get(extension) ?? null);
+}
+
+function imageMimeType(file: File): string | null {
+  const fileType = file.type.toLowerCase();
+  if (fileType.startsWith("image/")) {
+    return fileType;
+  }
+  return mimeTypeFromFileName(file.name);
+}
+
+export function isSupportedImageFile(file: File): boolean {
+  const mimeType = imageMimeType(file);
+  return mimeType !== null && IMAGE_MIME_TYPES.has(mimeType);
+}
+
+async function readImageDimensions(file: File): Promise<{ height: number; width: number }> {
+  try {
+    const bitmap = await globalThis.createImageBitmap?.(file);
+    if (bitmap !== undefined) {
+      const dimensions = { height: bitmap.height, width: bitmap.width };
+      bitmap.close();
+      return dimensions;
+    }
+  } catch {
+    // Some browsers cannot create an ImageBitmap from SVG files. The image element fallback
+    // below handles those files and still keeps the source entirely local.
+  }
+
+  const url = URL.createObjectURL(file);
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.addEventListener("load", () => resolve(element), { once: true });
+      element.addEventListener(
+        "error",
+        () => reject(new Error("The image could not be decoded.")),
+        { once: true },
+      );
+      element.src = url;
+    });
+    return { height: image.naturalHeight, width: image.naturalWidth };
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 export async function loadProject(): Promise<OgProject | null> {
   const record = await editorDatabase.projects.get(PROJECT_ID);
   return record === undefined ? null : projectSchema.parse(record.project);
@@ -44,17 +113,24 @@ export async function saveProject(project: OgProject): Promise<void> {
 }
 
 export async function saveImageAsset(file: File): Promise<AssetMeta> {
-  const bitmap = await createImageBitmap(file);
+  if (!isSupportedImageFile(file)) {
+    throw new Error("Choose a PNG, JPEG, WebP, GIF, AVIF, or SVG image.");
+  }
+
+  const { height, width } = await readImageDimensions(file);
+  if (width <= 0 || height <= 0) {
+    throw new Error("The image has no usable dimensions.");
+  }
+
   const asset: StoredAsset = {
     id: `asset-${crypto.randomUUID()}`,
     name: file.name || "Untitled image",
-    mime: file.type || "image/png",
-    width: bitmap.width,
-    height: bitmap.height,
+    mime: imageMimeType(file) ?? "image/png",
+    width,
+    height,
     blob: file,
     createdAt: Date.now(),
   };
-  bitmap.close();
   await editorDatabase.assets.put(asset);
   return {
     id: asset.id,

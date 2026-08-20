@@ -34,7 +34,7 @@ import {
   ZoomOut,
   type LucideIcon,
 } from "lucide-react";
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
 
 import { EditorCanvas, type EditorCanvasHandle } from "@/components/editor-canvas";
 import {
@@ -54,6 +54,8 @@ import {
 } from "@/editor/model";
 import {
   deleteUnusedAssets,
+  IMAGE_FILE_ACCEPT,
+  isSupportedImageFile,
   loadAssetUrl,
   loadProject,
   saveImageAsset,
@@ -91,6 +93,7 @@ function EditorPage() {
   const [zoom, setZoom] = useState(1);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("Saved locally in this browser");
+  const [isImageDropTarget, setIsImageDropTarget] = useState(false);
 
   const selectedLayer = project.layers.find(({ id }) => id === selectedLayerId);
 
@@ -184,22 +187,67 @@ function EditorPage() {
     }
   }
 
-  async function handleImageChange(event: ChangeEvent<HTMLInputElement>): Promise<void> {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (file === undefined) {
+  async function handleImageFiles(files: readonly File[]): Promise<void> {
+    const imageFiles = files.filter(isSupportedImageFile);
+    if (imageFiles.length === 0) {
+      setNotice("Choose a PNG, JPEG, WebP, GIF, AVIF, or SVG image");
       return;
     }
 
     setBusy(true);
-    try {
-      const asset = await saveImageAsset(file);
-      addImageLayer(asset);
-      setNotice("Image added from this device");
-    } catch {
-      setNotice("That image could not be read by this browser");
-    } finally {
-      setBusy(false);
+    let addedCount = 0;
+    let failedCount = files.length - imageFiles.length;
+
+    for (const file of imageFiles) {
+      try {
+        const asset = await saveImageAsset(file);
+        addImageLayer(asset);
+        addedCount += 1;
+      } catch {
+        failedCount += 1;
+      }
+    }
+
+    if (addedCount === 0) {
+      setNotice("Those image files could not be read by this browser");
+    } else if (failedCount > 0) {
+      setNotice(`${addedCount} image${addedCount === 1 ? "" : "s"} added; ${failedCount} skipped`);
+    } else {
+      setNotice(`${addedCount} image${addedCount === 1 ? "" : "s"} added from this device`);
+    }
+    setBusy(false);
+  }
+
+  async function handleImageChange(event: ChangeEvent<HTMLInputElement>): Promise<void> {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    if (files.length === 0) {
+      return;
+    }
+
+    await handleImageFiles(files);
+  }
+
+  function handleImageDragOver(event: DragEvent<HTMLDivElement>): void {
+    if (event.dataTransfer.types.includes("Files")) {
+      event.preventDefault();
+      setIsImageDropTarget(true);
+    }
+  }
+
+  function handleImageDragLeave(event: DragEvent<HTMLDivElement>): void {
+    const relatedTarget = event.relatedTarget;
+    if (!(relatedTarget instanceof Element) || !event.currentTarget.contains(relatedTarget)) {
+      setIsImageDropTarget(false);
+    }
+  }
+
+  function handleImageDrop(event: DragEvent<HTMLDivElement>): void {
+    event.preventDefault();
+    setIsImageDropTarget(false);
+    const files = Array.from(event.dataTransfer.files);
+    if (files.length > 0) {
+      void handleImageFiles(files);
     }
   }
 
@@ -265,6 +313,7 @@ function EditorPage() {
         <LayersPanel
           filter={filter}
           onAddGeometry={addGeometryLayer}
+          onAddImage={() => imageInputRef.current?.click()}
           onAddText={addTextLayer}
           onFilterChange={setFilter}
           onMove={moveLayerBefore}
@@ -374,7 +423,10 @@ function EditorPage() {
           <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-auto bg-[linear-gradient(45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(-45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(127,127,127,0.08)_75%),linear-gradient(-45deg,transparent_75%,rgba(127,127,127,0.08)_75%)] bg-size-[16px_16px] bg-position-[0_0,0_0,8px_8px,-8px_8px] p-6">
             <div className="flex max-w-full min-w-0 items-center justify-center rounded-sm border border-border bg-background p-1 shadow-2xl shadow-black/10">
               <div
-                className="editor-canvas-frame relative max-w-full overflow-hidden rounded-sm"
+                className={`editor-canvas-frame relative max-w-full overflow-hidden rounded-sm ${isImageDropTarget ? "ring-2 ring-primary ring-offset-2" : ""}`}
+                onDragLeave={handleImageDragLeave}
+                onDragOver={handleImageDragOver}
+                onDrop={handleImageDrop}
                 style={{
                   aspectRatio: `${project.width}/${project.height}`,
                   width: `${project.width * zoom}px`,
@@ -388,6 +440,13 @@ function EditorPage() {
                   project={project}
                   selectedLayerId={selectedLayerId}
                 />
+                {isImageDropTarget ? (
+                  <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-primary/10">
+                    <span className="rounded-md border border-dashed border-primary bg-background/95 px-4 py-2 text-xs font-medium text-primary shadow-sm">
+                      Drop image files to add them locally
+                    </span>
+                  </div>
+                ) : null}
               </div>
             </div>
             <div className="absolute right-4 bottom-4 flex items-center gap-1 rounded-md border border-border bg-background/90 p-1 shadow-sm backdrop-blur">
@@ -444,9 +503,10 @@ function EditorPage() {
 
       <input
         ref={imageInputRef}
-        accept="image/*"
+        accept={IMAGE_FILE_ACCEPT}
         className="hidden"
         onChange={(event) => void handleImageChange(event)}
+        multiple
         type="file"
       />
       <input
@@ -463,6 +523,7 @@ function EditorPage() {
 interface LayersPanelProps {
   filter: string;
   onAddGeometry: () => void;
+  onAddImage: () => void;
   onAddText: () => void;
   onFilterChange: (value: string) => void;
   onMove: (sourceId: string, targetId: string) => void;
@@ -476,6 +537,7 @@ interface LayersPanelProps {
 function LayersPanel({
   filter,
   onAddGeometry,
+  onAddImage,
   onAddText,
   onFilterChange,
   onMove,
@@ -554,6 +616,16 @@ function LayersPanel({
         <Button className="flex-1" onPress={onAddGeometry} size="sm" variant="outline">
           <Square />
           Shape
+        </Button>
+        <Button
+          aria-label="Upload local image"
+          className="flex-1"
+          onPress={onAddImage}
+          size="sm"
+          variant="outline"
+        >
+          <ImageIcon />
+          Image
         </Button>
       </div>
     </aside>
