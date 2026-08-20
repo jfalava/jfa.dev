@@ -1,5 +1,5 @@
 import type { ListBackend } from "@jfa.dev/common/lists";
-import { Button, buttonVariants } from "@jfa.dev/common/ui";
+import { Button, SiteHeader, buttonVariants } from "@jfa.dev/common/ui";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Check, CloudUpload, Copy, Plus, UserRound } from "lucide-react";
@@ -99,110 +99,98 @@ export function KewekeHeader({
   ]);
 
   return (
-    <header className="catalog-header sticky top-0 z-30 shrink-0 border-b border-border bg-background">
-      <div className="flex min-h-11 items-center justify-between gap-4 px-4 sm:gap-6 sm:px-6 lg:gap-8 lg:px-8">
-        <Link to="/" className="min-w-0 cursor-pointer text-sm text-foreground">
-          <div aria-label="keweke" className="flex min-w-0 items-baseline gap-3 truncate lg:pr-4">
-            <span className="shrink-0 text-sm font-bold text-primary">
-              <span className="inline tracking-wide">/KEWEKE</span>
-              <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
-            </span>
-            <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
-            <span className="hidden truncate text-[11px] text-muted-foreground sm:inline">
-              Yet another collaborative shopping list
-            </span>
-          </div>
-        </Link>
+    <SiteHeader
+      title="KEWEKE"
+      subtitle="Yet another collaborative shopping list"
+      titleHref={appPath("/")}
+      navLabel="General navigation"
+    >
+      <OpenListCommand />
 
-        <nav className="flex shrink-0 items-center gap-1" aria-label="General navigation">
-          <OpenListCommand />
-
-          {isUserDialogOpen !== undefined ? (
-            <UserDialog
-              key={userDialogMessage ?? "default"}
-              isOpen={isUserDialogOpen}
-              message={userDialogMessage}
-              onOpenChange={onUserDialogOpenChange}
-              onSaved={onUserDialogSaved}
-              showTrigger={false}
-            />
-          ) : null}
-          <ThemeToggle />
-          <Link
-            to="/user"
-            aria-label="User"
-            className={buttonVariants({
-              variant: "default",
-              size: "icon",
-              className: "w-7 sm:w-auto sm:gap-1 sm:px-2",
-            })}
+      {isUserDialogOpen !== undefined ? (
+        <UserDialog
+          key={userDialogMessage ?? "default"}
+          isOpen={isUserDialogOpen}
+          message={userDialogMessage}
+          onOpenChange={onUserDialogOpenChange}
+          onSaved={onUserDialogSaved}
+          showTrigger={false}
+        />
+      ) : null}
+      <ThemeToggle />
+      <Link
+        to="/user"
+        aria-label="User"
+        className={buttonVariants({
+          variant: "default",
+          size: "icon",
+          className: "w-7 sm:w-auto sm:gap-1 sm:px-2",
+        })}
+      >
+        <UserRound aria-hidden="true" className="size-3.5" />
+        <span className="hidden sm:inline">User</span>
+      </Link>
+      {backend === "local" && onMigrate ? (
+        <div className="relative">
+          <Button
+            aria-describedby={showPublishNudge ? "publish-list-nudge" : undefined}
+            aria-label="Publish list to a remote list"
+            className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
+            isDisabled={isMigrating}
+            onPress={onMigrate}
+            size="icon"
+            variant="outline"
           >
-            <UserRound aria-hidden="true" className="size-3.5" />
-            <span className="hidden sm:inline">User</span>
-          </Link>
-          {backend === "local" && onMigrate ? (
-            <div className="relative">
-              <Button
-                aria-describedby={showPublishNudge ? "publish-list-nudge" : undefined}
-                aria-label="Publish list to a remote list"
-                className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
-                isDisabled={isMigrating}
-                onPress={onMigrate}
-                size="icon"
-                variant="outline"
+            <CloudUpload className="size-3.5" />
+            <span className="hidden sm:inline">{isMigrating ? "Publishing" : "Publish"}</span>
+            {!isMigrating ? (
+              <HotkeyKbd className="hidden sm:inline-flex" hotkey={PUBLISH_HOTKEY} />
+            ) : null}
+          </Button>
+          {isPublishNudgeVisible ? (
+            <div
+              className="absolute top-full right-0 z-40 mt-2 w-64 rounded-md border border-border bg-popover px-3 py-2 text-left text-xs leading-relaxed text-popover-foreground shadow-lg before:absolute before:-top-1 before:right-3 before:size-2 before:rotate-45 before:border-t before:border-l before:border-border before:bg-popover before:content-[''] sm:before:right-10"
+              id="publish-list-nudge"
+              role="tooltip"
+            >
+              <button
+                aria-label="Dismiss publish tip"
+                className="block w-full cursor-pointer text-left"
+                onClick={() => setIsPublishNudgeDismissed(true)}
+                type="button"
               >
-                <CloudUpload className="size-3.5" />
-                <span className="hidden sm:inline">{isMigrating ? "Publishing" : "Publish"}</span>
-                {!isMigrating ? (
-                  <HotkeyKbd className="hidden sm:inline-flex" hotkey={PUBLISH_HOTKEY} />
-                ) : null}
-              </Button>
-              {isPublishNudgeVisible ? (
-                <div
-                  className="absolute top-full right-0 z-40 mt-2 w-64 rounded-md border border-border bg-popover px-3 py-2 text-left text-xs leading-relaxed text-popover-foreground shadow-lg before:absolute before:-top-1 before:right-3 before:size-2 before:rotate-45 before:border-t before:border-l before:border-border before:bg-popover before:content-[''] sm:before:right-10"
-                  id="publish-list-nudge"
-                  role="tooltip"
-                >
-                  <button
-                    aria-label="Dismiss publish tip"
-                    className="block w-full cursor-pointer text-left"
-                    onClick={() => setIsPublishNudgeDismissed(true)}
-                    type="button"
-                  >
-                    You can now publish this list to access it from anywhere.
-                  </button>
-                </div>
-              ) : null}
+                You can now publish this list to access it from anywhere.
+              </button>
             </div>
           ) : null}
-          {listId && backend === "remote" ? (
-            <Button
-              aria-label="Copy share link"
-              className="hidden h-7 min-w-0 sm:inline-flex"
-              onPress={() => void copyShareLink()}
-              variant="outline"
-            >
-              {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-              <span className="hidden sm:inline">{copied ? "Copied" : "Share"}</span>
-            </Button>
+        </div>
+      ) : null}
+      {listId && backend === "remote" ? (
+        <Button
+          aria-label="Copy share link"
+          className="hidden h-7 min-w-0 sm:inline-flex"
+          onPress={() => void copyShareLink()}
+          variant="outline"
+        >
+          {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+          <span className="hidden sm:inline">{copied ? "Copied" : "Share"}</span>
+        </Button>
+      ) : null}
+      {!hideNewListButton ? (
+        <Button
+          aria-label="Create new list"
+          className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
+          isDisabled={isCreating}
+          onPress={() => void createList()}
+          size="icon"
+        >
+          <Plus className="size-3.5" />
+          <span className="hidden sm:inline">New list</span>
+          {!isCreating ? (
+            <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />
           ) : null}
-          {!hideNewListButton ? (
-            <Button
-              aria-label="Create new list"
-              className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
-              isDisabled={isCreating}
-              onPress={() => void createList()}
-              size="icon"
-            >
-              <Plus className="size-3.5" />
-              <span className="hidden sm:inline">New list</span>
-              {!isCreating ? (
-                <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />
-              ) : null}
-            </Button>
-          ) : null}
-        </nav>
-      </div>
-    </header>
+        </Button>
+      ) : null}
+    </SiteHeader>
   );
 }

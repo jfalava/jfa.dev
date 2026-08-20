@@ -3,12 +3,6 @@
 @import "@jfa.dev/common/styles.css";
 
 @layer components {
-  .catalog-header {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-  }
-
   .catalog-main {
     min-height: 0;
   }

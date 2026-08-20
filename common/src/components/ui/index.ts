@@ -24,6 +24,7 @@ export {
 } from "./dropdown-menu";
 export { Input } from "./input";
 export { Kbd, KbdGroup } from "./kbd";
+export { SiteHeader, type SiteHeaderProps } from "./site-header";
 export { Toaster } from "./sonner";
 export {
   Table,
