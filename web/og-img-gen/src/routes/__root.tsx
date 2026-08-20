@@ -1,59 +1,66 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
+import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
-import Header from "../components/Header";
-import appCss from "../styles.css?url";
+import { OgImageGenHeader } from "@/components/og-image-gen-header";
+import { ThemeProvider } from "@/hooks/use-theme";
+import { appPath } from "@/lib/site-paths";
+import appCss from "@/styles.css?url";
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
-      {
-        charSet: "utf-8",
-      },
+      { charSet: "utf-8" },
       {
         name: "viewport",
-        content: "width=device-width, initial-scale=1",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
       {
-        title: "OG Image Generator",
+        name: "description",
+        content: "Create OpenGraph images from scratch with a layer-based editor.",
       },
-      {
-        name: "theme-color",
-        content: "#4f46e5",
-      },
+      { title: "OG Image Generator by JFA" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      {
-        rel: "manifest",
-        href: "/manifest.json",
-      },
-      {
-        rel: "icon",
-        href: "/favicon.ico",
-        type: "image/x-icon",
-      },
-      {
-        rel: "apple-touch-icon",
-        href: "/apple-touch-icon.png",
-      },
     ],
   }),
-
+  notFoundComponent: () => (
+    <div className="flex min-h-dvh items-center justify-center bg-background p-6 text-foreground">
+      <div className="text-center">
+        <p className="text-sm font-medium text-muted-foreground">OG IMAGE GEN</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Page not found</h1>
+        <a
+          href="./"
+          className="mt-6 inline-flex text-sm font-medium text-primary underline underline-offset-4"
+        >
+          Return to the editor
+        </a>
+      </div>
+    </div>
+  ),
   shellComponent: RootDocument,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script src={appPath("/theme-init.js")}></script>
         <HeadContent />
       </head>
-      <body className="min-h-dvh bg-background text-foreground">
-        <Header />
-        {children}
+      <body className="flex min-h-dvh flex-col overflow-hidden bg-background font-sans text-base text-foreground antialiased">
+        <ThemeProvider>
+          <OgImageGenHeader />
+          <main className="flex min-h-0 flex-1 flex-col">{children}</main>
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>
