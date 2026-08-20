@@ -6,7 +6,12 @@ export const infrastructureInventory = {
   router: {
     worker: "jfa-dev-router",
     domains: ["jfa.dev"],
-    publicRoutes: ["/", "/og-img-gen", "/hyperscaler-services", "/keweke"],
+    publicRoutes: [
+      "/",
+      "/og-img-gen/*",
+      "/hyperscaler-services/*",
+      "/keweke/*",
+    ],
     bindings: [
       "LANDING",
       "OG_IMG_GEN",
@@ -23,7 +28,7 @@ export const infrastructureInventory = {
   ogImgGen: {
     worker: "jfa-dev-og-img-gen",
     domains: [],
-    publicRoutes: ["/og-img-gen"],
+    publicRoutes: ["/og-img-gen/*"],
   },
   hyperscalerMounted: {
     worker: "jfa-dev-hyperscaler-services",

@@ -553,8 +553,7 @@ export async function handleMountedApp(
 ): Promise<Response> {
   const requestURL = new URL(request.url);
   const preserveMount =
-    options?.preserveMount === true ||
-    isMountedAssetRequest(requestURL.pathname, mount, assetPrefixes);
+    options?.preserveMount ?? isMountedAssetRequest(requestURL.pathname, mount, assetPrefixes);
   const forwardUrl = buildForwardUrl(request.url, mount, preserveMount);
 
   const relativePath = mountedRelativePath(requestURL.pathname, mount);

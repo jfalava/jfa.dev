@@ -36,7 +36,13 @@ const routeDefinitions = {
   smoothTransitions: true,
   routes: [
     { binding: "LANDING", path: "/", preload: true },
-    { binding: "OG_IMG_GEN", path: "/og-img-gen", preload: true },
+    {
+      binding: "OG_IMG_GEN",
+      path: "/og-img-gen",
+      preload: true,
+      // OG Image Gen is built for the worker root; the router owns the public mount.
+      preserveMount: false,
+    },
     {
       binding: "HYPERSCALER_SERVICES",
       path: "/hyperscaler-services",
@@ -53,6 +59,7 @@ const routeDefinitions = {
 };
 
 const assetPrefixes = [
+  "/assets/",
   "/icons/",
   "/manifest.json",
   "/theme-init.js",
