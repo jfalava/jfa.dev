@@ -14,7 +14,46 @@ describe("shouldShowPublishNudge", () => {
     ).toBe(true);
   });
 
-  test("requires every onboarding condition", () => {
+  test("shows on first meaningful interaction with the first list", () => {
+    // either a custom title (even with no items) or at least one item (even with default title)
+    expect(
+      shouldShowPublishNudge({
+        backend: "local",
+        isFirstList: true,
+        itemCount: 0,
+        title: "Weekend groceries",
+      }),
+    ).toBe(true);
+
+    expect(
+      shouldShowPublishNudge({
+        backend: "local",
+        isFirstList: true,
+        itemCount: 1,
+        title: "New list",
+      }),
+    ).toBe(true);
+
+    expect(
+      shouldShowPublishNudge({
+        backend: "local",
+        isFirstList: true,
+        itemCount: 5,
+        title: "New list",
+      }),
+    ).toBe(true);
+
+    expect(
+      shouldShowPublishNudge({
+        backend: "local",
+        isFirstList: true,
+        itemCount: 0,
+        title: undefined,
+      }),
+    ).toBe(false);
+  });
+
+  test("requires first-local-list context", () => {
     const base = {
       backend: "local" as const,
       isFirstList: true,
@@ -23,9 +62,15 @@ describe("shouldShowPublishNudge", () => {
     };
 
     expect(shouldShowPublishNudge({ ...base, backend: "remote" })).toBe(false);
+    expect(shouldShowPublishNudge({ ...base, backend: undefined })).toBe(false);
     expect(shouldShowPublishNudge({ ...base, isFirstList: false })).toBe(false);
-    expect(shouldShowPublishNudge({ ...base, itemCount: 0 })).toBe(false);
-    expect(shouldShowPublishNudge({ ...base, itemCount: 2 })).toBe(false);
-    expect(shouldShowPublishNudge({ ...base, title: "New list" })).toBe(false);
+    expect(
+      shouldShowPublishNudge({
+        backend: "local",
+        isFirstList: true,
+        itemCount: 0,
+        title: "New list",
+      }),
+    ).toBe(false);
   });
 });

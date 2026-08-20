@@ -8,11 +8,12 @@ export function shouldShowPublishNudge(input: {
   itemCount: number;
   title: string | undefined;
 }): boolean {
-  return (
-    input.backend === "local" &&
-    input.isFirstList &&
-    input.itemCount === 1 &&
-    input.title !== undefined &&
-    input.title !== DEFAULT_LIST_TITLE
-  );
+  if (input.backend !== "local" || !input.isFirstList) {
+    return false;
+  }
+
+  const hasCustomTitle = input.title !== undefined && input.title !== DEFAULT_LIST_TITLE;
+  const hasItems = input.itemCount >= 1;
+
+  return hasCustomTitle || hasItems;
 }
