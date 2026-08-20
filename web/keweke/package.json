@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@jfa.dev/common": "workspace:*",
-    "@number-flow/react": "^0.6.2",
+    "@number-flow/react": "0.6.2",
     "@passwordless-id/webauthn": "2.4.0",
     "@tailwindcss/vite": "catalog:styling",
     "@tanstack/react-hotkeys": "catalog:tanstack",

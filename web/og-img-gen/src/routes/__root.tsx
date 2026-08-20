@@ -3,6 +3,7 @@ import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/reac
 import type { ReactNode } from "react";
 
 import { OgImageGenHeader } from "@/components/og-image-gen-header";
+import { ViewportGuard } from "@/components/viewport-guard";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles.css?url";
@@ -58,8 +59,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body className="flex min-h-dvh flex-col overflow-hidden bg-background font-sans text-base text-foreground antialiased">
         <ThemeProvider>
-          <OgImageGenHeader />
-          <main className="flex min-h-0 flex-1 flex-col">{children}</main>
+          <ViewportGuard>
+            <OgImageGenHeader />
+            <main className="flex min-h-0 flex-1 flex-col">{children}</main>
+          </ViewportGuard>
         </ThemeProvider>
         <Scripts />
       </body>
