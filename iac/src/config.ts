@@ -40,8 +40,8 @@ const routeDefinitions = {
       binding: "OG_IMG_GEN",
       path: "/og-img-gen",
       preload: true,
-      // OG Image Gen is built for the worker root; the router owns the public mount.
-      preserveMount: false,
+      // OG Image Gen is built and served under the public mount, including in local dev.
+      preserveMount: true,
     },
     {
       binding: "HYPERSCALER_SERVICES",

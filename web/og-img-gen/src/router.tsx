@@ -2,6 +2,7 @@ import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
 import { getContext } from "./integrations/tanstack-query/root-provider";
+import { appBasePath } from "./lib/site-paths";
 import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
@@ -9,6 +10,7 @@ export function getRouter() {
 
   const router = createTanStackRouter({
     routeTree,
+    basepath: appBasePath,
     context,
     scrollRestoration: true,
     defaultPreload: "intent",

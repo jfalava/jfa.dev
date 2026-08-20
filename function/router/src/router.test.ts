@@ -86,13 +86,13 @@ describe("router configuration", () => {
     expect(await response.text()).toBe("I'm a teapot");
   });
 
-  test("forwards OG Image Gen assets to the worker root", async () => {
+  test("forwards OG Image Gen assets under the worker mount", async () => {
     let forwardedPath: string | undefined;
     const response = await router.fetch(new Request("https://jfa.dev/og-img-gen/assets/app.js"), {
       ROUTES: JSON.stringify({
         routes: [
           { binding: "LANDING", path: "/" },
-          { binding: "OG_IMG_GEN", path: "/og-img-gen", preserveMount: false },
+          { binding: "OG_IMG_GEN", path: "/og-img-gen", preserveMount: true },
         ],
       }),
       ASSET_PREFIXES: JSON.stringify(["/assets/", "/theme-init.js"]),
@@ -112,16 +112,16 @@ describe("router configuration", () => {
 
     expect(response.status).toBe(200);
     expect(await response.text()).toBe("asset");
-    expect(forwardedPath).toBe("/assets/app.js");
+    expect(forwardedPath).toBe("/og-img-gen/assets/app.js");
   });
 
-  test("forwards the trailing-slash OG document to the worker root", async () => {
+  test("forwards the trailing-slash OG document under the worker mount", async () => {
     let forwardedPath: string | undefined;
     const response = await router.fetch(new Request("https://jfa.dev/og-img-gen/"), {
       ROUTES: JSON.stringify({
         routes: [
           { binding: "LANDING", path: "/" },
-          { binding: "OG_IMG_GEN", path: "/og-img-gen", preserveMount: false },
+          { binding: "OG_IMG_GEN", path: "/og-img-gen", preserveMount: true },
         ],
       }),
       ASSET_PREFIXES: JSON.stringify(["/assets/", "/theme-init.js"]),
@@ -139,7 +139,7 @@ describe("router configuration", () => {
 
     expect(response.status).toBe(200);
     expect(await response.text()).toBe("editor");
-    expect(forwardedPath).toBe("/");
+    expect(forwardedPath).toBe("/og-img-gen/");
   });
 
   test("rejects a country present in the KV blocklist before forwarding", async () => {

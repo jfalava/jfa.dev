@@ -19,4 +19,4 @@ Run it from the repository root:
 bun run --filter @jfa.dev/og-img-gen dev
 ```
 
-The app is available at `http://localhost:3101/`.
+The app is available at `http://localhost:3101/og-img-gen/`.
