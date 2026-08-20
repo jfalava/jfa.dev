@@ -13,7 +13,7 @@ import { defineConfig } from "vite-plus";
  */
 
 export default defineConfig({
-  plugins: [tailwindcss(), tanstackStart(), viteReact()],
+  plugins: [tailwindcss(), tanstackStart(), viteReact({ compiler: true })],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

@@ -37,6 +37,7 @@
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
+    "oxc-transform-react": "catalog:build",
     "oxlint": "catalog:build",
     "tailwindcss": "catalog:styling",
     "tw-animate-css": "catalog:styling",

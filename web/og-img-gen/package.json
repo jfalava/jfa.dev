@@ -40,6 +40,7 @@
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
     "jsdom": "30.0.1",
+    "oxc-transform-react": "catalog:build",
     "shadcn": "catalog:ui",
     "tailwindcss": "catalog:styling",
     "typescript": "catalog:build",
