@@ -5,3 +5,4 @@ node_modules
 .tanstack
 .pnpm-store
 .env
+.amp/portals/
