@@ -115,6 +115,33 @@ describe("router configuration", () => {
     expect(forwardedPath).toBe("/assets/app.js");
   });
 
+  test("forwards the trailing-slash OG document to the worker root", async () => {
+    let forwardedPath: string | undefined;
+    const response = await router.fetch(new Request("https://jfa.dev/og-img-gen/"), {
+      ROUTES: JSON.stringify({
+        routes: [
+          { binding: "LANDING", path: "/" },
+          { binding: "OG_IMG_GEN", path: "/og-img-gen", preserveMount: false },
+        ],
+      }),
+      ASSET_PREFIXES: JSON.stringify(["/assets/", "/theme-init.js"]),
+      LANDING: { fetch: async () => new Response("landing") },
+      OG_IMG_GEN: {
+        fetch: async (request) => {
+          const requestUrl = request instanceof Request ? request.url : request.toString();
+          forwardedPath = new URL(requestUrl).pathname;
+          return new Response("editor");
+        },
+      },
+      HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
+      KEWEKE: { fetch: async () => new Response("forwarded") },
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("editor");
+    expect(forwardedPath).toBe("/");
+  });
+
   test("rejects a country present in the KV blocklist before forwarding", async () => {
     const response = await router.fetch(makeRequest("https://jfa.dev/", "cn"), {
       ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
