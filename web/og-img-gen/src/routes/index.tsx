@@ -11,6 +11,7 @@ import {
   EyeOff,
   FileDown,
   FileUp,
+  FileType,
   Frame,
   Hand,
   Image as ImageIcon,
@@ -43,8 +44,10 @@ import {
   downloadBlob,
   readProjectArchive,
 } from "@/editor/archive";
+import { registerFontFile, registerStoredFont } from "@/editor/fonts";
 import {
   createInitialProject,
+  type FontMeta,
   isImageLayer,
   isGeometryLayer,
   isTextLayer,
@@ -53,17 +56,41 @@ import {
   type OgProject,
 } from "@/editor/model";
 import {
+  createFontMeta,
   deleteUnusedAssets,
+  deleteUnusedFonts,
+  FONT_FILE_ACCEPT,
   IMAGE_FILE_ACCEPT,
+  isSupportedFontFile,
   isSupportedImageFile,
   loadAssetUrl,
+  loadFont as loadStoredFont,
   loadProject,
+  saveFontAsset,
   saveImageAsset,
   saveProject,
+  type FontUploadOptions,
 } from "@/editor/storage";
 import { useEditorStore } from "@/editor/store";
 
 export const Route = createFileRoute("/")({ component: EditorPage });
+
+async function registerProjectFonts(fonts: readonly FontMeta[]): Promise<number> {
+  let failedCount = 0;
+  for (const font of fonts) {
+    try {
+      const storedFont = await loadStoredFont(font.id);
+      if (storedFont === null) {
+        failedCount += 1;
+      } else {
+        await registerStoredFont(storedFont);
+      }
+    } catch {
+      failedCount += 1;
+    }
+  }
+  return failedCount;
+}
 
 function EditorPage() {
   const project = useEditorStore((state) => state.project);
@@ -74,6 +101,7 @@ function EditorPage() {
   const addTextLayer = useEditorStore((state) => state.addTextLayer);
   const addGeometryLayer = useEditorStore((state) => state.addGeometryLayer);
   const addImageLayer = useEditorStore((state) => state.addImageLayer);
+  const addFont = useEditorStore((state) => state.addFont);
   const updateProjectName = useEditorStore((state) => state.updateProjectName);
   const resetProject = useEditorStore((state) => state.resetProject);
   const removeSelectedLayer = useEditorStore((state) => state.removeSelectedLayer);
@@ -102,8 +130,15 @@ function EditorPage() {
     async function restoreProject(): Promise<void> {
       try {
         const storedProject = await loadProject();
+        const nextProject = storedProject ?? createInitialProject();
+        const failedFontCount = await registerProjectFonts(nextProject.fonts);
         if (!cancelled) {
-          useEditorStore.getState().hydrate(storedProject ?? createInitialProject());
+          useEditorStore.getState().hydrate(nextProject);
+          if (failedFontCount > 0) {
+            setNotice(
+              `${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`,
+            );
+          }
         }
       } catch {
         if (!cancelled) {
@@ -130,6 +165,7 @@ function EditorPage() {
         try {
           await saveProject(project);
           await deleteUnusedAssets(project);
+          await deleteUnusedFonts(project);
           setNotice("Saved locally in this browser");
         } catch {
           setNotice("Could not save locally; your canvas is still in memory");
@@ -228,6 +264,25 @@ function EditorPage() {
     await handleImageFiles(files);
   }
 
+  async function handleFontUpload(file: File, options: FontUploadOptions): Promise<void> {
+    setBusy(true);
+    try {
+      if (!isSupportedFontFile(file)) {
+        throw new Error("Unsupported font file");
+      }
+      const font = createFontMeta(file, options);
+      await registerFontFile(font, file);
+      await saveFontAsset(file, font);
+      addFont(font);
+      setNotice(`${font.family} added locally`);
+    } catch {
+      setNotice("That font could not be loaded by this browser");
+      throw new Error("The font could not be loaded.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   function handleImageDragOver(event: DragEvent<HTMLDivElement>): void {
     if (event.dataTransfer.types.includes("Files")) {
       event.preventDefault();
@@ -261,8 +316,13 @@ function EditorPage() {
     setBusy(true);
     try {
       const importedProject = await readProjectArchive(file);
+      const failedFontCount = await registerProjectFonts(importedProject.fonts);
       useEditorStore.getState().hydrate(importedProject);
-      setNotice("Project imported locally");
+      setNotice(
+        failedFontCount > 0
+          ? `${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`
+          : "Project imported locally",
+      );
     } catch {
       setNotice("That project file could not be imported");
     } finally {
@@ -490,7 +550,9 @@ function EditorPage() {
         </section>
 
         <PropertiesPanel
+          customFonts={project.fonts}
           layer={selectedLayer}
+          onAddFont={handleFontUpload}
           onDelete={removeSelectedLayer}
           onReset={() => {
             if (selectedLayer !== undefined) {
@@ -694,13 +756,22 @@ function LayerRow({
 }
 
 interface PropertiesPanelProps {
+  customFonts: FontMeta[];
   layer: Layer | undefined;
+  onAddFont: (file: File, options: FontUploadOptions) => Promise<void>;
   onDelete: () => void;
   onReset: () => void;
   onUpdate: (patch: LayerPatch) => void;
 }
 
-function PropertiesPanel({ layer, onDelete, onReset, onUpdate }: PropertiesPanelProps) {
+function PropertiesPanel({
+  customFonts,
+  layer,
+  onAddFont,
+  onDelete,
+  onReset,
+  onUpdate,
+}: PropertiesPanelProps) {
   return (
     <aside
       aria-label="Design properties"
@@ -779,7 +850,14 @@ function PropertiesPanel({ layer, onDelete, onReset, onUpdate }: PropertiesPanel
             </div>
           </PropertySection>
 
-          {isTextLayer(layer) ? <TextProperties layer={layer} onUpdate={onUpdate} /> : null}
+          {isTextLayer(layer) ? (
+            <TextProperties
+              customFonts={customFonts}
+              layer={layer}
+              onAddFont={onAddFont}
+              onUpdate={onUpdate}
+            />
+          ) : null}
           {isGeometryLayer(layer) ? <GeometryProperties layer={layer} onUpdate={onUpdate} /> : null}
           {isImageLayer(layer) ? <ImageProperties layer={layer} onUpdate={onUpdate} /> : null}
 
@@ -809,13 +887,82 @@ function PropertiesPanel({ layer, onDelete, onReset, onUpdate }: PropertiesPanel
   );
 }
 
+const BUNDLED_FONT_FAMILIES = ["Pretendard", "Zilla Slab", "Google Sans Code"] as const;
+
+const FONT_WEIGHT_OPTIONS = [
+  [400, "Regular"],
+  [500, "Medium"],
+  [600, "Semibold"],
+  [700, "Bold"],
+  [800, "Extra bold"],
+] as const;
+
+function fontFamilyFromFileName(name: string): string {
+  return (
+    name
+      .replace(/\.(woff2?|ttf|otf)$/i, "")
+      .replace(/[-_]+/g, " ")
+      .trim() || "Custom font"
+  );
+}
+
+function fontStyleValue(value: string): FontUploadOptions["style"] {
+  return value === "italic" ? "italic" : "normal";
+}
+
 function TextProperties({
+  customFonts,
   layer,
+  onAddFont,
   onUpdate,
 }: {
+  customFonts: FontMeta[];
   layer: Extract<Layer, { type: "text" }>;
+  onAddFont: (file: File, options: FontUploadOptions) => Promise<void>;
   onUpdate: (patch: LayerPatch) => void;
 }) {
+  const fontInputRef = useRef<HTMLInputElement>(null);
+  const [fontFile, setFontFile] = useState<File | null>(null);
+  const [fontFamily, setFontFamily] = useState("");
+  const [fontStyle, setFontStyle] = useState<FontUploadOptions["style"]>("normal");
+  const [fontVariable, setFontVariable] = useState(true);
+  const [fontWeight, setFontWeight] = useState(400);
+  const [fontUploadBusy, setFontUploadBusy] = useState(false);
+  const customFontFamilies = [...new Set(customFonts.map((font) => font.family))];
+  const availableFamilies = new Set([...BUNDLED_FONT_FAMILIES, ...customFontFamilies]);
+
+  function handleFontFileChange(event: ChangeEvent<HTMLInputElement>): void {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file === undefined) {
+      return;
+    }
+    setFontFile(file);
+    setFontFamily(fontFamilyFromFileName(file.name));
+  }
+
+  async function handleFontSubmit(): Promise<void> {
+    if (fontFile === null || fontFamily.trim() === "") {
+      return;
+    }
+
+    setFontUploadBusy(true);
+    try {
+      await onAddFont(fontFile, {
+        family: fontFamily.trim(),
+        style: fontStyle,
+        variable: fontVariable,
+        weight: fontWeight,
+      });
+      setFontFile(null);
+      setFontFamily("");
+    } catch {
+      // The editor reports the loading error in its local status message.
+    } finally {
+      setFontUploadBusy(false);
+    }
+  }
+
   return (
     <PropertySection icon={Type} label="Typography">
       <div className="space-y-2">
@@ -837,12 +984,123 @@ function TextProperties({
           onChange={(event) => onUpdate({ fontFamily: event.target.value })}
           value={layer.fontFamily}
         >
-          <option value="Pretendard">Pretendard</option>
-          <option value="Inter">Inter</option>
-          <option value="Arial">Arial</option>
-          <option value="Georgia">Georgia</option>
-          <option value="monospace">Monospace</option>
+          <optgroup label="Bundled fonts">
+            {BUNDLED_FONT_FAMILIES.map((family) => (
+              <option key={family} value={family}>
+                {family}
+              </option>
+            ))}
+          </optgroup>
+          {customFontFamilies.length > 0 ? (
+            <optgroup label="Your fonts">
+              {customFontFamilies.map((family) => (
+                <option key={family} value={family}>
+                  {family}
+                </option>
+              ))}
+            </optgroup>
+          ) : null}
+          {!availableFamilies.has(layer.fontFamily) ? (
+            <option value={layer.fontFamily}>{`${layer.fontFamily} (saved project)`}</option>
+          ) : null}
         </select>
+        <div className="space-y-2 rounded-md border border-dashed border-border p-2">
+          <Button
+            aria-label="Upload custom font"
+            className="w-full"
+            onPress={() => fontInputRef.current?.click()}
+            size="sm"
+            variant="outline"
+          >
+            <FileType />
+            Upload font
+          </Button>
+          <input
+            ref={fontInputRef}
+            accept={FONT_FILE_ACCEPT}
+            className="hidden"
+            onChange={handleFontFileChange}
+            type="file"
+          />
+          <p className="text-[10px] leading-relaxed text-muted-foreground">
+            Variable WOFF2 fonts are recommended because one file can cover multiple weights.
+          </p>
+          {fontFile !== null ? (
+            <div className="space-y-2 border-t border-border pt-2">
+              <p className="truncate text-[10px] font-medium" title={fontFile.name}>
+                {fontFile.name}
+              </p>
+              <label
+                className="flex flex-col gap-1 text-[10px] text-muted-foreground"
+                htmlFor="custom-font-family"
+              >
+                <span>Family name</span>
+                <Input
+                  id="custom-font-family"
+                  onChange={(event) => setFontFamily(event.target.value)}
+                  value={fontFamily}
+                />
+              </label>
+              <label className="flex items-start gap-2 text-[10px] text-muted-foreground">
+                <input
+                  checked={fontVariable}
+                  className="mt-0.5"
+                  onChange={(event) => setFontVariable(event.target.checked)}
+                  type="checkbox"
+                />
+                <span>
+                  Variable font
+                  <span className="block opacity-75">Recommended for flexible weight selection.</span>
+                </span>
+              </label>
+              {!fontVariable ? (
+                <label className="flex flex-col gap-1 text-[10px] text-muted-foreground">
+                  Fixed weight
+                  <select
+                    className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground"
+                    onChange={(event) => setFontWeight(Number(event.target.value))}
+                    value={fontWeight}
+                  >
+                    {FONT_WEIGHT_OPTIONS.map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : null}
+              <label className="flex flex-col gap-1 text-[10px] text-muted-foreground">
+                Style
+                <select
+                  className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground"
+                  onChange={(event) => setFontStyle(fontStyleValue(event.target.value))}
+                  value={fontStyle}
+                >
+                  <option value="normal">Normal</option>
+                  <option value="italic">Italic</option>
+                </select>
+              </label>
+              <div className="flex gap-2">
+                <Button
+                  className="flex-1"
+                  isDisabled={fontUploadBusy || fontFamily.trim() === ""}
+                  onPress={() => void handleFontSubmit()}
+                  size="sm"
+                >
+                  Add font
+                </Button>
+                <Button
+                  isDisabled={fontUploadBusy}
+                  onPress={() => setFontFile(null)}
+                  size="sm"
+                  variant="ghost"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : null}
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <NumberField
             label="Size"
@@ -858,11 +1116,11 @@ function TextProperties({
               onChange={(event) => onUpdate({ fontWeight: Number(event.target.value) })}
               value={layer.fontWeight}
             >
-              <option value={400}>Regular</option>
-              <option value={500}>Medium</option>
-              <option value={600}>Semibold</option>
-              <option value={700}>Bold</option>
-              <option value={800}>Extra bold</option>
+              {FONT_WEIGHT_OPTIONS.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </label>
         </div>

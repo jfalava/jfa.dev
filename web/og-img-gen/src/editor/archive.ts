@@ -1,7 +1,7 @@
 import { strFromU8, strToU8, unzipSync, zipSync } from "fflate";
 
 import { projectSchema, type OgProject } from "@/editor/model";
-import { editorDatabase, loadAsset } from "@/editor/storage";
+import { editorDatabase, loadAsset, loadFont } from "@/editor/storage";
 
 function projectFileName(name: string): string {
   const safeName = name
@@ -20,6 +20,13 @@ export async function createProjectArchive(project: OgProject): Promise<Blob> {
     const storedAsset = await loadAsset(asset.id);
     if (storedAsset !== null) {
       files.set(`assets/${asset.id}`, new Uint8Array(await storedAsset.blob.arrayBuffer()));
+    }
+  }
+
+  for (const font of project.fonts) {
+    const storedFont = await loadFont(font.id);
+    if (storedFont !== null) {
+      files.set(`fonts/${font.id}`, new Uint8Array(await storedFont.blob.arrayBuffer()));
     }
   }
 
@@ -43,6 +50,13 @@ export async function readProjectArchive(file: File): Promise<OgProject> {
     if (bytes !== undefined) {
       const blob = new Blob([bytes], { type: asset.mime });
       await editorDatabase.assets.put({ ...asset, blob, createdAt: Date.now() });
+    }
+  }
+  for (const font of project.fonts) {
+    const bytes = archive[`fonts/${font.id}`];
+    if (bytes !== undefined) {
+      const blob = new Blob([bytes], { type: font.mime });
+      await editorDatabase.fonts.put({ ...font, blob, createdAt: Date.now() });
     }
   }
   return project;

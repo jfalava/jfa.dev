@@ -5,6 +5,7 @@ import {
   createInitialProject,
   projectSchema,
   type AssetMeta,
+  type FontMeta,
   type Layer,
   type LayerPatch,
   type OgProject,
@@ -25,6 +26,7 @@ interface EditorState {
   addTextLayer: () => void;
   addGeometryLayer: () => void;
   addImageLayer: (asset: AssetMeta) => void;
+  addFont: (font: FontMeta) => void;
   removeSelectedLayer: () => void;
   toggleLayerVisibility: (id: string) => void;
   toggleLayerLocked: (id: string) => void;
@@ -169,6 +171,14 @@ export const useEditorStore = create<EditorState>((set) => ({
         id,
       );
     }),
+
+  addFont: (font) =>
+    set((state) =>
+      commitProject(state, {
+        ...state.project,
+        fonts: [...state.project.fonts, font],
+      }),
+    ),
 
   removeSelectedLayer: () =>
     set((state) => {

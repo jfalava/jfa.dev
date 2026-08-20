@@ -53,6 +53,16 @@ export const assetMetaSchema = z.object({
   height: z.number().positive(),
 });
 
+export const fontMetaSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  family: z.string().min(1),
+  mime: z.string().min(1),
+  weight: z.number().int().min(100).max(900),
+  style: z.enum(["normal", "italic"]),
+  variable: z.boolean(),
+});
+
 export const projectSchema = z.object({
   version: z.literal(1),
   id: z.string().min(1),
@@ -62,6 +72,7 @@ export const projectSchema = z.object({
   background: z.string().min(1),
   layers: z.array(layerSchema),
   assets: z.array(assetMetaSchema),
+  fonts: z.array(fontMetaSchema).default([]),
 });
 
 export type Layer = z.infer<typeof layerSchema>;
@@ -69,6 +80,7 @@ export type TextLayer = z.infer<typeof textLayerSchema>;
 export type GeometryLayer = z.infer<typeof geometryLayerSchema>;
 export type ImageLayer = z.infer<typeof imageLayerSchema>;
 export type AssetMeta = z.infer<typeof assetMetaSchema>;
+export type FontMeta = z.infer<typeof fontMetaSchema>;
 export type OgProject = z.infer<typeof projectSchema>;
 
 export type LayerPatch = Partial<{
@@ -106,6 +118,7 @@ export function createInitialProject(): OgProject {
     height: CANVAS_HEIGHT,
     background: "#f5f1ea",
     assets: [],
+    fonts: [],
     layers: [
       {
         id: "background",

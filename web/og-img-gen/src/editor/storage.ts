@@ -1,6 +1,13 @@
 import DexieDatabase, { type EntityTable } from "dexie";
 
-import { projectSchema, type AssetMeta, type OgProject } from "@/editor/model";
+import {
+  createId,
+  fontMetaSchema,
+  projectSchema,
+  type AssetMeta,
+  type FontMeta,
+  type OgProject,
+} from "@/editor/model";
 
 const PROJECT_ID = "local-project";
 const IMAGE_MIME_TYPES = new Set([
@@ -23,6 +30,22 @@ const IMAGE_EXTENSION_MIME_TYPES = new Map([
 
 export const IMAGE_FILE_ACCEPT =
   "image/avif,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,.avif,.gif,.jpeg,.jpg,.png,.svg,.webp";
+const FONT_MIME_TYPES = new Set([
+  "application/font-sfnt",
+  "font/otf",
+  "font/ttf",
+  "font/woff",
+  "font/woff2",
+]);
+const FONT_EXTENSION_MIME_TYPES = new Map([
+  ["otf", "font/otf"],
+  ["ttf", "font/ttf"],
+  ["woff", "font/woff"],
+  ["woff2", "font/woff2"],
+]);
+
+export const FONT_FILE_ACCEPT =
+  "font/otf,font/ttf,font/woff,font/woff2,.otf,.ttf,.woff,.woff2";
 
 interface ProjectRecord {
   id: string;
@@ -35,15 +58,26 @@ export interface StoredAsset extends AssetMeta {
   createdAt: number;
 }
 
+export interface StoredFont extends FontMeta {
+  blob: Blob;
+  createdAt: number;
+}
+
 class EditorDatabase extends DexieDatabase {
   projects!: EntityTable<ProjectRecord, "id">;
   assets!: EntityTable<StoredAsset, "id">;
+  fonts!: EntityTable<StoredFont, "id">;
 
   constructor() {
     super("og-img-gen");
     this.version(1).stores({
       projects: "id, updatedAt",
       assets: "id, createdAt",
+    });
+    this.version(2).stores({
+      projects: "id, updatedAt",
+      assets: "id, createdAt",
+      fonts: "id, createdAt",
     });
   }
 }
@@ -61,6 +95,40 @@ function imageMimeType(file: File): string | null {
     return fileType;
   }
   return mimeTypeFromFileName(file.name);
+}
+
+function fontMimeType(file: File): string | null {
+  const fileType = file.type.toLowerCase();
+  if (FONT_MIME_TYPES.has(fileType)) {
+    return fileType;
+  }
+  const extension = file.name.split(".").at(-1)?.toLowerCase();
+  return extension === undefined ? null : (FONT_EXTENSION_MIME_TYPES.get(extension) ?? null);
+}
+
+export function isSupportedFontFile(file: File): boolean {
+  return fontMimeType(file) !== null;
+}
+
+export interface FontUploadOptions {
+  family: string;
+  weight: number;
+  style: "normal" | "italic";
+  variable: boolean;
+}
+
+export function createFontMeta(file: File, options: FontUploadOptions): FontMeta {
+  const mime = fontMimeType(file);
+  if (mime === null) {
+    throw new Error("Choose a WOFF2, WOFF, TTF, or OTF font file.");
+  }
+
+  return fontMetaSchema.parse({
+    ...options,
+    id: createId("font"),
+    mime,
+    name: file.name || "Untitled font",
+  });
 }
 
 export function isSupportedImageFile(file: File): boolean {
@@ -148,6 +216,28 @@ export async function loadAssetUrl(assetId: string): Promise<string | null> {
 
 export async function loadAsset(assetId: string): Promise<StoredAsset | null> {
   return (await editorDatabase.assets.get(assetId)) ?? null;
+}
+
+export async function saveFontAsset(file: File, font: FontMeta): Promise<void> {
+  if (!isSupportedFontFile(file)) {
+    throw new Error("Choose a WOFF2, WOFF, TTF, or OTF font file.");
+  }
+  await editorDatabase.fonts.put({ ...fontMetaSchema.parse(font), blob: file, createdAt: Date.now() });
+}
+
+export async function loadFont(fontId: string): Promise<StoredFont | null> {
+  return (await editorDatabase.fonts.get(fontId)) ?? null;
+}
+
+export async function deleteUnusedFonts(project: OgProject): Promise<void> {
+  const usedFontIds = new Set(project.fonts.map((font) => font.id));
+  const allFonts = await editorDatabase.fonts.toArray();
+  const unusedIds = allFonts
+    .filter((font) => !usedFontIds.has(font.id))
+    .map((font) => font.id);
+  if (unusedIds.length > 0) {
+    await editorDatabase.fonts.bulkDelete(unusedIds);
+  }
 }
 
 export async function deleteUnusedAssets(project: OgProject): Promise<void> {
