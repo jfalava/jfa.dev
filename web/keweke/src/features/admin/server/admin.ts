@@ -1,6 +1,8 @@
-import { userProfileSchema } from "@jfa.dev/common/identities";
+import { identityIdSchema, userProfileSchema } from "@jfa.dev/common/identities";
+import { listIdSchema } from "@jfa.dev/common/lists";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { z } from "zod";
 
 import type { AdminListSummary } from "@/features/lists/server/keweke-list";
 
@@ -22,6 +24,14 @@ export type AdminOverview = {
   users: AdminUserSummary[];
   lists: AdminListSummary[];
 };
+
+export type AdminDeletionResult =
+  | { status: "deleted" }
+  | { status: "failed" }
+  | { status: "missing" };
+
+const adminUserInputSchema = z.object({ userId: identityIdSchema });
+const adminListInputSchema = z.object({ listId: listIdSchema });
 
 export const getAdminOverview = createServerFn().handler(
   async (): Promise<AdminOverview | null> => {
@@ -95,3 +105,33 @@ export const getAdminOverview = createServerFn().handler(
     return { users, lists };
   },
 );
+
+export const deleteAdminUser = createServerFn({ method: "POST" })
+  .validator(adminUserInputSchema)
+  .handler(async ({ data }): Promise<AdminDeletionResult> => {
+    await assertKewekeAdminAccess();
+    const result = await env.KEWEKE_USERS.getByName(data.userId).deleteAccountAsAdmin(data.userId);
+    // SAFETY: The Durable Object returns the AdminDeletionResult contract across the server boundary.
+    return JSON.parse(JSON.stringify(result)) as AdminDeletionResult;
+  });
+
+export const deleteAdminList = createServerFn({ method: "POST" })
+  .validator(adminListInputSchema)
+  .handler(async ({ data }): Promise<AdminDeletionResult> => {
+    await assertKewekeAdminAccess();
+
+    const directory = env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME);
+    const [userIds, result] = await Promise.all([
+      directory.listUserIds(),
+      env.KEWEKE_LISTS.getByName(data.listId).deleteAsAdmin(data.listId),
+    ]);
+
+    if (result.status === "deleted") {
+      await Promise.all(
+        userIds.map((userId) => env.KEWEKE_USERS.getByName(userId).removeListAsAdmin(data.listId)),
+      );
+    }
+
+    // SAFETY: The Durable Object returns the AdminDeletionResult contract across the server boundary.
+    return JSON.parse(JSON.stringify(result)) as AdminDeletionResult;
+  });

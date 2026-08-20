@@ -9,11 +9,14 @@ import {
 } from "@jfa.dev/common/ui";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
-import { RefreshCw } from "lucide-react";
-import { useMemo } from "react";
+import { RefreshCw, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { KewekeHeader } from "@/app/components/keweke-header";
 import {
+  deleteAdminList,
+  deleteAdminUser,
   getAdminOverview,
   type AdminListSummary,
   type AdminOverview,
@@ -46,6 +49,80 @@ const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
   timeStyle: "short",
 });
+
+function AdminDeleteAction({
+  ariaLabel,
+  confirmationLabel,
+  onDelete,
+}: {
+  ariaLabel: string;
+  confirmationLabel: string;
+  onDelete: () => Promise<void>;
+}) {
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const confirmDelete = async (): Promise<void> => {
+    setIsDeleting(true);
+    try {
+      await onDelete();
+    } catch {
+      setIsDeleting(false);
+      toast.error("Could not delete that remote item.");
+    }
+  };
+
+  if (isConfirming) {
+    return (
+      <div className="flex items-center justify-end gap-1.5">
+        <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
+          {confirmationLabel}
+        </span>
+        <Button
+          aria-label={`Confirm ${ariaLabel}`}
+          isDisabled={isDeleting}
+          onPress={() => void confirmDelete()}
+          size="sm"
+          variant="destructive"
+        >
+          Yes
+        </Button>
+        <Button
+          aria-label={`Keep ${ariaLabel.replace(/^Delete /, "")}`}
+          isDisabled={isDeleting}
+          onPress={() => setIsConfirming(false)}
+          size="sm"
+          variant="ghost"
+        >
+          Keep
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <Button aria-label={ariaLabel} onPress={() => setIsConfirming(true)} size="sm" variant="ghost">
+      <Trash2 aria-hidden="true" className="size-3.5 text-destructive" />
+      <span className="hidden sm:inline">Delete</span>
+    </Button>
+  );
+}
+
+async function deleteRemoteUserFromAdmin(userId: string): Promise<void> {
+  const result = await deleteAdminUser({ data: { userId } });
+  if (result.status !== "deleted") {
+    throw new Error("The remote user could not be deleted.");
+  }
+  window.location.reload();
+}
+
+async function deleteRemoteListFromAdmin(listId: string): Promise<void> {
+  const result = await deleteAdminList({ data: { listId } });
+  if (result.status !== "deleted") {
+    throw new Error("The remote list could not be deleted.");
+  }
+  window.location.reload();
+}
 
 /* -------------------------------------------------------------------------
  * Users table
@@ -122,7 +199,13 @@ const usersColumns = usersColumnHelper.columns([
   }),
 ]);
 
-function UsersTable({ users }: { users: AdminUserSummary[] }) {
+function UsersTable({
+  onDelete,
+  users,
+}: {
+  onDelete: (userId: string) => Promise<void>;
+  users: AdminUserSummary[];
+}) {
   const table = useTable({
     features: usersTableFeatures,
     data: users,
@@ -140,6 +223,7 @@ function UsersTable({ users }: { users: AdminUserSummary[] }) {
                 {header.isPlaceholder ? null : <table.FlexRender header={header} />}
               </TableHead>
             ))}
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         ))}
       </TableHeader>
@@ -151,6 +235,13 @@ function UsersTable({ users }: { users: AdminUserSummary[] }) {
                 <table.FlexRender cell={cell} />
               </TableCell>
             ))}
+            <TableCell className="text-right align-middle">
+              <AdminDeleteAction
+                ariaLabel={`Delete ${row.original.username}`}
+                confirmationLabel="Delete + lists?"
+                onDelete={() => onDelete(row.original.userId)}
+              />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -268,7 +359,13 @@ const listsColumns = listsColumnHelper.columns([
   }),
 ]);
 
-function ListsTable({ lists }: { lists: AdminListSummary[] }) {
+function ListsTable({
+  lists,
+  onDelete,
+}: {
+  lists: AdminListSummary[];
+  onDelete: (listId: string) => Promise<void>;
+}) {
   const table = useTable({
     features: listsTableFeatures,
     data: lists,
@@ -286,6 +383,7 @@ function ListsTable({ lists }: { lists: AdminListSummary[] }) {
                 {header.isPlaceholder ? null : <table.FlexRender header={header} />}
               </TableHead>
             ))}
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         ))}
       </TableHeader>
@@ -297,6 +395,13 @@ function ListsTable({ lists }: { lists: AdminListSummary[] }) {
                 <table.FlexRender cell={cell} />
               </TableCell>
             ))}
+            <TableCell className="text-right align-middle">
+              <AdminDeleteAction
+                ariaLabel={`Delete ${row.original.title}`}
+                confirmationLabel="Delete?"
+                onDelete={() => onDelete(row.original.listId)}
+              />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -364,7 +469,7 @@ function AdminRoutePage() {
               </div>
               {users.length > 0 ? (
                 <div className="w-full overflow-x-auto">
-                  <UsersTable users={users} />
+                  <UsersTable onDelete={deleteRemoteUserFromAdmin} users={users} />
                 </div>
               ) : (
                 <p className="px-4 pb-6 text-sm text-muted-foreground sm:px-6 lg:px-8">
@@ -384,7 +489,7 @@ function AdminRoutePage() {
               </div>
               {lists.length > 0 ? (
                 <div className="w-full overflow-x-auto">
-                  <ListsTable lists={lists} />
+                  <ListsTable lists={lists} onDelete={deleteRemoteListFromAdmin} />
                 </div>
               ) : (
                 <p className="px-4 pb-6 text-sm text-muted-foreground sm:px-6 lg:px-8">

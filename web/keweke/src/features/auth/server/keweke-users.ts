@@ -206,6 +206,25 @@ export class KewekeUserDirectory extends DurableObject {
       return { status: "unauthorized" };
     }
 
+    return this.deleteAccountData(authorization.userId);
+  }
+
+  async deleteAccountAsAdmin(userId: string): Promise<{ status: "deleted" | "failed" }> {
+    const normalizedUserId = identityIdSchema.parse(userId);
+    return this.deleteAccountData(normalizedUserId);
+  }
+
+  async removeListAsAdmin(listId: string): Promise<void> {
+    const normalizedListId = listIdSchema.parse(listId);
+    this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", normalizedListId);
+  }
+
+  private async deleteAccountData(userId: string): Promise<{ status: "deleted" | "failed" }> {
+    const state = this.readAccountState();
+    if (state?.status === "deleted") {
+      return { status: "deleted" };
+    }
+
     if (!state) {
       this.ctx.storage.sql.exec(
         "INSERT OR IGNORE INTO account_state (id, status, updated_at) VALUES (1, 'deleting', ?)",
@@ -214,7 +233,7 @@ export class KewekeUserDirectory extends DurableObject {
     }
 
     try {
-      await this.deleteCreatedLists(authorization.userId);
+      await this.deleteCreatedLists(userId);
       this.ctx.storage.transactionSync(() => {
         this.ctx.storage.sql.exec("DELETE FROM devices");
         this.ctx.storage.sql.exec("DELETE FROM passkeys");
@@ -225,12 +244,12 @@ export class KewekeUserDirectory extends DurableObject {
           new Date().toISOString(),
         );
       });
-      await this.unregisterFromDirectory(authorization.userId);
+      await this.unregisterFromDirectory(userId);
       return { status: "deleted" };
     } catch (error) {
       console.error("Keweke remote account deletion failed", {
         error,
-        userId: authorization.userId,
+        userId,
       });
       return { status: "failed" };
     }

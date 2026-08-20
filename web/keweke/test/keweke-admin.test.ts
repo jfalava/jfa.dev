@@ -4,7 +4,7 @@ import {
   listPublishSigningPayload,
   publicKeyFingerprint,
   signPayload,
-  userDeleteSigningPayload,
+  userListsSigningPayload,
 } from "@jfa.dev/common/crypto";
 import type { PublishAuth } from "@jfa.dev/common/identities";
 import { createStarterListSnapshot } from "@jfa.dev/common/lists";
@@ -119,23 +119,42 @@ describe("Keweke admin directory flow", () => {
     });
     expect(summary?.itemCount).toBeGreaterThan(0);
 
-    const deletion = await env.KEWEKE_LISTS.getByName(LIST_ID).deleteOwnedList(identity.userId);
-    expect(deletion.status).toBe("deleted");
-    expect(await directory.listListIds()).not.toContain(LIST_ID);
-    expect(await env.KEWEKE_LISTS.getByName(LIST_ID).getAdminSummary(LIST_ID)).toBeNull();
-
-    const accountDeletionPayload = userDeleteSigningPayload({
+    const alias = "admin-flow-abcde";
+    await directory.claimAlias(LIST_ID, alias);
+    await env.KEWEKE_LISTS.getByName(LIST_ID).setAlias(LIST_ID, alias);
+    const listPayload = userListsSigningPayload({
       userId: identity.userId,
       deviceId: identity.deviceId,
     });
-    await env.KEWEKE_USERS.getByName(identity.userId).deleteAccount({
-      auth: {
-        userId: identity.userId,
-        deviceId: identity.deviceId,
-        signature: await signPayload(identity.devicePrivateKey, accountDeletionPayload),
-      },
-      payload: accountDeletionPayload,
-    });
+    const listAuth = {
+      userId: identity.userId,
+      deviceId: identity.deviceId,
+      signature: await signPayload(identity.devicePrivateKey, listPayload),
+    };
+    expect(
+      await env.KEWEKE_USERS.getByName(identity.userId).getListIds({
+        auth: listAuth,
+        payload: listPayload,
+      }),
+    ).toContain(LIST_ID);
+
+    const deletion = await env.KEWEKE_LISTS.getByName(LIST_ID).deleteAsAdmin(LIST_ID);
+    expect(deletion.status).toBe("deleted");
+    expect(await directory.listListIds()).not.toContain(LIST_ID);
+    expect(await directory.getListId(alias)).toBeNull();
+    expect(await env.KEWEKE_LISTS.getByName(LIST_ID).getAdminSummary(LIST_ID)).toBeNull();
+    await env.KEWEKE_USERS.getByName(identity.userId).removeListAsAdmin(LIST_ID);
+    expect(
+      await env.KEWEKE_USERS.getByName(identity.userId).getListIds({
+        auth: listAuth,
+        payload: listPayload,
+      }),
+    ).not.toContain(LIST_ID);
+
+    const accountDeletion = await env.KEWEKE_USERS.getByName(identity.userId).deleteAccountAsAdmin(
+      identity.userId,
+    );
+    expect(accountDeletion.status).toBe("deleted");
     expect(await directory.listUserIds()).not.toContain(identity.userId);
   });
 });

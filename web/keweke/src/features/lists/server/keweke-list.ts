@@ -256,7 +256,24 @@ export class KewekeList extends DurableObject {
     }
 
     const normalizedListId = listIdSchema.parse(metadata.list_id);
-    const alias = metadata.alias;
+    return this.deleteStoredList(normalizedListId, metadata.alias);
+  }
+
+  async deleteAsAdmin(listId: string): Promise<{ status: "deleted" | "missing" }> {
+    const normalizedListId = listIdSchema.parse(listId);
+    const metadata = this.readMetadata();
+    if (!metadata || metadata.list_id !== normalizedListId) {
+      return { status: "missing" };
+    }
+
+    await this.deleteStoredList(normalizedListId, metadata.alias);
+    return { status: "deleted" };
+  }
+
+  private async deleteStoredList(
+    normalizedListId: string,
+    alias: string | null,
+  ): Promise<ListDeletionResult> {
     this.ctx.storage.transactionSync(() => {
       this.ctx.storage.sql.exec("DELETE FROM items");
       this.ctx.storage.sql.exec("DELETE FROM deleted_items");
@@ -270,6 +287,14 @@ export class KewekeList extends DurableObject {
       webSocket.close(1000, "List deleted");
     }
     await this.unregisterFromDirectory(normalizedListId);
+    try {
+      await this.env.KEWEKE_ALIASES.getByName("directory").releaseAlias(normalizedListId);
+    } catch (error) {
+      console.error("Keweke directory alias removal failed", {
+        error,
+        listId: normalizedListId,
+      });
+    }
     return { status: "deleted", alias };
   }
 
