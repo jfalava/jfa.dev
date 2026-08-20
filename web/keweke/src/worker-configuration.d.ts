@@ -1,10 +1,10 @@
 /// <reference types="@cloudflare/workers-types" />
 
-import type { KewekeAliasDirectory } from "./server/keweke-aliases";
-import type { KewekeList } from "./server/keweke-list";
-import type { KewekePairingSession } from "./server/keweke-pairing";
-import type { KewekePasskeySession } from "./server/keweke-passkey";
-import type { KewekeUserDirectory } from "./server/keweke-users";
+import type { KewekePairingSession } from "./features/auth/server/keweke-pairing";
+import type { KewekePasskeySession } from "./features/auth/server/keweke-passkey";
+import type { KewekeUserDirectory } from "./features/auth/server/keweke-users";
+import type { KewekeAliasDirectory } from "./features/lists/server/keweke-aliases";
+import type { KewekeList } from "./features/lists/server/keweke-list";
 
 declare global {
   namespace Cloudflare {

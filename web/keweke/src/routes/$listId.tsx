@@ -37,31 +37,35 @@ import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "r
 import { toast } from "sonner";
 import { uuidv7 } from "uuidv7";
 
-import { ItemEntryHelpDialog } from "@/components/item-entry-help-dialog";
-import { ItemHistoryDialog } from "@/components/item-history-dialog";
-import { KewekeHeader } from "@/components/keweke-header";
-import { PublishListDialog } from "@/components/publish-list-dialog";
-import { useRemoteListLiveSession } from "@/hooks/use-remote-list-live";
-import { userAvatarSeed } from "@/lib/blobatar";
-import { hasItemDraftErrors, validateItemDraft, type ItemDraftErrors } from "@/lib/item-draft";
-import { isListAddress } from "@/lib/list-id";
+import { KewekeHeader } from "@/app/components/keweke-header";
+import { appPath } from "@/app/lib/site-paths";
+import { userAvatarSeed } from "@/features/auth/lib/blobatar";
+import {
+  ensureLocalIdentity,
+  LOCAL_IDENTITY_PLACEHOLDER,
+  subscribeToLocalIdentity,
+  type LocalIdentity,
+} from "@/features/auth/lib/local-identity";
+import { ItemEntryHelpDialog } from "@/features/lists/components/item-entry-help-dialog";
+import { ItemHistoryDialog } from "@/features/lists/components/item-history-dialog";
+import { PublishListDialog } from "@/features/lists/components/publish-list-dialog";
+import {
+  hasItemDraftErrors,
+  validateItemDraft,
+  type ItemDraftErrors,
+} from "@/features/lists/lib/item-draft";
+import { isListAddress } from "@/features/lists/lib/list-id";
 import {
   applyMutation,
   createMutation,
   ensureListAlias,
   loadList,
   migrateList,
-} from "@/lib/list-repository";
-import {
-  ensureLocalIdentity,
-  LOCAL_IDENTITY_PLACEHOLDER,
-  subscribeToLocalIdentity,
-  type LocalIdentity,
-} from "@/lib/local-identity";
-import { deleteLocalList } from "@/lib/local-list-store";
-import { listShareDescription, type ListShareMeta } from "@/lib/share-meta";
-import { appPath } from "@/lib/site-paths";
-import { getListShareMeta, getRemoteList } from "@/server/lists";
+} from "@/features/lists/lib/list-repository";
+import { deleteLocalList } from "@/features/lists/lib/local-list-store";
+import { listShareDescription, type ListShareMeta } from "@/features/lists/lib/share-meta";
+import { getListShareMeta, getRemoteList } from "@/features/lists/server/lists";
+import { useRemoteListLiveSession } from "@/features/sync/hooks/use-remote-list-live";
 
 type ItemEditDraft = {
   name: string;

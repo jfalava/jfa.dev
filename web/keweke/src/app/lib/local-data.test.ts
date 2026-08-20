@@ -4,18 +4,19 @@
 import "fake-indexeddb/auto";
 import { afterEach, describe, expect, test } from "bun:test";
 
-import { clearLocalData, clearLocalIdentityData, clearRemoteUserData } from "./local-data";
 import {
   clearLocalIdentityDatabase,
   ensureLocalIdentity,
   readLocalIdentity,
-} from "./local-identity";
+} from "@/features/auth/lib/local-identity";
 import {
   clearLocalListDatabase,
   createLocalList,
   listLocalLists,
   markListRemote,
-} from "./local-list-store";
+} from "@/features/lists/lib/local-list-store";
+
+import { clearLocalData, clearLocalIdentityData, clearRemoteUserData } from "./local-data";
 
 const originalWindow = globalThis.window;
 

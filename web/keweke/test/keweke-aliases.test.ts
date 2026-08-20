@@ -2,7 +2,7 @@ import { runInDurableObject } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { describe, expect, it } from "vitest";
 
-import { KewekeAliasDirectory } from "../src/server/keweke-aliases";
+import { KewekeAliasDirectory } from "../src/features/lists/server/keweke-aliases";
 
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000030";
 const SECOND_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000031";

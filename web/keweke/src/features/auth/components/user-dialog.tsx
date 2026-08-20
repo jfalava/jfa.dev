@@ -7,8 +7,8 @@ import {
   useUserManager,
   type DialogFeedback,
   type FeedbackSection,
-} from "@/hooks/use-user-manager";
-import { LOCAL_IDENTITY_PLACEHOLDER } from "@/lib/local-identity";
+} from "@/features/auth/hooks/use-user-manager";
+import { LOCAL_IDENTITY_PLACEHOLDER } from "@/features/auth/lib/local-identity";
 
 function FeedbackMessage({
   feedback,

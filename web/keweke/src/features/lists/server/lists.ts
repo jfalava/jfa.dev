@@ -6,8 +6,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
-import { isUuidV7, normalizeListAddress } from "@/lib/list-id";
-import { listShareMetaFromSnapshot, type ListShareMeta } from "@/lib/share-meta";
+import { isUuidV7, normalizeListAddress } from "@/features/lists/lib/list-id";
+import { listShareMetaFromSnapshot, type ListShareMeta } from "@/features/lists/lib/share-meta";
 
 import { readRemoteList, resolveActorNames, resolveHistoryActorNames } from "./remote-list";
 

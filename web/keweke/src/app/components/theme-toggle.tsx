@@ -2,7 +2,7 @@ import { Button } from "@jfa.dev/common/ui";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 
-import { useTheme, type ThemeMode } from "@/hooks/use-theme";
+import { useTheme, type ThemeMode } from "@/app/hooks/use-theme";
 
 const themeLabels = {
   dark: "Dark",

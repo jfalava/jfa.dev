@@ -2,10 +2,11 @@ import { userProfileSchema } from "@jfa.dev/common/identities";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 
-import { assertKewekeAdminAccess } from "./access-auth";
-import type { AdminListSummary } from "./keweke-list";
+import type { AdminListSummary } from "@/features/lists/server/keweke-list";
 
-export type { AdminListSummary } from "./keweke-list";
+import { assertKewekeAdminAccess } from "./access-auth";
+
+export type { AdminListSummary } from "@/features/lists/server/keweke-list";
 
 const ALIAS_DIRECTORY_NAME = "directory";
 

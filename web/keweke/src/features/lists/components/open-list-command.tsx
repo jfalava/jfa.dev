@@ -15,10 +15,14 @@ import {
 } from "react-aria-components";
 import { toast } from "sonner";
 
-import { HotkeyKbd } from "@/components/hotkey-kbd";
-import { isListAddress, normalizeListAddress } from "@/lib/list-id";
-import { buildListSearchIndex, searchListIndex, type ListSearchIndex } from "@/lib/list-search";
-import { listLocalLists } from "@/lib/local-list-store";
+import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+import { isListAddress, normalizeListAddress } from "@/features/lists/lib/list-id";
+import {
+  buildListSearchIndex,
+  searchListIndex,
+  type ListSearchIndex,
+} from "@/features/lists/lib/list-search";
+import { listLocalLists } from "@/features/lists/lib/local-list-store";
 
 const OPEN_LIST_HOTKEY = "Mod+K";
 const SUGGESTION_LIMIT = 6;

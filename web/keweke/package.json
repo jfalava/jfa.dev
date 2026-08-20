@@ -9,7 +9,7 @@
     "format": "vp fmt",
     "lint": "vp lint",
     "preview": "vp preview",
-    "test": "bun test src/lib",
+    "test": "bun test src/app src/features",
     "test:workers": "vitest run --config vitest.workers.config.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:workers": "tsc --noEmit -p tsconfig.workers.json"

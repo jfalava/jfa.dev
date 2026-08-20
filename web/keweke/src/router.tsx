@@ -1,6 +1,6 @@
 import { createRouter } from "@tanstack/react-router";
 
-import { appBasePath } from "@/lib/site-paths";
+import { appBasePath } from "@/app/lib/site-paths";
 
 import { routeTree } from "./routeTree.gen";
 

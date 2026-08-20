@@ -12,7 +12,11 @@ import {
 } from "@jfa.dev/common/identities";
 import { client } from "@passwordless-id/webauthn";
 
-import { adoptLocalIdentity, ensureLocalIdentity, signLocalPayload } from "@/lib/local-identity";
+import {
+  adoptLocalIdentity,
+  ensureLocalIdentity,
+  signLocalPayload,
+} from "@/features/auth/lib/local-identity";
 import {
   completePasskeyAdoption,
   completePasskeyRegistration,
@@ -20,7 +24,7 @@ import {
   listPasskeys,
   startPasskeyAdoption,
   startPasskeyRegistration,
-} from "@/server/passkeys";
+} from "@/features/auth/server/passkeys";
 
 function requireRemoteIdentity(identity: Awaited<ReturnType<typeof ensureLocalIdentity>>) {
   if (!identity?.remoteUsername) {

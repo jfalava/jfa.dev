@@ -11,7 +11,7 @@ import { type PasskeyProfile, type UserProfile, usernameSchema } from "@jfa.dev/
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 
-import { clearLocalData, clearLocalIdentityData, clearRemoteUserData } from "@/lib/local-data";
+import { clearLocalData, clearLocalIdentityData, clearRemoteUserData } from "@/app/lib/local-data";
 import {
   adoptLocalIdentity,
   confirmRemoteUsername,
@@ -20,14 +20,13 @@ import {
   signLocalPayload,
   subscribeToLocalIdentity,
   type LocalIdentity,
-} from "@/lib/local-identity";
+} from "@/features/auth/lib/local-identity";
 import {
   adoptLocalIdentityWithPasskey,
   isPasskeyAvailable,
   listLocalPasskeys,
   registerLocalPasskey,
-} from "@/lib/passkeys";
-import { syncRemoteLists } from "@/lib/remote-list-sync";
+} from "@/features/auth/lib/passkeys";
 import {
   approveDevicePairing,
   createRemoteUser,
@@ -38,7 +37,8 @@ import {
   revokeUserDevice,
   startDevicePairing,
   updateUserProfile,
-} from "@/server/users";
+} from "@/features/auth/server/users";
+import { syncRemoteLists } from "@/features/sync/lib/remote-list-sync";
 
 export type PairingStatusView =
   | { status: "missing" | "expired"; code: string }

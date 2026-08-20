@@ -23,7 +23,7 @@ import { runInDurableObject } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { describe, expect, it } from "vitest";
 
-import { KewekeList } from "../src/server/keweke-list";
+import { KewekeList } from "../src/features/lists/server/keweke-list";
 
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000020";
 const SECOND_LIST_ID = "019c5f7e-7b7b-7000-8000-000000000021";

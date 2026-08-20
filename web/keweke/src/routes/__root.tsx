@@ -2,8 +2,8 @@ import { Toaster } from "@jfa.dev/common/ui";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { ThemeProvider, useTheme } from "@/hooks/use-theme";
-import { appPath } from "@/lib/site-paths";
+import { ThemeProvider, useTheme } from "@/app/hooks/use-theme";
+import { appPath } from "@/app/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 
 export const Route = createRootRoute({

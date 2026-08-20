@@ -14,17 +14,17 @@ import { ChevronRight, Cloud, House, List, ListChecks, Trash2 } from "lucide-rea
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { HotkeyKbd } from "@/components/hotkey-kbd";
-import { KewekeHeader, NEW_LIST_HOTKEY } from "@/components/keweke-header";
-import { removeRemoteList } from "@/lib/list-repository";
-import { ensureLocalIdentity } from "@/lib/local-identity";
+import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+import { KewekeHeader, NEW_LIST_HOTKEY } from "@/app/components/keweke-header";
+import { ensureLocalIdentity } from "@/features/auth/lib/local-identity";
+import { removeRemoteList } from "@/features/lists/lib/list-repository";
 import {
   createLocalList,
   deleteLocalList,
   listLocalLists,
   subscribeToLocalLists,
-} from "@/lib/local-list-store";
-import { syncRemoteLists } from "@/lib/remote-list-sync";
+} from "@/features/lists/lib/local-list-store";
+import { syncRemoteLists } from "@/features/sync/lib/remote-list-sync";
 
 const REMOTE_LIST_SYNC_INTERVAL_MS = 60_000;
 

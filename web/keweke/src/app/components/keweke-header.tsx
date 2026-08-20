@@ -5,12 +5,12 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Check, CloudUpload, Copy, Plus, UserRound } from "lucide-react";
 import { useCallback, useState } from "react";
 
-import { HotkeyKbd } from "@/components/hotkey-kbd";
-import { OpenListCommand } from "@/components/open-list-command";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { UserDialog } from "@/components/user-dialog";
-import { createLocalList } from "@/lib/local-list-store";
-import { appPath } from "@/lib/site-paths";
+import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+import { ThemeToggle } from "@/app/components/theme-toggle";
+import { appPath } from "@/app/lib/site-paths";
+import { UserDialog } from "@/features/auth/components/user-dialog";
+import { OpenListCommand } from "@/features/lists/components/open-list-command";
+import { createLocalList } from "@/features/lists/lib/local-list-store";
 
 export const NEW_LIST_HOTKEY = "Mod+E";
 const PUBLISH_HOTKEY = "Mod+U";

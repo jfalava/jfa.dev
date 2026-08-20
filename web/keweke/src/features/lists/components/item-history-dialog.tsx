@@ -5,8 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 import { toast } from "sonner";
 
-import { describeHistoryEvent, formatRelativeTime } from "@/lib/item-history";
-import { getItemHistory } from "@/lib/list-repository";
+import { describeHistoryEvent, formatRelativeTime } from "@/features/lists/lib/item-history";
+import { getItemHistory } from "@/features/lists/lib/list-repository";
 
 const PAGE_SIZE = 50;
 

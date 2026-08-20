@@ -1,8 +1,12 @@
 import { userListsSigningPayload } from "@jfa.dev/common/crypto";
 
-import { ensureLocalIdentity, signLocalPayload, type LocalIdentity } from "@/lib/local-identity";
-import { saveRemoteLists } from "@/lib/local-list-store";
-import { getUserLists } from "@/server/users";
+import {
+  ensureLocalIdentity,
+  signLocalPayload,
+  type LocalIdentity,
+} from "@/features/auth/lib/local-identity";
+import { getUserLists } from "@/features/auth/server/users";
+import { saveRemoteLists } from "@/features/lists/lib/local-list-store";
 
 const UNSIGNED_SIGNATURE = "unsigned-signature-placeholder";
 

@@ -1,5 +1,8 @@
-import { clearLocalIdentityDatabase } from "./local-identity";
-import { clearLocalListDatabase, clearRemoteListDatabase } from "./local-list-store";
+import { clearLocalIdentityDatabase } from "@/features/auth/lib/local-identity";
+import {
+  clearLocalListDatabase,
+  clearRemoteListDatabase,
+} from "@/features/lists/lib/local-list-store";
 
 export async function clearLocalData(): Promise<void> {
   if (globalThis.window !== undefined) {

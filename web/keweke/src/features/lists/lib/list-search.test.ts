@@ -2,7 +2,11 @@ import { describe, expect, test } from "bun:test";
 
 import type { ListSummary } from "@jfa.dev/common/lists";
 
-import { buildListSearchIndex, normalizeSearchText, searchListIndex } from "@/lib/list-search";
+import {
+  buildListSearchIndex,
+  normalizeSearchText,
+  searchListIndex,
+} from "@/features/lists/lib/list-search";
 
 function createList(overrides: Partial<ListSummary>): ListSummary {
   return {

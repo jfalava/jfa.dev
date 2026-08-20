@@ -1,7 +1,7 @@
 import type { ListSnapshot, LiveListMutation } from "@jfa.dev/common/lists";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { openRemoteListLiveSession } from "@/lib/remote-list-live";
+import { openRemoteListLiveSession } from "@/features/sync/lib/remote-list-live";
 
 export type RemoteListLiveStatus = "connecting" | "connected" | "disconnected";
 

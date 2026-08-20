@@ -22,13 +22,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
+import { readRemoteList } from "@/features/lists/server/remote-list";
+
 import type { PairingApprovalStatus, PairingStatus } from "./keweke-pairing";
 import type {
   AccountDeletionResult,
   RemoteListRemovalResult,
   RemoteUserCreationResult,
 } from "./keweke-users";
-import { readRemoteList } from "./remote-list";
 
 export {
   completePasskeyAdoption,

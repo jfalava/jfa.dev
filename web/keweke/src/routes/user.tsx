@@ -15,14 +15,14 @@ import { Blobatar } from "blobatar/react";
 import { Check, KeyRound, Shield, Smartphone, Trash2 } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
-import { KewekeHeader } from "@/components/keweke-header";
+import { KewekeHeader } from "@/app/components/keweke-header";
 import {
   useUserManager,
   type DialogFeedback,
   type FeedbackSection,
-} from "@/hooks/use-user-manager";
-import { userAvatarSeed } from "@/lib/blobatar";
-import { LOCAL_IDENTITY_PLACEHOLDER, type LocalIdentity } from "@/lib/local-identity";
+} from "@/features/auth/hooks/use-user-manager";
+import { userAvatarSeed } from "@/features/auth/lib/blobatar";
+import { LOCAL_IDENTITY_PLACEHOLDER, type LocalIdentity } from "@/features/auth/lib/local-identity";
 
 export const Route = createFileRoute("/user")({
   component: UserRoutePage,

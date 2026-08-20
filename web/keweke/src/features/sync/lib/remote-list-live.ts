@@ -4,7 +4,7 @@ import {
   type LiveListMutation,
 } from "@jfa.dev/common/lists";
 
-import { appPath } from "@/lib/site-paths";
+import { appPath } from "@/app/lib/site-paths";
 
 export type RemoteListLiveHandlers = {
   onSnapshot: (snapshot: ListSnapshot) => void;

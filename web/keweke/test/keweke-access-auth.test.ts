@@ -4,7 +4,7 @@ import {
   verifyAccessAssertion,
   verifyLiveAccessAssertion,
   type AccessCerts,
-} from "../src/server/access-jwt";
+} from "../src/features/admin/server/access-jwt";
 
 const TEAM_DOMAIN = "keweke-test.cloudflareaccess.com";
 const AUD = "test-audience-tag";

@@ -12,13 +12,13 @@ import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-tab
 import { RefreshCw } from "lucide-react";
 import { useMemo } from "react";
 
-import { KewekeHeader } from "@/components/keweke-header";
+import { KewekeHeader } from "@/app/components/keweke-header";
 import {
   getAdminOverview,
   type AdminListSummary,
   type AdminOverview,
   type AdminUserSummary,
-} from "@/server/admin";
+} from "@/features/admin/server/admin";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async () => {

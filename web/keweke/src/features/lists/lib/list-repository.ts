@@ -16,13 +16,14 @@ import type {
 } from "@jfa.dev/common/lists";
 import { uuidv7 } from "uuidv7";
 
-import { isUuidV7, normalizeListAddress } from "@/lib/list-id";
 import {
   confirmRemoteUsername,
   ensureLocalIdentity,
   signLocalPayload,
   type LocalIdentity,
-} from "@/lib/local-identity";
+} from "@/features/auth/lib/local-identity";
+import { removeRemoteList as removeRemoteListRequest } from "@/features/auth/server/users";
+import { isUuidV7, normalizeListAddress } from "@/features/lists/lib/list-id";
 import {
   applyLocalMutation,
   deleteLocalList,
@@ -32,7 +33,7 @@ import {
   markListRemote,
   saveLocalList,
   type LocalListRecord,
-} from "@/lib/local-list-store";
+} from "@/features/lists/lib/local-list-store";
 import {
   applyRemoteMutation,
   ensureRemoteListAlias,
@@ -40,8 +41,7 @@ import {
   getRemoteList,
   getRemoteListByAlias,
   importRemoteList,
-} from "@/server/lists";
-import { removeRemoteList as removeRemoteListRequest } from "@/server/users";
+} from "@/features/lists/server/lists";
 
 export interface LoadedList {
   backend: ListBackend;

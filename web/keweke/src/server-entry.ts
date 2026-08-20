@@ -2,11 +2,11 @@ import { listIdSchema } from "@jfa.dev/common/lists";
 import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
 import { env } from "cloudflare:workers";
 
-export { KewekeList } from "./server/keweke-list";
-export { KewekeAliasDirectory } from "./server/keweke-aliases";
-export { KewekePairingSession } from "./server/keweke-pairing";
-export { KewekePasskeySession } from "./server/keweke-passkey";
-export { KewekeUserDirectory } from "./server/keweke-users";
+export { KewekeList } from "./features/lists/server/keweke-list";
+export { KewekeAliasDirectory } from "./features/lists/server/keweke-aliases";
+export { KewekePairingSession } from "./features/auth/server/keweke-pairing";
+export { KewekePasskeySession } from "./features/auth/server/keweke-passkey";
+export { KewekeUserDirectory } from "./features/auth/server/keweke-users";
 
 function getLiveListId(request: Request): string | null {
   const segments = new URL(request.url).pathname.split("/").filter(Boolean);

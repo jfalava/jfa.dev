@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 
-import { describeHistoryEvent, formatRelativeTime } from "@/lib/item-history";
+import { describeHistoryEvent, formatRelativeTime } from "@/features/lists/lib/item-history";
 
 describe("describeHistoryEvent", () => {
   it("describes every item command type", () => {
