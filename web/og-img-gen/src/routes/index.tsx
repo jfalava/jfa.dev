@@ -275,7 +275,7 @@ function EditorPage() {
           selectedLayerId={selectedLayerId}
         />
 
-        <section aria-label="Canvas" className="flex min-h-[34rem] min-w-0 flex-1 flex-col">
+        <section aria-label="Canvas" className="flex min-h-136 min-w-0 flex-1 flex-col">
           <div className="flex min-h-10 shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border bg-background px-3 py-1.5">
             <div className="flex items-center gap-1">
               <Button
@@ -371,7 +371,7 @@ function EditorPage() {
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-auto [background-image:linear-gradient(45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(-45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(127,127,127,0.08)_75%),linear-gradient(-45deg,transparent_75%,rgba(127,127,127,0.08)_75%)] [background-size:16px_16px] [background-position:0_0,0_0,8px_8px,-8px_8px] p-6">
+          <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-auto bg-[linear-gradient(45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(-45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(127,127,127,0.08)_75%),linear-gradient(-45deg,transparent_75%,rgba(127,127,127,0.08)_75%)] bg-size-[16px_16px] bg-position-[0_0,0_0,8px_8px,-8px_8px] p-6">
             <div className="flex max-w-full min-w-0 items-center justify-center rounded-sm border border-border bg-background p-1 shadow-2xl shadow-black/10">
               <div
                 className="editor-canvas-frame relative max-w-full overflow-hidden rounded-sm"
