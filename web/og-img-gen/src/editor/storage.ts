@@ -44,8 +44,7 @@ const FONT_EXTENSION_MIME_TYPES = new Map([
   ["woff2", "font/woff2"],
 ]);
 
-export const FONT_FILE_ACCEPT =
-  "font/otf,font/ttf,font/woff,font/woff2,.otf,.ttf,.woff,.woff2";
+export const FONT_FILE_ACCEPT = "font/otf,font/ttf,font/woff,font/woff2,.otf,.ttf,.woff,.woff2";
 
 interface ProjectRecord {
   id: string;
@@ -222,7 +221,11 @@ export async function saveFontAsset(file: File, font: FontMeta): Promise<void> {
   if (!isSupportedFontFile(file)) {
     throw new Error("Choose a WOFF2, WOFF, TTF, or OTF font file.");
   }
-  await editorDatabase.fonts.put({ ...fontMetaSchema.parse(font), blob: file, createdAt: Date.now() });
+  await editorDatabase.fonts.put({
+    ...fontMetaSchema.parse(font),
+    blob: file,
+    createdAt: Date.now(),
+  });
 }
 
 export async function loadFont(fontId: string): Promise<StoredFont | null> {
@@ -232,9 +235,7 @@ export async function loadFont(fontId: string): Promise<StoredFont | null> {
 export async function deleteUnusedFonts(project: OgProject): Promise<void> {
   const usedFontIds = new Set(project.fonts.map((font) => font.id));
   const allFonts = await editorDatabase.fonts.toArray();
-  const unusedIds = allFonts
-    .filter((font) => !usedFontIds.has(font.id))
-    .map((font) => font.id);
+  const unusedIds = allFonts.filter((font) => !usedFontIds.has(font.id)).map((font) => font.id);
   if (unusedIds.length > 0) {
     await editorDatabase.fonts.bulkDelete(unusedIds);
   }

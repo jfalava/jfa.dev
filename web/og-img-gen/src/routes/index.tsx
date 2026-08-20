@@ -1050,7 +1050,9 @@ function TextProperties({
                 />
                 <span>
                   Variable font
-                  <span className="block opacity-75">Recommended for flexible weight selection.</span>
+                  <span className="block opacity-75">
+                    Recommended for flexible weight selection.
+                  </span>
                 </span>
               </label>
               {!fontVariable ? (

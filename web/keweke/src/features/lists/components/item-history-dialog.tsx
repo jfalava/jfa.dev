@@ -1,14 +1,70 @@
-import type { ListCommand, ListItemHistoryEvent } from "@jfa.dev/common/lists";
-import { Button } from "@jfa.dev/common/ui";
-import { ArchiveRestore, CheckCheck, Flame, History, Pencil, Plus, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import type { ListItemHistoryEvent } from "@jfa.dev/common/lists";
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@jfa.dev/common/ui";
+import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
+import { History, Minus, Plus } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 import { toast } from "sonner";
 
-import { describeHistoryEvent, formatRelativeTime } from "@/features/lists/lib/item-history";
+import {
+  buildHistoryTableRows,
+  formatRelativeTime,
+  type HistoryTableRow,
+} from "@/features/lists/lib/item-history";
 import { getItemHistory } from "@/features/lists/lib/list-repository";
 
 const PAGE_SIZE = 50;
+const historyTableFeatures = tableFeatures({});
+const historyColumnHelper = createColumnHelper<typeof historyTableFeatures, HistoryTableRow>();
+
+const historyColumns = historyColumnHelper.columns([
+  historyColumnHelper.display({
+    id: "field",
+    header: "field",
+    cell: ({ row }) => (
+      <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+        {row.original.field}
+      </span>
+    ),
+  }),
+  historyColumnHelper.display({
+    id: "before",
+    header: "changed",
+    cell: ({ row }) => <HistoryValue tone="old" value={row.original.before} />,
+  }),
+  historyColumnHelper.display({
+    id: "after",
+    header: "new value",
+    cell: ({ row }) => <HistoryValue tone="new" value={row.original.after} />,
+  }),
+  historyColumnHelper.display({
+    id: "details",
+    header: "updated",
+    cell: ({ row }) => {
+      const appliedAt = new Date(row.original.appliedAt);
+      const absoluteTime = Number.isNaN(appliedAt.getTime())
+        ? row.original.appliedAt
+        : appliedAt.toLocaleString();
+
+      return (
+        <div className="min-w-28" title={absoluteTime}>
+          <p className="truncate font-serif text-xs font-medium">{row.original.actorName}</p>
+          <p className="mt-0.5 font-mono text-[10px] tracking-[0.06em] whitespace-nowrap text-muted-foreground uppercase">
+            {formatRelativeTime(row.original.appliedAt)} · rev {row.original.revision}
+          </p>
+        </div>
+      );
+    },
+  }),
+]);
 
 interface ItemHistoryDialogProps {
   isOpen: boolean;
@@ -91,17 +147,29 @@ export function ItemHistoryDialog({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
     >
-      <Modal className="w-full max-w-md outline-none">
+      <Modal className="w-full max-w-3xl outline-none">
         <Dialog
           aria-label={`History for ${itemName}`}
           className="flex max-h-[85vh] flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
         >
-          <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-4">
+          <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
             <div className="min-w-0">
               <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
                 item history
               </p>
-              <h2 className="mt-1 truncate font-serif text-sm font-semibold">{itemName}</h2>
+              <h2 className="mt-1 truncate font-serif text-base font-semibold tracking-tight">
+                {itemName}
+              </h2>
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                <span className="inline-flex items-center gap-1.5">
+                  <span aria-hidden="true" className="size-1.5 rounded-full bg-destructive" />
+                  changed
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span aria-hidden="true" className="size-1.5 rounded-full bg-success" />
+                  new value
+                </span>
+              </div>
             </div>
             <Button
               aria-label="Close history"
@@ -116,26 +184,22 @@ export function ItemHistoryDialog({
             </Button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+          <div className="min-h-0 flex-1 overflow-auto">
             {isLoading && events.length === 0 ? (
-              <p className="py-8 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
+              <p className="px-5 py-10 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
                 loading history…
               </p>
             ) : events.length === 0 ? (
-              <p className="py-8 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
+              <p className="px-5 py-10 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
                 no recorded changes yet
               </p>
             ) : (
-              <ol className="divide-y divide-border">
-                {events.map((event) => (
-                  <HistoryEventRow event={event} key={event.id} />
-                ))}
-              </ol>
+              <HistoryTable events={events} />
             )}
           </div>
 
           {events.length > 0 ? (
-            <div className="border-t border-border px-4 py-3">
+            <div className="border-t border-border px-5 py-3">
               {nextCursor !== null ? (
                 <Button
                   className="w-full"
@@ -160,51 +224,62 @@ export function ItemHistoryDialog({
   );
 }
 
-function HistoryEventRow({ event }: { event: ListItemHistoryEvent }) {
-  const actorName = event.actor?.username ?? "someone";
-  const appliedAt = new Date(event.appliedAt);
-  const absoluteTime = Number.isNaN(appliedAt.getTime())
-    ? event.appliedAt
-    : appliedAt.toLocaleString();
+function HistoryTable({ events }: { events: ListItemHistoryEvent[] }) {
+  const rows = useMemo(() => buildHistoryTableRows(events), [events]);
+  const table = useTable({
+    features: historyTableFeatures,
+    data: rows,
+    columns: historyColumns,
+    getRowId: (row) => row.id,
+  });
 
   return (
-    <li className="flex items-start gap-3 py-3">
-      <span aria-hidden="true" className="mt-0.5 shrink-0 text-muted-foreground">
-        <HistoryEventIcon command={event.command} />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="text-[13px] leading-snug">
-          <span className="font-serif font-medium">{actorName}</span>{" "}
-          <span className="text-muted-foreground">{describeHistoryEvent(event.command)}</span>
-        </p>
-        <p
-          className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase"
-          title={absoluteTime}
-        >
-          {formatRelativeTime(event.appliedAt)} · rev {event.revision}
-        </p>
-      </div>
-    </li>
+    <Table className="min-w-[640px] text-xs">
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow className="hover:bg-transparent" key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <TableHead
+                className="h-9 bg-popover px-3 font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase"
+                key={header.id}
+              >
+                {header.isPlaceholder ? null : <table.FlexRender header={header} />}
+              </TableHead>
+            ))}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow className="hover:bg-muted/30" key={row.id}>
+            {row.getAllCells().map((cell) => (
+              <TableCell className="px-3 py-3" key={cell.id}>
+                <table.FlexRender cell={cell} />
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
-function HistoryEventIcon({ command }: { command: ListCommand }) {
-  const className = "size-4";
-  switch (command.type) {
-    case "add-item":
-      return <Plus aria-hidden="true" className={className} />;
-    case "update-item":
-      return <Pencil aria-hidden="true" className={className} />;
-    case "set-item-checked":
-      return <CheckCheck aria-hidden="true" className={className} />;
-    case "remove-item":
-      return <Trash2 aria-hidden="true" className={className} />;
-    case "restore-item":
-      return <ArchiveRestore aria-hidden="true" className={className} />;
-    case "purge-deleted-item":
-      return <Flame aria-hidden="true" className={className} />;
-    case "rename-list":
-    default:
-      return <History aria-hidden="true" className={className} />;
-  }
+function HistoryValue({ tone, value }: { tone: "new" | "old"; value: string }) {
+  const isNewValue = tone === "new";
+  return (
+    <span
+      className={
+        isNewValue
+          ? "inline-flex max-w-52 items-center gap-1 rounded-sm bg-success/10 px-2 py-1 font-mono text-[11px] text-success"
+          : "inline-flex max-w-52 items-center gap-1 rounded-sm bg-destructive/10 px-2 py-1 font-mono text-[11px] text-destructive"
+      }
+    >
+      {isNewValue ? (
+        <Plus aria-hidden="true" className="size-3 shrink-0" />
+      ) : (
+        <Minus aria-hidden="true" className="size-3 shrink-0" />
+      )}
+      <span className={isNewValue ? "truncate" : "truncate line-through"}>{value}</span>
+    </span>
+  );
 }
