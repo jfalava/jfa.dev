@@ -14,7 +14,7 @@ export function ViewportGuard({ children }: Readonly<{ children: ReactNode }>) {
             The OpenGraph image creator doesn't support small screens like phones or small tablets. In the future, perhaps?
           </p>
                     <p className="mt-4 text-sm font-semibold tracking-tight uppercase">
-            The minimun supported size is bigger than your phone
+            The minimum supported size is bigger than your phone
           </p>
         </div>
       </div>
