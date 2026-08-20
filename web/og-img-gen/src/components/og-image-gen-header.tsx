@@ -13,7 +13,6 @@ export function OgImageGenHeader() {
             aria-label="OG Image Generator by JFA"
             className="flex min-w-0 items-center gap-3 truncate lg:pr-4"
           >
-            <FileImage aria-hidden="true" className="size-4 shrink-0 text-primary" />
             <span className="shrink-0 text-sm font-bold tracking-wide text-primary">
               <span className="inline">/OG IMAGE GEN</span>
               <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
