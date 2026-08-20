@@ -1,7 +1,12 @@
 import { Button, Input } from "@jfa.dev/common/ui";
-import { Info, RefreshCw, Search } from "lucide-react";
+import { useHotkey } from "@tanstack/react-hotkeys";
+import { Grid2X2, Info, RefreshCw, Search } from "lucide-react";
+
+import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 
 import { ListAlias, ListTitleEditor } from "./list-header-controls";
+
+export const SPREADSHEET_MODE_HOTKEY = "Mod+Shift+E";
 
 export type ListPageHeaderProps = {
   activeCount: number;
@@ -9,6 +14,8 @@ export type ListPageHeaderProps = {
   backend: "local" | "remote";
   completedCount: number;
   filter: string;
+  isDesktop: boolean;
+  isSpreadsheetMode: boolean;
   isLiveDropped: boolean;
   isRefreshing: boolean;
   isRenaming: boolean;
@@ -17,6 +24,7 @@ export type ListPageHeaderProps = {
   onOpenHelp: () => void;
   onRefresh: () => void;
   onRename: (title: string) => Promise<boolean>;
+  onSpreadsheetModeChange: (isActive: boolean) => void;
   title: string;
 };
 
@@ -26,6 +34,8 @@ export function ListPageHeader({
   backend,
   completedCount,
   filter,
+  isDesktop,
+  isSpreadsheetMode,
   isLiveDropped,
   isRefreshing,
   isRenaming,
@@ -34,8 +44,13 @@ export function ListPageHeader({
   onOpenHelp,
   onRefresh,
   onRename,
+  onSpreadsheetModeChange,
   title,
 }: ListPageHeaderProps) {
+  useHotkey(SPREADSHEET_MODE_HOTKEY, () => onSpreadsheetModeChange(!isSpreadsheetMode), {
+    enabled: isDesktop,
+  });
+
   return (
     <>
       <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
@@ -80,6 +95,20 @@ export function ListPageHeader({
               <RefreshCw aria-hidden="true" className={isRefreshing ? "animate-spin" : undefined} />
             </Button>
           ) : null}
+          <Button
+            aria-label={isSpreadsheetMode ? "Exit spreadsheet mode" : "Enter spreadsheet mode"}
+            aria-pressed={isSpreadsheetMode}
+            className="hidden shrink-0 md:inline-flex md:w-auto md:gap-1 md:px-2"
+            onPress={() => onSpreadsheetModeChange(!isSpreadsheetMode)}
+            size="icon"
+            variant={isSpreadsheetMode ? "default" : "ghost"}
+          >
+            <Grid2X2 aria-hidden="true" />
+            <span className="hidden sm:inline">
+              {isSpreadsheetMode ? "Exit grid" : "Grid mode"}
+            </span>
+            <HotkeyKbd className="hidden sm:inline-flex" hotkey={SPREADSHEET_MODE_HOTKEY} />
+          </Button>
           <Button
             aria-label="How to add items"
             className="shrink-0"

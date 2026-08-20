@@ -2,6 +2,8 @@ import { Button } from "@jfa.dev/common/ui";
 import type { ReactNode } from "react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 
+import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+
 interface ItemEntryHelpDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
@@ -78,6 +80,21 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
                 e.g. snacks
               </FieldGuide>
             </ul>
+
+            <div className="hidden space-y-2 border border-primary/20 bg-primary/5 p-3 md:block">
+              <p className="font-mono text-[10px] tracking-[0.08em] text-primary uppercase">
+                spreadsheet mode
+              </p>
+              <p className="text-[13px] leading-snug text-muted-foreground">
+                On desktop, use the grid button or <HotkeyKbd hotkey="Mod+Shift+E" /> to edit every
+                row with the keyboard.
+              </p>
+              <p className="text-[13px] leading-snug text-muted-foreground">
+                <span className="text-foreground">Tab</span> moves across fields, arrows move
+                between cells, Enter moves down, and <HotkeyKbd hotkey="Mod+Backspace" /> removes
+                the current row. Escape exits.
+              </p>
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 border-t border-border px-4 py-3">

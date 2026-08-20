@@ -19,10 +19,12 @@ import {
   shoppingTableFeatures,
   type ShoppingTableMeta,
 } from "./shopping-columns";
+import { SpreadsheetShoppingTable } from "./spreadsheet-shopping-table";
 
 export function ShoppingTable({
   emptyMessage,
   identity,
+  isSpreadsheetMode,
   items,
   newItem,
   newItemErrors,
@@ -31,19 +33,22 @@ export function ShoppingTable({
   onNewItemChange,
   onRemove,
   onShowHistory,
+  onSpreadsheetModeChange,
   onToggle,
   onUpdate,
 }: {
   emptyMessage?: string;
   identity?: LocalIdentity;
+  isSpreadsheetMode: boolean;
   items: ListItem[];
   newItem: NewItemDraft;
   newItemErrors: ItemDraftErrors;
-  onAdd: () => void;
+  onAdd: () => Promise<boolean>;
   onAdjustQuantity: (itemId: string, nextQuantity: number) => void;
   onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
   onRemove: (id: string) => void;
   onShowHistory?: (item: ListItem) => void;
+  onSpreadsheetModeChange: (isActive: boolean) => void;
   onToggle: (id: string, checked: boolean) => void;
   onUpdate: (itemId: string, draft: ItemEditDraft) => Promise<boolean>;
 }) {
@@ -62,7 +67,7 @@ export function ShoppingTable({
     (event: KeyboardEvent<HTMLInputElement>): void => {
       if (event.key === "Enter") {
         event.preventDefault();
-        onAdd();
+        void onAdd();
       }
     },
     [onAdd],
@@ -186,85 +191,105 @@ export function ShoppingTable({
     meta: tableMeta,
   });
 
+  const handleAdd = useCallback((): void => {
+    void onAdd();
+  }, [onAdd]);
+
   return (
     <>
-      <MobileShoppingTable
-        editDraft={editDraft}
-        editErrors={displayedEditErrors}
-        editingItemId={editingItemId}
-        isSaving={isSaving}
+      <SpreadsheetShoppingTable
+        emptyMessage={emptyMessage}
+        isActive={isSpreadsheetMode}
+        items={items}
         newItem={newItem}
         newItemErrors={newItemErrors}
-        emptyMessage={emptyMessage}
-        table={mobileTable}
-        onCancelEditing={cancelEditing}
         onAdd={onAdd}
-        onEditDraftChange={updateDraft}
         onNewItemChange={onNewItemChange}
-        onSaveEditing={saveEditing}
-        onNewItemKeyDown={submitNewItemOnEnter}
+        onRemove={onRemove}
+        onShowHistory={onShowHistory}
+        onToggle={onToggle}
+        onUpdate={onUpdate}
+        onExit={() => onSpreadsheetModeChange(false)}
       />
-      <div className="hidden w-full overflow-x-auto md:block">
-        <table className="w-full min-w-190 border-collapse">
-          <colgroup>
-            <col className="w-24" />
-            <col className="w-10" />
-            <col />
-            <col className="w-24" />
-            <col className="w-20" />
-            <col className="w-28" />
-            <col className="w-32" />
-            <col className="w-32" />
-            <col className="w-24" />
-            <col className="w-12" />
-          </colgroup>
-          <thead className="sticky top-0 z-10">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="invoice-rule border-b-2">
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="h-10 bg-muted/50 px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase first:pl-4"
-                  >
-                    {header.isPlaceholder ? null : <table.FlexRender header={header} />}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <tr
-                  key={row.id}
-                  className="group border-b border-border/80 transition-colors hover:bg-muted/40"
-                >
-                  {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      <table.FlexRender cell={cell} />
-                    </TableCell>
+      <div className={isSpreadsheetMode ? "hidden" : undefined}>
+        <MobileShoppingTable
+          editDraft={editDraft}
+          editErrors={displayedEditErrors}
+          editingItemId={editingItemId}
+          isSaving={isSaving}
+          newItem={newItem}
+          newItemErrors={newItemErrors}
+          emptyMessage={emptyMessage}
+          table={mobileTable}
+          onCancelEditing={cancelEditing}
+          onAdd={handleAdd}
+          onEditDraftChange={updateDraft}
+          onNewItemChange={onNewItemChange}
+          onSaveEditing={saveEditing}
+          onNewItemKeyDown={submitNewItemOnEnter}
+        />
+        <div className="hidden w-full overflow-x-auto md:block">
+          <table className="w-full min-w-190 border-collapse">
+            <colgroup>
+              <col className="w-24" />
+              <col className="w-10" />
+              <col />
+              <col className="w-24" />
+              <col className="w-20" />
+              <col className="w-28" />
+              <col className="w-32" />
+              <col className="w-32" />
+              <col className="w-24" />
+              <col className="w-12" />
+            </colgroup>
+            <thead className="sticky top-0 z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id} className="invoice-rule border-b-2">
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="h-10 bg-muted/50 px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase first:pl-4"
+                    >
+                      {header.isPlaceholder ? null : <table.FlexRender header={header} />}
+                    </th>
                   ))}
                 </tr>
-              ))
-            ) : emptyMessage ? (
-              <tr>
-                <TableCell
-                  className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
-                  colSpan={columns.length}
-                >
-                  {emptyMessage}
-                </TableCell>
-              </tr>
-            ) : null}
-            <DesktopNewItemRow
-              newItem={newItem}
-              errors={newItemErrors}
-              onAdd={onAdd}
-              onKeyDown={submitNewItemOnEnter}
-              onChange={onNewItemChange}
-            />
-          </tbody>
-        </table>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="group border-b border-border/80 transition-colors hover:bg-muted/40"
+                  >
+                    {row.getAllCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        <table.FlexRender cell={cell} />
+                      </TableCell>
+                    ))}
+                  </tr>
+                ))
+              ) : emptyMessage ? (
+                <tr>
+                  <TableCell
+                    className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
+                    colSpan={columns.length}
+                  >
+                    {emptyMessage}
+                  </TableCell>
+                </tr>
+              ) : null}
+              <DesktopNewItemRow
+                newItem={newItem}
+                errors={newItemErrors}
+                onAdd={handleAdd}
+                onKeyDown={submitNewItemOnEnter}
+                onChange={onNewItemChange}
+              />
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

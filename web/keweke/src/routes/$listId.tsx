@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { uuidv7 } from "uuidv7";
 
 import { KewekeHeader } from "@/app/components/keweke-header";
+import { useIsDesktop } from "@/app/hooks/use-desktop-media-query";
 import { shouldShowPublishNudge } from "@/app/lib/publish-nudge";
 import {
   ensureLocalIdentity,
@@ -86,6 +87,7 @@ export const Route = createFileRoute("/$listId")({
 function ListPage() {
   const { listId } = Route.useParams();
   const navigate = useNavigate();
+  const isDesktop = useIsDesktop();
   const [loadedList, setLoadedList] = useState<
     { backend: "local" | "remote"; snapshot: ListSnapshot } | undefined
   >();
@@ -95,6 +97,7 @@ function ListPage() {
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const [userDialogMessage, setUserDialogMessage] = useState<string>();
   const [isItemEntryHelpOpen, setIsItemEntryHelpOpen] = useState(false);
+  const [isSpreadsheetMode, setIsSpreadsheetMode] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [busyArchiveId, setBusyArchiveId] = useState<string>();
   const [historyTarget, setHistoryTarget] = useState<HistoryTarget>();
@@ -112,6 +115,17 @@ function ListPage() {
   const [newItemAttempted, setNewItemAttempted] = useState(false);
   const [newItemErrors, setNewItemErrors] = useState<ItemDraftErrors>({});
   const [identity, setIdentity] = useState<LocalIdentity>();
+
+  const isSpreadsheetModeActive = isDesktop && isSpreadsheetMode;
+  const handleSpreadsheetModeChange = useCallback(
+    (isActive: boolean): void => {
+      if (!isDesktop && isActive) {
+        return;
+      }
+      setIsSpreadsheetMode(isActive);
+    },
+    [isDesktop],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -450,12 +464,12 @@ function ListPage() {
     setNewItemDraft((current) => ({ ...current, [field]: value }));
   }, []);
 
-  const addItem = useCallback((): void => {
+  const addItem = useCallback(async (): Promise<boolean> => {
     const draftErrors = validateItemDraft(newItemDraft);
     if (hasItemDraftErrors(draftErrors)) {
       setNewItemAttempted(true);
       setNewItemErrors(draftErrors);
-      return;
+      return false;
     }
 
     const name = newItemDraft.name.trim();
@@ -464,7 +478,7 @@ function ListPage() {
     const amount = newItemDraft.amount.trim();
     const category = newItemDraft.category.trim();
 
-    void commit({
+    const committed = await commit({
       type: "add-item",
       item: {
         id: uuidv7(),
@@ -474,20 +488,21 @@ function ListPage() {
         amount,
         category,
       },
-    }).then((committed) => {
-      if (committed) {
-        setNewItemAttempted(false);
-        setNewItemErrors({});
-        setNewItemDraft({
-          name: "",
-          quantity: "1",
-          unit: "",
-          amount: "",
-          category: "GENERAL",
-        });
-      }
-      return committed;
     });
+    if (!committed) {
+      return false;
+    }
+
+    setNewItemAttempted(false);
+    setNewItemErrors({});
+    setNewItemDraft({
+      name: "",
+      quantity: "1",
+      unit: "",
+      amount: "",
+      category: "GENERAL",
+    });
+    return true;
   }, [commit, newItemDraft]);
 
   const toggleItem = useCallback(
@@ -623,6 +638,8 @@ function ListPage() {
           backend={loadedList.backend}
           completedCount={completedCount}
           filter={filter}
+          isDesktop={isDesktop}
+          isSpreadsheetMode={isSpreadsheetModeActive}
           isLiveDropped={isLiveDropped}
           isRefreshing={isRefreshing}
           isRenaming={isRenaming}
@@ -631,11 +648,13 @@ function ListPage() {
           onOpenHelp={() => setIsItemEntryHelpOpen(true)}
           onRefresh={() => void handleRefreshLive()}
           onRename={renameList}
+          onSpreadsheetModeChange={handleSpreadsheetModeChange}
           title={snapshot.title}
         />
         <ShoppingTable
           emptyMessage={filter.trim() ? "no matching lines" : undefined}
           identity={identity}
+          isSpreadsheetMode={isSpreadsheetModeActive}
           items={visibleItems}
           newItem={newItemDraft}
           newItemErrors={displayedNewItemErrors}
@@ -644,6 +663,7 @@ function ListPage() {
           onNewItemChange={updateNewItemDraft}
           onRemove={removeItem}
           onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
+          onSpreadsheetModeChange={handleSpreadsheetModeChange}
           onToggle={toggleItem}
           onUpdate={updateItem}
         />
