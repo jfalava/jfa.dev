@@ -173,6 +173,8 @@ function ListPage() {
 
   useEffect(() => {
     if (loadedList?.backend !== "local") {
+      // oxlint-disable-next-line react/set-state-in-effect -- sync external IndexedDB list count to local flag
+      setIsFirstList(false);
       return undefined;
     }
 
@@ -180,6 +182,7 @@ function ListPage() {
     const refreshFirstList = (): void => {
       void listLocalLists().then((lists) => {
         if (!cancelled) {
+          // oxlint-disable-next-line react/set-state-in-effect -- async sync with IndexedDB via subscription
           setIsFirstList(lists.length === 1 && lists[0]?.id === loadedList.snapshot.id);
         }
         return lists;
@@ -597,7 +600,6 @@ function ListPage() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
       <KewekeHeader
-        key={`${listId}:${showPublishNudge}`}
         backend={loadedList.backend}
         isMigrating={isMigrating}
         listId={listId}

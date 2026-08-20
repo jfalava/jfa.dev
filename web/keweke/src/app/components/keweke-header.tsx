@@ -49,6 +49,8 @@ export function KewekeHeader({
 
   useEffect(() => {
     if (!showPublishNudge) {
+      // oxlint-disable-next-line react/set-state-in-effect -- reset dismissed state when nudge hides so next show is visible (external prop sync)
+      setIsPublishNudgeDismissed(false);
       return undefined;
     }
 
