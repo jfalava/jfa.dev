@@ -19,12 +19,17 @@
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
+    "dexie": "4.4.5",
+    "fabric": "7.4.0",
+    "fflate": "0.8.3",
     "lucide-react": "catalog:ui",
     "react": "catalog:react",
     "react-aria-components": "catalog:react",
     "react-dom": "catalog:react",
     "tailwindcss": "catalog:styling",
-    "tw-animate-css": "catalog:styling"
+    "tw-animate-css": "catalog:styling",
+    "zod": "4.4.3",
+    "zustand": "5.0.15"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:types",

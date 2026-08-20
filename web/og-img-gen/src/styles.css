@@ -22,3 +22,10 @@
     font: inherit;
   }
 }
+
+.editor-canvas-frame .canvas-container,
+.editor-canvas-frame canvas {
+  display: block;
+  height: 100% !important;
+  width: 100% !important;
+}
