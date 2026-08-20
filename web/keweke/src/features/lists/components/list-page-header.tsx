@@ -1,0 +1,96 @@
+import { Button, Input } from "@jfa.dev/common/ui";
+import { Info, RefreshCw, Search } from "lucide-react";
+
+import { ListAlias, ListTitleEditor } from "./list-header-controls";
+
+export type ListPageHeaderProps = {
+  activeCount: number;
+  alias: string | null;
+  backend: "local" | "remote";
+  completedCount: number;
+  filter: string;
+  isLiveDropped: boolean;
+  isRefreshing: boolean;
+  isRenaming: boolean;
+  listId: string;
+  onFilterChange: (value: string) => void;
+  onOpenHelp: () => void;
+  onRefresh: () => void;
+  onRename: (title: string) => Promise<boolean>;
+  title: string;
+};
+
+export function ListPageHeader({
+  activeCount,
+  alias,
+  backend,
+  completedCount,
+  filter,
+  isLiveDropped,
+  isRefreshing,
+  isRenaming,
+  listId,
+  onFilterChange,
+  onOpenHelp,
+  onRefresh,
+  onRename,
+  title,
+}: ListPageHeaderProps) {
+  return (
+    <>
+      <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
+        <div>
+          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+            {backend} list
+          </p>
+          <ListTitleEditor isSaving={isRenaming} onSave={onRename} title={title} />
+          <ListAlias alias={alias} listId={listId} />
+        </div>
+        <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+          {String(activeCount).padStart(2, "0")} open · {String(completedCount).padStart(2, "0")}{" "}
+          done
+        </p>
+      </div>
+
+      <div className="invoice-rule border-b px-4 py-3 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-1.5">
+          <div className="relative min-w-0 flex-1">
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              id="filter-items"
+              aria-label="Search items"
+              className="w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
+              onChange={(event) => onFilterChange(event.target.value)}
+              placeholder="Search items"
+              value={filter}
+            />
+          </div>
+          {isLiveDropped ? (
+            <Button
+              aria-label="Reconnect live updates"
+              className="shrink-0"
+              isDisabled={isRefreshing}
+              onPress={onRefresh}
+              size="icon"
+              variant="ghost"
+            >
+              <RefreshCw aria-hidden="true" className={isRefreshing ? "animate-spin" : undefined} />
+            </Button>
+          ) : null}
+          <Button
+            aria-label="How to add items"
+            className="shrink-0"
+            onPress={onOpenHelp}
+            size="icon"
+            variant="ghost"
+          >
+            <Info aria-hidden="true" />
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+}

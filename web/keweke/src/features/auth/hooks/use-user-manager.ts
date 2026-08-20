@@ -746,3 +746,5 @@ export function useUserManager({
     resetAllConfirmations,
   };
 }
+
+export type UserManager = ReturnType<typeof useUserManager>;
