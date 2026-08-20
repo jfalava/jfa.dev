@@ -89,7 +89,7 @@ function ListPage() {
   const [loadedList, setLoadedList] = useState<
     { backend: "local" | "remote"; snapshot: ListSnapshot } | undefined
   >();
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadedRequestId, setLoadedRequestId] = useState<string>();
   const [isMigrating, setIsMigrating] = useState(false);
   const [isPublishConfirmOpen, setIsPublishConfirmOpen] = useState(false);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
@@ -133,12 +133,11 @@ function ListPage() {
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
     void loadList(listId)
       .then((nextList) => {
         if (!cancelled) {
           setLoadedList(nextList ?? undefined);
-          setIsLoading(false);
+          setLoadedRequestId(listId);
         }
         return nextList;
       })
@@ -146,7 +145,7 @@ function ListPage() {
         if (!cancelled) {
           setLoadedList(undefined);
           setUnavailableReason("This list could not be opened.");
-          setIsLoading(false);
+          setLoadedRequestId(listId);
         }
       });
 
@@ -155,9 +154,11 @@ function ListPage() {
     };
   }, [listId]);
 
+  const isLoading = loadedRequestId !== listId;
+  const currentUnavailableReason = loadedRequestId === listId ? unavailableReason : undefined;
+
   useEffect(() => {
     if (loadedList?.backend !== "local") {
-      setIsFirstList(false);
       return undefined;
     }
 
@@ -179,12 +180,7 @@ function ListPage() {
     };
   }, [loadedList?.backend, loadedList?.snapshot.id]);
 
-  useEffect(() => {
-    if (!newItemAttempted) {
-      return;
-    }
-    setNewItemErrors(validateItemDraft(newItemDraft));
-  }, [newItemAttempted, newItemDraft]);
+  const displayedNewItemErrors = newItemAttempted ? validateItemDraft(newItemDraft) : newItemErrors;
 
   const remoteListId = loadedList?.backend === "remote" ? loadedList.snapshot.id : undefined;
 
@@ -222,7 +218,7 @@ function ListPage() {
 
   const isLiveDropped = liveStatus === "disconnected" && loadedList?.backend === "remote";
 
-  const handleRefreshLive = useCallback(async (): Promise<void> => {
+  const handleRefreshLive = async (): Promise<void> => {
     if (!remoteListId || isRefreshing) {
       return;
     }
@@ -253,7 +249,7 @@ function ListPage() {
     } finally {
       setIsRefreshing(false);
     }
-  }, [isRefreshing, navigate, refreshLiveSession, remoteListId]);
+  };
 
   const commit = useCallback(
     async (command: ListCommand): Promise<ListSnapshot | null> => {
@@ -573,7 +569,8 @@ function ListPage() {
                 Nothing here
               </h1>
               <p className="mt-6 max-w-lg text-sm text-muted-foreground">
-                {unavailableReason ?? "This list is not available in local or remote storage."}
+                {currentUnavailableReason ??
+                  "This list is not available in local or remote storage."}
               </p>
             </div>
           </section>
@@ -585,6 +582,7 @@ function ListPage() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
       <KewekeHeader
+        key={`${listId}:${showPublishNudge}`}
         backend={loadedList.backend}
         isMigrating={isMigrating}
         listId={listId}
@@ -640,7 +638,7 @@ function ListPage() {
           identity={identity}
           items={visibleItems}
           newItem={newItemDraft}
-          newItemErrors={newItemErrors}
+          newItemErrors={displayedNewItemErrors}
           onAdd={addItem}
           onAdjustQuantity={adjustQuantity}
           onNewItemChange={updateNewItemDraft}

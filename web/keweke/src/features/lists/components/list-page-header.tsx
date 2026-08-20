@@ -44,7 +44,7 @@ export function ListPageHeader({
             {backend} list
           </p>
           <ListTitleEditor isSaving={isRenaming} onSave={onRename} title={title} />
-          <ListAlias alias={alias} listId={listId} />
+          <ListAlias key={`${listId}:${alias ?? ""}`} alias={alias} listId={listId} />
         </div>
         <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
           {String(activeCount).padStart(2, "0")} open · {String(completedCount).padStart(2, "0")}{" "}

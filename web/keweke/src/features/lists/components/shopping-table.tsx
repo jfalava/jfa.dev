@@ -1,7 +1,7 @@
 import type { ListItem } from "@jfa.dev/common/lists";
 import { TableCell } from "@jfa.dev/common/ui";
 import { useTable } from "@tanstack/react-table";
-import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 
 import type { LocalIdentity } from "@/features/auth/lib/local-identity";
 import {
@@ -52,6 +52,11 @@ export function ShoppingTable({
   const [isSaving, setIsSaving] = useState(false);
   const [editAttempted, setEditAttempted] = useState(false);
   const [editErrors, setEditErrors] = useState<ItemDraftErrors>({});
+  const onUpdateRef = useRef(onUpdate);
+
+  useEffect(() => {
+    onUpdateRef.current = onUpdate;
+  }, [onUpdate]);
 
   const submitNewItemOnEnter = useCallback(
     (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -87,12 +92,8 @@ export function ShoppingTable({
     setEditErrors({});
   }, []);
 
-  useEffect(() => {
-    if (!editAttempted || !editDraft) {
-      return;
-    }
-    setEditErrors(validateItemDraft(editDraft));
-  }, [editAttempted, editDraft]);
+  const displayedEditErrors =
+    editAttempted && editDraft ? validateItemDraft(editDraft) : editErrors;
 
   const saveEditing = useCallback(async (): Promise<void> => {
     if (!editingItemId || !editDraft || isSaving) {
@@ -110,13 +111,16 @@ export function ShoppingTable({
     setEditErrors({});
     setIsSaving(true);
     try {
-      if (await onUpdate(editingItemId, editDraft)) {
-        cancelEditing();
+      if (await onUpdateRef.current(editingItemId, editDraft)) {
+        setEditingItemId(undefined);
+        setEditDraft(undefined);
+        setEditAttempted(false);
+        setEditErrors({});
       }
     } finally {
       setIsSaving(false);
     }
-  }, [cancelEditing, editDraft, editingItemId, isSaving, onUpdate]);
+  }, [editDraft, editingItemId, isSaving]);
 
   // Keep these cell definitions stable. TanStack renders each cell function as
   // a React component, so recreating them for every draft update remounts the
@@ -138,7 +142,7 @@ export function ShoppingTable({
   const tableMeta = useMemo<ShoppingTableMeta>(
     () => ({
       editDraft,
-      editErrors,
+      editErrors: displayedEditErrors,
       editingItemId,
       identity,
       isSaving,
@@ -154,7 +158,7 @@ export function ShoppingTable({
     [
       cancelEditing,
       editDraft,
-      editErrors,
+      displayedEditErrors,
       editingItemId,
       identity,
       isSaving,
@@ -186,7 +190,7 @@ export function ShoppingTable({
     <>
       <MobileShoppingTable
         editDraft={editDraft}
-        editErrors={editErrors}
+        editErrors={displayedEditErrors}
         editingItemId={editingItemId}
         isSaving={isSaving}
         newItem={newItem}

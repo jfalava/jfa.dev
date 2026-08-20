@@ -65,7 +65,9 @@ function EmptyState() {
       } finally {
         isSyncing = false;
         if (!cancelled) {
-          refreshLists();
+          const nextLists = await listLocalLists();
+          setLists(nextLists);
+          setIsLoading(false);
         }
       }
     };
@@ -76,7 +78,7 @@ function EmptyState() {
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [refreshLists]);
+  }, []);
 
   const removeList = useCallback(async (list: ListSummary): Promise<void> => {
     setDeletingListId(list.id);

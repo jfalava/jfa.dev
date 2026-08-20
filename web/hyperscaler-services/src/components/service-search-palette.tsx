@@ -241,15 +241,10 @@ export function ServiceSearchPalette({
   };
 
   useEffect(() => {
-    if (open) {
-      setDraftQuery(initialQuery);
-    }
-  }, [initialQuery, open]);
-
-  useEffect(() => {
     const handleShortcut = (event: KeyboardEvent): void => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
+        setDraftQuery(initialQuery);
         setOpen(true);
       }
     };
@@ -259,7 +254,7 @@ export function ServiceSearchPalette({
     }
 
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [shortcutEnabled]);
+  }, [initialQuery, shortcutEnabled]);
 
   const applySearch = (): void => {
     const nextQuery = draftQuery.trim();

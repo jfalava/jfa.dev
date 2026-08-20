@@ -49,7 +49,6 @@ export function KewekeHeader({
 
   useEffect(() => {
     if (!showPublishNudge) {
-      setIsPublishNudgeDismissed(false);
       return undefined;
     }
 
@@ -120,6 +119,7 @@ export function KewekeHeader({
 
           {isUserDialogOpen !== undefined ? (
             <UserDialog
+              key={userDialogMessage ?? "default"}
               isOpen={isUserDialogOpen}
               message={userDialogMessage}
               onOpenChange={onUserDialogOpenChange}

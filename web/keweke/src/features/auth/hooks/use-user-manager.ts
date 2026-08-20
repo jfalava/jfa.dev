@@ -97,14 +97,18 @@ export function useUserManager({
   const [approvalCode, setApprovalCode] = useState("");
   const [pairingCode, setPairingCode] = useState("");
   const [pairingStatus, setPairingStatus] = useState<PairingStatusView>();
-  const [feedback, setFeedback] = useState<DialogFeedback>();
+  const [feedback, setFeedback] = useState<DialogFeedback | undefined>(() =>
+    isActive && initialMessage
+      ? { section: "username", tone: "error", text: initialMessage }
+      : undefined,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [isCreatingRemoteUser, setIsCreatingRemoteUser] = useState(false);
   const [isStartingPairing, setIsStartingPairing] = useState(false);
   const [isFindingDevice, setIsFindingDevice] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [passkeys, setPasskeys] = useState<PasskeyProfile[]>([]);
-  const [isLoadingPasskeys, setIsLoadingPasskeys] = useState(false);
+  const [loadedPasskeyRequestKey, setLoadedPasskeyRequestKey] = useState<string>();
   const [isRegisteringPasskey, setIsRegisteringPasskey] = useState(false);
   const [isAdoptingPasskey, setIsAdoptingPasskey] = useState(false);
   const [isAdopting, setIsAdopting] = useState(false);
@@ -189,12 +193,6 @@ export function useUserManager({
     return () => window.clearInterval(interval);
   }, [pairingCode, pairingStatus?.status]);
 
-  useEffect(() => {
-    if (isActive && initialMessage) {
-      setError("username", initialMessage);
-    }
-  }, [isActive, initialMessage, setError]);
-
   const canManagePasskeys = Boolean(
     identity?.remoteUsername &&
     profile?.devices.some(
@@ -202,16 +200,16 @@ export function useUserManager({
     ),
   );
   const passkeyAvailable = isPasskeyAvailable();
+  const passkeyRequestKey = `${identity?.deviceId ?? ""}:${identity?.userId ?? ""}:${canManagePasskeys}:${isActive}`;
+  const isLoadingPasskeys =
+    isActive && canManagePasskeys && loadedPasskeyRequestKey !== passkeyRequestKey;
 
   useEffect(() => {
     if (!isActive || !canManagePasskeys) {
-      setPasskeys([]);
-      setIsLoadingPasskeys(false);
       return undefined;
     }
 
     let cancelled = false;
-    setIsLoadingPasskeys(true);
     void listLocalPasskeys()
       .then((nextPasskeys) => {
         if (!cancelled) {
@@ -227,14 +225,14 @@ export function useUserManager({
       })
       .finally(() => {
         if (!cancelled) {
-          setIsLoadingPasskeys(false);
+          setLoadedPasskeyRequestKey(passkeyRequestKey);
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [canManagePasskeys, identity?.deviceId, identity?.userId, isActive, setError]);
+  }, [canManagePasskeys, isActive, passkeyRequestKey, setError]);
 
   const save = async (event?: FormEvent<HTMLFormElement>): Promise<void> => {
     event?.preventDefault();

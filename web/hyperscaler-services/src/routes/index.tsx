@@ -37,7 +37,10 @@ function Home() {
   const services = Route.useLoaderData();
   const navigate = Route.useNavigate();
   const { lang, q } = useSearch({ from: "/" });
-  const [cookieLang, setCookieLang] = useState<LanguageCode>("en");
+  const [cookieLang] = useState<LanguageCode>(() => {
+    const savedLanguage = readPreference(preferenceCookies.language);
+    return isLanguageCode(savedLanguage) ? savedLanguage : "en";
+  });
   const currentLang = lang ?? cookieLang;
   const activeQuery = q ?? "";
   const t = translations[currentLang];
@@ -45,13 +48,6 @@ function Home() {
   useEffect(() => {
     if (lang !== undefined) {
       writePreference(preferenceCookies.language, lang);
-      setCookieLang(lang);
-      return;
-    }
-
-    const savedLanguage = readPreference(preferenceCookies.language);
-    if (isLanguageCode(savedLanguage)) {
-      setCookieLang(savedLanguage);
     }
   }, [lang]);
 

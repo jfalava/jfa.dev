@@ -45,18 +45,15 @@ function applyTheme(theme: Theme): void {
 }
 
 export default function Header() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(getPreferredTheme);
 
   useEffect(() => {
-    const nextTheme = getPreferredTheme();
-    setTheme(nextTheme);
-    applyTheme(nextTheme);
-  }, []);
+    applyTheme(theme);
+  }, [theme]);
 
   const toggleTheme = () => {
     const nextTheme: Theme = isDarkTheme(theme) ? "light" : "dark";
     setTheme(nextTheme);
-    applyTheme(nextTheme);
     writePreference(preferenceCookies.theme, nextTheme);
   };
 

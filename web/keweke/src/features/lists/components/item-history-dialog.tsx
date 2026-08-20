@@ -35,7 +35,6 @@ export function ItemHistoryDialog({
     }
 
     let cancelled = false;
-    setIsLoading(true);
     void getItemHistory(listId, itemId, { limit: PAGE_SIZE })
       .then((page) => {
         if (!cancelled) {

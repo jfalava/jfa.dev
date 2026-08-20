@@ -43,7 +43,10 @@ export function useRemoteListLiveSession(
 ): RemoteListLiveSession {
   const [status, setStatus] = useState<RemoteListLiveStatus>("connecting");
   const handlersRef = useRef(handlers);
-  handlersRef.current = handlers;
+
+  useEffect(() => {
+    handlersRef.current = handlers;
+  }, [handlers]);
 
   const generationRef = useRef(0);
   const reconnectAttemptRef = useRef(0);
@@ -51,53 +54,57 @@ export function useRemoteListLiveSession(
   const webSocketRef = useRef<WebSocket | undefined>(undefined);
   const isDeletedRef = useRef(false);
 
-  const connect = useCallback((): void => {
-    if (!listId) {
-      return;
-    }
-    const generation = generationRef.current;
-    const webSocket = openRemoteListLiveSession(listId, {
-      onOpen: () => {
-        if (generation !== generationRef.current) {
-          return;
-        }
-        reconnectAttemptRef.current = 0;
-        setStatus("connected");
-      },
-      onSnapshot: (snapshot) => {
-        if (generation === generationRef.current) {
-          handlersRef.current.onSnapshot(snapshot);
-        }
-      },
-      onMutation: (mutation, appliedAt) => {
-        if (generation === generationRef.current) {
-          handlersRef.current.onMutation(mutation, appliedAt);
-        }
-      },
-      onDeleted: () => {
-        if (generation !== generationRef.current) {
-          return;
-        }
-        isDeletedRef.current = true;
-        handlersRef.current.onDeleted();
-      },
-      onClose: () => {
-        if (generation !== generationRef.current) {
-          return;
-        }
-        setStatus("disconnected");
-        if (isDeletedRef.current) {
-          return;
-        }
-        reconnectTimerRef.current = window.setTimeout(
-          connect,
-          reconnectDelayMs(reconnectAttemptRef.current),
-        );
-        reconnectAttemptRef.current += 1;
-      },
-    });
-    webSocketRef.current = webSocket;
-  }, [listId]);
+  const connect = useCallback(
+    function connect(): void {
+      if (!listId) {
+        return;
+      }
+      setStatus("connecting");
+      const generation = generationRef.current;
+      const webSocket = openRemoteListLiveSession(listId, {
+        onOpen: () => {
+          if (generation !== generationRef.current) {
+            return;
+          }
+          reconnectAttemptRef.current = 0;
+          setStatus("connected");
+        },
+        onSnapshot: (snapshot) => {
+          if (generation === generationRef.current) {
+            handlersRef.current.onSnapshot(snapshot);
+          }
+        },
+        onMutation: (mutation, appliedAt) => {
+          if (generation === generationRef.current) {
+            handlersRef.current.onMutation(mutation, appliedAt);
+          }
+        },
+        onDeleted: () => {
+          if (generation !== generationRef.current) {
+            return;
+          }
+          isDeletedRef.current = true;
+          handlersRef.current.onDeleted();
+        },
+        onClose: () => {
+          if (generation !== generationRef.current) {
+            return;
+          }
+          setStatus("disconnected");
+          if (isDeletedRef.current) {
+            return;
+          }
+          reconnectTimerRef.current = window.setTimeout(
+            connect,
+            reconnectDelayMs(reconnectAttemptRef.current),
+          );
+          reconnectAttemptRef.current += 1;
+        },
+      });
+      webSocketRef.current = webSocket;
+    },
+    [listId],
+  );
 
   const refresh = useCallback((): Promise<RemoteListRefreshOutcome> => {
     return new Promise((resolve) => {
@@ -182,18 +189,17 @@ export function useRemoteListLiveSession(
 
   useEffect(() => {
     if (!listId) {
-      setStatus("connecting");
       return undefined;
     }
 
     isDeletedRef.current = false;
     generationRef.current += 1;
     reconnectAttemptRef.current = 0;
-    setStatus("connecting");
-    connect();
+    const connectTimer = window.setTimeout(connect, 0);
 
     return () => {
       generationRef.current += 1;
+      window.clearTimeout(connectTimer);
       if (reconnectTimerRef.current !== undefined) {
         window.clearTimeout(reconnectTimerRef.current);
         reconnectTimerRef.current = undefined;

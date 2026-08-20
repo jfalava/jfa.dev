@@ -1,6 +1,6 @@
 import { Button, Input } from "@jfa.dev/common/ui";
 import { ArrowLeftRight, Check, Copy, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { appPath } from "@/app/lib/site-paths";
 
@@ -16,12 +16,6 @@ export function ListTitleEditor({
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(title);
 
-  useEffect(() => {
-    if (!isEditing) {
-      setValue(title);
-    }
-  }, [isEditing, title]);
-
   if (!isEditing) {
     return (
       <div className="mt-1 flex items-center gap-1">
@@ -30,7 +24,10 @@ export function ListTitleEditor({
         </h1>
         <Button
           aria-label="Edit list title"
-          onPress={() => setIsEditing(true)}
+          onPress={() => {
+            setValue(title);
+            setIsEditing(true);
+          }}
           size="icon"
           variant="ghost"
         >
@@ -89,11 +86,6 @@ export function ListTitleEditor({
 export function ListAlias({ alias, listId }: { alias: string | null; listId: string }) {
   const [showListId, setShowListId] = useState(alias === null);
   const [isCopied, setIsCopied] = useState(false);
-
-  useEffect(() => {
-    setShowListId(alias === null);
-    setIsCopied(false);
-  }, [alias, listId]);
 
   const identifier = showListId || alias === null ? listId : alias;
   const label = showListId || alias === null ? "ID" : "Alias";

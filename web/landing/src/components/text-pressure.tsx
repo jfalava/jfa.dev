@@ -230,8 +230,6 @@ const TextPressure: React.FC<TextPressureProps> = ({
     );
   }, [fontFamily, fontUrl, textColor, strokeColor, strokeWidth]);
 
-  let spanIndex = 0;
-
   return (
     <div ref={containerRef} className="relative h-full w-full overflow-visible bg-transparent">
       {styleElement}
@@ -256,11 +254,14 @@ const TextPressure: React.FC<TextPressureProps> = ({
             return " ";
           }
 
+          const spanOffset = tokens
+            .slice(0, tokenIndex)
+            .reduce((count, previousToken) => count + previousToken.replace(/\s/g, "").length, 0);
+
           return (
             <span key={tokenIndex} className="inline-block whitespace-nowrap">
-              {token.split("").map((char) => {
-                const currentSpanIndex = spanIndex;
-                spanIndex += 1;
+              {token.split("").map((char, charIndex) => {
+                const currentSpanIndex = spanOffset + charIndex;
 
                 return (
                   <span
