@@ -1,6 +1,6 @@
 import { buttonVariants } from "@jfa.dev/common/ui";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, FileImage } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
