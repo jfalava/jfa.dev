@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { uuidv7 } from "uuidv7";
 
 import { KewekeHeader } from "@/app/components/keweke-header";
+import { shouldShowPublishNudge } from "@/app/lib/publish-nudge";
 import {
   ensureLocalIdentity,
   subscribeToLocalIdentity,
@@ -35,7 +36,11 @@ import {
   loadList,
   migrateList,
 } from "@/features/lists/lib/list-repository";
-import { deleteLocalList } from "@/features/lists/lib/local-list-store";
+import {
+  deleteLocalList,
+  listLocalLists,
+  subscribeToLocalLists,
+} from "@/features/lists/lib/local-list-store";
 import { listShareDescription, type ListShareMeta } from "@/features/lists/lib/share-meta";
 import { getListShareMeta, getRemoteList } from "@/features/lists/server/lists";
 import { useRemoteListLiveSession } from "@/features/sync/hooks/use-remote-list-live";
@@ -95,6 +100,7 @@ function ListPage() {
   const [historyTarget, setHistoryTarget] = useState<HistoryTarget>();
   const [unavailableReason, setUnavailableReason] = useState<string>();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isFirstList, setIsFirstList] = useState(false);
   const [filter, setFilter] = useState("");
   const [newItemDraft, setNewItemDraft] = useState<NewItemDraft>({
     name: "",
@@ -148,6 +154,30 @@ function ListPage() {
       cancelled = true;
     };
   }, [listId]);
+
+  useEffect(() => {
+    if (loadedList?.backend !== "local") {
+      setIsFirstList(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    const refreshFirstList = (): void => {
+      void listLocalLists().then((lists) => {
+        if (!cancelled) {
+          setIsFirstList(lists.length === 1 && lists[0]?.id === loadedList.snapshot.id);
+        }
+        return lists;
+      });
+    };
+
+    refreshFirstList();
+    const unsubscribe = subscribeToLocalLists(refreshFirstList);
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, [loadedList?.backend, loadedList?.snapshot.id]);
 
   useEffect(() => {
     if (!newItemAttempted) {
@@ -492,6 +522,12 @@ function ListPage() {
   const items = snapshot?.items ?? EMPTY_ITEMS;
   const activeCount = items.filter((item) => !item.checked).length;
   const completedCount = items.length - activeCount;
+  const showPublishNudge = shouldShowPublishNudge({
+    backend: loadedList?.backend,
+    isFirstList,
+    itemCount: items.length,
+    title: snapshot?.title,
+  });
 
   useEffect(() => {
     document.title = snapshot ? `${snapshot.title} - KEWEKE` : "keweke";
@@ -552,6 +588,7 @@ function ListPage() {
         backend={loadedList.backend}
         isMigrating={isMigrating}
         listId={listId}
+        showPublishNudge={showPublishNudge}
         onMigrate={requestMigration}
         isUserDialogOpen={isUserDialogOpen}
         onUserDialogOpenChange={handleUserDialogOpenChange}
