@@ -1,4 +1,5 @@
 import { Button } from "@jfa.dev/common/ui";
+import { Inbox } from "lucide-react";
 
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 import { NEW_LIST_HOTKEY } from "@/app/components/keweke-header";
@@ -11,7 +12,12 @@ export function EmptyListsState({
   onCreate: () => void;
 }) {
   return (
-    <div className="flex grow flex-col items-center justify-center gap-6 px-4 text-center sm:px-6 lg:px-8">
+    <div className="flex grow flex-col items-center justify-center gap-5 px-4 py-10 text-center sm:px-6 lg:px-8">
+      <Inbox aria-hidden="true" className="size-12 stroke-[1.25] text-muted-foreground" />
+      <div>
+        <h2 className="text-lg font-semibold tracking-tight">No lists yet</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Create one when you need it.</p>
+      </div>
       <Button
         className="flex h-11 w-full gap-x-3 text-base sm:w-auto sm:px-8"
         isDisabled={isCreating}
