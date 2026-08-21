@@ -29,7 +29,7 @@ export const webPackages: WebPackage[] = [
   },
   {
     path: "/og-img-gen",
-    title: "OG Image Generator",
+    title: "OG-IMG-GEN",
     routes: [{ path: "/", title: "OpenGraph Image Generator" }],
   },
   {
