@@ -13,7 +13,7 @@ export function OgImageGenHeader() {
       packages={webPackages}
       activePackagePath="/og-img-gen"
       navLabel="Editor navigation"
-      githubHref="https://github.com/jfalava/jfa.dev"
+      githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/og-img-gen"
     >
       <ThemeToggle />
     </SiteHeader>

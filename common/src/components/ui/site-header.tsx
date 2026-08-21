@@ -118,13 +118,12 @@ export function SiteHeader({
               rel="noopener noreferrer"
               aria-label="Open the GitHub repository"
               className={buttonVariants({
-                className:
-                  "hidden gap-1 bg-action text-action-foreground hover:bg-action/80 lg:inline-flex",
+                className: "gap-1 bg-action text-action-foreground hover:bg-action/80",
                 size: "default",
               })}
             >
               <GitHubIcon />
-              <ArrowUpRight aria-hidden="true" />
+              <ArrowUpRight aria-hidden="true" className="hidden lg:inline" />
             </a>
           ) : null}
         </nav>

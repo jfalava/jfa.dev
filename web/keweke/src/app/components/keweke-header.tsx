@@ -110,6 +110,7 @@ export function KewekeHeader({
       packages={webPackages}
       activePackagePath="/keweke"
       navLabel="General navigation"
+      githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/keweke"
     >
       <OpenListCommand />
 

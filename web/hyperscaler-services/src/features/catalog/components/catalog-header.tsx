@@ -35,7 +35,7 @@ export function CatalogHeader({
       packages={webPackages}
       activePackagePath="/hyperscaler-services"
       navLabel="Catalog navigation"
-      githubHref="https://github.com/jfalava/hyperscaler-services"
+      githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/hyperscaler-services"
     >
       <ServiceSearchPalette
         activeQuery={activeQuery}

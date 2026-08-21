@@ -16,7 +16,7 @@ function App() {
         packages={webPackages}
         activePackagePath="/"
         navLabel="Ego page"
-        githubHref="https://github.com/jfalava/jfa.dev"
+        githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/landing"
       >
         <ThemeToggle />
       </SiteHeader>

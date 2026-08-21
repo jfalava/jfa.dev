@@ -51,6 +51,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             packages={webPackages}
             activePackagePath="/branding"
             navLabel="Branding navigation"
+            githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/branding"
           >
             <ThemeToggle />
           </SiteHeader>
