@@ -1,0 +1,37 @@
+{
+  "name": "@jfa.dev/branding",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "check": "vp check --fix",
+    "dev": "vp dev --port 3104 --host",
+    "format": "vp fmt",
+    "lint": "vp lint",
+    "preview": "vp preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jfa.dev/common": "workspace:*",
+    "@tailwindcss/vite": "catalog:styling",
+    "@tanstack/react-router": "catalog:tanstack",
+    "@tanstack/react-start": "catalog:tanstack",
+    "lucide-react": "catalog:ui",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "sonner": "catalog:ui",
+    "tailwindcss": "catalog:styling",
+    "tw-animate-css": "catalog:styling"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:types",
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "@vitejs/plugin-react": "catalog:build",
+    "oxc-transform-react": "catalog:build",
+    "typescript": "catalog:build",
+    "vite": "catalog:build",
+    "vite-plus": "catalog:build"
+  }
+}

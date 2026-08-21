@@ -191,6 +191,36 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     kewekeOptions,
   ).pipe(adopt(true));
 
+  const brandingOptions = {
+    ...workerDefaults(config.workers.brandingMounted),
+    name: config.workers.brandingMounted.name,
+    rootDir: resolve(repositoryRoot, "web/branding"),
+    assets: {
+      runWorkerFirst: false,
+    },
+  };
+  if (config.workers.brandingMounted.basePath !== undefined) {
+    const env: HyperscalerEnvironment = {
+      VITE_BASE_PATH: config.workers.brandingMounted.basePath,
+    };
+    if (config.workers.brandingMounted.assetBasePath !== undefined) {
+      env.VITE_ASSET_BASE_PATH = config.workers.brandingMounted.assetBasePath;
+    }
+    Object.assign(brandingOptions, { env });
+  }
+  if (config.workers.brandingMounted.domain !== undefined) {
+    Object.assign(brandingOptions, {
+      domain: config.workers.brandingMounted.domain,
+    });
+  }
+  if (isLocal) {
+    Object.assign(brandingOptions, { dev: localDev(3104) });
+  }
+  const brandingMounted = yield* Cloudflare.Website.Vite(
+    "BrandingMountedWorker",
+    brandingOptions,
+  ).pipe(adopt(true));
+
   const countryBlocklist =
     config.stage === "production" && config.router.countryBlocklistName
       ? yield* Cloudflare.KV.Namespace(config.router.countryBlocklistName, {
@@ -205,6 +235,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     OG_IMG_GEN: typeof ogImgGen;
     HYPERSCALER_SERVICES: typeof hyperscalerMounted;
     KEWEKE: typeof kewekeMounted;
+    BRANDING: typeof brandingMounted;
     COUNTRY_BLOCKLIST?: typeof countryBlocklist;
   };
   const routerEnv: RouterEnvironment = {
@@ -214,6 +245,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     OG_IMG_GEN: ogImgGen,
     HYPERSCALER_SERVICES: hyperscalerMounted,
     KEWEKE: kewekeMounted,
+    BRANDING: brandingMounted,
   };
   if (countryBlocklist !== undefined) {
     routerEnv.COUNTRY_BLOCKLIST = countryBlocklist;
@@ -257,6 +289,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     ogImgGen,
     hyperscalerMounted,
     kewekeMounted,
+    brandingMounted,
     router,
     redirects,
   };
