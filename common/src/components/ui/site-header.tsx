@@ -147,7 +147,7 @@ interface PackageSwitcherProps {
  */
 function PackageBrand({ subtitle, title }: { subtitle?: ReactNode; title: string }) {
   return (
-    <span className="flex min-w-0 items-baseline gap-3 truncate">
+    <span className="flex min-w-0 items-baseline gap-3 truncate font-sans">
       <span className="shrink-0 whitespace-nowrap text-sm font-bold tracking-tight text-primary">
         /{title}
         <span className="pl-0.5 text-xs font-bold tracking-tight">by JFA</span>
