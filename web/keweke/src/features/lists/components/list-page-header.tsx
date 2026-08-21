@@ -1,6 +1,6 @@
 import { Button, Input } from "@jfa.dev/common/ui";
 import { useHotkey } from "@tanstack/react-hotkeys";
-import { Grid2X2, Info, RefreshCw, Search } from "lucide-react";
+import { FileSpreadsheet, Info, RefreshCw, Search } from "lucide-react";
 
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 
@@ -103,9 +103,9 @@ export function ListPageHeader({
             size="icon"
             variant={isSpreadsheetMode ? "default" : "ghost"}
           >
-            <Grid2X2 aria-hidden="true" />
+            <FileSpreadsheet aria-hidden="true" />
             <span className="hidden sm:inline">
-              {isSpreadsheetMode ? "Exit grid" : "Grid mode"}
+              {isSpreadsheetMode ? "Exit Excel" : "Excel Mode"}
             </span>
             <HotkeyKbd className="hidden sm:inline-flex" hotkey={SPREADSHEET_MODE_HOTKEY} />
           </Button>
