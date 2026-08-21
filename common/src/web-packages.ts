@@ -50,7 +50,11 @@ export const webPackages: WebPackage[] = [
   {
     path: "/branding",
     title: "Branding",
-    routes: [{
-      path: "/", title: "Branding and Component showcase" }],
+    routes: [
+      {
+        path: "/",
+        title: "Branding and Component showcase",
+      },
+    ],
   },
 ];
