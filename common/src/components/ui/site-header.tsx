@@ -191,7 +191,7 @@ function PackageSwitcher({
         </span>
         <ChevronDown aria-hidden="true" className="shrink-0 opacity-70" />
       </Button>
-      <DropdownMenu className="w-auto min-w-72">
+      <DropdownMenu className="w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] sm:w-auto sm:min-w-72 sm:max-w-none">
         {packages.map((pkg) => {
           const subtitle =
             pkg.routes.find((route) => route.path === "/")?.title ??
