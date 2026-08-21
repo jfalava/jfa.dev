@@ -179,9 +179,9 @@ function PackageSwitcher({
       <Button
         aria-label={ariaLabel}
         variant="ghost"
-        className="-ml-1 h-auto min-w-0 justify-start gap-1 px-1 py-0.5 text-sm font-bold tracking-tight whitespace-nowrap text-primary hover:text-primary dark:hover:text-primary [&_svg:not([class*='size-'])]:size-3"
+        className="-ml-1 h-auto w-40 min-w-0 shrink justify-start gap-1 px-1 py-0.5 text-sm font-bold tracking-tight whitespace-nowrap text-primary hover:text-primary sm:w-[17.5rem] md:w-[25rem] lg:w-[30rem] dark:hover:text-primary [&_svg:not([class*='size-'])]:size-3"
       >
-        <span className="flex min-w-0 truncate lg:pr-2">
+        <span className="flex min-w-0 flex-1 truncate lg:pr-2">
           <span className="hidden min-w-0 sm:inline">
             <PackageBrand subtitle={subtitle} title={title} />
           </span>
@@ -191,7 +191,7 @@ function PackageSwitcher({
         </span>
         <ChevronDown aria-hidden="true" className="shrink-0 opacity-70" />
       </Button>
-      <DropdownMenu className="w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] sm:w-auto sm:min-w-72 sm:max-w-none">
+      <DropdownMenu className="w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] sm:w-(--trigger-width) sm:min-w-0 sm:max-w-none">
         {packages.map((pkg) => {
           const routeSubtitle =
             pkg.routes.find((route) => route.path === "/")?.title ?? pkg.routes[0]?.title;
