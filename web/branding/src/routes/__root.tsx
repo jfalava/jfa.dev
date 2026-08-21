@@ -44,8 +44,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <body className="flex min-h-dvh flex-col bg-background font-sans text-base text-foreground">
         <ThemeProvider>
           <SiteHeader
-            title="branding"
-            subtitle="component showcase"
+            title="BRANDING"
+            subtitle="Component showcase"
             titleHref={appPath("/")}
             navLabel="Branding navigation"
           >
