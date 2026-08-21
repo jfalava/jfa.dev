@@ -39,7 +39,7 @@ export const webPackages: WebPackage[] = [
   },
   {
     path: "/keweke",
-    title: "Keweke",
+    title: "KEWEKE",
     routes: [
       { path: "/", title: "Yet another collaborative shopping list" },
       { path: "/:listId", title: "List · KEWEKE" },
