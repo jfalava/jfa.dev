@@ -15,4 +15,4 @@ bun run lint
 bun run build        # vp build -> Cloudflare Worker via Alchemy (iac)
 ```
 
-Deployed at `/branding` (port 3104 local) through `iac/src/config.ts` + `iac/src/workers.ts` and the top-level `function/router`.
+Deployed at `/branding` (locally via `bun run dev`, which boots everything through `alchemy dev --stage local`) through `iac/src/config.ts` + `iac/src/workers.ts` and the top-level `function/router`.

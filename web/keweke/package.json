@@ -5,7 +5,10 @@
   "scripts": {
     "build": "vp build",
     "check": "vp check --fix",
-    "dev": "vp dev --port 3103 --host",
+    "check": "vp check --fix",
+    "dev": "bun run --cwd ../../iac dev",
+    "dev:app": "bun run --cwd ../../iac dev",
+    "format": "vp fmt",
     "format": "vp fmt",
     "lint": "vp lint",
     "preview": "vp preview",

@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "check": "vp check --fix",
-    "dev": "bun --watch src/dev.ts",
+    "dev": "bun run --cwd ../../iac dev",
+    "dev:app": "bun run --cwd ../../iac dev",
     "format": "vp fmt",
     "lint": "vp lint",
     "typecheck": "tsc --noEmit"

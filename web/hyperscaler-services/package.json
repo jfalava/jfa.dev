@@ -4,7 +4,8 @@
   "scripts": {
     "build": "tsc --noEmit && vp lint && vp build",
     "check": "vp check --fix && vp lint --type-check --fix",
-    "dev": "vp dev --port 3102 --host",
+    "dev": "bun run --cwd ../../iac dev",
+    "dev:app": "bun run --cwd ../../iac dev",
     "format": "vp fmt",
     "generate:search-index": "bun run scripts/build-service-search-index.ts",
     "lint": "vp lint --type-aware",
