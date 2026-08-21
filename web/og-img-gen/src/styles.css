@@ -43,14 +43,19 @@
 
 @media (max-width: 767px), (orientation: portrait) {
   .viewport-guard-app {
+    flex: none;
+    min-height: 0;
+  }
+
+  .viewport-guard-app > :not(.site-header) {
     display: none;
   }
 
   .viewport-guard {
     align-items: center;
     display: flex;
+    flex: 1;
     justify-content: center;
-    min-height: 100dvh;
     padding: 1.5rem;
   }
 }
