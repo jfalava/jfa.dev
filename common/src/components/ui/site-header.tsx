@@ -57,7 +57,7 @@ export function SiteHeader({
 }: SiteHeaderProps) {
   const brandBody = (
     <>
-      <span className="shrink-0 text-sm font-bold tracking-wide text-primary">
+      <span className="shrink-0 text-sm font-bold tracking-tight text-primary">
         <span className="hidden sm:inline">/{title}</span>
         <span className="inline sm:hidden">/{titleSmol}</span>
         <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">
@@ -168,7 +168,7 @@ function PackageSwitcher({
       <Button
         aria-label={ariaLabel}
         variant="ghost"
-        className="-ml-1 h-auto min-w-0 justify-start gap-1 px-1 py-0.5 text-sm font-bold tracking-wide whitespace-nowrap text-primary hover:text-primary dark:hover:text-primary [&_svg:not([class*='size-'])]:size-3"
+        className="-ml-1 h-auto min-w-0 justify-start gap-1 px-1 py-0.5 text-sm font-bold tracking-tight whitespace-nowrap text-primary hover:text-primary dark:hover:text-primary [&_svg:not([class*='size-'])]:size-3"
       >
         <span className="flex min-w-0 items-baseline gap-3 truncate lg:pr-2">
           <span className="truncate">
