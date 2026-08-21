@@ -11,12 +11,14 @@ export const infrastructureInventory = {
       "/og-img-gen/*",
       "/hyperscaler-services/*",
       "/keweke/*",
+      "/branding/*",
     ],
     bindings: [
       "LANDING",
       "OG_IMG_GEN",
       "HYPERSCALER_SERVICES",
       "KEWEKE",
+      "BRANDING",
       "COUNTRY_BLOCKLIST",
     ],
   },
@@ -41,6 +43,12 @@ export const infrastructureInventory = {
     domains: [],
     publicRoutes: ["/keweke/*"],
     basePath: "/keweke",
+  },
+  brandingMounted: {
+    worker: "jfa-dev-branding",
+    domains: [],
+    publicRoutes: ["/branding/*"],
+    basePath: "/branding",
   },
   kewekeAdminAccess: {
     application: "Keweke Admin",
