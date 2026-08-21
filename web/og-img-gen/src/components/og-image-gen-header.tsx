@@ -11,6 +11,7 @@ export function OgImageGenHeader() {
       subtitle="Create OpenGraph images from scratch"
       titleHref={appPath("/")}
       packages={webPackages}
+      activePackagePath="/og-img-gen"
       navLabel="Editor navigation"
       githubHref="https://github.com/jfalava/jfa.dev"
     >

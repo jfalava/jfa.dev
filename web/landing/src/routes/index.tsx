@@ -11,9 +11,10 @@ function App() {
   return (
     <div className="flex h-dvh min-h-svh flex-col">
       <SiteHeader
-        title="jfa.dev"
+        title="Landing"
         packages={webPackages}
-        navLabel="Landing navigation"
+        activePackagePath="/"
+        navLabel="Ego page"
         githubHref="https://github.com/jfalava/jfa.dev"
       />
       <main className="relative flex-1 overflow-hidden overscroll-none bg-[#0e1116]">

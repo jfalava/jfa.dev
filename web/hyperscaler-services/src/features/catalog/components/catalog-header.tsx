@@ -33,6 +33,7 @@ export function CatalogHeader({
       titleSmol={t.titleSmol}
       subtitle={t.subtitle}
       packages={webPackages}
+      activePackagePath="/hyperscaler-services"
       navLabel="Catalog navigation"
       githubHref="https://github.com/jfalava/hyperscaler-services"
     >

@@ -49,6 +49,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             subtitle="Component showcase"
             titleHref={appPath("/")}
             packages={webPackages}
+            activePackagePath="/branding"
             navLabel="Branding navigation"
           >
             <ThemeToggle />

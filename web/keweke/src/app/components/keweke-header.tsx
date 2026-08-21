@@ -108,6 +108,7 @@ export function KewekeHeader({
       subtitle="Yet another collaborative shopping list"
       titleHref={appPath("/")}
       packages={webPackages}
+      activePackagePath="/keweke"
       navLabel="General navigation"
     >
       <OpenListCommand />

@@ -25,7 +25,7 @@ export const webPackages: WebPackage[] = [
   {
     path: "/",
     title: "Landing",
-    routes: [{ path: "/", title: "jorge fernando álava" }],
+    routes: [{ path: "/", title: "Ego page" }],
   },
   {
     path: "/og-img-gen",
@@ -35,13 +35,13 @@ export const webPackages: WebPackage[] = [
   {
     path: "/hyperscaler-services",
     title: "Hyperscaler Services",
-    routes: [{ path: "/", title: "Hyperscaler Services" }],
+    routes: [{ path: "/", title: "A directory of similar cloud services" }],
   },
   {
     path: "/keweke",
     title: "Keweke",
     routes: [
-      { path: "/", title: "KEWEKE by JFA" },
+      { path: "/", title: "Yet another collaborative shopping list" },
       { path: "/:listId", title: "List · KEWEKE" },
       { path: "/admin", title: "Admin · KEWEKE" },
       { path: "/user", title: "User · KEWEKE" },
@@ -50,6 +50,7 @@ export const webPackages: WebPackage[] = [
   {
     path: "/branding",
     title: "Branding",
-    routes: [{ path: "/", title: "Component showcase" }],
+    routes: [{
+      path: "/", title: "Branding and Component showcase" }],
   },
 ];

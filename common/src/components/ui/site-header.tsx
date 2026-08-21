@@ -28,6 +28,11 @@ export interface SiteHeaderProps extends Omit<
    * title becomes a dropdown listing every package with its mounted routes.
    */
   packages?: WebPackage[];
+  /**
+   * When set, the package with this mount path is excluded from the brand
+   * switcher dropdown — the current package should not link to itself.
+   */
+  activePackagePath?: string;
   /** The accessible name for the header navigation. */
   navLabel: string;
   /** The repository URL for the normalized GitHub action. */
@@ -38,6 +43,7 @@ export interface SiteHeaderProps extends Omit<
 
 /** Shared shell for the headers used by the web applications. */
 export function SiteHeader({
+  activePackagePath,
   children,
   className,
   githubHref,
@@ -73,10 +79,13 @@ export function SiteHeader({
 
   let brand: ReactNode;
   if (packages && packages.length > 0) {
+    const filteredPackages = activePackagePath
+      ? packages.filter((pkg) => pkg.path !== activePackagePath)
+      : packages;
     brand = (
       <PackageSwitcher
         ariaLabel={`${title} by JFA`}
-        packages={packages}
+        packages={filteredPackages}
         subtitle={subtitle}
         title={title}
         titleSmol={titleSmol}
