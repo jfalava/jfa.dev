@@ -2,6 +2,7 @@ import { SiteHeader } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { ThemeToggle } from "@/components/theme-toggle";
 import Grainient from "@/features/hero/components/grainient";
 import TextPressure from "@/features/hero/components/text-pressure";
 
@@ -16,7 +17,9 @@ function App() {
         activePackagePath="/"
         navLabel="Ego page"
         githubHref="https://github.com/jfalava/jfa.dev"
-      />
+      >
+        <ThemeToggle />
+      </SiteHeader>
       <main className="relative flex-1 overflow-hidden overscroll-none bg-[#0e1116]">
         <Grainient
           className="pointer-events-none absolute inset-0 size-full"
