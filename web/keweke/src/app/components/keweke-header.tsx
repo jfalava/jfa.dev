@@ -1,5 +1,6 @@
 import type { ListBackend } from "@jfa.dev/common/lists";
 import { Button, SiteHeader, buttonVariants } from "@jfa.dev/common/ui";
+import { webPackages } from "@jfa.dev/common/web-packages";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Check, CloudUpload, Copy, Plus, UserRound } from "lucide-react";
@@ -106,6 +107,7 @@ export function KewekeHeader({
       title="KEWEKE"
       subtitle="Yet another collaborative shopping list"
       titleHref={appPath("/")}
+      packages={webPackages}
       navLabel="General navigation"
     >
       <OpenListCommand />

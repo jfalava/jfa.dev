@@ -6,3 +6,4 @@ node_modules
 .pnpm-store
 .env
 .amp/portals/
+dist/

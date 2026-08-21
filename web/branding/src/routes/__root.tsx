@@ -1,4 +1,5 @@
 import { SiteHeader, Toaster } from "@jfa.dev/common/ui";
+import { webPackages } from "@jfa.dev/common/web-packages";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
@@ -47,6 +48,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             title="BRANDING"
             subtitle="Component showcase"
             titleHref={appPath("/")}
+            packages={webPackages}
             navLabel="Branding navigation"
           >
             <ThemeToggle />

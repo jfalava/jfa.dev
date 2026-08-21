@@ -1,4 +1,5 @@
 import { SiteHeader } from "@jfa.dev/common/ui";
+import { webPackages } from "@jfa.dev/common/web-packages";
 import { X } from "lucide-react";
 
 import { LanguageToggle } from "@/components/language-toggle";
@@ -31,6 +32,7 @@ export function CatalogHeader({
       title={t.title}
       titleSmol={t.titleSmol}
       subtitle={t.subtitle}
+      packages={webPackages}
       navLabel="Catalog navigation"
       githubHref="https://github.com/jfalava/hyperscaler-services"
     >

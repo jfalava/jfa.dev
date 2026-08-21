@@ -3,14 +3,63 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./aliases": "./src/aliases.ts",
-    "./crypto": "./src/crypto.ts",
-    "./identities": "./src/identities.ts",
-    "./preferences": "./src/preferences.ts",
+    ".": {
+      "workerd": "./src/index.ts",
+      "worker": "./src/index.ts",
+      "browser": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./aliases": {
+      "workerd": "./src/aliases.ts",
+      "worker": "./src/aliases.ts",
+      "browser": "./src/aliases.ts",
+      "import": "./src/aliases.ts",
+      "default": "./src/aliases.ts"
+    },
+    "./crypto": {
+      "workerd": "./src/crypto.ts",
+      "worker": "./src/crypto.ts",
+      "browser": "./src/crypto.ts",
+      "import": "./src/crypto.ts",
+      "default": "./src/crypto.ts"
+    },
+    "./identities": {
+      "workerd": "./src/identities.ts",
+      "worker": "./src/identities.ts",
+      "browser": "./src/identities.ts",
+      "import": "./src/identities.ts",
+      "default": "./src/identities.ts"
+    },
+    "./preferences": {
+      "workerd": "./src/preferences.ts",
+      "worker": "./src/preferences.ts",
+      "browser": "./src/preferences.ts",
+      "import": "./src/preferences.ts",
+      "default": "./src/preferences.ts"
+    },
     "./styles.css": "./src/styles.css",
-    "./ui": "./src/components/ui/index.ts",
-    "./lists": "./src/lists.ts"
+    "./ui": {
+      "workerd": "./src/components/ui/index.ts",
+      "worker": "./src/components/ui/index.ts",
+      "browser": "./src/components/ui/index.ts",
+      "import": "./src/components/ui/index.ts",
+      "default": "./src/components/ui/index.ts"
+    },
+    "./lists": {
+      "workerd": "./src/lists.ts",
+      "worker": "./src/lists.ts",
+      "browser": "./src/lists.ts",
+      "import": "./src/lists.ts",
+      "default": "./src/lists.ts"
+    },
+    "./web-packages": {
+      "workerd": "./src/web-packages.ts",
+      "worker": "./src/web-packages.ts",
+      "browser": "./src/web-packages.ts",
+      "import": "./src/web-packages.ts",
+      "default": "./src/web-packages.ts"
+    }
   },
   "scripts": {
     "check": "vp check --fix",

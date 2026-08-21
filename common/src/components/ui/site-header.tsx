@@ -1,8 +1,10 @@
 import { cn } from "../../lib/utils";
+import type { WebPackage } from "../../web-packages";
 
-import { buttonVariants } from "./button";
+import { Button, buttonVariants } from "./button";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 
 export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title"> {
@@ -14,6 +16,11 @@ export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title">
   subtitle?: ReactNode;
   /** An optional URL for making the brand link back to the application. */
   titleHref?: string;
+  /**
+   * The web packages offered by the brand switcher. When provided, the brand
+   * title becomes a dropdown listing every package with its mounted routes.
+   */
+  packages?: WebPackage[];
   /** The accessible name for the header navigation. */
   navLabel: string;
   /** The repository URL for the normalized GitHub action. */
@@ -28,17 +35,15 @@ export function SiteHeader({
   className,
   githubHref,
   navLabel,
+  packages,
   subtitle,
   title,
   titleHref,
   titleSmol = title,
   ...props
 }: SiteHeaderProps) {
-  const brand = (
-    <div
-      aria-label={`${title} by JFA`}
-      className="flex min-w-0 items-baseline gap-3 truncate lg:pr-4"
-    >
+  const brandBody = (
+    <>
       <span className="shrink-0 text-sm font-bold tracking-wide text-primary">
         <span className="hidden sm:inline">/{title}</span>
         <span className="inline sm:hidden">/{titleSmol}</span>
@@ -52,8 +57,37 @@ export function SiteHeader({
           {subtitle}
         </span>
       ) : null}
-    </div>
+    </>
   );
+
+  let brand: ReactNode;
+  if (packages && packages.length > 0) {
+    brand = (
+      <PackageSwitcher
+        ariaLabel={`${title} by JFA`}
+        packages={packages}
+        subtitle={subtitle}
+        title={title}
+        titleSmol={titleSmol}
+      />
+    );
+  } else {
+    brand = (
+      <div
+        aria-label={`${title} by JFA`}
+        className="flex min-w-0 items-baseline gap-3 truncate lg:pr-4"
+      >
+        {brandBody}
+      </div>
+    );
+    if (titleHref) {
+      brand = (
+        <a href={titleHref} className="min-w-0 cursor-pointer text-sm text-foreground">
+          {brand}
+        </a>
+      );
+    }
+  }
 
   return (
     <header
@@ -64,13 +98,7 @@ export function SiteHeader({
       {...props}
     >
       <div className="flex min-h-11 items-center justify-between gap-4 px-4 sm:gap-6 sm:px-6 lg:gap-8 lg:px-8">
-        {titleHref ? (
-          <a href={titleHref} className="min-w-0 cursor-pointer text-sm text-foreground">
-            {brand}
-          </a>
-        ) : (
-          brand
-        )}
+        {brand}
 
         <nav className="flex shrink-0 items-center gap-1" aria-label={navLabel}>
           {children}
@@ -93,6 +121,73 @@ export function SiteHeader({
         </nav>
       </div>
     </header>
+  );
+}
+
+interface PackageSwitcherProps {
+  ariaLabel: string;
+  packages: WebPackage[];
+  subtitle?: ReactNode;
+  title: string;
+  titleSmol: string;
+}
+
+/** Brand switcher rendered in place of the plain title when packages are provided. */
+function PackageSwitcher({
+  ariaLabel,
+  packages,
+  subtitle,
+  title,
+  titleSmol,
+}: PackageSwitcherProps) {
+  return (
+    <DropdownMenuTrigger>
+      <Button
+        aria-label={ariaLabel}
+        variant="ghost"
+        className="-ml-1 h-auto min-w-0 justify-start gap-1 px-1 py-0.5 text-sm font-bold tracking-wide whitespace-nowrap text-primary hover:text-primary dark:hover:text-primary [&_svg:not([class*='size-'])]:size-3"
+      >
+        <span className="flex min-w-0 items-baseline gap-3 truncate lg:pr-2">
+          <span className="truncate">
+            <span className="hidden sm:inline">/{title}</span>
+            <span className="inline sm:hidden">/{titleSmol}</span>
+            <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
+          </span>
+          {subtitle ? (
+            <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
+          ) : null}
+          {subtitle ? (
+            <span className="hidden truncate text-[11px] font-normal tracking-normal text-muted-foreground sm:inline">
+              {subtitle}
+            </span>
+          ) : null}
+        </span>
+        <ChevronDown aria-hidden="true" className="shrink-0 opacity-70" />
+      </Button>
+      <DropdownMenu className="w-auto min-w-72">
+        {packages.map((pkg) => (
+          <DropdownMenuItem
+            key={pkg.path}
+            href={pkg.path === "/" ? "/" : `${pkg.path}/`}
+            textValue={`${pkg.title} ${pkg.path}`}
+          >
+            <div className="flex min-w-0 flex-col gap-0.5 py-0.5">
+              <span className="flex items-baseline gap-2">
+                <span className="text-sm font-semibold">{pkg.title}</span>
+                <span className="text-xs text-muted-foreground">{pkg.path}</span>
+              </span>
+              <span className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] leading-snug text-muted-foreground">
+                {pkg.routes.map((route) => (
+                  <span key={route.path}>
+                    <span className="font-mono">{route.path}</span> · {route.title}
+                  </span>
+                ))}
+              </span>
+            </div>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenu>
+    </DropdownMenuTrigger>
   );
 }
 
