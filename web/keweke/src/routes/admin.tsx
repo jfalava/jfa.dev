@@ -66,8 +66,9 @@ function AdminDeleteAction({
     setIsDeleting(true);
     try {
       await onDelete();
-    } catch {
+    } catch (error) {
       setIsDeleting(false);
+      console.error(error);
       toast.error("Could not delete that remote item.");
     }
   };
