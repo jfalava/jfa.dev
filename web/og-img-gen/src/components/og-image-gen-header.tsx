@@ -8,6 +8,7 @@ export function OgImageGenHeader() {
   return (
     <SiteHeader
       title="OpenGraph Image Generator"
+      titleSmol="OG Image Gen."
       subtitle="Create OpenGraph images from scratch"
       titleHref={appPath("/")}
       packages={webPackages}

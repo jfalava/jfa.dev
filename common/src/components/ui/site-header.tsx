@@ -5,7 +5,7 @@ import { Button, buttonVariants } from "./button";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 
 import { ArrowUpRight, ChevronDown } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
+import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
 
 export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title"> {
   /** The full title displayed on larger screens. */
@@ -173,12 +173,25 @@ function PackageSwitcher({
   title,
   titleSmol,
 }: PackageSwitcherProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && !event.altKey && event.code === "KeyJ") {
+        event.preventDefault();
+        setIsOpen((open) => !open);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
-    <DropdownMenuTrigger>
+    <DropdownMenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
       <Button
         aria-label={ariaLabel}
         variant="ghost"
-        className="-ml-1 h-auto w-40 min-w-0 shrink justify-start gap-1 px-1 py-0.5 text-sm font-bold tracking-tight whitespace-nowrap text-primary hover:text-primary sm:w-[17.5rem] md:w-[25rem] lg:w-[30rem] dark:hover:text-primary [&_svg:not([class*='size-'])]:size-3"
+        className="-ml-1 h-auto w-48 min-w-0 shrink justify-start gap-1 px-1 py-0.5 text-sm font-bold tracking-tight whitespace-nowrap text-primary hover:text-primary sm:w-[21rem] md:w-[30rem] lg:w-[36rem] dark:hover:text-primary [&_svg:not([class*='size-'])]:size-3"
       >
         <span className="flex min-w-0 flex-1 truncate lg:pr-2">
           <span className="hidden min-w-0 sm:inline">
