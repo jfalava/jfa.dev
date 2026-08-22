@@ -252,7 +252,7 @@ export function ServiceSearchPalette({
       {
         scope: "category",
         label: translations.categories ?? "Categories",
-        hotkey: "Mod+Shift+C",
+        hotkey: "O",
         queryPrefix: "category:",
       },
     ],
@@ -343,7 +343,7 @@ export function ServiceSearchPalette({
         callback: () => applyScope("provider"),
       },
       {
-        hotkey: "Mod+Shift+C",
+        hotkey: "O",
         callback: () => applyScope("category"),
       },
     ],
