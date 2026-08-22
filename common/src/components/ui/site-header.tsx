@@ -6,8 +6,8 @@ import { DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 import { Kbd, KbdGroup } from "./kbd";
 
 import { ArrowUpRight, ChevronDown, CodeXml } from "lucide-react";
-import { Menu as MenuPrimitive, Popover as PopoverPrimitive } from "react-aria-components";
 import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
+import { Menu as MenuPrimitive, Popover as PopoverPrimitive } from "react-aria-components";
 
 export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title"> {
   /** The full title displayed on larger screens. */

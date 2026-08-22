@@ -62,11 +62,16 @@ export function SpreadsheetShoppingTable({
   const pendingCommitsRef = useRef(new Map<string, Promise<boolean>>());
   const commitQueueRef = useRef(Promise.resolve());
   const wasActiveRef = useRef(false);
+  const onAddRef = useRef(onAdd);
 
   useEffect(() => {
     draftsRef.current = drafts;
     itemsRef.current = items;
   }, [drafts, items]);
+
+  useEffect(() => {
+    onAddRef.current = onAdd;
+  }, [onAdd]);
 
   const rowIds = useMemo(() => [...items.map((item) => item.id), NEW_SPREADSHEET_ROW_ID], [items]);
 
@@ -180,6 +185,12 @@ export function SpreadsheetShoppingTable({
     });
   }, []);
 
+  const focusLocationRef = useRef(focusLocation);
+
+  useEffect(() => {
+    focusLocationRef.current = focusLocation;
+  }, [focusLocation]);
+
   const focusFirstLocation = useCallback((): void => {
     focusLocation({
       rowId: rowIds[0] ?? NEW_SPREADSHEET_ROW_ID,
@@ -207,14 +218,14 @@ export function SpreadsheetShoppingTable({
     isAddingRef.current = true;
     setIsAdding(true);
     try {
-      if (await onAdd()) {
-        focusLocation({ rowId: NEW_SPREADSHEET_ROW_ID, field: SPREADSHEET_FIELDS[0] });
+      if (await onAddRef.current()) {
+        focusLocationRef.current({ rowId: NEW_SPREADSHEET_ROW_ID, field: SPREADSHEET_FIELDS[0] });
       }
     } finally {
       isAddingRef.current = false;
       setIsAdding(false);
     }
-  }, [focusLocation, onAdd]);
+  }, []);
 
   const removeItem = useCallback(
     (itemId: string): void => {
