@@ -13,7 +13,7 @@ export function ViewportGuard({ children }: Readonly<{ children: ReactNode }>) {
             In the future, perhaps?
           </p>
           <p className="mt-4 text-sm font-semibold tracking-tight uppercase">
-            The minimum supported size is bigger than your phone
+            Minimum size: 1180 x 820 (iPad Air, landscape)
           </p>
         </div>
       </div>

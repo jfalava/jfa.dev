@@ -41,7 +41,8 @@
   min-height: 100dvh;
 }
 
-@media (max-width: 767px), (orientation: portrait) {
+/* Minimum supported viewport: iPad Air landscape (1180 x 820). */
+@media (max-width: 1179px), (max-height: 819px) {
   .viewport-guard-app {
     flex: none;
     min-height: 0;
