@@ -43,11 +43,11 @@ export function LanguageToggle({ currentLang }: LanguageToggleProps) {
     <DropdownMenuTrigger>
       <Button
         variant="outline"
-        size="default"
+        size="lg"
         className="min-w-17 justify-between px-2.5 text-primary hover:bg-primary/10 hover:text-primary"
       >
         <span>{currentLang.toUpperCase()}</span>
-        <ChevronDown className="size-3.5" />
+        <ChevronDown className="size-4" />
       </Button>
       <DropdownMenu placement="bottom end">
         <DropdownMenuItem onAction={() => handleLanguageChange("en")}>

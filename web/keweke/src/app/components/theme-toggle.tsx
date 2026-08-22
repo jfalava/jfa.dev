@@ -33,8 +33,8 @@ export function ThemeToggle() {
     <MenuTrigger>
       <Button
         aria-label={`Theme: ${themeLabels[theme]}`}
-        className="gap-1.5 px-2 text-primary hover:bg-primary/10 hover:text-primary sm:w-auto sm:gap-1"
-        size="icon"
+        className="gap-1.5 px-2.5 text-primary hover:bg-primary/10 hover:text-primary sm:w-auto sm:gap-1.5"
+        size="icon-lg"
         variant="outline"
       >
         <ThemeIcon theme={theme} />

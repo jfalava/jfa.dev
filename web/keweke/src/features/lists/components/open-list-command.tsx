@@ -99,8 +99,8 @@ export function OpenListCommand() {
         }
       }}
     >
-      <Button aria-label="Open list" className="h-7" variant="outline">
-        <ArrowUpRight className="size-3.5" />
+      <Button aria-label="Open list" size="lg" variant="outline">
+        <ArrowUpRight className="size-4" />
         <span>Open list</span>
         <HotkeyKbd className="hidden sm:inline-flex" hotkey={OPEN_LIST_HOTKEY} />
       </Button>

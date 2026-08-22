@@ -378,13 +378,17 @@ export function ServiceSearchPalette({
       <Button
         type="button"
         variant="ghost"
-        size="default"
-        className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-[11px] font-medium text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+        size="icon-lg"
+        className="gap-1.5 rounded-md border border-border bg-background text-xs font-medium text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30 sm:w-auto sm:gap-1.5 sm:px-2.5"
         aria-label={translations.search}
       >
-        <Search className="size-3.5" />
+        <Search className="size-4" />
         <span className="hidden sm:inline">{translations.search}</span>
-        <HotkeyKbd hotkey="Mod+K" className="hidden md:inline-flex" kbdClassName="h-5 min-h-0 px-1 text-[10px]" />
+        <HotkeyKbd
+          hotkey="Mod+K"
+          className="hidden md:inline-flex"
+          kbdClassName="h-5 min-h-0 px-1 text-[10px]"
+        />
       </Button>
       <Dialog
         className="max-w-[calc(100%-1.5rem)] gap-0 overflow-hidden p-0 sm:max-w-2xl"

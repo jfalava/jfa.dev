@@ -130,11 +130,11 @@ export function KewekeHeader({
         aria-label="User"
         className={buttonVariants({
           variant: "default",
-          size: "icon",
-          className: "w-7 sm:w-auto sm:gap-1 sm:px-2",
+          size: "icon-lg",
+          className: "w-8 sm:w-auto sm:gap-1.5 sm:px-2.5",
         })}
       >
-        <UserRound aria-hidden="true" className="size-3.5" />
+        <UserRound aria-hidden="true" className="size-4" />
         <span className="hidden sm:inline">User</span>
       </Link>
       {backend === "local" && onMigrate ? (
@@ -142,13 +142,13 @@ export function KewekeHeader({
           <Button
             aria-describedby={showPublishNudge ? "publish-list-nudge" : undefined}
             aria-label="Publish list to a remote list"
-            className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
+            className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
             isDisabled={isMigrating}
             onPress={onMigrate}
-            size="icon"
+            size="icon-lg"
             variant="outline"
           >
-            <CloudUpload className="size-3.5" />
+            <CloudUpload className="size-4" />
             <span className="hidden sm:inline">{isMigrating ? "Publishing" : "Publish"}</span>
             {!isMigrating ? (
               <HotkeyKbd className="hidden sm:inline-flex" hotkey={PUBLISH_HOTKEY} />
@@ -175,23 +175,24 @@ export function KewekeHeader({
       {listId && backend === "remote" ? (
         <Button
           aria-label="Copy share link"
-          className="hidden h-7 min-w-0 sm:inline-flex"
+          className="hidden h-8 min-w-0 sm:inline-flex"
           onPress={() => void copyShareLink()}
+          size="lg"
           variant="outline"
         >
-          {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+          {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
           <span className="hidden sm:inline">{copied ? "Copied" : "Share"}</span>
         </Button>
       ) : null}
       {!hideNewListButton ? (
         <Button
           aria-label="Create new list"
-          className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
+          className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
           isDisabled={isCreating}
           onPress={() => void createList()}
-          size="icon"
+          size="icon-lg"
         >
-          <Plus className="size-3.5" />
+          <Plus className="size-4" />
           <span className="hidden sm:inline">New list</span>
           {!isCreating ? (
             <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />

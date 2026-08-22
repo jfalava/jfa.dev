@@ -48,10 +48,10 @@ export function CatalogHeader({
           onClick={onClearQuery}
           aria-label={t.clearSearch}
           title={t.clearSearch}
-          className="inline-flex h-7 max-w-44 shrink-0 items-center gap-1 rounded-md border border-primary/30 px-2 text-[11px] text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+          className="inline-flex h-8 max-w-44 shrink-0 items-center gap-1 rounded-md border border-primary/30 px-2.5 text-xs text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
         >
           <span className="truncate">{activeQuery}</span>
-          <X className="size-3.5 shrink-0" />
+          <X className="size-4 shrink-0" />
         </button>
       ) : null}
       <LanguageToggle currentLang={currentLang} />
