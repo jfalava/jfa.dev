@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ServicesTable } from "@/components/services-table";
 import serviceSearchArtifact from "@/data/service-search-index.json";
-import { importServices, serviceProviders, type ServiceProvider } from "@/data/services";
+import { importServices } from "@/data/services";
 import { CatalogHeader } from "@/features/catalog/components/catalog-header";
 import {
   isLanguageCode,
@@ -72,26 +72,12 @@ function Home() {
     });
   };
 
-  const selectProvider = (provider: ServiceProvider): void => {
-    const label = serviceProviders.find(({ key }) => key === provider)?.label ?? provider;
-
-    void navigate({
-      to: "/",
-      search: (previous) => ({
-        ...previous,
-        lang: currentLang,
-        q: `provider:${label}`,
-      }),
-    });
-  };
-
   return (
     <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-background text-foreground">
       <CatalogHeader
         activeQuery={activeQuery}
         currentLang={currentLang}
         onClearQuery={clearQuery}
-        onSelectProvider={selectProvider}
         searchIndex={searchIndex}
         services={services}
         t={t}

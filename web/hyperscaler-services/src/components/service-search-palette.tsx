@@ -5,10 +5,13 @@ import {
   DialogTitle,
   DialogTrigger,
   Input,
+  Kbd,
+  KbdGroup,
 } from "@jfa.dev/common/ui";
+import { detectPlatform, formatForDisplay, useHotkey, useHotkeys } from "@tanstack/react-hotkeys";
 import { useNavigate } from "@tanstack/react-router";
 import { CornerDownLeft, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 import { serviceProviders, type ServiceMapping, type ServiceProvider } from "@/data/services";
 import {
@@ -27,6 +30,10 @@ interface ServiceSearchTranslations {
   searchPlaceholder: string;
   searchResults: (count: number) => string;
   searchScopeHint: (scope: ServiceSearchScope) => string;
+  // Optional filter labels provided by PageTranslations (kept loose for backward compat)
+  services?: string;
+  providers?: string;
+  categories?: string;
 }
 
 /** Props for the command-palette service search. */
@@ -41,16 +48,8 @@ interface ServiceSearchPaletteProps {
   searchIndex: ServiceSearchIndex;
   /** Localized copy for the search control and palette. */
   translations: ServiceSearchTranslations;
-  /** Optional scoped query inserted when this preset opens the palette. */
-  presetQuery?: string;
-  /** Optional alternate label for a preset trigger. */
-  triggerLabel?: string;
-  /** Applies a provider selection immediately when a provider suggestion is clicked. */
-  onSelectProvider?: (provider: ServiceProvider) => void;
   /** Whether Ctrl/⌘K should open this palette instance. */
   shortcutEnabled?: boolean;
-  /** Hides this preset trigger below the small-screen breakpoint. */
-  hideOnMobile?: boolean;
 }
 
 const previewLimit = 7;
@@ -80,6 +79,40 @@ const previewProviders = [
   { label: "Oracle", nameKey: "oracle", urlKey: "oracleUrl" },
   { label: "Cloudflare", nameKey: "cloudflare", urlKey: "cloudflareUrl" },
 ] as const;
+
+interface FilterConfig {
+  scope: ServiceSearchScope;
+  label: string;
+  hotkey: string;
+  queryPrefix: string;
+}
+
+// oxlint-disable-next-line eslint/no-empty-function
+const subscribe = () => () => {};
+
+function HotkeyKbd({
+  hotkey,
+  className,
+  kbdClassName,
+}: {
+  hotkey: string;
+  className?: string;
+  kbdClassName?: string;
+}) {
+  const platform = useSyncExternalStore(subscribe, detectPlatform, () => "mac" as const);
+
+  return (
+    <KbdGroup className={className}>
+      {formatForDisplay(hotkey, { platform, separatorToken: " " })
+        .split(" ")
+        .map((token) => (
+          <Kbd key={token} className={kbdClassName}>
+            {token}
+          </Kbd>
+        ))}
+    </KbdGroup>
+  );
+}
 
 /** Renders one provider result while retaining its catalog documentation link. */
 function SearchResultService({ label, name, url }: { label: string; name: string; url?: string }) {
@@ -186,16 +219,12 @@ export function ServiceSearchPalette({
   services,
   searchIndex,
   translations,
-  presetQuery,
-  triggerLabel,
-  onSelectProvider,
   shortcutEnabled = true,
-  hideOnMobile = false,
 }: ServiceSearchPaletteProps) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const initialQuery = presetQuery ?? activeQuery;
-  const [draftQuery, setDraftQuery] = useState(initialQuery);
+  const [draftQuery, setDraftQuery] = useState(activeQuery);
+  const inputRef = useRef<HTMLInputElement>(null);
   const parsedQuery = useMemo(() => parseServiceSearchQuery(draftQuery), [draftQuery]);
   const searchResults = useMemo(
     () => (parsedQuery.queryTokens.length > 0 ? searchServiceIndex(searchIndex, draftQuery) : []),
@@ -205,6 +234,31 @@ export function ServiceSearchPalette({
   const hasEmptyScope = parsedQuery.scope !== undefined && !hasQuery;
   const activeScope = parsedQuery.scope;
   const previewResults = searchResults.slice(0, previewLimit);
+
+  const filterConfigs: readonly FilterConfig[] = useMemo(
+    () => [
+      {
+        scope: "service",
+        label: translations.services ?? "Services",
+        hotkey: "Mod+Shift+S",
+        queryPrefix: "service:",
+      },
+      {
+        scope: "provider",
+        label: translations.providers ?? "Providers",
+        hotkey: "Mod+Shift+P",
+        queryPrefix: "provider:",
+      },
+      {
+        scope: "category",
+        label: translations.categories ?? "Categories",
+        hotkey: "Mod+Shift+C",
+        queryPrefix: "category:",
+      },
+    ],
+    [translations.services, translations.providers, translations.categories],
+  );
+
   const scopeSuggestions = useMemo(() => {
     if (!hasEmptyScope || !parsedQuery.scope) {
       return [];
@@ -231,30 +285,71 @@ export function ServiceSearchPalette({
   }, [currentLang, hasEmptyScope, parsedQuery.scope, services]);
 
   const selectSuggestion = (suggestion: SearchScopeSuggestion): void => {
-    if (suggestion.provider && onSelectProvider) {
-      onSelectProvider(suggestion.provider);
-      setOpen(false);
-      return;
-    }
-
     setDraftQuery(suggestion.query);
+    // keep focus on input so user can continue typing or press Enter
+    requestAnimationFrame(() => inputRef.current?.focus());
   };
 
-  useEffect(() => {
-    const handleShortcut = (event: KeyboardEvent): void => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        setDraftQuery(initialQuery);
+  const applyScope = useCallback(
+    (scope: ServiceSearchScope) => {
+      if (parsedQuery.scope === scope) {
         setOpen(true);
+        requestAnimationFrame(() => inputRef.current?.focus());
+        return;
       }
-    };
 
-    if (shortcutEnabled) {
-      window.addEventListener("keydown", handleShortcut);
+      const prefix = `${scope}:`;
+      const term = parsedQuery.scope
+        ? draftQuery.slice(draftQuery.indexOf(":") + 1).trim()
+        : draftQuery.trim();
+      // Preserve existing term when switching scopes; strip any existing scope prefix
+      const nextQuery = term ? `${prefix}${term}` : prefix;
+      setDraftQuery(nextQuery);
+      setOpen(true);
+      requestAnimationFrame(() => inputRef.current?.focus());
+    },
+    [draftQuery, parsedQuery.scope],
+  );
+
+  // Sync draft with active query when palette opens
+  useEffect(() => {
+    if (open) {
+      // oxlint-disable-next-line react/set-state-in-effect
+      setDraftQuery(activeQuery);
+      // focus after open animation
+      requestAnimationFrame(() => inputRef.current?.focus());
     }
+  }, [open, activeQuery]);
 
-    return () => window.removeEventListener("keydown", handleShortcut);
-  }, [initialQuery, shortcutEnabled]);
+  // Global open hotkey: Mod+K
+  useHotkey(
+    "Mod+K",
+    () => {
+      setDraftQuery(activeQuery);
+      setOpen((prev) => !prev);
+    },
+    { enabled: shortcutEnabled },
+  );
+
+  // Per-filter hotkeys using TanStack Hotkeys (each with own keybind)
+  useHotkeys(
+    [
+      {
+        hotkey: "Mod+Shift+S",
+        callback: () => applyScope("service"),
+      },
+      {
+        hotkey: "Mod+Shift+P",
+        callback: () => applyScope("provider"),
+      },
+      {
+        hotkey: "Mod+Shift+C",
+        callback: () => applyScope("category"),
+      },
+    ],
+    // Allow Mod+Shift combos inside inputs (smart default already true for Mod combos)
+    { enabled: true },
+  );
 
   const applySearch = (): void => {
     const nextQuery = draftQuery.trim();
@@ -270,30 +365,26 @@ export function ServiceSearchPalette({
     setOpen(false);
   };
 
+  const handleOpenChange = (nextOpen: boolean): void => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
+      // reset draft on close? keep activeQuery for next open
+      setDraftQuery(activeQuery);
+    }
+  };
+
   return (
-    <DialogTrigger isOpen={open} onOpenChange={setOpen}>
+    <DialogTrigger isOpen={open} onOpenChange={handleOpenChange}>
       <Button
         type="button"
         variant="ghost"
         size="default"
-        className={cn(
-          "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-[11px] font-medium text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30",
-          presetQuery ? "border border-transparent" : "border border-border bg-background",
-          hideOnMobile && "hidden sm:inline-flex",
-        )}
-        aria-label={triggerLabel ?? translations.search}
+        className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-[11px] font-medium text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+        aria-label={translations.search}
       >
-        {presetQuery ? (
-          <span>{triggerLabel}</span>
-        ) : (
-          <>
-            <Search className="size-3.5" />
-            <span className="hidden sm:inline">{translations.search}</span>
-            <kbd className="hidden rounded-sm border border-border/70 px-1 text-[10px] font-normal text-muted-foreground md:inline-flex">
-              ⌘K
-            </kbd>
-          </>
-        )}
+        <Search className="size-3.5" />
+        <span className="hidden sm:inline">{translations.search}</span>
+        <HotkeyKbd hotkey="Mod+K" className="hidden md:inline-flex" kbdClassName="h-5 min-h-0 px-1 text-[10px]" />
       </Button>
       <Dialog
         className="max-w-[calc(100%-1.5rem)] gap-0 overflow-hidden p-0 sm:max-w-2xl"
@@ -304,6 +395,7 @@ export function ServiceSearchPalette({
         <div className="flex items-center gap-3 border-b border-border px-4">
           <Search className="size-4 shrink-0 text-muted-foreground" />
           <Input
+            ref={inputRef}
             value={draftQuery}
             onChange={(event) => setDraftQuery(event.target.value)}
             onKeyDown={(event) => {
@@ -320,6 +412,50 @@ export function ServiceSearchPalette({
             <CornerDownLeft className="size-3" />
             {translations.searchApply}
           </kbd>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 border-b border-border bg-muted/20 px-3 py-2">
+          {filterConfigs.map((filter) => {
+            const isActive = activeScope === filter.scope;
+            return (
+              <button
+                key={filter.scope}
+                type="button"
+                onClick={() => applyScope(filter.scope)}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                  isActive
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
+                aria-pressed={isActive}
+              >
+                <span>{filter.label}</span>
+                <HotkeyKbd
+                  hotkey={filter.hotkey}
+                  className="hidden sm:inline-flex"
+                  kbdClassName={cn(
+                    "h-5 min-h-0 px-1 text-[10px]",
+                    isActive
+                      ? "border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground"
+                      : "bg-muted text-muted-foreground",
+                  )}
+                />
+              </button>
+            );
+          })}
+          {activeScope ? (
+            <button
+              type="button"
+              onClick={() => {
+                setDraftQuery("");
+                requestAnimationFrame(() => inputRef.current?.focus());
+              }}
+              className="ml-auto text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+            >
+              Clear filter
+            </button>
+          ) : null}
         </div>
 
         <SearchPalettePreview

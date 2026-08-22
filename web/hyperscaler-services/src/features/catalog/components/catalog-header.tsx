@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { LanguageToggle } from "@/components/language-toggle";
 import { ServiceSearchPalette } from "@/components/service-search-palette";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { importServices, type ServiceProvider } from "@/data/services";
+import { importServices } from "@/data/services";
 import type { LanguageCode, PageTranslations } from "@/features/catalog/lib/translations";
 import type { ServiceSearchIndex } from "@/lib/service-search";
 
@@ -14,7 +14,6 @@ export function CatalogHeader({
   activeQuery,
   currentLang,
   onClearQuery,
-  onSelectProvider,
   searchIndex,
   services,
   t,
@@ -22,7 +21,6 @@ export function CatalogHeader({
   activeQuery: string;
   currentLang: LanguageCode;
   onClearQuery: () => void;
-  onSelectProvider: (provider: ServiceProvider) => void;
   searchIndex: ServiceSearchIndex;
   services: Awaited<ReturnType<typeof importServices>>;
   t: PageTranslations;
@@ -37,39 +35,6 @@ export function CatalogHeader({
       navLabel="Catalog navigation"
       githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/hyperscaler-services"
     >
-      <ServiceSearchPalette
-        activeQuery={activeQuery}
-        currentLang={currentLang}
-        presetQuery="service:"
-        searchIndex={searchIndex}
-        services={services}
-        shortcutEnabled={false}
-        triggerLabel={t.services}
-        translations={t}
-      />
-      <ServiceSearchPalette
-        activeQuery={activeQuery}
-        currentLang={currentLang}
-        presetQuery="provider:"
-        searchIndex={searchIndex}
-        services={services}
-        shortcutEnabled={false}
-        triggerLabel={t.providers}
-        translations={t}
-        onSelectProvider={onSelectProvider}
-        hideOnMobile
-      />
-      <ServiceSearchPalette
-        activeQuery={activeQuery}
-        currentLang={currentLang}
-        presetQuery="category:"
-        searchIndex={searchIndex}
-        services={services}
-        shortcutEnabled={false}
-        triggerLabel={t.categories}
-        translations={t}
-        hideOnMobile
-      />
       <ServiceSearchPalette
         activeQuery={activeQuery}
         currentLang={currentLang}
