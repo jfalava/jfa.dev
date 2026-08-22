@@ -24,7 +24,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         name: "description",
         content: "Create OpenGraph images from scratch with a layer-based editor.",
       },
-      { title: "OG Image Generator by JFA" },
+      { title: "OpenGraph Image Generator by JFA" },
     ],
     links: [
       {
