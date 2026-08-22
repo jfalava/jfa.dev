@@ -1,20 +1,40 @@
 import { Button, DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@jfa.dev/common/ui";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
 
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme, type ThemeMode } from "@/hooks/use-theme";
+
+const themeLabels = {
+  light: "Light",
+  dark: "Dark",
+  system: "System",
+} as const satisfies Record<ThemeMode, string>;
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
+  const getThemeIcon = () => {
+    switch (theme) {
+      case "light":
+        return <Sun className="h-5 w-5" />;
+      case "dark":
+        return <Moon className="h-5 w-5" />;
+      case "system":
+        return <Monitor className="h-5 w-5" />;
+      default:
+        return <Monitor className="h-5 w-5" />;
+    }
+  };
+
   return (
     <DropdownMenuTrigger>
       <Button
-        aria-label={`Theme: ${theme}`}
-        className="text-primary hover:bg-primary/10 hover:text-primary"
-        size="icon"
+        aria-label={`Theme: ${themeLabels[theme]}`}
+        className="gap-1.5 px-2.5 text-primary hover:bg-primary/10 hover:text-primary sm:w-auto sm:gap-1.5 sm:px-2.5"
+        size="icon-lg"
         variant="outline"
       >
-        {theme === "light" ? <Sun /> : theme === "dark" ? <Moon /> : <Monitor />}
+        <span className="flex items-center justify-center">{getThemeIcon()}</span>
+        <span className="hidden sm:inline">{themeLabels[theme]}</span>
       </Button>
       <DropdownMenu placement="bottom end">
         <DropdownMenuItem onAction={() => setTheme("light")}>
