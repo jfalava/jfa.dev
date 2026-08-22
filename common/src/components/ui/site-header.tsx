@@ -2,10 +2,11 @@ import { cn } from "../../lib/utils";
 import type { WebPackage } from "../../web-packages";
 
 import { Button, buttonVariants } from "./button";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
+import { DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 import { Kbd, KbdGroup } from "./kbd";
 
 import { ArrowUpRight, ChevronDown, CodeXml } from "lucide-react";
+import { Menu as MenuPrimitive, Popover as PopoverPrimitive } from "react-aria-components";
 import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
 
 export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title"> {
@@ -177,7 +178,7 @@ function PackageSwitcher({
   titleSmol,
 }: PackageSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.userAgent);
+  const isMac = /Mac|iPhone|iPad/.test(globalThis.navigator?.userAgent ?? "");
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -211,31 +212,37 @@ function PackageSwitcher({
           </span>
         </span>
         <ChevronDown aria-hidden="true" className="shrink-0 opacity-70" />
+        <KbdGroup className="hidden shrink-0 gap-1 sm:inline-flex">
+          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">{isMac ? "⌘" : "Ctrl"}</Kbd>
+          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">⇧</Kbd>
+          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">U</Kbd>
+        </KbdGroup>
       </Button>
-      <DropdownMenu className="w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] sm:w-(--trigger-width) sm:min-w-0 sm:max-w-none">
-        {packages.map((pkg) => {
-          const routeSubtitle =
-            pkg.routes.find((route) => route.path === "/")?.title ?? pkg.routes[0]?.title;
-          return (
-            <DropdownMenuItem
-              key={pkg.path}
-              href={pkg.path === "/" ? "/" : `${pkg.path}/`}
-              textValue={`${pkg.title} ${routeSubtitle ?? ""}`}
-            >
-              <PackageBrand subtitle={routeSubtitle} title={pkg.title} />
-            </DropdownMenuItem>
-          );
-        })}
-        <DropdownMenuSeparator />
-        <div className="flex items-center justify-end gap-1 px-1.5 py-1 text-xs text-muted-foreground">
-          <span>Switch packages</span>
-          <KbdGroup>
-            <Kbd>{isMac ? "⌘" : "Ctrl"}</Kbd>
-            <Kbd>⇧</Kbd>
-            <Kbd>U</Kbd>
-          </KbdGroup>
-        </div>
-      </DropdownMenu>
+      <PopoverPrimitive
+        placement="bottom start"
+        offset={4}
+        crossOffset={0}
+        className={cn(
+          "z-50 w-(--trigger-width) min-w-32 origin-(--trigger-anchor-point) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 outline-none data-entering:animate-in data-entering:fade-in-0 data-entering:zoom-in-95 data-exiting:animate-out data-exiting:overflow-hidden data-exiting:fade-out-0 data-exiting:zoom-out-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2",
+          "w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] sm:w-(--trigger-width) sm:min-w-0 sm:max-w-none",
+        )}
+      >
+        <MenuPrimitive className="max-h-[inherit] overflow-x-hidden overflow-y-auto outline-hidden">
+          {packages.map((pkg) => {
+            const routeSubtitle =
+              pkg.routes.find((route) => route.path === "/")?.title ?? pkg.routes[0]?.title;
+            return (
+              <DropdownMenuItem
+                key={pkg.path}
+                href={pkg.path === "/" ? "/" : `${pkg.path}/`}
+                textValue={`${pkg.title} ${routeSubtitle ?? ""}`}
+              >
+                <PackageBrand subtitle={routeSubtitle} title={pkg.title} />
+              </DropdownMenuItem>
+            );
+          })}
+        </MenuPrimitive>
+      </PopoverPrimitive>
     </DropdownMenuTrigger>
   );
 }
