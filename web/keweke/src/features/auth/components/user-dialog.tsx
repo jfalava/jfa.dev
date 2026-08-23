@@ -10,6 +10,23 @@ import {
 } from "@/features/auth/hooks/use-user-manager";
 import { LOCAL_IDENTITY_PLACEHOLDER } from "@/features/auth/lib/local-identity";
 
+function OrDivider({ size = "default" }: { size?: "default" | "small" }) {
+  return (
+    <div aria-hidden="true" className="relative flex items-center">
+      <hr className="h-px w-full border-0 bg-border" />
+      <span
+        className={
+          size === "small"
+            ? "absolute left-1/2 -translate-x-1/2 bg-popover px-1.5 font-mono text-[9px] tracking-widest text-muted-foreground uppercase"
+            : "absolute left-1/2 -translate-x-1/2 bg-popover px-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase"
+        }
+      >
+        or
+      </span>
+    </div>
+  );
+}
+
 function FeedbackMessage({
   feedback,
   section,
@@ -22,7 +39,13 @@ function FeedbackMessage({
   }
 
   return (
-    <p className={feedback.tone === "error" ? "text-sm text-destructive" : "text-sm text-primary"}>
+    <p
+      className={
+        feedback.tone === "error"
+          ? "text-center text-sm text-destructive"
+          : "text-center text-sm text-primary"
+      }
+    >
       {feedback.text}
     </p>
   );
@@ -148,10 +171,8 @@ export function UserDialog({
           </section>
 
           {identity && !identity.remoteUsername ? (
-            <section
-              className="space-y-3 border-t border-border pt-4"
-              aria-labelledby="pair-user-heading"
-            >
+            <section className="space-y-3" aria-labelledby="pair-user-heading">
+              <OrDivider />
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
                   pair a user
@@ -170,7 +191,7 @@ export function UserDialog({
                 Already have a user on another browser? Connect this one with a passkey or a pairing
                 code.
               </p>
-              <div className="flex flex-wrap gap-x-1">
+              <div className="flex flex-col items-stretch gap-3">
                 {passkeyAvailable ? (
                   <Button
                     className="h-10 gap-1.5 px-5 text-sm"
@@ -180,6 +201,7 @@ export function UserDialog({
                     {isAdoptingPasskey ? "Waiting…" : "Pair with passkey"}
                   </Button>
                 ) : null}
+                {passkeyAvailable ? <OrDivider size="small" /> : null}
                 <Button
                   className="h-10 min-w-24 px-5 text-sm"
                   isDisabled={isStartingPairing}
