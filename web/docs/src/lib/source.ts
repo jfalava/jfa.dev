@@ -1,0 +1,13 @@
+import { loader } from "fumadocs-core/source";
+import { lucideIconsPlugin } from "fumadocs-core/source/plugins/lucide-icons";
+import { defineDocs } from "fumadocs-mdx/macro";
+
+export const docs = defineDocs({
+  dir: "content/docs",
+});
+
+export const source = loader({
+  baseUrl: "/docs",
+  plugins: [lucideIconsPlugin()],
+  source: docs.toFumadocsSource(),
+});

@@ -12,6 +12,7 @@ export const infrastructureInventory = {
       "/hyperscaler-services/*",
       "/keweke/*",
       "/branding/*",
+      "/docs/*",
     ],
     bindings: [
       "LANDING",
@@ -19,6 +20,7 @@ export const infrastructureInventory = {
       "HYPERSCALER_SERVICES",
       "KEWEKE",
       "BRANDING",
+      "DOCS",
       "COUNTRY_BLOCKLIST",
     ],
   },
@@ -49,6 +51,12 @@ export const infrastructureInventory = {
     domains: [],
     publicRoutes: ["/branding/*"],
     basePath: "/branding",
+  },
+  docsMounted: {
+    worker: "jfa-dev-docs",
+    domains: [],
+    publicRoutes: ["/docs/*"],
+    basePath: "/docs",
   },
   kewekeAdminAccess: {
     application: "Keweke Admin",

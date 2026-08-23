@@ -221,6 +221,36 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     brandingOptions,
   ).pipe(adopt(true));
 
+  const docsOptions = {
+    ...workerDefaults(config.workers.docsMounted),
+    name: config.workers.docsMounted.name,
+    rootDir: resolve(repositoryRoot, "web/docs"),
+    assets: {
+      runWorkerFirst: false,
+    },
+  };
+  if (config.workers.docsMounted.basePath !== undefined) {
+    const env: HyperscalerEnvironment = {
+      VITE_BASE_PATH: config.workers.docsMounted.basePath,
+    };
+    if (config.workers.docsMounted.assetBasePath !== undefined) {
+      env.VITE_ASSET_BASE_PATH = config.workers.docsMounted.assetBasePath;
+    }
+    Object.assign(docsOptions, { env });
+  }
+  if (config.workers.docsMounted.domain !== undefined) {
+    Object.assign(docsOptions, {
+      domain: config.workers.docsMounted.domain,
+    });
+  }
+  if (isLocal) {
+    Object.assign(docsOptions, { dev: localDev(3105) });
+  }
+  const docsMounted = yield* Cloudflare.Website.Vite(
+    "DocsMountedWorker",
+    docsOptions,
+  ).pipe(adopt(true));
+
   const countryBlocklist =
     config.stage === "production" && config.router.countryBlocklistName
       ? yield* Cloudflare.KV.Namespace(config.router.countryBlocklistName, {
@@ -236,6 +266,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     HYPERSCALER_SERVICES: typeof hyperscalerMounted;
     KEWEKE: typeof kewekeMounted;
     BRANDING: typeof brandingMounted;
+    DOCS: typeof docsMounted;
     COUNTRY_BLOCKLIST?: typeof countryBlocklist;
   };
   const routerEnv: RouterEnvironment = {
@@ -246,6 +277,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     HYPERSCALER_SERVICES: hyperscalerMounted,
     KEWEKE: kewekeMounted,
     BRANDING: brandingMounted,
+    DOCS: docsMounted,
   };
   if (countryBlocklist !== undefined) {
     routerEnv.COUNTRY_BLOCKLIST = countryBlocklist;
@@ -290,6 +322,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     hyperscalerMounted,
     kewekeMounted,
     brandingMounted,
+    docsMounted,
     router,
     redirects,
   };

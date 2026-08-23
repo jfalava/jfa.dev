@@ -1,0 +1,43 @@
+{
+  "name": "@jfa.dev/docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "check": "vp check --fix",
+    "dev": "bun run --cwd ../../iac dev",
+    "dev:app": "vp dev",
+    "format": "vp fmt",
+    "lint": "vp lint",
+    "preview": "vp preview",
+    "serve": "vp preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jfa.dev/common": "workspace:*",
+    "@tailwindcss/vite": "catalog:styling",
+    "@tanstack/react-router": "catalog:tanstack",
+    "@tanstack/react-start": "catalog:tanstack",
+    "@tanstack/router-plugin": "catalog:tanstack",
+    "fumadocs-core": "16.15.0",
+    "fumadocs-mdx": "15.3.1",
+    "fumadocs-ui": "16.15.0",
+    "lucide-react": "catalog:ui",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "shadcn": "catalog:ui",
+    "tailwindcss": "catalog:styling",
+    "tw-animate-css": "catalog:styling"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:types",
+    "@types/mdx": "2.0.14",
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "@vitejs/plugin-react": "catalog:build",
+    "oxc-transform-react": "catalog:build",
+    "typescript": "catalog:build",
+    "vite": "catalog:build",
+    "vite-plus": "catalog:build"
+  }
+}

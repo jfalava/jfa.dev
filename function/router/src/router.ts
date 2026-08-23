@@ -12,6 +12,7 @@ export type Bindings = {
   HYPERSCALER_SERVICES: WorkerFetcher;
   KEWEKE: WorkerFetcher;
   BRANDING: WorkerFetcher;
+  DOCS: WorkerFetcher;
   ROUTES: string;
   ASSET_PREFIXES?: string;
   COUNTRY_BLOCKLIST?: CountryBlocklistBinding;
@@ -19,7 +20,7 @@ export type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-export const COUNTRY_BLOCKLIST_KEY = "blocked-countries";
+const COUNTRY_BLOCKLIST_KEY = "blocked-countries";
 const COUNTRY_BLOCKED_MESSAGE = "Access denied";
 const COUNTRY_POLICY_UNAVAILABLE_MESSAGE = "Country access policy unavailable";
 const COUNTRY_CODE_PATTERN = /^(?:[A-Z]{2}|T1)$/;

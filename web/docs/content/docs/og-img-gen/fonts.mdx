@@ -1,0 +1,18 @@
+---
+title: Fonts
+description: Bundled families and custom font uploads.
+---
+
+## Bundled fonts
+
+Built-in text families are Pretendard, Zilla Slab, and Google Sans Code,
+provided by `@jfa.dev/common`.
+
+## Custom fonts
+
+Custom WOFF2, WOFF, TTF, and OTF fonts are registered locally via the
+`FontFace` API. They persist as project metadata plus blobs in IndexedDB and
+are included in `.ogproj` archives.
+
+Variable WOFF2 is the recommended format. There is no R2 bucket, upload API,
+or server-side transform — assets stay in the browser.

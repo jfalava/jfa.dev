@@ -29,6 +29,7 @@ export type StageConfig = {
     hyperscalerMounted: WorkerConfig;
     kewekeMounted: WorkerConfig;
     brandingMounted: WorkerConfig;
+    docsMounted: WorkerConfig;
     redirects: WorkerConfig;
   };
 };
@@ -59,6 +60,12 @@ const routeDefinitions = {
     {
       binding: "BRANDING",
       path: "/branding",
+      preload: true,
+      preserveMount: true,
+    },
+    {
+      binding: "DOCS",
+      path: "/docs",
       preload: true,
       preserveMount: true,
     },
@@ -202,6 +209,13 @@ export function getStageConfig(stage: string | undefined): StageConfig {
         workersDev: normalizedStage !== "production",
         basePath: "/branding",
         assetBasePath: "/branding",
+      }),
+      docsMounted: worker("jfa-dev-docs", normalizedStage, {
+        compatibilityDate: compatibilityDate(normalizedStage, "2026-08-13"),
+        observability: true,
+        workersDev: normalizedStage !== "production",
+        basePath: "/docs",
+        assetBasePath: "/docs",
       }),
       redirects: worker("jfa-redirects", normalizedStage, {
         compatibilityDate: "2026-01-01",

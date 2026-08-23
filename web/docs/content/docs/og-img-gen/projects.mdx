@@ -1,0 +1,19 @@
+---
+title: Projects & Assets
+description: Persistence and .ogproj archives.
+---
+
+## Local-first persistence
+
+OG image assets (uploaded images, custom fonts) live only in Dexie IndexedDB.
+Nothing is sent to a remote service; images are removed when you delete them
+or reset the project.
+
+Supported uploads: PNG, JPEG, WebP, GIF, AVIF, and SVG — including multi-file
+selection and drag-and-drop.
+
+## .ogproj archives
+
+Exporting creates a portable ZIP-based `.ogproj` file containing the project
+data plus local image files and fonts, so a workspace can be moved between
+browsers or machines.

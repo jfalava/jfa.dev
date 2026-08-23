@@ -1,0 +1,7 @@
+{
+  "title": "OG Image Generator",
+  "description": "Zero-cost, local-first OpenGraph image editor.",
+  "icon": "Image",
+  "root": true,
+  "pages": ["index", "fonts", "projects"]
+}

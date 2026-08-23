@@ -1,11 +1,12 @@
 import { describe, expect, test } from "bun:test";
 
 import router, {
-  COUNTRY_BLOCKLIST_KEY,
   buildAssetPrefixes,
   findMatchingRoute,
   parseRoutesConfig,
 } from "./router";
+
+const COUNTRY_BLOCKLIST_KEY = "blocked-countries";
 
 const makeCountryBlocklist = (value: string | null) => ({
   get: async (key: string, _type: "text") => (key === COUNTRY_BLOCKLIST_KEY ? value : null),
