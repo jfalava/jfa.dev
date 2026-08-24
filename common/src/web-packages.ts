@@ -29,8 +29,8 @@ export const webPackages: WebPackage[] = [
   },
   {
     path: "/opengraph",
-    title: "OpenGraph Image Generator",
-    routes: [{ path: "/", title: "OpenGraph" }],
+    title: "OpenGraph",
+    routes: [{ path: "/", title: "OpenGraph Image Generator" }],
   },
   {
     path: "/hyperscaler-services",
