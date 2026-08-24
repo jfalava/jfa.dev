@@ -1,4 +1,10 @@
-import { Button, Input } from "@jfa.dev/common/ui";
+import {
+  Button,
+  Input,
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@jfa.dev/common/ui";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AlignCenter,
@@ -6,6 +12,7 @@ import {
   AlignRight,
   Boxes,
   ChevronDown,
+  Copy,
   Download,
   Eye,
   EyeOff,
@@ -20,6 +27,7 @@ import {
   MoreHorizontal,
   MousePointer2,
   Palette,
+  Pipette,
   Plus,
   Redo2,
   RotateCcw,
@@ -92,6 +100,16 @@ async function registerProjectFonts(fonts: readonly FontMeta[]): Promise<number>
   return failedCount;
 }
 
+function getLayerFill(layer: Layer | undefined): string | undefined {
+  if (layer === undefined) {
+    return undefined;
+  }
+  if (isTextLayer(layer) || isGeometryLayer(layer)) {
+    return layer.fill;
+  }
+  return undefined;
+}
+
 function EditorPage() {
   const project = useEditorStore((state) => state.project);
   const selectedLayerId = useEditorStore((state) => state.selectedLayerId);
@@ -105,6 +123,7 @@ function EditorPage() {
   const updateProjectName = useEditorStore((state) => state.updateProjectName);
   const resetProject = useEditorStore((state) => state.resetProject);
   const removeSelectedLayer = useEditorStore((state) => state.removeSelectedLayer);
+  const duplicateSelectedLayer = useEditorStore((state) => state.duplicateSelectedLayer);
   const toggleLayerVisibility = useEditorStore((state) => state.toggleLayerVisibility);
   const toggleLayerLocked = useEditorStore((state) => state.toggleLayerLocked);
   const moveLayerBefore = useEditorStore((state) => state.moveLayerBefore);
@@ -116,12 +135,15 @@ function EditorPage() {
   const canvasRef = useRef<EditorCanvasHandle>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const projectInputRef = useRef<HTMLInputElement>(null);
+  const foregroundColorInputRef = useRef<HTMLInputElement>(null);
+  const backgroundColorInputRef = useRef<HTMLInputElement>(null);
   const [assetUrls, setAssetUrls] = useState<ReadonlyMap<string, string>>(new Map());
   const [filter, setFilter] = useState("");
   const [zoom, setZoom] = useState(1);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("Saved locally in this browser");
   const [isImageDropTarget, setIsImageDropTarget] = useState(false);
+  const [activeTool, setActiveTool] = useState<"select" | "hand" | "pipette">("select");
 
   const selectedLayer = project.layers.find(({ id }) => id === selectedLayerId);
 
@@ -367,35 +389,56 @@ function EditorPage() {
     );
   }
 
+  // Photoshop-style: left toolbox (select/copy/color), center canvas, right split (top Design / bottom Layers)
+  // Top bar (SiteHeader) is preserved via __root.tsx; this component's inner toolbar is kept as the "options bar".
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-muted/25">
-      <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[17rem_minmax(0,1fr)_19rem]">
-        <LayersPanel
-          filter={filter}
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        {/* Left: Photoshop-style toolbox */}
+        <PhotoshopToolbox
+          activeTool={activeTool}
+          backgroundColor={project.background}
+          busy={busy}
+          canRedo={futureLength > 0}
+          canUndo={pastLength > 0}
+          foregroundColor={getLayerFill(selectedLayer) ?? project.background}
           onAddGeometry={addGeometryLayer}
           onAddImage={() => imageInputRef.current?.click()}
           onAddText={addTextLayer}
-          onFilterChange={setFilter}
-          onMove={moveLayerBefore}
-          onSelect={selectLayer}
-          onToggleLocked={toggleLayerLocked}
-          onToggleVisibility={toggleLayerVisibility}
-          project={project}
-          selectedLayerId={selectedLayerId}
+          onDuplicate={duplicateSelectedLayer}
+          onRedo={redo}
+          onRemove={removeSelectedLayer}
+          onSelectTool={setActiveTool}
+          onUndo={undo}
+          selectedLayer={selectedLayer}
+          foregroundColorInputRef={foregroundColorInputRef}
+          backgroundColorInputRef={backgroundColorInputRef}
         />
 
-        <section aria-label="Canvas" className="flex min-h-136 min-w-0 flex-1 flex-col">
+        {/* Center: Canvas + options bar + status bar */}
+        <section
+          aria-label="Canvas"
+          className="order-1 flex min-h-[420px] min-w-0 flex-1 flex-col lg:order-none"
+        >
+          {/* Options bar — kept as top bar inside canvas (Photoshop "options bar"); hold design for now */}
           <div className="flex min-h-10 shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border bg-background px-3 py-1.5">
             <div className="flex items-center gap-1">
               <Button
                 aria-label="Select tool"
-                className="bg-primary/10 text-primary"
+                className={activeTool === "select" ? "bg-primary/10 text-primary" : ""}
+                onPress={() => setActiveTool("select")}
                 size="icon-xs"
                 variant="ghost"
               >
                 <MousePointer2 />
               </Button>
-              <Button aria-label="Pan tool" size="icon-xs" variant="ghost">
+              <Button
+                aria-label="Pan tool"
+                className={activeTool === "hand" ? "bg-primary/10 text-primary" : ""}
+                onPress={() => setActiveTool("hand")}
+                size="icon-xs"
+                variant="ghost"
+              >
                 <Hand />
               </Button>
               <span className="mx-1 h-4 w-px bg-border" />
@@ -417,7 +460,7 @@ function EditorPage() {
               >
                 <Redo2 />
               </Button>
-              <span className="mx-1 h-4 w-px bg-border" />
+              <span className="mx-1 hidden h-4 w-px bg-border sm:inline-flex" />
               <Button
                 aria-label="Add text to canvas"
                 isDisabled={busy}
@@ -549,19 +592,104 @@ function EditorPage() {
           </div>
         </section>
 
-        <PropertiesPanel
-          customFonts={project.fonts}
-          layer={selectedLayer}
-          onAddFont={handleFontUpload}
-          onDelete={removeSelectedLayer}
-          onReset={() => {
-            if (selectedLayer !== undefined) {
-              updateLayer(selectedLayer.id, createLayerReset(selectedLayer));
-            }
-          }}
-          onUpdate={updateSelected}
-        />
+        {/* Right: Photoshop-style dock — resizable vertical (Properties / Layers) with inner resizable for layer name/state */}
+        <div className="order-2 hidden min-h-0 w-full flex-col border-border bg-background lg:flex lg:w-[22rem] lg:shrink-0 lg:overflow-hidden lg:border-l xl:w-[24rem]">
+          <ResizablePanelGroup orientation="vertical" className="min-h-0 flex-1">
+            <ResizablePanel defaultSize="60%" minSize="28%">
+              <PropertiesPanel
+                className="flex h-full min-h-0 flex-col overflow-hidden"
+                customFonts={project.fonts}
+                layer={selectedLayer}
+                onAddFont={handleFontUpload}
+                onDelete={removeSelectedLayer}
+                onReset={() => {
+                  if (selectedLayer !== undefined) {
+                    updateLayer(selectedLayer.id, createLayerReset(selectedLayer));
+                  }
+                }}
+                onUpdate={updateSelected}
+              />
+            </ResizablePanel>
+            <ResizableHandle withHandle className="bg-border" />
+            <ResizablePanel defaultSize="40%" minSize="22%">
+              <LayersPanel
+                className="flex h-full min-h-0 flex-col overflow-hidden"
+                filter={filter}
+                onAddGeometry={addGeometryLayer}
+                onAddImage={() => imageInputRef.current?.click()}
+                onAddText={addTextLayer}
+                onFilterChange={setFilter}
+                onMove={moveLayerBefore}
+                onSelect={selectLayer}
+                onToggleLocked={toggleLayerLocked}
+                onToggleVisibility={toggleLayerVisibility}
+                project={project}
+                selectedLayerId={selectedLayerId}
+              />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
+        <div className="order-2 flex min-h-0 w-full flex-col border-border bg-background lg:hidden">
+          <PropertiesPanel
+            className="flex min-h-0 flex-col overflow-hidden border-b"
+            customFonts={project.fonts}
+            layer={selectedLayer}
+            onAddFont={handleFontUpload}
+            onDelete={removeSelectedLayer}
+            onReset={() => {
+              if (selectedLayer !== undefined) {
+                updateLayer(selectedLayer.id, createLayerReset(selectedLayer));
+              }
+            }}
+            onUpdate={updateSelected}
+          />
+          <LayersPanel
+            className="flex min-h-[260px] flex-col overflow-hidden"
+            filter={filter}
+            onAddGeometry={addGeometryLayer}
+            onAddImage={() => imageInputRef.current?.click()}
+            onAddText={addTextLayer}
+            onFilterChange={setFilter}
+            onMove={moveLayerBefore}
+            onSelect={selectLayer}
+            onToggleLocked={toggleLayerLocked}
+            onToggleVisibility={toggleLayerVisibility}
+            project={project}
+            selectedLayerId={selectedLayerId}
+          />
+        </div>
       </div>
+
+      {/* Hidden inputs for toolbox color swatches */}
+      <input
+        ref={foregroundColorInputRef}
+        className="hidden"
+        type="color"
+        onChange={(event) => {
+          if (selectedLayer !== undefined && "fill" in selectedLayer) {
+            updateSelected({ fill: event.target.value });
+          }
+        }}
+        value={getLayerFill(selectedLayer) ?? project.background}
+      />
+      <input
+        ref={backgroundColorInputRef}
+        className="hidden"
+        type="color"
+        onChange={(event) => {
+          const value = event.target.value;
+          useEditorStore.setState((state) => ({
+            project: { ...state.project, background: value },
+            past: [...state.past, state.project].slice(-50),
+            future: [],
+          }));
+          const bgLayer = project.layers.find((l) => l.id === "background");
+          if (bgLayer) {
+            updateLayer(bgLayer.id, { fill: value });
+          }
+        }}
+        value={project.background}
+      />
 
       <input
         ref={imageInputRef}
@@ -582,7 +710,187 @@ function EditorPage() {
   );
 }
 
+interface PhotoshopToolboxProps {
+  activeTool: "select" | "hand" | "pipette";
+  backgroundColor: string;
+  busy: boolean;
+  canRedo: boolean;
+  canUndo: boolean;
+  foregroundColor: string;
+  onAddGeometry: () => void;
+  onAddImage: () => void;
+  onAddText: () => void;
+  onDuplicate: () => void;
+  onRedo: () => void;
+  onRemove: () => void;
+  onSelectTool: (tool: "select" | "hand" | "pipette") => void;
+  onUndo: () => void;
+  selectedLayer: Layer | undefined;
+  foregroundColorInputRef: React.RefObject<HTMLInputElement | null>;
+  backgroundColorInputRef: React.RefObject<HTMLInputElement | null>;
+}
+
+function PhotoshopToolbox({
+  activeTool,
+  backgroundColor,
+  busy,
+  canRedo,
+  canUndo,
+  foregroundColor,
+  onAddGeometry,
+  onAddImage,
+  onAddText,
+  onDuplicate,
+  onRedo,
+  onRemove,
+  onSelectTool,
+  onUndo,
+  selectedLayer,
+  foregroundColorInputRef,
+  backgroundColorInputRef,
+}: PhotoshopToolboxProps) {
+  const canModify = selectedLayer !== undefined && !selectedLayer.locked;
+  return (
+    <aside
+      aria-label="Tools"
+      className="hidden w-[52px] shrink-0 flex-col items-center gap-0.5 border-r border-zinc-800 bg-[#2b2b2b] py-2 lg:flex dark:border-zinc-800 dark:bg-[#1e1e1e]"
+    >
+      {/* Move / Select */}
+      <ToolboxButton
+        active={activeTool === "select"}
+        ariaLabel="Move tool (V)"
+        onPress={() => onSelectTool("select")}
+      >
+        <MousePointer2 className="size-4" />
+      </ToolboxButton>
+      <ToolboxButton
+        active={activeTool === "hand"}
+        ariaLabel="Hand tool (H)"
+        onPress={() => onSelectTool("hand")}
+      >
+        <Hand className="size-4" />
+      </ToolboxButton>
+
+      <ToolboxSeparator />
+
+      {/* Insert */}
+      <ToolboxButton ariaLabel="Add text (T)" onPress={onAddText} isDisabled={busy}>
+        <Type className="size-4" />
+      </ToolboxButton>
+      <ToolboxButton ariaLabel="Add shape (U)" onPress={onAddGeometry} isDisabled={busy}>
+        <Square className="size-4" />
+      </ToolboxButton>
+      <ToolboxButton ariaLabel="Add image" onPress={onAddImage} isDisabled={busy}>
+        <ImageIcon className="size-4" />
+      </ToolboxButton>
+
+      <ToolboxSeparator />
+
+      {/* Color / Eyedropper */}
+      <ToolboxButton
+        ariaLabel="Eyedropper tool (I)"
+        active={activeTool === "pipette"}
+        onPress={() => onSelectTool("pipette")}
+      >
+        <Pipette className="size-4" />
+      </ToolboxButton>
+      <ToolboxButton
+        ariaLabel="Swatches / fill color"
+        onPress={() => foregroundColorInputRef.current?.click()}
+      >
+        <Palette className="size-4" />
+      </ToolboxButton>
+
+      {/* Photoshop-style foreground/background swatches */}
+      <div className="relative my-1 flex size-9 items-center justify-center">
+        {/* Background swatch */}
+        <button
+          aria-label="Background color"
+          className="absolute top-1 left-1 size-5 rounded-sm border border-white/30 shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-white"
+          onClick={() => backgroundColorInputRef.current?.click()}
+          style={{ backgroundColor }}
+          type="button"
+        />
+        {/* Foreground swatch */}
+        <button
+          aria-label="Foreground color"
+          className="absolute right-1 bottom-1 size-5 rounded-sm border border-white shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-white"
+          onClick={() => foregroundColorInputRef.current?.click()}
+          style={{ backgroundColor: foregroundColor }}
+          type="button"
+        />
+        {/* Swap icon hint */}
+        <div className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-zinc-700" />
+      </div>
+      <span className="px-1 text-center text-[7px] leading-none tracking-wide text-zinc-400">
+        FG/BG
+      </span>
+
+      <ToolboxSeparator />
+
+      {/* Edit */}
+      <ToolboxButton ariaLabel="Duplicate layer" onPress={onDuplicate} isDisabled={!canModify}>
+        <Copy className="size-4" />
+      </ToolboxButton>
+      <ToolboxButton ariaLabel="Delete layer" onPress={onRemove} isDisabled={!canModify}>
+        <Trash2 className="size-4" />
+      </ToolboxButton>
+
+      <ToolboxSeparator />
+
+      {/* History */}
+      <ToolboxButton ariaLabel="Undo" onPress={onUndo} isDisabled={!canUndo}>
+        <Undo2 className="size-4" />
+      </ToolboxButton>
+      <ToolboxButton ariaLabel="Redo" onPress={onRedo} isDisabled={!canRedo}>
+        <Redo2 className="size-4" />
+      </ToolboxButton>
+
+      <div className="mt-auto flex flex-col items-center gap-1 pt-2">
+        <span className="text-[7px] tracking-[0.14em] text-zinc-500">TOOLS</span>
+        <div className="h-px w-8 bg-white/10" />
+        <span className="text-[7px] text-zinc-600">PS</span>
+      </div>
+    </aside>
+  );
+}
+
+function ToolboxButton({
+  active,
+  ariaLabel,
+  children,
+  isDisabled,
+  onPress,
+}: {
+  active?: boolean;
+  ariaLabel: string;
+  children: React.ReactNode;
+  isDisabled?: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <button
+      aria-label={ariaLabel}
+      disabled={isDisabled}
+      onClick={onPress}
+      type="button"
+      className={`flex size-7 items-center justify-center rounded-[4px] border text-zinc-400 transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
+        active
+          ? "border-white/20 bg-white/15 text-white shadow-inner"
+          : "border-transparent bg-transparent hover:border-white/10 hover:bg-white/10 hover:text-white"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ToolboxSeparator() {
+  return <div className="my-1 h-px w-8 bg-white/10" />;
+}
+
 interface LayersPanelProps {
+  className?: string;
   filter: string;
   onAddGeometry: () => void;
   onAddImage: () => void;
@@ -597,6 +905,7 @@ interface LayersPanelProps {
 }
 
 function LayersPanel({
+  className,
   filter,
   onAddGeometry,
   onAddImage,
@@ -615,10 +924,7 @@ function LayersPanel({
     .filter((layer) => layer.name.toLowerCase().includes(filter.toLowerCase()));
 
   return (
-    <aside
-      aria-label="Layers"
-      className="flex min-h-60 flex-col border-b border-border bg-background lg:min-h-0 lg:border-r lg:border-b-0"
-    >
+    <aside aria-label="Layers" className={`flex min-h-0 flex-col bg-background ${className ?? ""}`}>
       <PanelHeader icon={Layers3} label="Layers">
         <Button aria-label="Add text layer" onPress={onAddText} size="icon-xs" variant="ghost">
           <Plus />
@@ -756,6 +1062,7 @@ function LayerRow({
 }
 
 interface PropertiesPanelProps {
+  className?: string;
   customFonts: FontMeta[];
   layer: Layer | undefined;
   onAddFont: (file: File, options: FontUploadOptions) => Promise<void>;
@@ -765,6 +1072,7 @@ interface PropertiesPanelProps {
 }
 
 function PropertiesPanel({
+  className,
   customFonts,
   layer,
   onAddFont,
@@ -775,9 +1083,9 @@ function PropertiesPanel({
   return (
     <aside
       aria-label="Design properties"
-      className="flex min-h-80 flex-col border-t border-border bg-background lg:min-h-0 lg:border-t-0 lg:border-l"
+      className={`flex min-h-0 flex-col bg-background ${className ?? ""}`}
     >
-      <PanelHeader icon={SlidersHorizontal} label="Design">
+      <PanelHeader icon={SlidersHorizontal} label="Properties">
         <Button
           aria-label="Reset selected layer"
           isDisabled={layer === undefined}
@@ -803,85 +1111,202 @@ function PropertiesPanel({
           <p>Select a layer to edit its properties.</p>
         </div>
       ) : (
-        <div className="min-h-0 flex-1 overflow-auto p-3">
-          <div className="mb-4 space-y-2">
-            <label
-              className="block text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase"
-              htmlFor="layer-name"
-            >
-              Layer name
-            </label>
-            <Input
-              id="layer-name"
-              onChange={(event) => onUpdate({ name: event.target.value })}
-              value={layer.name}
-            />
+        <>
+          <div className="hidden min-h-0 flex-1 flex-col lg:flex">
+            <ResizablePanelGroup orientation="vertical" className="min-h-0 flex-1">
+              <ResizablePanel defaultSize="16%" minSize="12%">
+                <div className="overflow-auto p-3">
+                  <label
+                    className="block text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase"
+                    htmlFor="layer-name"
+                  >
+                    Layer name
+                  </label>
+                  <Input
+                    id="layer-name"
+                    className="mt-2"
+                    onChange={(event) => onUpdate({ name: event.target.value })}
+                    value={layer.name}
+                  />
+                </div>
+              </ResizablePanel>
+              <ResizableHandle withHandle className="bg-border" />
+              <ResizablePanel defaultSize="58%" minSize="28%">
+                <div className="overflow-auto p-3">
+                  <PropertySection icon={Frame} label="Position & size">
+                    <div className="grid grid-cols-2 gap-2">
+                      <NumberField
+                        label="X"
+                        onChange={(value) => onUpdate({ x: value })}
+                        value={layer.x}
+                      />
+                      <NumberField
+                        label="Y"
+                        onChange={(value) => onUpdate({ y: value })}
+                        value={layer.y}
+                      />
+                      <NumberField
+                        label="W"
+                        min={1}
+                        onChange={(value) => onUpdate({ width: value })}
+                        value={layer.width}
+                      />
+                      <NumberField
+                        label="H"
+                        min={1}
+                        onChange={(value) => onUpdate({ height: value })}
+                        value={layer.height}
+                      />
+                      <NumberField
+                        label="Rotation"
+                        onChange={(value) => onUpdate({ rotation: value })}
+                        suffix="°"
+                        value={layer.rotation}
+                      />
+                      <NumberField
+                        label="Opacity"
+                        max={1}
+                        min={0}
+                        onChange={(value) => onUpdate({ opacity: value })}
+                        step={0.05}
+                        value={layer.opacity}
+                      />
+                    </div>
+                  </PropertySection>
+
+                  {isTextLayer(layer) ? (
+                    <TextProperties
+                      customFonts={customFonts}
+                      layer={layer}
+                      onAddFont={onAddFont}
+                      onUpdate={onUpdate}
+                    />
+                  ) : null}
+                  {isGeometryLayer(layer) ? (
+                    <GeometryProperties layer={layer} onUpdate={onUpdate} />
+                  ) : null}
+                  {isImageLayer(layer) ? (
+                    <ImageProperties layer={layer} onUpdate={onUpdate} />
+                  ) : null}
+                </div>
+              </ResizablePanel>
+              <ResizableHandle withHandle className="bg-border" />
+              <ResizablePanel defaultSize="26%" minSize="16%">
+                <div className="overflow-auto p-3">
+                  <PropertySection icon={Boxes} label="Layer state">
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        onPress={() => onUpdate({ visible: !layer.visible })}
+                        size="sm"
+                        variant="outline"
+                      >
+                        {layer.visible ? <Eye /> : <EyeOff />}
+                        {layer.visible ? "Visible" : "Hidden"}
+                      </Button>
+                      <Button
+                        onPress={() => onUpdate({ locked: !layer.locked })}
+                        size="sm"
+                        variant="outline"
+                      >
+                        {layer.locked ? <LockKeyhole /> : <Unlock />}
+                        {layer.locked ? "Locked" : "Editable"}
+                      </Button>
+                    </div>
+                  </PropertySection>
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </div>
-          <PropertySection icon={Frame} label="Position & size">
-            <div className="grid grid-cols-2 gap-2">
-              <NumberField label="X" onChange={(value) => onUpdate({ x: value })} value={layer.x} />
-              <NumberField label="Y" onChange={(value) => onUpdate({ y: value })} value={layer.y} />
-              <NumberField
-                label="W"
-                min={1}
-                onChange={(value) => onUpdate({ width: value })}
-                value={layer.width}
-              />
-              <NumberField
-                label="H"
-                min={1}
-                onChange={(value) => onUpdate({ height: value })}
-                value={layer.height}
-              />
-              <NumberField
-                label="Rotation"
-                onChange={(value) => onUpdate({ rotation: value })}
-                suffix="°"
-                value={layer.rotation}
-              />
-              <NumberField
-                label="Opacity"
-                max={1}
-                min={0}
-                onChange={(value) => onUpdate({ opacity: value })}
-                step={0.05}
-                value={layer.opacity}
+          <div className="flex min-h-0 flex-1 flex-col overflow-auto p-3 lg:hidden">
+            <div className="mb-4 space-y-2">
+              <label
+                className="block text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase"
+                htmlFor="layer-name-mobile"
+              >
+                Layer name
+              </label>
+              <Input
+                id="layer-name-mobile"
+                onChange={(event) => onUpdate({ name: event.target.value })}
+                value={layer.name}
               />
             </div>
-          </PropertySection>
+            <PropertySection icon={Frame} label="Position & size">
+              <div className="grid grid-cols-2 gap-2">
+                <NumberField
+                  label="X"
+                  onChange={(value) => onUpdate({ x: value })}
+                  value={layer.x}
+                />
+                <NumberField
+                  label="Y"
+                  onChange={(value) => onUpdate({ y: value })}
+                  value={layer.y}
+                />
+                <NumberField
+                  label="W"
+                  min={1}
+                  onChange={(value) => onUpdate({ width: value })}
+                  value={layer.width}
+                />
+                <NumberField
+                  label="H"
+                  min={1}
+                  onChange={(value) => onUpdate({ height: value })}
+                  value={layer.height}
+                />
+                <NumberField
+                  label="Rotation"
+                  onChange={(value) => onUpdate({ rotation: value })}
+                  suffix="°"
+                  value={layer.rotation}
+                />
+                <NumberField
+                  label="Opacity"
+                  max={1}
+                  min={0}
+                  onChange={(value) => onUpdate({ opacity: value })}
+                  step={0.05}
+                  value={layer.opacity}
+                />
+              </div>
+            </PropertySection>
 
-          {isTextLayer(layer) ? (
-            <TextProperties
-              customFonts={customFonts}
-              layer={layer}
-              onAddFont={onAddFont}
-              onUpdate={onUpdate}
-            />
-          ) : null}
-          {isGeometryLayer(layer) ? <GeometryProperties layer={layer} onUpdate={onUpdate} /> : null}
-          {isImageLayer(layer) ? <ImageProperties layer={layer} onUpdate={onUpdate} /> : null}
+            {isTextLayer(layer) ? (
+              <TextProperties
+                customFonts={customFonts}
+                layer={layer}
+                onAddFont={onAddFont}
+                onUpdate={onUpdate}
+              />
+            ) : null}
+            {isGeometryLayer(layer) ? (
+              <GeometryProperties layer={layer} onUpdate={onUpdate} />
+            ) : null}
+            {isImageLayer(layer) ? <ImageProperties layer={layer} onUpdate={onUpdate} /> : null}
 
-          <PropertySection icon={Boxes} label="Layer state">
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                onPress={() => onUpdate({ visible: !layer.visible })}
-                size="sm"
-                variant="outline"
-              >
-                {layer.visible ? <Eye /> : <EyeOff />}
-                {layer.visible ? "Visible" : "Hidden"}
-              </Button>
-              <Button
-                onPress={() => onUpdate({ locked: !layer.locked })}
-                size="sm"
-                variant="outline"
-              >
-                {layer.locked ? <LockKeyhole /> : <Unlock />}
-                {layer.locked ? "Locked" : "Editable"}
-              </Button>
-            </div>
-          </PropertySection>
-        </div>
+            <PropertySection icon={Boxes} label="Layer state">
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  onPress={() => onUpdate({ visible: !layer.visible })}
+                  size="sm"
+                  variant="outline"
+                >
+                  {layer.visible ? <Eye /> : <EyeOff />}
+                  {layer.visible ? "Visible" : "Hidden"}
+                </Button>
+                <Button
+                  onPress={() => onUpdate({ locked: !layer.locked })}
+                  size="sm"
+                  variant="outline"
+                >
+                  {layer.locked ? <LockKeyhole /> : <Unlock />}
+                  {layer.locked ? "Locked" : "Editable"}
+                </Button>
+              </div>
+            </PropertySection>
+          </div>
+        </>
       )}
     </aside>
   );

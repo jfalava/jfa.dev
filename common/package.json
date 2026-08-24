@@ -79,6 +79,7 @@
     "react": "catalog:react",
     "react-aria-components": "catalog:react",
     "react-dom": "catalog:react",
+    "react-resizable-panels": "catalog:ui",
     "sonner": "catalog:ui",
     "tailwind-merge": "catalog:styling",
     "zod": "4.4.3"

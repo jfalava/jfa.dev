@@ -28,6 +28,7 @@ interface EditorState {
   addImageLayer: (asset: AssetMeta) => void;
   addFont: (font: FontMeta) => void;
   removeSelectedLayer: () => void;
+  duplicateSelectedLayer: () => void;
   toggleLayerVisibility: (id: string) => void;
   toggleLayerLocked: (id: string) => void;
   moveLayerBefore: (sourceId: string, targetId: string) => void;
@@ -191,6 +192,29 @@ export const useEditorStore = create<EditorState>((set) => ({
       }
       const layers = state.project.layers.filter(({ id }) => id !== state.selectedLayerId);
       return commitProject(state, { ...state.project, layers }, layers.at(-1)?.id ?? null);
+    }),
+
+  duplicateSelectedLayer: () =>
+    set((state) => {
+      if (state.selectedLayerId === null) {
+        return state;
+      }
+      const layer = state.project.layers.find(({ id }) => id === state.selectedLayerId);
+      if (layer === undefined || layer.locked) {
+        return state;
+      }
+      const cloned: Layer = {
+        ...structuredClone(layer),
+        id: createId(layer.type),
+        name: `${layer.name} copy`,
+        x: layer.x + 16,
+        y: layer.y + 16,
+      };
+      return commitProject(
+        state,
+        { ...state.project, layers: [...state.project.layers, cloned] },
+        cloned.id,
+      );
     }),
 
   toggleLayerVisibility: (id) =>

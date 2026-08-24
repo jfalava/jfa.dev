@@ -25,6 +25,7 @@ export {
 export { Input } from "./input";
 export { Kbd, KbdGroup } from "./kbd";
 export { SiteHeader, type SiteHeaderProps } from "./site-header";
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
 export { Toaster } from "./sonner";
 export {
   Table,
