@@ -109,11 +109,11 @@ export function createId(prefix: string): string {
   return `${prefix}-${randomId}`;
 }
 
-export function createInitialProject(): OgProject {
+export function createInitialProject(options?: { id?: string; name?: string }): OgProject {
   return {
     version: 1,
-    id: "local-project",
-    name: "Untitled canvas",
+    id: options?.id ?? `project-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`}`,
+    name: options?.name ?? "Untitled canvas",
     width: CANVAS_WIDTH,
     height: CANVAS_HEIGHT,
     background: "#f5f1ea",

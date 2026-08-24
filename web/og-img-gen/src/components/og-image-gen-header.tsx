@@ -64,11 +64,12 @@ export function OgImageGenHeader() {
     try {
       const importedProject = await readProjectArchive(file);
       const failedFontCount = await registerProjectFonts(importedProject.fonts);
-      useEditorStore.getState().hydrate(importedProject);
+      // Krita-style: import opens as a new tab, does not replace active canvas
+      useEditorStore.getState().openProject(importedProject);
       setNotice(
         failedFontCount > 0
           ? `${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`
-          : "Project imported locally",
+          : "Project imported as new tab",
       );
     } catch {
       setNotice("That project file could not be imported");

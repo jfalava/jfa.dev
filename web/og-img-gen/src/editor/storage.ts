@@ -173,10 +173,94 @@ export async function loadProject(): Promise<OgProject | null> {
 
 export async function saveProject(project: OgProject): Promise<void> {
   await editorDatabase.projects.put({
-    id: PROJECT_ID,
+    id: project.id,
     project,
     updatedAt: Date.now(),
   });
+  // Keep legacy single-key for migration cleanup — not removed immediately
+  if (project.id !== PROJECT_ID) {
+    await editorDatabase.projects.put({
+      id: PROJECT_ID,
+      project,
+      updatedAt: Date.now(),
+    });
+  }
+}
+
+// Tabs persistence — Krita-style multiple canvases in one session
+export const TABS_META_KEY = "og-img-gen:tabs-meta";
+
+export interface TabsMeta {
+  tabIds: string[];
+  activeTabId: string;
+}
+
+export function loadTabsMeta(): TabsMeta | null {
+  try {
+    const raw = globalThis.localStorage?.getItem(TABS_META_KEY);
+    if (!raw) {
+      return null;
+    }
+    // SAFETY: parsed TabsMeta is validated via array/string checks below before use
+    const parsed = JSON.parse(raw) as TabsMeta;
+    // oxlint-disable-next-line anti-slop/no-runtime-typeof -- TabsMeta is persisted JSON; runtime validation is the parse boundary
+    if (!Array.isArray(parsed.tabIds) || typeof parsed.activeTabId !== "string") {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export function saveTabsMeta(meta: TabsMeta): void {
+  try {
+    globalThis.localStorage?.setItem(TABS_META_KEY, JSON.stringify(meta));
+  } catch {
+    // Ignore quota errors — tabs will still live in memory
+  }
+}
+
+export async function loadAllProjects(): Promise<OgProject[]> {
+  const records = await editorDatabase.projects.toArray();
+  // Filter out legacy duplicate if we have real tabs
+  return records.map((r) => projectSchema.parse(r.project));
+}
+
+export async function saveAllProjects(projects: readonly OgProject[]): Promise<void> {
+  await editorDatabase.transaction("rw", editorDatabase.projects, async () => {
+    for (const project of projects) {
+      await editorDatabase.projects.put({
+        id: project.id,
+        project,
+        updatedAt: Date.now(),
+      });
+    }
+  });
+}
+
+export async function deleteProjectById(projectId: string): Promise<void> {
+  await editorDatabase.projects.delete(projectId);
+}
+
+export async function deleteUnusedAssetsForAll(projects: readonly OgProject[]): Promise<void> {
+  const usedAssetIds = new Set(
+    projects.flatMap((p) => p.layers.flatMap((layer) => (layer.type === "image" ? [layer.assetId] : []))),
+  );
+  const allAssets = await editorDatabase.assets.toArray();
+  const unusedIds = allAssets.filter((asset) => !usedAssetIds.has(asset.id)).map((asset) => asset.id);
+  if (unusedIds.length > 0) {
+    await editorDatabase.assets.bulkDelete(unusedIds);
+  }
+}
+
+export async function deleteUnusedFontsForAll(projects: readonly OgProject[]): Promise<void> {
+  const usedFontIds = new Set(projects.flatMap((p) => p.fonts.map((font) => font.id)));
+  const allFonts = await editorDatabase.fonts.toArray();
+  const unusedIds = allFonts.filter((font) => !usedFontIds.has(font.id)).map((font) => font.id);
+  if (unusedIds.length > 0) {
+    await editorDatabase.fonts.bulkDelete(unusedIds);
+  }
 }
 
 export async function saveImageAsset(file: File): Promise<AssetMeta> {

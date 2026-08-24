@@ -13,7 +13,71 @@ import {
 
 const HISTORY_LIMIT = 50;
 
+export interface TabState {
+  id: string;
+  project: OgProject;
+  selectedLayerId: string | null;
+  past: OgProject[];
+  future: OgProject[];
+}
+
+function cloneProject(project: OgProject): OgProject {
+  return structuredClone(project);
+}
+
+function getTabDisplayName(index: number): string {
+  return index === 0 ? "Untitled canvas" : `Untitled canvas ${index + 1}`;
+}
+
+function createNewTab(index: number): TabState {
+  const project = createInitialProject({ name: getTabDisplayName(index) });
+  return {
+    id: project.id,
+    project,
+    selectedLayerId: project.layers.at(-1)?.id ?? null,
+    past: [],
+    future: [],
+  };
+}
+
+function createTabFromProject(project: OgProject): TabState {
+  return {
+    id: project.id,
+    project: cloneProject(project),
+    selectedLayerId: project.layers.at(-1)?.id ?? null,
+    past: [],
+    future: [],
+  };
+}
+
+function commitProject(
+  tab: TabState,
+  nextProject: OgProject,
+  selectedLayerId: string | null = tab.selectedLayerId,
+): TabState {
+  return {
+    ...tab,
+    project: nextProject,
+    selectedLayerId,
+    past: [...tab.past, tab.project].slice(-HISTORY_LIMIT),
+    future: [],
+  };
+}
+
+function replaceLayer(project: OgProject, id: string, patch: LayerPatch): OgProject {
+  const nextLayers = project.layers.map((layer) =>
+    layer.id === id ? { ...layer, ...patch } : layer,
+  );
+  return projectSchema.parse({
+    ...project,
+    layers: nextLayers,
+  });
+}
+
 interface EditorState {
+  tabs: TabState[];
+  activeTabId: string;
+  // derived active-tab mirrors for backwards compat
   project: OgProject;
   selectedLayerId: string | null;
   past: OgProject[];
@@ -26,6 +90,12 @@ interface EditorState {
   editingLayerId: string | null;
   editingLayerName: string;
   hydrate: (project: OgProject) => void;
+  hydrateTabs: (tabs: TabState[], activeTabId: string) => void;
+  switchTab: (id: string) => void;
+  createTab: () => void;
+  closeTab: (id: string) => void;
+  duplicateTab: (id: string) => void;
+  openProject: (project: OgProject) => void;
   selectLayer: (id: string | null) => void;
   updateProjectName: (name: string) => void;
   updateLayer: (id: string, patch: LayerPatch) => void;
@@ -55,38 +125,39 @@ interface EditorState {
   redo: () => void;
 }
 
-function cloneProject(project: OgProject): OgProject {
-  return structuredClone(project);
-}
-
-function commitProject(
+function withActiveTab(
   state: EditorState,
-  nextProject: OgProject,
-  selectedLayerId = state.selectedLayerId,
+  updater: (tab: TabState) => TabState,
 ): Partial<EditorState> {
+  const activeIndex = state.tabs.findIndex((t) => t.id === state.activeTabId);
+  if (activeIndex === -1) {
+    return state;
+  }
+  const activeTab = state.tabs[activeIndex];
+  if (activeTab === undefined) {
+    return state;
+  }
+  const nextTab = updater(activeTab);
+  const nextTabs = [...state.tabs];
+  nextTabs[activeIndex] = nextTab;
   return {
-    project: nextProject,
-    selectedLayerId,
-    past: [...state.past, state.project].slice(-HISTORY_LIMIT),
-    future: [],
+    tabs: nextTabs,
+    project: nextTab.project,
+    selectedLayerId: nextTab.selectedLayerId,
+    past: nextTab.past,
+    future: nextTab.future,
   };
 }
 
-function replaceLayer(project: OgProject, id: string, patch: LayerPatch): OgProject {
-  const nextLayers = project.layers.map((layer) =>
-    layer.id === id ? { ...layer, ...patch } : layer,
-  );
-  return projectSchema.parse({
-    ...project,
-    layers: nextLayers,
-  });
-}
+const initialTab = createNewTab(0);
 
 export const useEditorStore = create<EditorState>((set) => ({
-  project: createInitialProject(),
-  selectedLayerId: "headline",
-  past: [],
-  future: [],
+  tabs: [initialTab],
+  activeTabId: initialTab.id,
+  project: initialTab.project,
+  selectedLayerId: initialTab.selectedLayerId,
+  past: initialTab.past,
+  future: initialTab.future,
   hydrated: false,
   notice: "Saved locally in this browser",
   busy: false,
@@ -96,239 +167,473 @@ export const useEditorStore = create<EditorState>((set) => ({
   editingLayerName: "",
 
   hydrate: (project) =>
-    set({
-      project: cloneProject(project),
-      selectedLayerId: project.layers.at(-1)?.id ?? null,
-      past: [],
-      future: [],
-      hydrated: true,
-    }),
-
-  selectLayer: (id) => set({ selectedLayerId: id }),
-
-  updateProjectName: (name) =>
-    set((state) => commitProject(state, { ...state.project, name: name || "Untitled canvas" })),
-
-  updateLayer: (id, patch) =>
-    set((state) => commitProject(state, replaceLayer(state.project, id, patch))),
-
-  addTextLayer: () =>
-    set((state) => {
-      const id = createId("text");
-      const layer: Layer = {
-        id,
-        type: "text",
-        name: "New text",
-        visible: true,
-        locked: false,
-        x: 160,
-        y: 180,
-        width: 520,
-        height: 80,
-        rotation: 0,
-        opacity: 1,
-        text: "New text",
-        fontFamily: "Pretendard",
-        fontSize: 56,
-        fontWeight: 600,
-        fill: "#2f302c",
-        textAlign: "left",
+    set(() => {
+      const tab = createTabFromProject(project);
+      return {
+        tabs: [tab],
+        activeTabId: tab.id,
+        project: tab.project,
+        selectedLayerId: tab.selectedLayerId,
+        past: [],
+        future: [],
+        hydrated: true,
+        editingLayerId: null,
+        editingLayerName: "",
       };
-      return commitProject(
-        state,
-        { ...state.project, layers: [...state.project.layers, layer] },
-        id,
-      );
     }),
 
-  addGeometryLayer: () =>
-    set((state) => {
-      const id = createId("geometry");
-      const layer: Layer = {
-        id,
-        type: "shape",
-        name: "New shape",
-        visible: true,
-        locked: false,
-        x: 260,
-        y: 180,
-        width: 180,
-        height: 180,
-        rotation: 0,
-        opacity: 1,
-        geometry: "rectangle",
-        fill: "#a78bfa",
-        cornerRadius: 16,
+  hydrateTabs: (tabs, activeTabId) =>
+    set(() => {
+      if (tabs.length === 0) {
+        const fallback = createNewTab(0);
+        return {
+          tabs: [fallback],
+          activeTabId: fallback.id,
+          project: fallback.project,
+          selectedLayerId: fallback.selectedLayerId,
+          past: [],
+          future: [],
+          hydrated: true,
+          editingLayerId: null,
+          editingLayerName: "",
+        };
+      }
+      const active = tabs.find((t) => t.id === activeTabId) ?? tabs[0];
+      if (active === undefined) {
+        const fallback = createNewTab(0);
+        return {
+          tabs: [fallback],
+          activeTabId: fallback.id,
+          project: fallback.project,
+          selectedLayerId: fallback.selectedLayerId,
+          past: [],
+          future: [],
+          hydrated: true,
+          editingLayerId: null,
+          editingLayerName: "",
+        };
+      }
+      return {
+        tabs: tabs.map((t) => ({
+          ...t,
+          project: cloneProject(t.project),
+          past: [...t.past],
+          future: [...t.future],
+        })),
+        activeTabId: active.id,
+        project: cloneProject(active.project),
+        selectedLayerId: active.selectedLayerId,
+        past: [...active.past],
+        future: [...active.future],
+        hydrated: true,
+        editingLayerId: null,
+        editingLayerName: "",
       };
-      return commitProject(
-        state,
-        { ...state.project, layers: [...state.project.layers, layer] },
-        id,
-      );
     }),
 
-  addImageLayer: (asset) =>
+  switchTab: (id) =>
     set((state) => {
-      const id = createId("image");
-      const scale = Math.min(720 / asset.width, 420 / asset.height, 1);
-      const layer: Layer = {
-        id,
-        type: "image",
-        name: asset.name,
-        visible: true,
-        locked: false,
-        x: (state.project.width - asset.width * scale) / 2,
-        y: (state.project.height - asset.height * scale) / 2,
-        width: asset.width * scale,
-        height: asset.height * scale,
-        rotation: 0,
-        opacity: 1,
-        assetId: asset.id,
-        fit: "contain",
+      const tab = state.tabs.find((t) => t.id === id);
+      if (tab === undefined) {
+        return state;
+      }
+      return {
+        activeTabId: tab.id,
+        project: cloneProject(tab.project),
+        selectedLayerId: tab.selectedLayerId,
+        past: [...tab.past],
+        future: [...tab.future],
+        editingLayerId: null,
+        editingLayerName: "",
       };
-      return commitProject(
-        state,
-        {
-          ...state.project,
-          layers: [...state.project.layers, layer],
-          assets: [...state.project.assets, asset],
-        },
-        id,
-      );
     }),
 
-  addFont: (font) =>
-    set((state) =>
-      commitProject(state, {
-        ...state.project,
-        fonts: [...state.project.fonts, font],
-      }),
-    ),
-
-  removeSelectedLayer: () =>
+  createTab: () =>
     set((state) => {
-      if (!state.selectedLayerId) {
-        return state;
-      }
-      const layer = state.project.layers.find(({ id }) => id === state.selectedLayerId);
-      if (!layer || layer.locked) {
-        return state;
-      }
-      const layers = state.project.layers.filter(({ id }) => id !== state.selectedLayerId);
-      return commitProject(state, { ...state.project, layers }, layers.at(-1)?.id ?? null);
-    }),
-
-  duplicateSelectedLayer: () =>
-    set((state) => {
-      if (state.selectedLayerId === null) {
-        return state;
-      }
-      const layer = state.project.layers.find(({ id }) => id === state.selectedLayerId);
-      if (layer === undefined || layer.locked) {
-        return state;
-      }
-      const cloned: Layer = {
-        ...structuredClone(layer),
-        id: createId(layer.type),
-        name: `${layer.name} copy`,
-        x: layer.x + 16,
-        y: layer.y + 16,
+      const nextIndex = state.tabs.length;
+      const newTab = createNewTab(nextIndex);
+      return {
+        tabs: [...state.tabs, newTab],
+        activeTabId: newTab.id,
+        project: cloneProject(newTab.project),
+        selectedLayerId: newTab.selectedLayerId,
+        past: [],
+        future: [],
+        editingLayerId: null,
+        editingLayerName: "",
       };
-      return commitProject(
-        state,
-        { ...state.project, layers: [...state.project.layers, cloned] },
-        cloned.id,
-      );
     }),
 
-  removeLayer: (id) =>
+  closeTab: (id) =>
     set((state) => {
-      const layer = state.project.layers.find((candidate) => candidate.id === id);
-      if (layer === undefined || layer.locked) {
+      if (state.tabs.length <= 1) {
+        // Keep at least one tab — reset it instead
+        const fresh = createNewTab(0);
+        return {
+          tabs: [fresh],
+          activeTabId: fresh.id,
+          project: fresh.project,
+          selectedLayerId: fresh.selectedLayerId,
+          past: [],
+          future: [],
+          editingLayerId: null,
+          editingLayerName: "",
+        };
+      }
+      const closingIndex = state.tabs.findIndex((t) => t.id === id);
+      if (closingIndex === -1) {
         return state;
       }
-      const layers = state.project.layers.filter((candidate) => candidate.id !== id);
-      const nextSelected =
-        state.selectedLayerId === id ? (layers.at(-1)?.id ?? null) : state.selectedLayerId;
-      return commitProject(state, { ...state.project, layers }, nextSelected);
-    }),
-
-  duplicateLayer: (id) =>
-    set((state) => {
-      const layer = state.project.layers.find((candidate) => candidate.id === id);
-      if (layer === undefined || layer.locked) {
-        return state;
+      const nextTabs = state.tabs.filter((t) => t.id !== id);
+      // If closing active tab, switch to neighbor
+      if (state.activeTabId === id) {
+        const nextIndex = Math.min(closingIndex, nextTabs.length - 1);
+        const nextActive = nextTabs[nextIndex];
+        if (nextActive === undefined) {
+          return state;
+        }
+        return {
+          tabs: nextTabs,
+          activeTabId: nextActive.id,
+          project: cloneProject(nextActive.project),
+          selectedLayerId: nextActive.selectedLayerId,
+          past: [...nextActive.past],
+          future: [...nextActive.future],
+          editingLayerId: null,
+          editingLayerName: "",
+        };
       }
-      const cloned: Layer = {
-        ...structuredClone(layer),
-        id: createId(layer.type),
-        name: `${layer.name} copy`,
-        x: layer.x + 16,
-        y: layer.y + 16,
-      };
-      return commitProject(
-        state,
-        { ...state.project, layers: [...state.project.layers, cloned] },
-        cloned.id,
-      );
+      return { tabs: nextTabs };
     }),
 
-  resetLayer: (id) =>
+  duplicateTab: (id) =>
     set((state) => {
-      const layer = state.project.layers.find((candidate) => candidate.id === id);
-      if (layer === undefined || layer.locked) {
-        return state;
-      }
-      const patch: LayerPatch =
-        layer.type === "text"
-          ? { height: 80, rotation: 0, width: 520, x: 160, y: 180 }
-          : { height: layer.height, rotation: 0, width: layer.width, x: layer.x, y: layer.y };
-      return commitProject(state, replaceLayer(state.project, id, patch), id);
-    }),
-
-  toggleLayerVisibility: (id) =>
-    set((state) => {
-      const layer = state.project.layers.find((candidate) => candidate.id === id);
-      return layer === undefined
-        ? state
-        : commitProject(state, replaceLayer(state.project, id, { visible: !layer.visible }));
-    }),
-
-  toggleLayerLocked: (id) =>
-    set((state) => {
-      const layer = state.project.layers.find((candidate) => candidate.id === id);
-      return layer === undefined
-        ? state
-        : commitProject(state, replaceLayer(state.project, id, { locked: !layer.locked }));
-    }),
-
-  moveLayerBefore: (sourceId, targetId) =>
-    set((state) => {
-      if (sourceId === targetId) {
-        return state;
-      }
-      const layers = [...state.project.layers];
-      const sourceIndex = layers.findIndex(({ id }) => id === sourceId);
-      const targetIndex = layers.findIndex(({ id }) => id === targetId);
-      if (sourceIndex === -1 || targetIndex === -1) {
-        return state;
-      }
-      const [source] = layers.splice(sourceIndex, 1);
+      const source = state.tabs.find((t) => t.id === id);
       if (source === undefined) {
         return state;
       }
-      layers.splice(
-        layers.findIndex(({ id }) => id === targetId),
-        0,
-        source,
-      );
-      return commitProject(state, { ...state.project, layers });
+      // SAFETY: cloned project inherits valid OgProject shape via structuredClone + parse below
+      const clonedProject = {
+        ...structuredClone(source.project),
+        id: createId("project"),
+        name: `${source.project.name} copy`,
+      } as OgProject;
+      const newTab: TabState = {
+        id: clonedProject.id,
+        project: projectSchema.parse(clonedProject),
+        selectedLayerId: source.selectedLayerId,
+        past: [],
+        future: [],
+      };
+      const sourceIndex = state.tabs.findIndex((t) => t.id === id);
+      const nextTabs = [...state.tabs];
+      nextTabs.splice(sourceIndex + 1, 0, newTab);
+      return {
+        tabs: nextTabs,
+        activeTabId: newTab.id,
+        project: cloneProject(newTab.project),
+        selectedLayerId: newTab.selectedLayerId,
+        past: [],
+        future: [],
+        editingLayerId: null,
+        editingLayerName: "",
+      };
     }),
 
-  resetProject: () => {
-    const project = createInitialProject();
-    set((state) => commitProject(state, project, "headline"));
-  },
+  openProject: (project) =>
+    set((state) => {
+      // Avoid duplicate tab ids — ensure unique
+      const existing = state.tabs.find((t) => t.id === project.id);
+      const parsed = projectSchema.parse(project);
+      // SAFETY: duplicate id gets regenerated via createId to keep tab keys unique
+      const projectToOpen = existing ? ({ ...parsed, id: createId("project") } as OgProject) : parsed;
+      const finalProject = existing ? projectSchema.parse(projectToOpen) : parsed;
+      const newTab: TabState = {
+        id: finalProject.id,
+        project: cloneProject(finalProject),
+        selectedLayerId: finalProject.layers.at(-1)?.id ?? null,
+        past: [],
+        future: [],
+      };
+      return {
+        tabs: [...state.tabs, newTab],
+        activeTabId: newTab.id,
+        project: cloneProject(newTab.project),
+        selectedLayerId: newTab.selectedLayerId,
+        past: [],
+        future: [],
+        editingLayerId: null,
+        editingLayerName: "",
+      };
+    }),
+
+  selectLayer: (id) =>
+    set((state) =>
+      withActiveTab(state, (tab) => ({
+        ...tab,
+        selectedLayerId: id,
+      })),
+    ),
+
+  updateProjectName: (name) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const nextProject = { ...tab.project, name: name || "Untitled canvas" };
+        return commitProject(tab, projectSchema.parse(nextProject), tab.selectedLayerId);
+      }),
+    ),
+
+  updateLayer: (id, patch) =>
+    set((state) =>
+      withActiveTab(state, (tab) => commitProject(tab, replaceLayer(tab.project, id, patch))),
+    ),
+
+  addTextLayer: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const id = createId("text");
+        const layer: Layer = {
+          id,
+          type: "text",
+          name: "New text",
+          visible: true,
+          locked: false,
+          x: 160,
+          y: 180,
+          width: 520,
+          height: 80,
+          rotation: 0,
+          opacity: 1,
+          text: "New text",
+          fontFamily: "Pretendard",
+          fontSize: 56,
+          fontWeight: 600,
+          fill: "#2f302c",
+          textAlign: "left",
+        };
+        return commitProject(
+          tab,
+          { ...tab.project, layers: [...tab.project.layers, layer] },
+          id,
+        );
+      }),
+    ),
+
+  addGeometryLayer: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const id = createId("geometry");
+        const layer: Layer = {
+          id,
+          type: "shape",
+          name: "New shape",
+          visible: true,
+          locked: false,
+          x: 260,
+          y: 180,
+          width: 180,
+          height: 180,
+          rotation: 0,
+          opacity: 1,
+          geometry: "rectangle",
+          fill: "#a78bfa",
+          cornerRadius: 16,
+        };
+        return commitProject(
+          tab,
+          { ...tab.project, layers: [...tab.project.layers, layer] },
+          id,
+        );
+      }),
+    ),
+
+  addImageLayer: (asset) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const id = createId("image");
+        const scale = Math.min(720 / asset.width, 420 / asset.height, 1);
+        const layer: Layer = {
+          id,
+          type: "image",
+          name: asset.name,
+          visible: true,
+          locked: false,
+          x: (tab.project.width - asset.width * scale) / 2,
+          y: (tab.project.height - asset.height * scale) / 2,
+          width: asset.width * scale,
+          height: asset.height * scale,
+          rotation: 0,
+          opacity: 1,
+          assetId: asset.id,
+          fit: "contain",
+        };
+        return commitProject(
+          tab,
+          {
+            ...tab.project,
+            layers: [...tab.project.layers, layer],
+            assets: [...tab.project.assets, asset],
+          },
+          id,
+        );
+      }),
+    ),
+
+  addFont: (font) =>
+    set((state) =>
+      withActiveTab(state, (tab) =>
+        commitProject(tab, {
+          ...tab.project,
+          fonts: [...tab.project.fonts, font],
+        }),
+      ),
+    ),
+
+  removeSelectedLayer: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        if (!tab.selectedLayerId) {
+          return tab;
+        }
+        const layer = tab.project.layers.find(({ id }) => id === tab.selectedLayerId);
+        if (!layer || layer.locked) {
+          return tab;
+        }
+        const layers = tab.project.layers.filter(({ id }) => id !== tab.selectedLayerId);
+        return commitProject(tab, { ...tab.project, layers }, layers.at(-1)?.id ?? null);
+      }),
+    ),
+
+  duplicateSelectedLayer: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        if (tab.selectedLayerId === null) {
+          return tab;
+        }
+        const layer = tab.project.layers.find(({ id }) => id === tab.selectedLayerId);
+        if (layer === undefined || layer.locked) {
+          return tab;
+        }
+        const cloned: Layer = {
+          ...structuredClone(layer),
+          id: createId(layer.type),
+          name: `${layer.name} copy`,
+          x: layer.x + 16,
+          y: layer.y + 16,
+        };
+        return commitProject(
+          tab,
+          { ...tab.project, layers: [...tab.project.layers, cloned] },
+          cloned.id,
+        );
+      }),
+    ),
+
+  removeLayer: (id) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const layer = tab.project.layers.find((candidate) => candidate.id === id);
+        if (layer === undefined || layer.locked) {
+          return tab;
+        }
+        const layers = tab.project.layers.filter((candidate) => candidate.id !== id);
+        const nextSelected =
+          tab.selectedLayerId === id ? (layers.at(-1)?.id ?? null) : tab.selectedLayerId;
+        return commitProject(tab, { ...tab.project, layers }, nextSelected);
+      }),
+    ),
+
+  duplicateLayer: (id) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const layer = tab.project.layers.find((candidate) => candidate.id === id);
+        if (layer === undefined || layer.locked) {
+          return tab;
+        }
+        const cloned: Layer = {
+          ...structuredClone(layer),
+          id: createId(layer.type),
+          name: `${layer.name} copy`,
+          x: layer.x + 16,
+          y: layer.y + 16,
+        };
+        return commitProject(
+          tab,
+          { ...tab.project, layers: [...tab.project.layers, cloned] },
+          cloned.id,
+        );
+      }),
+    ),
+
+  resetLayer: (id) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const layer = tab.project.layers.find((candidate) => candidate.id === id);
+        if (layer === undefined || layer.locked) {
+          return tab;
+        }
+        const patch: LayerPatch =
+          layer.type === "text"
+            ? { height: 80, rotation: 0, width: 520, x: 160, y: 180 }
+            : { height: layer.height, rotation: 0, width: layer.width, x: layer.x, y: layer.y };
+        return commitProject(tab, replaceLayer(tab.project, id, patch), id);
+      }),
+    ),
+
+  toggleLayerVisibility: (id) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const layer = tab.project.layers.find((candidate) => candidate.id === id);
+        return layer === undefined
+          ? tab
+          : commitProject(tab, replaceLayer(tab.project, id, { visible: !layer.visible }));
+      }),
+    ),
+
+  toggleLayerLocked: (id) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const layer = tab.project.layers.find((candidate) => candidate.id === id);
+        return layer === undefined
+          ? tab
+          : commitProject(tab, replaceLayer(tab.project, id, { locked: !layer.locked }));
+      }),
+    ),
+
+  moveLayerBefore: (sourceId, targetId) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        if (sourceId === targetId) {
+          return tab;
+        }
+        const layers = [...tab.project.layers];
+        const sourceIndex = layers.findIndex(({ id }) => id === sourceId);
+        const targetIndex = layers.findIndex(({ id }) => id === targetId);
+        if (sourceIndex === -1 || targetIndex === -1) {
+          return tab;
+        }
+        const [source] = layers.splice(sourceIndex, 1);
+        if (source === undefined) {
+          return tab;
+        }
+        layers.splice(
+          layers.findIndex(({ id }) => id === targetId),
+          0,
+          source,
+        );
+        return commitProject(tab, { ...tab.project, layers });
+      }),
+    ),
+
+  resetProject: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const fresh = createInitialProject({ name: tab.project.name });
+        // Keep same tab id but refresh project with same id
+        const nextProject = { ...fresh, id: tab.project.id, name: tab.project.name };
+        return commitProject(tab, projectSchema.parse(nextProject), "headline");
+      }),
+    ),
 
   setNotice: (notice) => set({ notice }),
 
@@ -344,7 +649,11 @@ export const useEditorStore = create<EditorState>((set) => ({
 
   startRenamingSelected: () =>
     set((state) => {
-      const layer = state.project.layers.find((l) => l.id === state.selectedLayerId);
+      const tab = state.tabs.find((t) => t.id === state.activeTabId);
+      if (tab === undefined) {
+        return state;
+      }
+      const layer = tab.project.layers.find((l) => l.id === tab.selectedLayerId);
       if (!layer || layer.locked) {
         return state;
       }
@@ -360,46 +669,69 @@ export const useEditorStore = create<EditorState>((set) => ({
       if (trimmed.length === 0) {
         return { editingLayerId: null, editingLayerName: "" };
       }
-      const nextLayers = state.project.layers.map((l) =>
-        l.id === state.editingLayerId ? { ...l, name: trimmed } : l,
-      );
-      const nextProject = projectSchema.parse({ ...state.project, layers: nextLayers });
-      return {
-        project: nextProject,
-        past: [...state.past, state.project].slice(-HISTORY_LIMIT),
-        future: [],
-        editingLayerId: null,
-        editingLayerName: "",
-      };
+      const patch = withActiveTab(state, (tab) => {
+        const nextLayers = tab.project.layers.map((l) =>
+          l.id === state.editingLayerId ? { ...l, name: trimmed } : l,
+        );
+        const nextProject = projectSchema.parse({ ...tab.project, layers: nextLayers });
+        return commitProject(tab, nextProject);
+      });
+      return { ...patch, editingLayerId: null, editingLayerName: "" };
     }),
 
   cancelRename: () => set({ editingLayerId: null, editingLayerName: "" }),
 
   undo: () =>
     set((state) => {
-      const previous = state.past.at(-1);
+      const tab = state.tabs.find((t) => t.id === state.activeTabId);
+      if (tab === undefined) {
+        return state;
+      }
+      const previous = tab.past.at(-1);
       if (previous === undefined) {
         return state;
       }
-      return {
+      const nextTab: TabState = {
+        ...tab,
         project: previous,
         selectedLayerId: previous.layers.at(-1)?.id ?? null,
-        past: state.past.slice(0, -1),
-        future: [state.project, ...state.future],
+        past: tab.past.slice(0, -1),
+        future: [tab.project, ...tab.future],
+      };
+      const nextTabs = state.tabs.map((t) => (t.id === tab.id ? nextTab : t));
+      return {
+        tabs: nextTabs,
+        project: previous,
+        selectedLayerId: previous.layers.at(-1)?.id ?? null,
+        past: nextTab.past,
+        future: nextTab.future,
       };
     }),
 
   redo: () =>
     set((state) => {
-      const next = state.future[0];
+      const tab = state.tabs.find((t) => t.id === state.activeTabId);
+      if (tab === undefined) {
+        return state;
+      }
+      const next = tab.future[0];
       if (next === undefined) {
         return state;
       }
-      return {
+      const nextTab: TabState = {
+        ...tab,
         project: next,
         selectedLayerId: next.layers.at(-1)?.id ?? null,
-        past: [...state.past, state.project].slice(-HISTORY_LIMIT),
-        future: state.future.slice(1),
+        past: [...tab.past, tab.project].slice(-HISTORY_LIMIT),
+        future: tab.future.slice(1),
+      };
+      const nextTabs = state.tabs.map((t) => (t.id === tab.id ? nextTab : t));
+      return {
+        tabs: nextTabs,
+        project: next,
+        selectedLayerId: next.layers.at(-1)?.id ?? null,
+        past: nextTab.past,
+        future: nextTab.future,
       };
     }),
 }));

@@ -33,7 +33,6 @@ import {
   Plus,
   Redo2,
   RefreshCw,
-  Save,
   Search,
   SlidersHorizontal,
   Square,
@@ -49,6 +48,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "r
 import { Pressable } from "react-aria-components";
 
 import { EditorCanvas, type EditorCanvasHandle } from "@/components/editor-canvas";
+import { EditorTabsBar } from "@/components/editor-tabs";
 import { ShortcutGuide } from "@/components/shortcut-guide";
 import { editorCanvasRef } from "@/editor/canvas-ref";
 import { projectInputRef } from "@/editor/project-input-ref";
@@ -66,18 +66,22 @@ import {
 } from "@/editor/model";
 import {
   createFontMeta,
-  deleteUnusedAssets,
-  deleteUnusedFonts,
+  deleteProjectById,
+  deleteUnusedAssetsForAll,
+  deleteUnusedFontsForAll,
   FONT_FILE_ACCEPT,
   IMAGE_FILE_ACCEPT,
   isSupportedFontFile,
   isSupportedImageFile,
+  loadAllProjects,
   loadAssetUrl,
   loadFont as loadStoredFont,
   loadProject,
+  loadTabsMeta,
+  saveAllProjects,
   saveFontAsset,
   saveImageAsset,
-  saveProject,
+  saveTabsMeta,
   type FontUploadOptions,
 } from "@/editor/storage";
 import { useEditorStore } from "@/editor/store";
@@ -115,13 +119,14 @@ function EditorPage() {
   const project = useEditorStore((state) => state.project);
   const selectedLayerId = useEditorStore((state) => state.selectedLayerId);
   const hydrated = useEditorStore((state) => state.hydrated);
+  const tabs = useEditorStore((state) => state.tabs);
+  const activeTabId = useEditorStore((state) => state.activeTabId);
   const selectLayer = useEditorStore((state) => state.selectLayer);
   const updateLayer = useEditorStore((state) => state.updateLayer);
   const addTextLayer = useEditorStore((state) => state.addTextLayer);
   const addGeometryLayer = useEditorStore((state) => state.addGeometryLayer);
   const addImageLayer = useEditorStore((state) => state.addImageLayer);
   const addFont = useEditorStore((state) => state.addFont);
-  const updateProjectName = useEditorStore((state) => state.updateProjectName);
   const duplicateSelectedLayer = useEditorStore((state) => state.duplicateSelectedLayer);
   const removeSelectedLayer = useEditorStore((state) => state.removeSelectedLayer);
   const toggleLayerVisibility = useEditorStore((state) => state.toggleLayerVisibility);
@@ -141,7 +146,6 @@ function EditorPage() {
   const [zoom, setZoom] = useState(1);
   const busy = useEditorStore((state) => state.busy);
   const setBusy = useEditorStore((state) => state.setBusy);
-  const notice = useEditorStore((state) => state.notice);
   const setNotice = useEditorStore((state) => state.setNotice);
   const isHelpOpen = useEditorStore((state) => state.isHelpOpen);
   const isHelpHeld = useEditorStore((state) => state.isHelpHeld);
@@ -264,18 +268,55 @@ function EditorPage() {
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let cancelled = false;
-    async function restoreProject(): Promise<void> {
+    async function restoreTabs(): Promise<void> {
       try {
-        const storedProject = await loadProject();
-        const nextProject = storedProject ?? createInitialProject();
-        const failedFontCount = await registerProjectFonts(nextProject.fonts);
-        if (!cancelled) {
-          useEditorStore.getState().hydrate(nextProject);
-          if (failedFontCount > 0) {
-            setNotice(
-              `${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`,
-            );
+        const meta = loadTabsMeta();
+        const allProjects = await loadAllProjects();
+        // Try tabs meta first (Krita-style multi-canvas)
+        if (meta && allProjects.length > 0) {
+          const ordered = meta.tabIds
+            .map((id) => allProjects.find((p) => p.id === id))
+            .filter((p): p is OgProject => p !== undefined);
+          if (ordered.length > 0) {
+            let failedFontCount = 0;
+            for (const proj of ordered) {
+              failedFontCount += await registerProjectFonts(proj.fonts);
+            }
+            if (!cancelled) {
+              const tabStates = ordered.map((proj) => ({
+                id: proj.id,
+                project: proj,
+                selectedLayerId: proj.layers.at(-1)?.id ?? null,
+                // SAFETY: empty history for restored tabs — past/future intentionally reset on load
+                past: [] as OgProject[],
+                // SAFETY: empty history for restored tabs — past/future intentionally reset on load
+                future: [] as OgProject[],
+              }));
+              // SAFETY: ordered non-empty checked above; activeId fallback is ordered[0] which is guaranteed
+              // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- non-null assertion required after length check
+              const activeId = ordered.some((p) => p.id === meta.activeTabId) ? meta.activeTabId : ordered[0]!.id;
+              useEditorStore.getState().hydrateTabs(tabStates, activeId);
+              if (failedFontCount > 0) {
+                setNotice(`${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`);
+              }
+            }
+            return;
           }
+        }
+        // Migration: single project (legacy)
+        const storedProject = await loadProject();
+        if (storedProject) {
+          const failedFontCount = await registerProjectFonts(storedProject.fonts);
+          if (!cancelled) {
+            useEditorStore.getState().hydrate(storedProject);
+            if (failedFontCount > 0) {
+              setNotice(`${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`);
+            }
+          }
+          return;
+        }
+        if (!cancelled) {
+          useEditorStore.getState().hydrate(createInitialProject());
         }
       } catch {
         if (!cancelled) {
@@ -285,7 +326,7 @@ function EditorPage() {
       }
     }
 
-    void restoreProject();
+    void restoreTabs();
 
     return () => {
       cancelled = true;
@@ -299,24 +340,38 @@ function EditorPage() {
     }
 
     const saveTimer = window.setTimeout(() => {
-      async function persistProject(): Promise<void> {
+      async function persistTabs(): Promise<void> {
         try {
-          await saveProject(project);
-          await deleteUnusedAssets(project);
-          await deleteUnusedFonts(project);
+          const projects = tabs.map((t) => t.project);
+          await saveAllProjects(projects);
+          saveTabsMeta({ tabIds: tabs.map((t) => t.id), activeTabId });
+          // Clean up closed tabs (orphan projects) — best-effort
+          try {
+            const all = await loadAllProjects();
+            const aliveIds = new Set(projects.map((p) => p.id));
+            for (const p of all) {
+              if (!aliveIds.has(p.id) && p.id !== "local-project") {
+                await deleteProjectById(p.id);
+              }
+            }
+          } catch {
+            // Ignore cleanup errors
+          }
+          await deleteUnusedAssetsForAll(projects);
+          await deleteUnusedFontsForAll(projects);
           setNotice("Saved locally in this browser");
         } catch {
           setNotice("Could not save locally; your canvas is still in memory");
         }
       }
 
-      void persistProject();
+      void persistTabs();
     }, 300);
 
     return () => {
       window.clearTimeout(saveTimer);
     };
-  }, [hydrated, project]);
+  }, [hydrated, tabs, activeTabId]);
 
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -457,6 +512,7 @@ function EditorPage() {
   // Top bar (SiteHeader) is preserved via __root.tsx; this component's inner toolbar is kept as the "options bar".
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-muted/25">
+      <EditorTabsBar />
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
         {/* Left: Photoshop-style toolbox */}
         <PhotoshopToolbox
@@ -534,22 +590,6 @@ function EditorPage() {
                 <ZoomIn />
               </Button>
             </div>
-          </div>
-
-          <div className="flex min-h-8 shrink-0 items-center justify-between gap-3 border-t border-border bg-background px-3 py-1 text-[10px] text-muted-foreground">
-            <div className="flex min-w-0 items-center gap-2">
-              <Save className="size-3" />
-              <Input
-                aria-label="Project name"
-                className="h-5 max-w-44 border-0 bg-transparent px-1 text-[10px] shadow-none"
-                onChange={(event) => updateProjectName(event.target.value)}
-                value={project.name}
-              />
-              <span className="truncate">{notice}</span>
-            </div>
-            <span className="shrink-0">
-              {project.width} × {project.height} px
-            </span>
           </div>
         </section>
 
