@@ -33,7 +33,6 @@ import {
   Plus,
   Redo2,
   RefreshCw,
-  RotateCcw,
   Save,
   Search,
   SlidersHorizontal,
@@ -120,8 +119,8 @@ function EditorPage() {
   const addImageLayer = useEditorStore((state) => state.addImageLayer);
   const addFont = useEditorStore((state) => state.addFont);
   const updateProjectName = useEditorStore((state) => state.updateProjectName);
-  const removeSelectedLayer = useEditorStore((state) => state.removeSelectedLayer);
   const duplicateSelectedLayer = useEditorStore((state) => state.duplicateSelectedLayer);
+  const removeSelectedLayer = useEditorStore((state) => state.removeSelectedLayer);
   const toggleLayerVisibility = useEditorStore((state) => state.toggleLayerVisibility);
   const toggleLayerLocked = useEditorStore((state) => state.toggleLayerLocked);
   const moveLayerBefore = useEditorStore((state) => state.moveLayerBefore);
@@ -452,12 +451,6 @@ function EditorPage() {
                 customFonts={project.fonts}
                 layer={selectedLayer}
                 onAddFont={handleFontUpload}
-                onDelete={removeSelectedLayer}
-                onReset={() => {
-                  if (selectedLayer !== undefined) {
-                    updateLayer(selectedLayer.id, createLayerReset(selectedLayer));
-                  }
-                }}
                 onUpdate={updateSelected}
               />
             </ResizablePanel>
@@ -486,12 +479,6 @@ function EditorPage() {
             customFonts={project.fonts}
             layer={selectedLayer}
             onAddFont={handleFontUpload}
-            onDelete={removeSelectedLayer}
-            onReset={() => {
-              if (selectedLayer !== undefined) {
-                updateLayer(selectedLayer.id, createLayerReset(selectedLayer));
-              }
-            }}
             onUpdate={updateSelected}
           />
           <LayersPanel
@@ -1007,8 +994,6 @@ interface PropertiesPanelProps {
   customFonts: FontMeta[];
   layer: Layer | undefined;
   onAddFont: (file: File, options: FontUploadOptions) => Promise<void>;
-  onDelete: () => void;
-  onReset: () => void;
   onUpdate: (patch: LayerPatch) => void;
 }
 
@@ -1017,8 +1002,6 @@ function PropertiesPanel({
   customFonts,
   layer,
   onAddFont,
-  onDelete,
-  onReset,
   onUpdate,
 }: PropertiesPanelProps) {
   return (
@@ -1026,26 +1009,7 @@ function PropertiesPanel({
       aria-label="Design properties"
       className={`flex min-h-0 flex-col bg-background ${className ?? ""}`}
     >
-      <PanelHeader icon={SlidersHorizontal} label="Properties">
-        <Button
-          aria-label="Reset selected layer"
-          isDisabled={layer === undefined}
-          onPress={onReset}
-          size="icon-sm"
-          variant="ghost"
-        >
-          <RotateCcw />
-        </Button>
-        <Button
-          aria-label="Delete selected layer"
-          isDisabled={layer === undefined || layer.locked}
-          onPress={onDelete}
-          size="icon-sm"
-          variant="ghost"
-        >
-          <Trash2 />
-        </Button>
-      </PanelHeader>
+      <PanelHeader icon={SlidersHorizontal} label="Properties" />
       {layer === undefined ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-2 p-6 text-center text-xs text-muted-foreground">
           <MousePointer2 className="size-5" />
@@ -1521,22 +1485,12 @@ function fitValue(value: string): "contain" | "cover" {
   return value === "cover" ? "cover" : "contain";
 }
 
-function createLayerReset(layer: Layer): LayerPatch {
-  return {
-    height: layer.type === "text" ? 80 : layer.height,
-    rotation: 0,
-    width: layer.type === "text" ? 520 : layer.width,
-    x: layer.type === "text" ? 160 : layer.x,
-    y: layer.type === "text" ? 180 : layer.y,
-  };
-}
-
 function PanelHeader({
   children,
   icon: Icon,
   label,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   icon: LucideIcon;
   label: string;
 }) {
