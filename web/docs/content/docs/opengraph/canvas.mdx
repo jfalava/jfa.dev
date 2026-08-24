@@ -1,0 +1,41 @@
+---
+title: Canvas
+description: Choose a preset or type any size. Multiple canvases live in tabs.
+icon: Frame
+---
+
+import { CanvasPreview, TabsPreview } from "@/components/opengraph/canvas-preview";
+
+The canvas is the page. Everything else — text, shapes, images — sits on it.
+
+<CanvasPreview />
+
+## Presets
+
+The editor ships with the sizes you use most for banners and thumbnails:
+
+- **OG Banner 1200×630** — Facebook, LinkedIn, the default.
+- **X Card 1200×675** — X / Twitter large card.
+- **YouTube 1280×720** — 16:9 thumbnail.
+- **Square 1080×1080** — Instagram feed.
+- **Story 1080×1920** — 9:16 for stories and reels.
+- **Wide 1600×900** — 16:9 wide banner.
+
+Pick a preset and the canvas updates. The background fills the new size. Undo with `Alt+Z`.
+
+## Custom size
+
+Below the presets are two fields, **W** and **H**. Type any number from 100 to 8000. The background follows automatically. You can also find these fields in **Properties → Canvas**.
+
+## Tabs
+
+<TabsPreview />
+
+You can keep several canvases in one session. Each tab has its own layers, size, and undo history.
+
+- Click a tab to switch.
+- Double-click its name to rename.
+- **+** makes a fresh canvas.
+- **×** closes the tab. Closing the last tab starts a new blank canvas.
+
+All tabs are saved locally in this browser.

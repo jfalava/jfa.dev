@@ -1,0 +1,31 @@
+---
+title: Shapes & Images
+description: Rectangles, ellipses, and local images.
+icon: Shapes
+---
+
+import { ColorPickerPreview } from "@/components/opengraph/layers-preview";
+
+## Shapes
+
+A shape layer is a rectangle or an ellipse with a fill.
+
+- **Type** — choose **Rectangle** or **Ellipse** in **Properties → Shape**.
+- **Fill** — pick a color for the shape.
+- **Radius** — for rectangles, the corner radius in pixels. Set it to half the smallest side for a pill shape.
+
+Shapes stay crisp at any canvas size. Move, scale, or rotate them like any other layer.
+
+## Images
+
+Images are files you pick from your device. They never leave the browser.
+
+- Click **P** or **New image layer**, or drag files onto the canvas. You can select multiple files at once.
+- Supported formats: **PNG, JPEG, WebP, GIF, AVIF, SVG**.
+- On import, the image is scaled to fit the canvas. Then move, scale, rotate, or change its opacity as needed.
+
+<ColorPickerPreview />
+
+## Color
+
+All color controls use the same picker — the toolbox swatches, **Properties → Fill** for shapes, and **Properties → Color** for text. Click the swatch to drag the color field or type a hex value.

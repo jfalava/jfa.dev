@@ -1,19 +1,24 @@
 ---
 title: Projects & Assets
-description: Persistence and .ogproj archives.
+description: Saved in the browser and portable as .ogproj archives.
+icon: Archive
 ---
 
-## Local-first persistence
+## Saved locally
 
-OG image assets (uploaded images, custom fonts) live only in Dexie IndexedDB.
-Nothing is sent to a remote service; images are removed when you delete them
-or reset the project.
+Everything you create lives in this browser:
 
-Supported uploads: PNG, JPEG, WebP, GIF, AVIF, and SVG — including multi-file
-selection and drag-and-drop.
+- Layers, canvas size, and fonts are saved automatically after every change.
+- Uploaded images and custom fonts stay on your device — nothing is sent to a server.
+- Removing an image or font deletes it locally. Resetting a project clears everything for that canvas.
+
+Supported uploads: PNG, JPEG, WebP, GIF, AVIF, and SVG. You can select multiple files or drag and drop.
 
 ## .ogproj archives
 
-Exporting creates a portable ZIP-based `.ogproj` file containing the project
-data plus local image files and fonts, so a workspace can be moved between
-browsers or machines.
+Export a portable archive to move a project between browsers or machines:
+
+- **Export ZIP (.ogproj)** — creates a ZIP file containing the project data, images, and fonts. Open it with **Import** to continue editing as a new tab.
+- **Export PNG** — renders the current canvas at full size (for example, 1200 × 630) and downloads it directly.
+
+Find both actions in the header **Export** menu. No account or upload required.

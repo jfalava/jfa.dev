@@ -1,18 +1,27 @@
 ---
 title: Fonts
-description: Bundled families and custom font uploads.
+description: Built-in families and custom uploads.
+icon: ALargeSmall
 ---
 
-## Bundled fonts
+## Built-in fonts
 
-Built-in text families are Pretendard, Zilla Slab, and Google Sans Code,
-provided by `@jfa.dev/common`.
+The editor includes three families out of the box:
+
+- **Pretendard** — a clean sans-serif for body and headlines.
+- **Zilla Slab** — a sturdy slab serif.
+- **Google Sans Code** — a monospaced option for code or labels.
+
+Pick any of them from **Properties → Font family** when a text layer is selected.
 
 ## Custom fonts
 
-Custom WOFF2, WOFF, TTF, and OTF fonts are registered locally via the
-`FontFace` API. They persist as project metadata plus blobs in IndexedDB and
-are included in `.ogproj` archives.
+Add your own fonts from **Properties → Upload font**:
 
-Variable WOFF2 is the recommended format. There is no R2 bucket, upload API,
-or server-side transform — assets stay in the browser.
+- Supported formats: **WOFF2, WOFF, TTF, OTF**.
+- Drag and drop or click to browse — the font is added to the family picker immediately.
+- Custom fonts are saved with the project and included when you export a `.ogproj` archive.
+
+WOFF2 variable fonts are recommended — one file covers many weights, so you can use Regular through Extra Bold without extra downloads.
+
+All fonts stay in the browser. Nothing is uploaded.

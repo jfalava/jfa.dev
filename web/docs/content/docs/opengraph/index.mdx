@@ -1,18 +1,31 @@
 ---
-title: OpenGraph
+title: Overview
 description: Zero-cost, local-first OpenGraph image editor.
+icon: BookOpen
 ---
 
-OpenGraph (`@jfa.dev/opengraph`) is a zero-cost, local-first
-OpenGraph image editor. It provides a Photoshop-style layer workspace with no
-uploads, no buckets, no server-side image transformations, and no account.
+OpenGraph (`@jfa.dev/opengraph`) is a local-first editor for OpenGraph images. No uploads, no buckets, no server-side transforms, no account. Everything runs in the browser.
 
-Everything lives in the browser:
+## What you can do
 
-- text, geometry, and local image layers
-- layer selection, visibility, locking, reordering, deletion, undo/redo
-- position, size, rotation, opacity, color, typography, and image-fit controls
-- browser-only persistence via IndexedDB
-- client-side PNG rendering at 1200 × 630 pixels
+- Create text, shape, and image layers
+- Move, resize, rotate, and change opacity
+- Reorder, hide, lock, duplicate, and delete layers
+- Pick colors and type with built-in or custom fonts
+- Work across multiple canvases in tabs
+- Export to PNG or a portable `.ogproj` archive
 
-Run it locally at `http://localhost:3101/opengraph/`.
+Open the editor at `http://localhost:3101/opengraph/`.
+
+## Manual
+
+This manual follows the same structure you would expect from Photoshop:
+
+- [Canvas](/docs/opengraph/canvas) — presets, custom sizes, and tabs
+- [Tools](/docs/opengraph/tools) — the toolbox on the left
+- [Layers](/docs/opengraph/layers) — the stack, search, and layer options
+- [Text](/docs/opengraph/text) — position, size, and typography
+- [Shapes & Images](/docs/opengraph/shapes-images) — rectangles, ellipses, and local images
+- [Fonts](/docs/opengraph/fonts) — bundled families and uploads
+- [Projects & Assets](/docs/opengraph/projects) — saved locally and portable archives
+- [Shortcuts](/docs/opengraph/shortcuts) — every key, at a glance

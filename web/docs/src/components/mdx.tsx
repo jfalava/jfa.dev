@@ -29,25 +29,43 @@ import {
   UserSettingsPreview,
   UserStateBadgePreview,
 } from "@/components/keweke/user-settings-preview";
+import { CanvasPreview, TabsPreview } from "@/components/opengraph/canvas-preview";
+import {
+  ColorPickerPreview,
+  LayersPreview,
+} from "@/components/opengraph/layers-preview";
+import { PositionPreview, TextPreview } from "@/components/opengraph/text-preview";
+import {
+  ShortcutsPreview,
+  ToolsPreview,
+} from "@/components/opengraph/tools-preview";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
     AfterCreatePreview,
+    CanvasPreview,
+    ColorPickerPreview,
     DeletedItemsPreview,
     EmptyListsPreview,
     HeaderNewListPreview,
     HeaderUserButtonPreview,
     ItemHistoryPreview,
+    LayersPreview,
     ListAliasIdPreview,
     ListHeaderPreview,
     LiveDroppedPreview,
     NewListHotkeyPreview,
+    PositionPreview,
     PublishButtonPreview,
     PublishDialogPreview,
     PublishNudgePreview,
     RemoteListPreview,
+    ShortcutsPreview,
     SignedBadgePreview,
+    TabsPreview,
+    TextPreview,
+    ToolsPreview,
     UserDialogPreview,
     UserSettingsPreview,
     UserStateBadgePreview,
