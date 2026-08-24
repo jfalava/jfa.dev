@@ -43,7 +43,7 @@ async function registerProjectFonts(fonts: readonly FontMeta[]): Promise<number>
   return failedCount;
 }
 
-export function OgImageGenHeader() {
+export function OpengraphHeader() {
   const project = useEditorStore((state) => state.project);
   const busy = useEditorStore((state) => state.busy);
   const setBusy = useEditorStore((state) => state.setBusy);
@@ -115,14 +115,14 @@ export function OgImageGenHeader() {
   return (
     <>
       <SiteHeader
-        title="OpenGraph Image Generator"
-        titleSmol="OG Image Gen."
+        title="OpenGraph"
+        titleSmol="OpenGraph"
         subtitle="Create OpenGraph images from scratch"
         titleHref={appPath("/")}
         packages={webPackages}
-        activePackagePath="/og-img-gen"
+        activePackagePath="/opengraph"
         navLabel="Editor navigation"
-        githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/og-img-gen"
+        githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/opengraph"
       >
         <div className="flex items-center gap-1.5">
           <Button

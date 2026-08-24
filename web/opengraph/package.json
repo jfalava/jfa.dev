@@ -1,5 +1,5 @@
 {
-  "name": "@jfa.dev/og-img-gen",
+  "name": "@jfa.dev/opengraph",
   "private": true,
   "type": "module",
   "scripts": {

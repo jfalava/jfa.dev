@@ -1,5 +1,5 @@
 {
-  "projectName": "og-img-gen",
+  "projectName": "opengraph",
   "mode": "file-router",
   "typescript": true,
   "packageManager": "npm",

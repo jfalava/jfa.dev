@@ -1,6 +1,6 @@
-# OG Image Generator
+# OpenGraph
 
-`@jfa.dev/og-img-gen` is a zero-cost, local-first OpenGraph image editor. It provides a Photoshop-style layer workspace without uploads, buckets, server-side image transformations, or an account requirement.
+`@jfa.dev/opengraph` is a zero-cost, local-first OpenGraph image editor. It provides a Photoshop-style layer workspace without uploads, buckets, server-side image transformations, or an account requirement.
 
 Current capabilities:
 
@@ -18,7 +18,7 @@ Local images and custom fonts stay in the browser’s IndexedDB until the user r
 Run it from the repository root:
 
 ```bash
-bun run --filter @jfa.dev/og-img-gen dev
+bun run --filter @jfa.dev/opengraph dev
 ```
 
-The app is available at `http://localhost:3101/og-img-gen/`.
+The app is available at `http://localhost:3101/opengraph/`.

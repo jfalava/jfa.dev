@@ -5,7 +5,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
 
-const MOUNT_PATH = "/og-img-gen/";
+const MOUNT_PATH = "/opengraph/";
 
 export default defineConfig({
   base: MOUNT_PATH,

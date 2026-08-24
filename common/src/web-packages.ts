@@ -28,9 +28,9 @@ export const webPackages: WebPackage[] = [
     routes: [{ path: "/", title: "Ego page" }],
   },
   {
-    path: "/og-img-gen",
-    title: "OG-IMG-GEN",
-    routes: [{ path: "/", title: "OpenGraph Image Generator" }],
+    path: "/opengraph",
+    title: "OpenGraph",
+    routes: [{ path: "/", title: "OpenGraph" }],
   },
   {
     path: "/hyperscaler-services",

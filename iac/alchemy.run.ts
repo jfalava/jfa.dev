@@ -21,7 +21,7 @@ export default Alchemy.Stack(
       workers: {
         router: workers.router.workerName,
         landing: workers.landing.workerName,
-        ogImgGen: workers.ogImgGen.workerName,
+        opengraph: workers.opengraph.workerName,
         hyperscalerMounted: workers.hyperscalerMounted.workerName,
         kewekeMounted: workers.kewekeMounted.workerName,
         redirects: workers.redirects.workerName,

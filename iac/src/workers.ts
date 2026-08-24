@@ -58,23 +58,23 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     landingOptions,
   ).pipe(adopt(true));
 
-  const ogImgGenOptions = {
-    ...workerDefaults(config.workers.ogImgGen),
-    name: config.workers.ogImgGen.name,
-    rootDir: resolve(repositoryRoot, "web/og-img-gen"),
+  const opengraphOptions = {
+    ...workerDefaults(config.workers.opengraph),
+    name: config.workers.opengraph.name,
+    rootDir: resolve(repositoryRoot, "web/opengraph"),
     assets: {
       runWorkerFirst: false,
     },
   };
-  if (config.workers.ogImgGen.domain !== undefined) {
-    Object.assign(ogImgGenOptions, { domain: config.workers.ogImgGen.domain });
+  if (config.workers.opengraph.domain !== undefined) {
+    Object.assign(opengraphOptions, { domain: config.workers.opengraph.domain });
   }
   if (isLocal) {
-    Object.assign(ogImgGenOptions, { dev: localDev(3101) });
+    Object.assign(opengraphOptions, { dev: localDev(3101) });
   }
-  const ogImgGen = yield* Cloudflare.Website.Vite(
-    "OgImgGenWorker",
-    ogImgGenOptions,
+  const opengraph = yield* Cloudflare.Website.Vite(
+    "OpengraphWorker",
+    opengraphOptions,
   ).pipe(adopt(true));
 
   const hyperscalerOptions = {
@@ -262,7 +262,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     ROUTES: string;
     ASSET_PREFIXES: string;
     LANDING: typeof landing;
-    OG_IMG_GEN: typeof ogImgGen;
+    OPENGRAPH: typeof opengraph;
     HYPERSCALER_SERVICES: typeof hyperscalerMounted;
     KEWEKE: typeof kewekeMounted;
     BRANDING: typeof brandingMounted;
@@ -273,7 +273,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     ROUTES: config.router.routesJson,
     ASSET_PREFIXES: config.router.assetPrefixesJson,
     LANDING: landing,
-    OG_IMG_GEN: ogImgGen,
+    OPENGRAPH: opengraph,
     HYPERSCALER_SERVICES: hyperscalerMounted,
     KEWEKE: kewekeMounted,
     BRANDING: brandingMounted,
@@ -318,7 +318,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
 
   return {
     landing,
-    ogImgGen,
+    opengraph,
     hyperscalerMounted,
     kewekeMounted,
     brandingMounted,

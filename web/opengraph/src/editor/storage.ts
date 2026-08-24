@@ -68,7 +68,7 @@ class EditorDatabase extends DexieDatabase {
   fonts!: EntityTable<StoredFont, "id">;
 
   constructor() {
-    super("og-img-gen");
+    super("opengraph");
     this.version(1).stores({
       projects: "id, updatedAt",
       assets: "id, createdAt",
@@ -188,7 +188,7 @@ export async function saveProject(project: OgProject): Promise<void> {
 }
 
 // Tabs persistence — Krita-style multiple canvases in one session
-export const TABS_META_KEY = "og-img-gen:tabs-meta";
+export const TABS_META_KEY = "opengraph:tabs-meta";
 
 export interface TabsMeta {
   tabIds: string[];

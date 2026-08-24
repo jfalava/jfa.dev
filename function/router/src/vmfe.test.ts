@@ -94,9 +94,9 @@ describe("mounted app forwarding", () => {
     });
 
     const response = await handleMountedApp(
-      new Request("https://jfa.dev/og-img-gen/assets/app.css"),
+      new Request("https://jfa.dev/opengraph/assets/app.css"),
       upstream,
-      "/og-img-gen",
+      "/opengraph",
       ["/assets/", "/theme-init.js"],
       { preserveMount: false },
     );

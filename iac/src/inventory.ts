@@ -8,7 +8,7 @@ export const infrastructureInventory = {
     domains: ["jfa.dev"],
     publicRoutes: [
       "/",
-      "/og-img-gen/*",
+      "/opengraph/*",
       "/hyperscaler-services/*",
       "/keweke/*",
       "/branding/*",
@@ -16,7 +16,7 @@ export const infrastructureInventory = {
     ],
     bindings: [
       "LANDING",
-      "OG_IMG_GEN",
+      "OPENGRAPH",
       "HYPERSCALER_SERVICES",
       "KEWEKE",
       "BRANDING",
@@ -29,10 +29,10 @@ export const infrastructureInventory = {
     domains: [],
     publicRoutes: ["/"],
   },
-  ogImgGen: {
-    worker: "jfa-dev-og-img-gen",
+  opengraph: {
+    worker: "jfa-dev-opengraph",
     domains: [],
-    publicRoutes: ["/og-img-gen/*"],
+    publicRoutes: ["/opengraph/*"],
   },
   hyperscalerMounted: {
     worker: "jfa-dev-hyperscaler-services",

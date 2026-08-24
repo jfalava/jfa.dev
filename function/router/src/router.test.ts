@@ -43,21 +43,21 @@ describe("router configuration", () => {
   });
 
   test("prefers static routes over dynamic routes of the same depth", () => {
-    const match = findMatchingRoute("/og-img-gen/status", [
+    const match = findMatchingRoute("/opengraph/status", [
       { binding: "DYNAMIC", path: "/:service/status" },
-      { binding: "OG_IMG_GEN", path: "/og-img-gen/status" },
+      { binding: "OPENGRAPH", path: "/opengraph/status" },
     ]);
 
     expect(match).toEqual({
-      route: { binding: "OG_IMG_GEN", path: "/og-img-gen/status" },
-      mount: "/og-img-gen/status",
+      route: { binding: "OPENGRAPH", path: "/opengraph/status" },
+      mount: "/opengraph/status",
     });
   });
 
   test("does not use the root route as a catch-all", () => {
     const routes = [
       { binding: "LANDING", path: "/" },
-      { binding: "OG_IMG_GEN", path: "/og-img-gen" },
+      { binding: "OPENGRAPH", path: "/opengraph" },
       { binding: "HYPERSCALER_SERVICES", path: "/hyperscaler-services" },
     ];
 
@@ -77,7 +77,7 @@ describe("router configuration", () => {
       ROUTES: JSON.stringify({
         routes: [
           { binding: "LANDING", path: "/" },
-          { binding: "OG_IMG_GEN", path: "/og-img-gen" },
+          { binding: "OPENGRAPH", path: "/opengraph" },
           { binding: "HYPERSCALER_SERVICES", path: "/hyperscaler-services" },
         ],
       }),
@@ -87,18 +87,18 @@ describe("router configuration", () => {
     expect(await response.text()).toBe("I'm a teapot");
   });
 
-  test("forwards OG Image Gen assets under the worker mount", async () => {
+  test("forwards OpenGraph assets under the worker mount", async () => {
     let forwardedPath: string | undefined;
-    const response = await router.fetch(new Request("https://jfa.dev/og-img-gen/assets/app.js"), {
+    const response = await router.fetch(new Request("https://jfa.dev/opengraph/assets/app.js"), {
       ROUTES: JSON.stringify({
         routes: [
           { binding: "LANDING", path: "/" },
-          { binding: "OG_IMG_GEN", path: "/og-img-gen", preserveMount: true },
+          { binding: "OPENGRAPH", path: "/opengraph", preserveMount: true },
         ],
       }),
       ASSET_PREFIXES: JSON.stringify(["/assets/", "/theme-init.js"]),
       LANDING: { fetch: async () => new Response("landing") },
-      OG_IMG_GEN: {
+      OPENGRAPH: {
         fetch: async (request) => {
           const requestUrl = request instanceof Request ? request.url : request.toString();
           forwardedPath = new URL(requestUrl).pathname;
@@ -113,21 +113,21 @@ describe("router configuration", () => {
 
     expect(response.status).toBe(200);
     expect(await response.text()).toBe("asset");
-    expect(forwardedPath).toBe("/og-img-gen/assets/app.js");
+    expect(forwardedPath).toBe("/opengraph/assets/app.js");
   });
 
   test("forwards the trailing-slash OG document under the worker mount", async () => {
     let forwardedPath: string | undefined;
-    const response = await router.fetch(new Request("https://jfa.dev/og-img-gen/"), {
+    const response = await router.fetch(new Request("https://jfa.dev/opengraph/"), {
       ROUTES: JSON.stringify({
         routes: [
           { binding: "LANDING", path: "/" },
-          { binding: "OG_IMG_GEN", path: "/og-img-gen", preserveMount: true },
+          { binding: "OPENGRAPH", path: "/opengraph", preserveMount: true },
         ],
       }),
       ASSET_PREFIXES: JSON.stringify(["/assets/", "/theme-init.js"]),
       LANDING: { fetch: async () => new Response("landing") },
-      OG_IMG_GEN: {
+      OPENGRAPH: {
         fetch: async (request) => {
           const requestUrl = request instanceof Request ? request.url : request.toString();
           forwardedPath = new URL(requestUrl).pathname;
@@ -140,14 +140,14 @@ describe("router configuration", () => {
 
     expect(response.status).toBe(200);
     expect(await response.text()).toBe("editor");
-    expect(forwardedPath).toBe("/og-img-gen/");
+    expect(forwardedPath).toBe("/opengraph/");
   });
 
   test("rejects a country present in the KV blocklist before forwarding", async () => {
     const response = await router.fetch(makeRequest("https://jfa.dev/", "cn"), {
       ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
       LANDING: { fetch: async () => new Response("forwarded") },
-      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      OPENGRAPH: { fetch: async () => new Response("forwarded") },
       HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
       COUNTRY_BLOCKLIST: makeCountryBlocklist(JSON.stringify(["CN", "RU"])),
     });
@@ -160,7 +160,7 @@ describe("router configuration", () => {
     const response = await router.fetch(makeRequest("https://jfa.dev/", "ES"), {
       ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
       LANDING: { fetch: async () => new Response("forwarded") },
-      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      OPENGRAPH: { fetch: async () => new Response("forwarded") },
       HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
       COUNTRY_BLOCKLIST: makeCountryBlocklist(JSON.stringify(["CN", "RU"])),
     });
@@ -173,7 +173,7 @@ describe("router configuration", () => {
     const response = await router.fetch(makeRequest("https://jfa.dev/", "CN"), {
       ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
       LANDING: { fetch: async () => new Response("forwarded") },
-      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      OPENGRAPH: { fetch: async () => new Response("forwarded") },
       HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
     });
 
@@ -194,7 +194,7 @@ describe("router configuration", () => {
     const response = await router.fetch(makeRequest("https://jfa.dev/"), {
       ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
       LANDING: landing,
-      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      OPENGRAPH: { fetch: async () => new Response("forwarded") },
       HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
       KEWEKE: { fetch: async () => new Response("forwarded") },
     });
@@ -207,7 +207,7 @@ describe("router configuration", () => {
     const response = await router.fetch(makeRequest("https://jfa.dev/", "ES"), {
       ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
       LANDING: { fetch: async () => new Response("forwarded") },
-      OG_IMG_GEN: { fetch: async () => new Response("forwarded") },
+      OPENGRAPH: { fetch: async () => new Response("forwarded") },
       HYPERSCALER_SERVICES: { fetch: async () => new Response("forwarded") },
       COUNTRY_BLOCKLIST: makeCountryBlocklist('{"CN":true}'),
     });

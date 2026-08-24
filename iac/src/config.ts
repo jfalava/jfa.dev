@@ -25,7 +25,7 @@ export type StageConfig = {
   workers: {
     router: WorkerConfig;
     landing: WorkerConfig;
-    ogImgGen: WorkerConfig;
+    opengraph: WorkerConfig;
     hyperscalerMounted: WorkerConfig;
     kewekeMounted: WorkerConfig;
     brandingMounted: WorkerConfig;
@@ -39,10 +39,10 @@ const routeDefinitions = {
   routes: [
     { binding: "LANDING", path: "/", preload: true },
     {
-      binding: "OG_IMG_GEN",
-      path: "/og-img-gen",
+      binding: "OPENGRAPH",
+      path: "/opengraph",
       preload: true,
-      // OG Image Gen is built and served under the public mount, including in local dev.
+      // OpenGraph is built and served under the public mount, including in local dev.
       preserveMount: true,
     },
     {
@@ -180,7 +180,7 @@ export function getStageConfig(stage: string | undefined): StageConfig {
         observability: true,
         workersDev: true,
       }),
-      ogImgGen: worker("jfa-dev-og-img-gen", normalizedStage, {
+      opengraph: worker("jfa-dev-opengraph", normalizedStage, {
         compatibilityDate: "2026-01-01",
         observability: true,
         workersDev: true,
