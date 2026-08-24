@@ -5,6 +5,10 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Input,
   ResizableHandle,
   ResizablePanel,
@@ -15,6 +19,8 @@ import {
   AlignCenter,
   AlignLeft,
   AlignRight,
+  ArrowDownUp,
+  ArrowUpDown,
   ChevronDown,
   Copy,
   Eye,
@@ -909,6 +915,15 @@ function LayersPanel({
   const setEditingLayerName = useEditorStore((state) => state.setEditingLayerName);
   const commitRename = useEditorStore((state) => state.commitRename);
   const cancelRename = useEditorStore((state) => state.cancelRename);
+  const setAllLayersVisibility = useEditorStore((state) => state.setAllLayersVisibility);
+  const setAllLayersLocked = useEditorStore((state) => state.setAllLayersLocked);
+  const deleteHiddenLayers = useEditorStore((state) => state.deleteHiddenLayers);
+  const deleteAllLayers = useEditorStore((state) => state.deleteAllLayers);
+  const sortLayersByName = useEditorStore((state) => state.sortLayersByName);
+  const reverseLayerOrder = useEditorStore((state) => state.reverseLayerOrder);
+  const hasHidden = project.layers.some((l) => !l.visible && l.id !== "background");
+  const hasVisible = project.layers.some((l) => l.visible && l.id !== "background");
+  const canDeleteAll = project.layers.filter((l) => l.id !== "background").length > 0;
   const visibleLayers = project.layers
     .toReversed()
     .filter((layer) => layer.name.toLowerCase().includes(filter.toLowerCase()));
@@ -935,9 +950,77 @@ function LayersPanel({
         <Button aria-label="Add text layer" onPress={onAddText} size="icon-sm" variant="ghost">
           <Plus />
         </Button>
-        <Button aria-label="Layer options" size="icon-sm" variant="ghost">
-          <MoreHorizontal />
-        </Button>
+        <DropdownMenuTrigger>
+          <Button aria-label="Layer options" size="icon-sm" variant="ghost">
+            <MoreHorizontal />
+          </Button>
+          <DropdownMenu className="!w-auto !min-w-56">
+            <DropdownMenuItem onAction={onAddText} textValue="Add text layer">
+              <Type />
+              New text layer
+            </DropdownMenuItem>
+            <DropdownMenuItem onAction={onAddGeometry} textValue="Add shape layer">
+              <Square />
+              New shape layer
+            </DropdownMenuItem>
+            <DropdownMenuItem onAction={onAddImage} textValue="Upload image layer">
+              <ImageIcon />
+              New image layer
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onAction={() => setAllLayersVisibility(true)}
+              isDisabled={!hasHidden && hasVisible}
+              textValue="Show all layers"
+            >
+              <Eye />
+              Show all
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onAction={() => setAllLayersVisibility(false)}
+              isDisabled={!hasVisible}
+              textValue="Hide all layers"
+            >
+              <EyeOff />
+              Hide all
+            </DropdownMenuItem>
+            <DropdownMenuItem onAction={() => setAllLayersLocked(true)} textValue="Lock all layers">
+              <LockKeyhole />
+              Lock all
+            </DropdownMenuItem>
+            <DropdownMenuItem onAction={() => setAllLayersLocked(false)} textValue="Unlock all layers">
+              <Unlock />
+              Unlock all
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onAction={sortLayersByName} textValue="Sort by name">
+              <ArrowUpDown />
+              Sort A → Z
+            </DropdownMenuItem>
+            <DropdownMenuItem onAction={reverseLayerOrder} textValue="Reverse order">
+              <ArrowDownUp />
+              Reverse order
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onAction={deleteHiddenLayers}
+              isDisabled={!hasHidden}
+              textValue="Delete hidden layers"
+            >
+              <Trash2 />
+              Delete hidden
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onAction={deleteAllLayers}
+              isDisabled={!canDeleteAll}
+              textValue="Delete all layers"
+              variant="destructive"
+            >
+              <Trash2 />
+              Delete all
+            </DropdownMenuItem>
+          </DropdownMenu>
+        </DropdownMenuTrigger>
       </PanelHeader>
       <div className="border-b border-border p-3">
         <div className="relative">
@@ -1112,7 +1195,7 @@ function LayerRow({
           </Button>
         </div>
       </Pressable>
-      <ContextMenu>
+      <ContextMenu className="!w-auto !min-w-40 !max-w-52">
         <ContextMenuItem onAction={onRenameStart} isDisabled={layer.locked}>
           <Pencil />
           Rename

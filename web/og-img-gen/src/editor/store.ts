@@ -113,6 +113,12 @@ interface EditorState {
   moveLayerBefore: (sourceId: string, targetId: string) => void;
   resetProject: () => void;
   setCanvasSize: (width: number, height: number) => void;
+  setAllLayersVisibility: (visible: boolean) => void;
+  setAllLayersLocked: (locked: boolean) => void;
+  deleteHiddenLayers: () => void;
+  deleteAllLayers: () => void;
+  sortLayersByName: () => void;
+  reverseLayerOrder: () => void;
   setNotice: (notice: string) => void;
   setBusy: (busy: boolean) => void;
   setHelpOpen: (isHelpOpen: boolean) => void;
@@ -656,6 +662,72 @@ export const useEditorStore = create<EditorState>((set) => ({
           layers: nextLayers,
         });
         return commitProject(tab, nextProject);
+      }),
+    ),
+
+  setAllLayersVisibility: (visible) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const nextLayers = tab.project.layers.map((layer) =>
+          layer.id === "background" ? layer : { ...layer, visible },
+        );
+        return commitProject(tab, projectSchema.parse({ ...tab.project, layers: nextLayers }));
+      }),
+    ),
+
+  setAllLayersLocked: (locked) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const nextLayers = tab.project.layers.map((layer) =>
+          layer.id === "background" ? layer : { ...layer, locked },
+        );
+        return commitProject(tab, projectSchema.parse({ ...tab.project, layers: nextLayers }));
+      }),
+    ),
+
+  deleteHiddenLayers: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const visibleLayers = tab.project.layers.filter((l) => l.visible || l.id === "background");
+        if (visibleLayers.length === tab.project.layers.length) {
+          return tab;
+        }
+        const nextSelected =
+          tab.selectedLayerId && visibleLayers.some((l) => l.id === tab.selectedLayerId)
+            ? tab.selectedLayerId
+            : (visibleLayers.at(-1)?.id ?? null);
+        return commitProject(tab, { ...tab.project, layers: visibleLayers }, nextSelected);
+      }),
+    ),
+
+  deleteAllLayers: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const background = tab.project.layers.find((l) => l.id === "background");
+        const nextLayers = background ? [background] : [];
+        return commitProject(tab, { ...tab.project, layers: nextLayers }, background?.id ?? null);
+      }),
+    ),
+
+  sortLayersByName: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const background = tab.project.layers.find((l) => l.id === "background");
+        const rest = tab.project.layers.filter((l) => l.id !== "background");
+        const sorted = rest.toSorted((a, b) => a.name.localeCompare(b.name));
+        const nextLayers = background ? [background, ...sorted] : sorted;
+        return commitProject(tab, { ...tab.project, layers: nextLayers });
+      }),
+    ),
+
+  reverseLayerOrder: () =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const background = tab.project.layers.find((l) => l.id === "background");
+        const rest = tab.project.layers.filter((l) => l.id !== "background");
+        const reversed = rest.toReversed();
+        const nextLayers = background ? [background, ...reversed] : reversed;
+        return commitProject(tab, { ...tab.project, layers: nextLayers });
       }),
     ),
 
