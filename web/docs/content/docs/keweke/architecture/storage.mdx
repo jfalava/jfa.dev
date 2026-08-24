@@ -1,9 +1,9 @@
 ---
 title: Storage
-description: Where Keweke keeps your lists — in the browser and on the edge — and how it chooses which copy to show.
+description: Where KEWEKE keeps your lists — in the browser and on the edge — and how it chooses which copy to show.
 ---
 
-Keweke is local-first, so your lists live in your browser by default. Remote storage only exists for lists you choose to share.
+KEWEKE is local-first, so your lists live in your browser by default. Remote storage only exists for lists you choose to share.
 
 ## In the browser — IndexedDB
 
@@ -27,7 +27,7 @@ Each shared list is its own Durable Object with a small SQLite database:
 
 Because a Durable Object is single-threaded for its list, edits are applied one at a time and revision numbers stay sequential. If the object has never seen a list snapshot, importing one creates it; importing the same snapshot twice is idempotent.
 
-> The table layout and `writeSnapshot` / `writeMutationDelta` paths are in the [Keweke list object](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/server/keweke-list.ts).
+> The table layout and `writeSnapshot` / `writeMutationDelta` paths are in the [KEWEKE list object](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/server/keweke-list.ts).
 
 ## How the app picks which copy to show
 

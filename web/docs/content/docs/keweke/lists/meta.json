@@ -1,6 +1,6 @@
 {
   "title": "Lists",
-  "description": "Create, open, and organize Keweke lists",
+  "description": "Create, open, and organize KEWEKE lists",
   "icon": "List",
   "pages": ["create-a-list", "working-with-the-list", "publishing-a-list"]
 }
