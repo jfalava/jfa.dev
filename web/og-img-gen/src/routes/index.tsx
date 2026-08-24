@@ -944,12 +944,9 @@ function LayersPanel({
   return (
     <aside aria-label="Layers" className={`flex min-h-0 flex-col bg-background ${className ?? ""}`}>
       <PanelHeader icon={Layers3} label="Layers">
-        <Button aria-label="Add text layer" onPress={onAddText} size="icon-sm" variant="ghost">
-          <Plus />
-        </Button>
         <DropdownMenuTrigger>
-          <Button aria-label="Layer options" size="icon-sm" variant="ghost">
-            <MoreHorizontal />
+          <Button aria-label="Add layer" size="icon-sm" variant="ghost">
+            <Plus />
           </Button>
           <DropdownMenu className="!w-auto !min-w-56">
             <DropdownMenuItem onAction={onAddText} textValue="Add text layer">
@@ -964,7 +961,13 @@ function LayersPanel({
               <ImageIcon />
               New image layer
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+          </DropdownMenu>
+        </DropdownMenuTrigger>
+        <DropdownMenuTrigger>
+          <Button aria-label="Layer options" size="icon-sm" variant="ghost">
+            <MoreHorizontal />
+          </Button>
+          <DropdownMenu className="!w-auto !min-w-56">
             <DropdownMenuItem
               onAction={() => setAllLayersVisibility(true)}
               isDisabled={!hasHidden && hasVisible}
@@ -1067,26 +1070,6 @@ function LayersPanel({
         <span>
           {project.width} × {project.height}
         </span>
-      </div>
-      <div className="flex gap-2 border-t border-border p-3">
-        <Button className="flex-1" onPress={onAddText} size="default" variant="outline">
-          <Type />
-          Text
-        </Button>
-        <Button className="flex-1" onPress={onAddGeometry} size="default" variant="outline">
-          <Square />
-          Shape
-        </Button>
-        <Button
-          aria-label="Upload local image"
-          className="flex-1"
-          onPress={onAddImage}
-          size="default"
-          variant="outline"
-        >
-          <ImageIcon />
-          Image
-        </Button>
       </div>
     </aside>
   );
