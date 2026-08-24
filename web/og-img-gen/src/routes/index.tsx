@@ -1,5 +1,10 @@
+/* oxlint-disable react-hooks/exhaustive-deps */
 import {
   Button,
+  ContextMenu,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
   Input,
   ResizableHandle,
   ResizablePanel,
@@ -10,14 +15,10 @@ import {
   AlignCenter,
   AlignLeft,
   AlignRight,
-  Boxes,
   ChevronDown,
   Copy,
-  Download,
   Eye,
   EyeOff,
-  FileDown,
-  FileUp,
   FileType,
   Frame,
   Hand,
@@ -27,9 +28,11 @@ import {
   MoreHorizontal,
   MousePointer2,
   Palette,
+  Pencil,
   Pipette,
   Plus,
   Redo2,
+  RefreshCw,
   RotateCcw,
   Save,
   Search,
@@ -44,14 +47,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { Pressable } from "react-aria-components";
 
 import { EditorCanvas, type EditorCanvasHandle } from "@/components/editor-canvas";
-import {
-  archiveFileName,
-  createProjectArchive,
-  downloadBlob,
-  readProjectArchive,
-} from "@/editor/archive";
+import { editorCanvasRef } from "@/editor/canvas-ref";
 import { registerFontFile, registerStoredFont } from "@/editor/fonts";
 import {
   createInitialProject,
@@ -121,7 +120,6 @@ function EditorPage() {
   const addImageLayer = useEditorStore((state) => state.addImageLayer);
   const addFont = useEditorStore((state) => state.addFont);
   const updateProjectName = useEditorStore((state) => state.updateProjectName);
-  const resetProject = useEditorStore((state) => state.resetProject);
   const removeSelectedLayer = useEditorStore((state) => state.removeSelectedLayer);
   const duplicateSelectedLayer = useEditorStore((state) => state.duplicateSelectedLayer);
   const toggleLayerVisibility = useEditorStore((state) => state.toggleLayerVisibility);
@@ -134,19 +132,26 @@ function EditorPage() {
 
   const canvasRef = useRef<EditorCanvasHandle>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const projectInputRef = useRef<HTMLInputElement>(null);
   const foregroundColorInputRef = useRef<HTMLInputElement>(null);
   const backgroundColorInputRef = useRef<HTMLInputElement>(null);
   const [assetUrls, setAssetUrls] = useState<ReadonlyMap<string, string>>(new Map());
   const [filter, setFilter] = useState("");
   const [zoom, setZoom] = useState(1);
-  const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState("Saved locally in this browser");
+  const busy = useEditorStore((state) => state.busy);
+  const setBusy = useEditorStore((state) => state.setBusy);
+  const notice = useEditorStore((state) => state.notice);
+  const setNotice = useEditorStore((state) => state.setNotice);
   const [isImageDropTarget, setIsImageDropTarget] = useState(false);
   const [activeTool, setActiveTool] = useState<"select" | "hand" | "pipette">("select");
 
   const selectedLayer = project.layers.find(({ id }) => id === selectedLayerId);
 
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    editorCanvasRef.current = canvasRef.current;
+  }, []);
+
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let cancelled = false;
     async function restoreProject(): Promise<void> {
@@ -177,6 +182,7 @@ function EditorPage() {
     };
   }, []);
 
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!hydrated) {
       return undefined;
@@ -202,6 +208,7 @@ function EditorPage() {
     };
   }, [hydrated, project]);
 
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let cancelled = false;
     const objectUrls: string[] = [];
@@ -328,59 +335,6 @@ function EditorPage() {
     }
   }
 
-  async function handleProjectImport(event: ChangeEvent<HTMLInputElement>): Promise<void> {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (file === undefined) {
-      return;
-    }
-
-    setBusy(true);
-    try {
-      const importedProject = await readProjectArchive(file);
-      const failedFontCount = await registerProjectFonts(importedProject.fonts);
-      useEditorStore.getState().hydrate(importedProject);
-      setNotice(
-        failedFontCount > 0
-          ? `${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`
-          : "Project imported locally",
-      );
-    } catch {
-      setNotice("That project file could not be imported");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handleProjectExport(): Promise<void> {
-    setBusy(true);
-    try {
-      const archive = await createProjectArchive(project);
-      downloadBlob(archive, archiveFileName(project));
-      setNotice("Project archive downloaded");
-    } catch {
-      setNotice("The project archive could not be created");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handlePngDownload(): Promise<void> {
-    setBusy(true);
-    try {
-      const blob = await canvasRef.current?.download();
-      if (blob === null || blob === undefined) {
-        throw new Error("Canvas is not ready");
-      }
-      downloadBlob(blob, `${project.name || "untitled-canvas"}.png`);
-      setNotice("PNG downloaded");
-    } catch {
-      setNotice("The PNG could not be rendered");
-    } finally {
-      setBusy(false);
-    }
-  }
-
   if (!hydrated) {
     return (
       <div className="flex min-h-0 flex-1 items-center justify-center text-sm text-muted-foreground">
@@ -420,109 +374,6 @@ function EditorPage() {
           aria-label="Canvas"
           className="order-1 flex min-h-[420px] min-w-0 flex-1 flex-col lg:order-none"
         >
-          {/* Options bar — kept as top bar inside canvas (Photoshop "options bar"); hold design for now */}
-          <div className="flex min-h-10 shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border bg-background px-3 py-1.5">
-            <div className="flex items-center gap-1">
-              <Button
-                aria-label="Select tool"
-                className={activeTool === "select" ? "bg-primary/10 text-primary" : ""}
-                onPress={() => setActiveTool("select")}
-                size="icon-xs"
-                variant="ghost"
-              >
-                <MousePointer2 />
-              </Button>
-              <Button
-                aria-label="Pan tool"
-                className={activeTool === "hand" ? "bg-primary/10 text-primary" : ""}
-                onPress={() => setActiveTool("hand")}
-                size="icon-xs"
-                variant="ghost"
-              >
-                <Hand />
-              </Button>
-              <span className="mx-1 h-4 w-px bg-border" />
-              <Button
-                aria-label="Undo"
-                isDisabled={pastLength === 0}
-                onPress={undo}
-                size="icon-xs"
-                variant="ghost"
-              >
-                <Undo2 />
-              </Button>
-              <Button
-                aria-label="Redo"
-                isDisabled={futureLength === 0}
-                onPress={redo}
-                size="icon-xs"
-                variant="ghost"
-              >
-                <Redo2 />
-              </Button>
-              <span className="mx-1 hidden h-4 w-px bg-border sm:inline-flex" />
-              <Button
-                aria-label="Add text to canvas"
-                isDisabled={busy}
-                onPress={addTextLayer}
-                size="sm"
-                variant="ghost"
-              >
-                <Type />
-                Text
-              </Button>
-              <Button
-                aria-label="Add shape to canvas"
-                isDisabled={busy}
-                onPress={addGeometryLayer}
-                size="sm"
-                variant="ghost"
-              >
-                <Square />
-                Shape
-              </Button>
-              <Button
-                aria-label="Add image to canvas"
-                isDisabled={busy}
-                onPress={() => imageInputRef.current?.click()}
-                size="sm"
-                variant="ghost"
-              >
-                <ImageIcon />
-                Image
-              </Button>
-            </div>
-
-            <div className="flex items-center gap-1">
-              <Button isDisabled={busy} onPress={resetProject} size="sm" variant="ghost">
-                <Plus />
-                New
-              </Button>
-              <Button
-                isDisabled={busy}
-                onPress={() => projectInputRef.current?.click()}
-                size="sm"
-                variant="outline"
-              >
-                <FileUp />
-                Import
-              </Button>
-              <Button
-                isDisabled={busy}
-                onPress={() => void handleProjectExport()}
-                size="sm"
-                variant="outline"
-              >
-                <FileDown />
-                Export
-              </Button>
-              <Button isDisabled={busy} onPress={() => void handlePngDownload()} size="sm">
-                <Download />
-                PNG
-              </Button>
-            </div>
-          </div>
-
           <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-auto bg-[linear-gradient(45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(-45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(127,127,127,0.08)_75%),linear-gradient(-45deg,transparent_75%,rgba(127,127,127,0.08)_75%)] bg-size-[16px_16px] bg-position-[0_0,0_0,8px_8px,-8px_8px] p-6">
             <div className="flex max-w-full min-w-0 items-center justify-center rounded-sm border border-border bg-background p-1 shadow-2xl shadow-black/10">
               <div
@@ -556,7 +407,7 @@ function EditorPage() {
               <Button
                 aria-label="Zoom out"
                 onPress={() => setZoom((value) => Math.max(0.5, value - 0.1))}
-                size="icon-xs"
+                size="icon-sm"
                 variant="ghost"
               >
                 <ZoomOut />
@@ -567,7 +418,7 @@ function EditorPage() {
               <Button
                 aria-label="Zoom in"
                 onPress={() => setZoom((value) => Math.min(2, value + 0.1))}
-                size="icon-xs"
+                size="icon-sm"
                 variant="ghost"
               >
                 <ZoomIn />
@@ -699,13 +550,6 @@ function EditorPage() {
         multiple
         type="file"
       />
-      <input
-        ref={projectInputRef}
-        accept=".ogproj,application/zip"
-        className="hidden"
-        onChange={(event) => void handleProjectImport(event)}
-        type="file"
-      />
     </div>
   );
 }
@@ -753,7 +597,7 @@ function PhotoshopToolbox({
   return (
     <aside
       aria-label="Tools"
-      className="hidden w-[52px] shrink-0 flex-col items-center gap-0.5 border-r border-zinc-800 bg-[#2b2b2b] py-2 lg:flex dark:border-zinc-800 dark:bg-[#1e1e1e]"
+      className="hidden w-[56px] shrink-0 flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 lg:flex dark:border-zinc-800 dark:bg-[#1e1e1e]"
     >
       {/* Move / Select */}
       <ToolboxButton
@@ -761,27 +605,27 @@ function PhotoshopToolbox({
         ariaLabel="Move tool (V)"
         onPress={() => onSelectTool("select")}
       >
-        <MousePointer2 className="size-4" />
+        <MousePointer2 className="size-[18px]" />
       </ToolboxButton>
       <ToolboxButton
         active={activeTool === "hand"}
         ariaLabel="Hand tool (H)"
         onPress={() => onSelectTool("hand")}
       >
-        <Hand className="size-4" />
+        <Hand className="size-[18px]" />
       </ToolboxButton>
 
       <ToolboxSeparator />
 
       {/* Insert */}
       <ToolboxButton ariaLabel="Add text (T)" onPress={onAddText} isDisabled={busy}>
-        <Type className="size-4" />
+        <Type className="size-[18px]" />
       </ToolboxButton>
       <ToolboxButton ariaLabel="Add shape (U)" onPress={onAddGeometry} isDisabled={busy}>
-        <Square className="size-4" />
+        <Square className="size-[18px]" />
       </ToolboxButton>
       <ToolboxButton ariaLabel="Add image" onPress={onAddImage} isDisabled={busy}>
-        <ImageIcon className="size-4" />
+        <ImageIcon className="size-[18px]" />
       </ToolboxButton>
 
       <ToolboxSeparator />
@@ -792,13 +636,13 @@ function PhotoshopToolbox({
         active={activeTool === "pipette"}
         onPress={() => onSelectTool("pipette")}
       >
-        <Pipette className="size-4" />
+        <Pipette className="size-[18px]" />
       </ToolboxButton>
       <ToolboxButton
         ariaLabel="Swatches / fill color"
         onPress={() => foregroundColorInputRef.current?.click()}
       >
-        <Palette className="size-4" />
+        <Palette className="size-[18px]" />
       </ToolboxButton>
 
       {/* Photoshop-style foreground/background swatches */}
@@ -830,20 +674,20 @@ function PhotoshopToolbox({
 
       {/* Edit */}
       <ToolboxButton ariaLabel="Duplicate layer" onPress={onDuplicate} isDisabled={!canModify}>
-        <Copy className="size-4" />
+        <Copy className="size-[18px]" />
       </ToolboxButton>
       <ToolboxButton ariaLabel="Delete layer" onPress={onRemove} isDisabled={!canModify}>
-        <Trash2 className="size-4" />
+        <Trash2 className="size-[18px]" />
       </ToolboxButton>
 
       <ToolboxSeparator />
 
       {/* History */}
       <ToolboxButton ariaLabel="Undo" onPress={onUndo} isDisabled={!canUndo}>
-        <Undo2 className="size-4" />
+        <Undo2 className="size-[18px]" />
       </ToolboxButton>
       <ToolboxButton ariaLabel="Redo" onPress={onRedo} isDisabled={!canRedo}>
-        <Redo2 className="size-4" />
+        <Redo2 className="size-[18px]" />
       </ToolboxButton>
 
       <div className="mt-auto flex flex-col items-center gap-1 pt-2">
@@ -874,7 +718,7 @@ function ToolboxButton({
       disabled={isDisabled}
       onClick={onPress}
       type="button"
-      className={`flex size-7 items-center justify-center rounded-[4px] border text-zinc-400 transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
+      className={`flex size-8 items-center justify-center rounded-[4px] border text-zinc-400 transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
         active
           ? "border-white/20 bg-white/15 text-white shadow-inner"
           : "border-transparent bg-transparent hover:border-white/10 hover:bg-white/10 hover:text-white"
@@ -919,17 +763,42 @@ function LayersPanel({
   selectedLayerId,
 }: LayersPanelProps) {
   const draggedLayerId = useRef<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+  const updateLayer = useEditorStore((state) => state.updateLayer);
   const visibleLayers = project.layers
     .toReversed()
     .filter((layer) => layer.name.toLowerCase().includes(filter.toLowerCase()));
 
+  function handleRenameStart(layer: Layer): void {
+    if (layer.locked) {
+      return;
+    }
+    setEditingId(layer.id);
+    setEditingName(layer.name);
+  }
+
+  function handleRenameCommit(): void {
+    if (editingId !== null) {
+      const trimmed = editingName.trim();
+      if (trimmed.length > 0) {
+        updateLayer(editingId, { name: trimmed });
+      }
+      setEditingId(null);
+    }
+  }
+
+  function handleRenameCancel(): void {
+    setEditingId(null);
+  }
+
   return (
     <aside aria-label="Layers" className={`flex min-h-0 flex-col bg-background ${className ?? ""}`}>
       <PanelHeader icon={Layers3} label="Layers">
-        <Button aria-label="Add text layer" onPress={onAddText} size="icon-xs" variant="ghost">
+        <Button aria-label="Add text layer" onPress={onAddText} size="icon-sm" variant="ghost">
           <Plus />
         </Button>
-        <Button aria-label="Layer options" size="icon-xs" variant="ghost">
+        <Button aria-label="Layer options" size="icon-sm" variant="ghost">
           <MoreHorizontal />
         </Button>
       </PanelHeader>
@@ -953,6 +822,8 @@ function LayersPanel({
             <LayerRow
               key={layer.id}
               layer={layer}
+              editing={editingId === layer.id}
+              editingName={editingName}
               onDragStart={() => {
                 draggedLayerId.current = layer.id;
               }}
@@ -962,6 +833,10 @@ function LayersPanel({
                   draggedLayerId.current = null;
                 }
               }}
+              onEditingNameChange={setEditingName}
+              onRenameCancel={handleRenameCancel}
+              onRenameCommit={handleRenameCommit}
+              onRenameStart={() => handleRenameStart(layer)}
               onSelect={() => onSelect(layer.id)}
               onToggleLocked={() => onToggleLocked(layer.id)}
               onToggleVisibility={() => onToggleVisibility(layer.id)}
@@ -977,11 +852,11 @@ function LayersPanel({
         </span>
       </div>
       <div className="flex gap-2 border-t border-border p-3">
-        <Button className="flex-1" onPress={onAddText} size="sm" variant="outline">
+        <Button className="flex-1" onPress={onAddText} size="default" variant="outline">
           <Type />
           Text
         </Button>
-        <Button className="flex-1" onPress={onAddGeometry} size="sm" variant="outline">
+        <Button className="flex-1" onPress={onAddGeometry} size="default" variant="outline">
           <Square />
           Shape
         </Button>
@@ -989,7 +864,7 @@ function LayersPanel({
           aria-label="Upload local image"
           className="flex-1"
           onPress={onAddImage}
-          size="sm"
+          size="default"
           variant="outline"
         >
           <ImageIcon />
@@ -1002,8 +877,14 @@ function LayersPanel({
 
 interface LayerRowProps {
   layer: Layer;
+  editing: boolean;
+  editingName: string;
   onDragStart: () => void;
   onDrop: () => void;
+  onEditingNameChange: (value: string) => void;
+  onRenameCancel: () => void;
+  onRenameCommit: () => void;
+  onRenameStart: () => void;
   onSelect: () => void;
   onToggleLocked: () => void;
   onToggleVisibility: () => void;
@@ -1011,53 +892,113 @@ interface LayerRowProps {
 }
 
 function LayerRow({
+  editing,
+  editingName,
   layer,
   onDragStart,
   onDrop,
+  onEditingNameChange,
+  onRenameCancel,
+  onRenameCommit,
+  onRenameStart,
   onSelect,
   onToggleLocked,
   onToggleVisibility,
   selected,
 }: LayerRowProps) {
+  const duplicateLayer = useEditorStore((state) => state.duplicateLayer);
+  const removeLayer = useEditorStore((state) => state.removeLayer);
+  const resetLayer = useEditorStore((state) => state.resetLayer);
   const Icon = layer.type === "text" ? Type : layer.type === "image" ? ImageIcon : Square;
   const detail = layer.type === "text" ? "Text" : layer.type === "image" ? "Image" : "Shape";
 
   return (
-    <div
-      className={`group flex items-center gap-1 rounded-md px-1 py-1 text-xs ${selected ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"} ${layer.visible ? "" : "opacity-50"}`}
-      draggable={!layer.locked}
-      onDragOver={(event) => event.preventDefault()}
-      onDragStart={onDragStart}
-      onDrop={onDrop}
-    >
-      <Button
-        aria-label={`Select ${layer.name}`}
-        className="min-w-0 flex-1 justify-start px-1.5"
-        onPress={onSelect}
-        size="sm"
-        variant="ghost"
-      >
-        <Icon className="size-3.5 shrink-0" />
-        <span className="min-w-0 flex-1 truncate text-left">{layer.name}</span>
-        <span className="text-[10px] text-muted-foreground">{detail}</span>
-      </Button>
-      <Button
-        aria-label={layer.visible ? `Hide ${layer.name}` : `Show ${layer.name}`}
-        onPress={onToggleVisibility}
-        size="icon-xs"
-        variant="ghost"
-      >
-        {layer.visible ? <Eye /> : <EyeOff />}
-      </Button>
-      <Button
-        aria-label={layer.locked ? `Unlock ${layer.name}` : `Lock ${layer.name}`}
-        onPress={onToggleLocked}
-        size="icon-xs"
-        variant="ghost"
-      >
-        {layer.locked ? <LockKeyhole /> : <Unlock />}
-      </Button>
-    </div>
+    <ContextMenuTrigger>
+      <Pressable>
+        <div
+          className={`group flex items-center gap-1 rounded-md px-1 py-1 text-xs ${selected ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"} ${layer.visible ? "" : "opacity-50"}`}
+          draggable={!layer.locked && !editing}
+          onContextMenu={() => onSelect()}
+          onDragOver={(event) => event.preventDefault()}
+          onDragStart={onDragStart}
+          onDrop={onDrop}
+        >
+          {editing ? (
+            <div className="flex min-w-0 flex-1 items-center gap-1 px-1.5">
+              <Icon className="size-3.5 shrink-0" />
+              <Input
+                aria-label={`Rename ${layer.name}`}
+                // oxlint-disable-next-line jsx-a11y/no-autofocus
+                autoFocus
+                className="h-6 flex-1"
+                onBlur={onRenameCommit}
+                onChange={(event) => onEditingNameChange(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    onRenameCommit();
+                  }
+                  if (event.key === "Escape") {
+                    onRenameCancel();
+                  }
+                }}
+                value={editingName}
+              />
+            </div>
+          ) : (
+            <Button
+              aria-label={`Select ${layer.name}`}
+              className="min-w-0 flex-1 justify-start px-1.5"
+              onPress={onSelect}
+              size="default"
+              variant="ghost"
+            >
+              <Icon className="size-3.5 shrink-0" />
+              <span className="min-w-0 flex-1 truncate text-left">{layer.name}</span>
+              <span className="text-[10px] text-muted-foreground">{detail}</span>
+            </Button>
+          )}
+          <Button
+            aria-label={layer.visible ? `Hide ${layer.name}` : `Show ${layer.name}`}
+            onPress={onToggleVisibility}
+            size="icon-sm"
+            variant="ghost"
+          >
+            {layer.visible ? <Eye /> : <EyeOff />}
+          </Button>
+          <Button
+            aria-label={layer.locked ? `Unlock ${layer.name}` : `Lock ${layer.name}`}
+            onPress={onToggleLocked}
+            size="icon-sm"
+            variant="ghost"
+          >
+            {layer.locked ? <LockKeyhole /> : <Unlock />}
+          </Button>
+        </div>
+      </Pressable>
+      <ContextMenu>
+        <ContextMenuItem onAction={onRenameStart} isDisabled={layer.locked}>
+          <Pencil />
+          Rename
+        </ContextMenuItem>
+        <ContextMenuItem isDisabled={layer.locked} onAction={() => duplicateLayer(layer.id)}>
+          <Copy />
+          Duplicate
+        </ContextMenuItem>
+        <ContextMenuItem isDisabled={layer.locked} onAction={() => resetLayer(layer.id)}>
+          <RefreshCw />
+          Refresh
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          isDisabled={layer.locked}
+          onAction={() => removeLayer(layer.id)}
+          variant="destructive"
+        >
+          <Trash2 />
+          Delete
+        </ContextMenuItem>
+      </ContextMenu>
+    </ContextMenuTrigger>
   );
 }
 
@@ -1090,7 +1031,7 @@ function PropertiesPanel({
           aria-label="Reset selected layer"
           isDisabled={layer === undefined}
           onPress={onReset}
-          size="icon-xs"
+          size="icon-sm"
           variant="ghost"
         >
           <RotateCcw />
@@ -1099,7 +1040,7 @@ function PropertiesPanel({
           aria-label="Delete selected layer"
           isDisabled={layer === undefined || layer.locked}
           onPress={onDelete}
-          size="icon-xs"
+          size="icon-sm"
           variant="ghost"
         >
           <Trash2 />
@@ -1111,202 +1052,51 @@ function PropertiesPanel({
           <p>Select a layer to edit its properties.</p>
         </div>
       ) : (
-        <>
-          <div className="hidden min-h-0 flex-1 flex-col lg:flex">
-            <ResizablePanelGroup orientation="vertical" className="min-h-0 flex-1">
-              <ResizablePanel defaultSize="16%" minSize="12%">
-                <div className="overflow-auto p-3">
-                  <label
-                    className="block text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase"
-                    htmlFor="layer-name"
-                  >
-                    Layer name
-                  </label>
-                  <Input
-                    id="layer-name"
-                    className="mt-2"
-                    onChange={(event) => onUpdate({ name: event.target.value })}
-                    value={layer.name}
-                  />
-                </div>
-              </ResizablePanel>
-              <ResizableHandle withHandle className="bg-border" />
-              <ResizablePanel defaultSize="58%" minSize="28%">
-                <div className="overflow-auto p-3">
-                  <PropertySection icon={Frame} label="Position & size">
-                    <div className="grid grid-cols-2 gap-2">
-                      <NumberField
-                        label="X"
-                        onChange={(value) => onUpdate({ x: value })}
-                        value={layer.x}
-                      />
-                      <NumberField
-                        label="Y"
-                        onChange={(value) => onUpdate({ y: value })}
-                        value={layer.y}
-                      />
-                      <NumberField
-                        label="W"
-                        min={1}
-                        onChange={(value) => onUpdate({ width: value })}
-                        value={layer.width}
-                      />
-                      <NumberField
-                        label="H"
-                        min={1}
-                        onChange={(value) => onUpdate({ height: value })}
-                        value={layer.height}
-                      />
-                      <NumberField
-                        label="Rotation"
-                        onChange={(value) => onUpdate({ rotation: value })}
-                        suffix="°"
-                        value={layer.rotation}
-                      />
-                      <NumberField
-                        label="Opacity"
-                        max={1}
-                        min={0}
-                        onChange={(value) => onUpdate({ opacity: value })}
-                        step={0.05}
-                        value={layer.opacity}
-                      />
-                    </div>
-                  </PropertySection>
-
-                  {isTextLayer(layer) ? (
-                    <TextProperties
-                      customFonts={customFonts}
-                      layer={layer}
-                      onAddFont={onAddFont}
-                      onUpdate={onUpdate}
-                    />
-                  ) : null}
-                  {isGeometryLayer(layer) ? (
-                    <GeometryProperties layer={layer} onUpdate={onUpdate} />
-                  ) : null}
-                  {isImageLayer(layer) ? (
-                    <ImageProperties layer={layer} onUpdate={onUpdate} />
-                  ) : null}
-                </div>
-              </ResizablePanel>
-              <ResizableHandle withHandle className="bg-border" />
-              <ResizablePanel defaultSize="26%" minSize="16%">
-                <div className="overflow-auto p-3">
-                  <PropertySection icon={Boxes} label="Layer state">
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        onPress={() => onUpdate({ visible: !layer.visible })}
-                        size="sm"
-                        variant="outline"
-                      >
-                        {layer.visible ? <Eye /> : <EyeOff />}
-                        {layer.visible ? "Visible" : "Hidden"}
-                      </Button>
-                      <Button
-                        onPress={() => onUpdate({ locked: !layer.locked })}
-                        size="sm"
-                        variant="outline"
-                      >
-                        {layer.locked ? <LockKeyhole /> : <Unlock />}
-                        {layer.locked ? "Locked" : "Editable"}
-                      </Button>
-                    </div>
-                  </PropertySection>
-                </div>
-              </ResizablePanel>
-            </ResizablePanelGroup>
-          </div>
-          <div className="flex min-h-0 flex-1 flex-col overflow-auto p-3 lg:hidden">
-            <div className="mb-4 space-y-2">
-              <label
-                className="block text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase"
-                htmlFor="layer-name-mobile"
-              >
-                Layer name
-              </label>
-              <Input
-                id="layer-name-mobile"
-                onChange={(event) => onUpdate({ name: event.target.value })}
-                value={layer.name}
+        <div className="min-h-0 flex-1 overflow-auto p-3">
+          <PropertySection icon={Frame} label="Position & size">
+            <div className="grid grid-cols-2 gap-2">
+              <NumberField label="X" onChange={(value) => onUpdate({ x: value })} value={layer.x} />
+              <NumberField label="Y" onChange={(value) => onUpdate({ y: value })} value={layer.y} />
+              <NumberField
+                label="W"
+                min={1}
+                onChange={(value) => onUpdate({ width: value })}
+                value={layer.width}
+              />
+              <NumberField
+                label="H"
+                min={1}
+                onChange={(value) => onUpdate({ height: value })}
+                value={layer.height}
+              />
+              <NumberField
+                label="Rotation"
+                onChange={(value) => onUpdate({ rotation: value })}
+                suffix="°"
+                value={layer.rotation}
+              />
+              <NumberField
+                label="Opacity"
+                max={1}
+                min={0}
+                onChange={(value) => onUpdate({ opacity: value })}
+                step={0.05}
+                value={layer.opacity}
               />
             </div>
-            <PropertySection icon={Frame} label="Position & size">
-              <div className="grid grid-cols-2 gap-2">
-                <NumberField
-                  label="X"
-                  onChange={(value) => onUpdate({ x: value })}
-                  value={layer.x}
-                />
-                <NumberField
-                  label="Y"
-                  onChange={(value) => onUpdate({ y: value })}
-                  value={layer.y}
-                />
-                <NumberField
-                  label="W"
-                  min={1}
-                  onChange={(value) => onUpdate({ width: value })}
-                  value={layer.width}
-                />
-                <NumberField
-                  label="H"
-                  min={1}
-                  onChange={(value) => onUpdate({ height: value })}
-                  value={layer.height}
-                />
-                <NumberField
-                  label="Rotation"
-                  onChange={(value) => onUpdate({ rotation: value })}
-                  suffix="°"
-                  value={layer.rotation}
-                />
-                <NumberField
-                  label="Opacity"
-                  max={1}
-                  min={0}
-                  onChange={(value) => onUpdate({ opacity: value })}
-                  step={0.05}
-                  value={layer.opacity}
-                />
-              </div>
-            </PropertySection>
+          </PropertySection>
 
-            {isTextLayer(layer) ? (
-              <TextProperties
-                customFonts={customFonts}
-                layer={layer}
-                onAddFont={onAddFont}
-                onUpdate={onUpdate}
-              />
-            ) : null}
-            {isGeometryLayer(layer) ? (
-              <GeometryProperties layer={layer} onUpdate={onUpdate} />
-            ) : null}
-            {isImageLayer(layer) ? <ImageProperties layer={layer} onUpdate={onUpdate} /> : null}
-
-            <PropertySection icon={Boxes} label="Layer state">
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onPress={() => onUpdate({ visible: !layer.visible })}
-                  size="sm"
-                  variant="outline"
-                >
-                  {layer.visible ? <Eye /> : <EyeOff />}
-                  {layer.visible ? "Visible" : "Hidden"}
-                </Button>
-                <Button
-                  onPress={() => onUpdate({ locked: !layer.locked })}
-                  size="sm"
-                  variant="outline"
-                >
-                  {layer.locked ? <LockKeyhole /> : <Unlock />}
-                  {layer.locked ? "Locked" : "Editable"}
-                </Button>
-              </div>
-            </PropertySection>
-          </div>
-        </>
+          {isTextLayer(layer) ? (
+            <TextProperties
+              customFonts={customFonts}
+              layer={layer}
+              onAddFont={onAddFont}
+              onUpdate={onUpdate}
+            />
+          ) : null}
+          {isGeometryLayer(layer) ? <GeometryProperties layer={layer} onUpdate={onUpdate} /> : null}
+          {isImageLayer(layer) ? <ImageProperties layer={layer} onUpdate={onUpdate} /> : null}
+        </div>
       )}
     </aside>
   );
@@ -1773,7 +1563,7 @@ function PropertySection({
   return (
     <section className="border-b border-border py-4 first:pt-0 last:border-b-0">
       <h2 className="mb-3 flex items-center gap-2 text-[11px] font-medium">
-        <Icon className="size-3.5 text-muted-foreground" />
+        <Icon className="size-3.5 text-primary" />
         {label}
         <ChevronDown className="ml-auto size-3.5 text-muted-foreground" />
       </h2>

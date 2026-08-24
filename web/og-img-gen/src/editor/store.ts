@@ -19,6 +19,8 @@ interface EditorState {
   past: OgProject[];
   future: OgProject[];
   hydrated: boolean;
+  notice: string;
+  busy: boolean;
   hydrate: (project: OgProject) => void;
   selectLayer: (id: string | null) => void;
   updateProjectName: (name: string) => void;
@@ -28,11 +30,16 @@ interface EditorState {
   addImageLayer: (asset: AssetMeta) => void;
   addFont: (font: FontMeta) => void;
   removeSelectedLayer: () => void;
+  removeLayer: (id: string) => void;
   duplicateSelectedLayer: () => void;
+  duplicateLayer: (id: string) => void;
+  resetLayer: (id: string) => void;
   toggleLayerVisibility: (id: string) => void;
   toggleLayerLocked: (id: string) => void;
   moveLayerBefore: (sourceId: string, targetId: string) => void;
   resetProject: () => void;
+  setNotice: (notice: string) => void;
+  setBusy: (busy: boolean) => void;
   undo: () => void;
   redo: () => void;
 }
@@ -70,6 +77,8 @@ export const useEditorStore = create<EditorState>((set) => ({
   past: [],
   future: [],
   hydrated: false,
+  notice: "Saved locally in this browser",
+  busy: false,
 
   hydrate: (project) =>
     set({
@@ -217,6 +226,51 @@ export const useEditorStore = create<EditorState>((set) => ({
       );
     }),
 
+  removeLayer: (id) =>
+    set((state) => {
+      const layer = state.project.layers.find((candidate) => candidate.id === id);
+      if (layer === undefined || layer.locked) {
+        return state;
+      }
+      const layers = state.project.layers.filter((candidate) => candidate.id !== id);
+      const nextSelected =
+        state.selectedLayerId === id ? (layers.at(-1)?.id ?? null) : state.selectedLayerId;
+      return commitProject(state, { ...state.project, layers }, nextSelected);
+    }),
+
+  duplicateLayer: (id) =>
+    set((state) => {
+      const layer = state.project.layers.find((candidate) => candidate.id === id);
+      if (layer === undefined || layer.locked) {
+        return state;
+      }
+      const cloned: Layer = {
+        ...structuredClone(layer),
+        id: createId(layer.type),
+        name: `${layer.name} copy`,
+        x: layer.x + 16,
+        y: layer.y + 16,
+      };
+      return commitProject(
+        state,
+        { ...state.project, layers: [...state.project.layers, cloned] },
+        cloned.id,
+      );
+    }),
+
+  resetLayer: (id) =>
+    set((state) => {
+      const layer = state.project.layers.find((candidate) => candidate.id === id);
+      if (layer === undefined || layer.locked) {
+        return state;
+      }
+      const patch: LayerPatch =
+        layer.type === "text"
+          ? { height: 80, rotation: 0, width: 520, x: 160, y: 180 }
+          : { height: layer.height, rotation: 0, width: layer.width, x: layer.x, y: layer.y };
+      return commitProject(state, replaceLayer(state.project, id, patch), id);
+    }),
+
   toggleLayerVisibility: (id) =>
     set((state) => {
       const layer = state.project.layers.find((candidate) => candidate.id === id);
@@ -260,6 +314,10 @@ export const useEditorStore = create<EditorState>((set) => ({
     const project = createInitialProject();
     set((state) => commitProject(state, project, "headline"));
   },
+
+  setNotice: (notice) => set({ notice }),
+
+  setBusy: (busy) => set({ busy }),
 
   undo: () =>
     set((state) => {

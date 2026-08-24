@@ -25,6 +25,18 @@ export {
 export { Input } from "./input";
 export { Kbd, KbdGroup } from "./kbd";
 export { SiteHeader, type SiteHeaderProps } from "./site-header";
+export {
+  ContextMenu,
+  ContextMenuGroup,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from "./context-menu";
 export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
 export { Toaster } from "./sonner";
 export {
