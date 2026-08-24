@@ -11,6 +11,7 @@
     "lint": "vp lint",
     "preview": "vp preview",
     "serve": "vp preview",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -44,6 +45,7 @@
     "oxc-transform-react": "catalog:build",
     "typescript": "catalog:build",
     "vite": "catalog:build",
-    "vite-plus": "catalog:build"
+    "vite-plus": "catalog:build",
+    "vitest": "catalog:build"
   }
 }
