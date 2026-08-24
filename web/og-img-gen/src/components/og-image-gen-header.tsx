@@ -5,10 +5,11 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Kbd,
   SiteHeader,
 } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
-import { Download, FileDown, FileUp } from "lucide-react";
+import { Download, FileDown, FileUp, Keyboard } from "lucide-react";
 import { useRef, useState, type ChangeEvent } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -47,6 +48,7 @@ export function OgImageGenHeader() {
   const busy = useEditorStore((state) => state.busy);
   const setBusy = useEditorStore((state) => state.setBusy);
   const setNotice = useEditorStore((state) => state.setNotice);
+  const setHelpOpen = useEditorStore((state) => state.setHelpOpen);
   const projectInputRef = useRef<HTMLInputElement>(null);
   const [localBusy, setLocalBusy] = useState(false);
   const isBusy = busy || localBusy;
@@ -122,6 +124,22 @@ export function OgImageGenHeader() {
         githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/og-img-gen"
       >
         <div className="flex items-center gap-1.5">
+          <Button
+            aria-label="Show keyboard shortcuts (press ?)"
+            onPress={() => setHelpOpen(true)}
+            size="lg"
+            variant="outline"
+          >
+            <Keyboard />
+            <span className="hidden sm:inline">Keybinds</span>
+            <Kbd
+              aria-hidden="true"
+              className="hidden h-4 min-w-4 px-1 text-[10px] leading-none sm:inline-flex"
+            >
+              ?
+            </Kbd>
+          </Button>
+
           <Button
             aria-label="Import project"
             isDisabled={isBusy}

@@ -153,18 +153,19 @@ export const PHOTOSHOP_SHORTCUTS: PhotoshopShortcut[] = [
     label: "Refresh",
     description: "Reset layer position",
     icon: RefreshCw,
-    hotkey: "Mod+R",
-    keys: ["mod+r"],
+    hotkey: "Alt+R",
+    keys: ["alt+r", "mod+shift+r"],
     category: "Edit",
   },
-  // File
+  // File — Alt+ avoids browser File menu (Mod+N/O/S/R clash with new/open/save/reload)
+  // Shift aliases (Mod+Shift+) also accepted as low-hassle non-clashing fallback per request
   {
     id: "file-new",
     label: "New",
     description: "New blank canvas",
     icon: Plus,
-    hotkey: "Mod+N",
-    keys: ["mod+n"],
+    hotkey: "Alt+N",
+    keys: ["alt+n", "mod+shift+n"],
     category: "File",
   },
   {
@@ -172,8 +173,8 @@ export const PHOTOSHOP_SHORTCUTS: PhotoshopShortcut[] = [
     label: "Import",
     description: "Import .ogproj archive",
     icon: FileUp,
-    hotkey: "Mod+O",
-    keys: ["mod+o"],
+    hotkey: "Alt+O",
+    keys: ["alt+o", "mod+shift+o"],
     category: "File",
   },
   {
@@ -181,8 +182,8 @@ export const PHOTOSHOP_SHORTCUTS: PhotoshopShortcut[] = [
     label: "Export ZIP",
     description: "Export project as .ogproj",
     icon: FileDown,
-    hotkey: "Mod+S",
-    keys: ["mod+s"],
+    hotkey: "Alt+S",
+    keys: ["alt+s", "mod+shift+s"],
     category: "File",
   },
   {
@@ -190,8 +191,8 @@ export const PHOTOSHOP_SHORTCUTS: PhotoshopShortcut[] = [
     label: "Export PNG",
     description: "Export canvas as PNG",
     icon: Download,
-    hotkey: "Mod+Shift+S",
-    keys: ["mod+shift+s"],
+    hotkey: "Alt+Shift+S",
+    keys: ["alt+shift+s", "mod+alt+s"],
     category: "File",
   },
   // View
@@ -222,14 +223,14 @@ export const PHOTOSHOP_SHORTCUTS: PhotoshopShortcut[] = [
     keys: ["mod+0"],
     category: "View",
   },
-  // Layers
+  // Layers — bare "," avoids Mod+, (browser settings on macOS) — Shift not needed
   {
     id: "layer-visibility",
     label: "Toggle visibility",
     description: "Show / hide layer",
     icon: Eye,
-    hotkey: "Mod+,",
-    keys: ["mod+,"],
+    hotkey: ",",
+    keys: [",", "comma", "mod+shift+,"],
     category: "Layers",
   },
   // Help

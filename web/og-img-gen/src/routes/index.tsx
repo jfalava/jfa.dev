@@ -248,6 +248,11 @@ function EditorPage() {
       onZoomReset: () => {
         setZoom(1);
       },
+      onToggleVisibility: () => {
+        if (selectedLayerId) {
+          toggleLayerVisibility(selectedLayerId);
+        }
+      },
       onToggleHelp: () => {
         setHelpOpen(!isHelpOpen);
       },

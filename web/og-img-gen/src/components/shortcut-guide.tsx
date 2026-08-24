@@ -36,7 +36,7 @@ export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
               </span>
             </div>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Every tool and action mirrors Photoshop. Single keys switch tools, <span className="text-foreground">Mod</span> combos handle file and edit. Works only when not typing in an input.
+              Every tool and action mirrors Photoshop. Single keys switch tools, <span className="text-foreground">Alt</span> combos handle file and edit to avoid browser clashes (<span className="text-foreground">Mod</span> only for undo/redo/duplicate/zoom). Works only when not typing in an input.
             </p>
           </div>
 
@@ -63,13 +63,6 @@ export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
                   </section>
                 );
               })}
-            </div>
-
-            <div className="mt-6 hidden rounded-lg border border-primary/20 bg-primary/[0.04] p-3 md:block">
-              <p className="font-mono text-[10px] tracking-[0.08em] text-primary uppercase">PowerToys-style</p>
-              <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
-                Hold <HotkeyKbd hotkey="?" className="mx-1 inline-flex" /> for 400ms to peek this guide. Release to dismiss. Press <HotkeyKbd hotkey="Escape" className="mx-1 inline-flex" /> or click outside.
-              </p>
             </div>
           </div>
 

@@ -18,6 +18,7 @@ export interface PhotoshopHotkeyHandlers {
   onZoomIn?: () => void;
   onZoomOut?: () => void;
   onZoomReset?: () => void;
+  onToggleVisibility?: () => void;
   onToggleHelp?: () => void;
   onHelpHoldChange?: (isHeld: boolean) => void;
 }
@@ -52,6 +53,7 @@ export function usePhotoshopHotkeys(
     function handleKeyDown(event: KeyboardEvent): void {
       const typing = isTypingInInput(event.target);
       const mod = isMod(event);
+      const alt = event.altKey;
       const shift = event.shiftKey;
       const key = event.key.toLowerCase();
       const code = event.code.toLowerCase();
@@ -98,8 +100,8 @@ export function usePhotoshopHotkeys(
         return;
       }
 
-      // Single-key tools — only when not typing and no Mod
-      if (!typing && !mod) {
+      // Single-key tools — only when not typing and no Mod/Alt
+      if (!typing && !mod && !alt) {
         if (key === "v" && !shift) {
           handlers.onToolSelect?.("select");
           event.preventDefault();
@@ -145,10 +147,83 @@ export function usePhotoshopHotkeys(
           event.preventDefault();
           return;
         }
+        // Toggle visibility — bare "," (comma) avoids Mod+, browser settings
+        if ((key === "," || code === "comma") && !shift) {
+          handlers.onToggleVisibility?.();
+          event.preventDefault();
+          return;
+        }
       }
 
-      // Mod+ combos
-      if (mod) {
+      // Alt+ combos — file/edit without clashing with browser Mod+ (Cmd+,/S/N/O/R)
+      // Use code for letters to avoid Option-char issues on macOS (Alt+R -> ®)
+      if (alt && !mod && !typing) {
+        if (code === "keyr" && !shift) {
+          handlers.onRefresh?.();
+          event.preventDefault();
+          return;
+        }
+        if (code === "keyn" && !shift) {
+          handlers.onNew?.();
+          event.preventDefault();
+          return;
+        }
+        if (code === "keyo" && !shift) {
+          handlers.onImport?.();
+          event.preventDefault();
+          return;
+        }
+        if (code === "keys" && !shift) {
+          handlers.onExportZip?.();
+          event.preventDefault();
+          return;
+        }
+        if (code === "keys" && shift) {
+          handlers.onExportPng?.();
+          event.preventDefault();
+          return;
+        }
+        // Toggle visibility also via Alt+, if preferred
+        if ((code === "comma" || key === ",") && !shift) {
+          handlers.onToggleVisibility?.();
+          event.preventDefault();
+          return;
+        }
+      }
+
+      // Mod+Shift+ fallbacks — add Shift to avoid browser clash (e.g. Mod+, -> Mod+Shift+,)
+      if (mod && shift && !alt && !typing) {
+        if (code === "keyr" || key === "r") {
+          handlers.onRefresh?.();
+          event.preventDefault();
+          return;
+        }
+        if (code === "keyn" || key === "n") {
+          handlers.onNew?.();
+          event.preventDefault();
+          return;
+        }
+        if (code === "keyo" || key === "o") {
+          handlers.onImport?.();
+          event.preventDefault();
+          return;
+        }
+        if (code === "keys" || key === "s") {
+          // Shift distinguishes ZIP vs PNG — check original shift already true here
+          // For Mod+Shift+S we map to Export ZIP as Shift fallback (PNG is Alt+Shift+S primary)
+          handlers.onExportZip?.();
+          event.preventDefault();
+          return;
+        }
+        if ((code === "comma" || key === "," || key === "<") && !alt) {
+          handlers.onToggleVisibility?.();
+          event.preventDefault();
+          return;
+        }
+      }
+
+      // Mod+ combos (undo/redo/duplicate/zoom — safe, widely overridden)
+      if (mod && !alt) {
         if (key === "z" && !shift) {
           handlers.onUndo?.();
           event.preventDefault();
@@ -161,31 +236,6 @@ export function usePhotoshopHotkeys(
         }
         if (key === "j" && !shift) {
           handlers.onDuplicate?.();
-          event.preventDefault();
-          return;
-        }
-        if (key === "r" && !shift) {
-          handlers.onRefresh?.();
-          event.preventDefault();
-          return;
-        }
-        if (key === "o" && !shift) {
-          handlers.onImport?.();
-          event.preventDefault();
-          return;
-        }
-        if (key === "s" && !shift) {
-          handlers.onExportZip?.();
-          event.preventDefault();
-          return;
-        }
-        if (key === "s" && shift) {
-          handlers.onExportPng?.();
-          event.preventDefault();
-          return;
-        }
-        if (key === "n" && !shift) {
-          handlers.onNew?.();
           event.preventDefault();
           return;
         }
