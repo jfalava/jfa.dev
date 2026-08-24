@@ -1,6 +1,8 @@
 /* oxlint-disable react-hooks/exhaustive-deps */
 import {
   Button,
+  ColorField,
+  ColorPicker,
   ContextMenu,
   ContextMenuItem,
   ContextMenuSeparator,
@@ -145,8 +147,6 @@ function EditorPage() {
 
   const canvasRef = useRef<EditorCanvasHandle>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const foregroundColorInputRef = useRef<HTMLInputElement>(null);
-  const backgroundColorInputRef = useRef<HTMLInputElement>(null);
   const [assetUrls, setAssetUrls] = useState<ReadonlyMap<string, string>>(new Map());
   const [filter, setFilter] = useState("");
   const [zoom, setZoom] = useState(1);
@@ -506,6 +506,41 @@ function EditorPage() {
     }
   }
 
+  function handleForegroundColorChange(color: string): void {
+    if (selectedLayer !== undefined && "fill" in selectedLayer) {
+      updateSelected({ fill: color });
+    }
+  }
+
+  function handleBackgroundColorChange(color: string): void {
+    const value = color;
+    // Keep project background and background layer in sync (react-colorful)
+    useEditorStore.setState((state) => {
+      const activeTab = state.tabs.find((t) => t.id === state.activeTabId);
+      if (activeTab === undefined) {
+        return state;
+      }
+      const nextProject = { ...activeTab.project, background: value };
+      const nextTab = {
+        ...activeTab,
+        project: nextProject,
+        past: [...activeTab.past, activeTab.project].slice(-50),
+        future: [],
+      };
+      const nextTabs = state.tabs.map((t) => (t.id === activeTab.id ? nextTab : t));
+      return {
+        tabs: nextTabs,
+        project: nextTab.project,
+        past: nextTab.past,
+        future: nextTab.future,
+      };
+    });
+    const bgLayer = project.layers.find((l) => l.id === "background");
+    if (bgLayer) {
+      updateLayer(bgLayer.id, { fill: value });
+    }
+  }
+
   if (!hydrated) {
     return (
       <div className="flex min-h-0 flex-1 items-center justify-center text-sm text-muted-foreground">
@@ -531,14 +566,14 @@ function EditorPage() {
           onAddGeometry={addGeometryLayer}
           onAddImage={() => imageInputRef.current?.click()}
           onAddText={addTextLayer}
+          onBackgroundColorChange={handleBackgroundColorChange}
           onDuplicate={duplicateSelectedLayer}
+          onForegroundColorChange={handleForegroundColorChange}
           onRedo={redo}
           onRemove={removeSelectedLayer}
           onSelectTool={setActiveTool}
           onUndo={undo}
           selectedLayer={selectedLayer}
-          foregroundColorInputRef={foregroundColorInputRef}
-          backgroundColorInputRef={backgroundColorInputRef}
         />
 
         {/* Center: Canvas + options bar + status bar */}
@@ -657,37 +692,6 @@ function EditorPage() {
 
       <ShortcutGuide isOpen={isHelpVisible} onOpenChange={setHelpOpen} />
 
-      {/* Hidden inputs for toolbox color swatches */}
-      <input
-        ref={foregroundColorInputRef}
-        className="hidden"
-        type="color"
-        onChange={(event) => {
-          if (selectedLayer !== undefined && "fill" in selectedLayer) {
-            updateSelected({ fill: event.target.value });
-          }
-        }}
-        value={getLayerFill(selectedLayer) ?? project.background}
-      />
-      <input
-        ref={backgroundColorInputRef}
-        className="hidden"
-        type="color"
-        onChange={(event) => {
-          const value = event.target.value;
-          useEditorStore.setState((state) => ({
-            project: { ...state.project, background: value },
-            past: [...state.past, state.project].slice(-50),
-            future: [],
-          }));
-          const bgLayer = project.layers.find((l) => l.id === "background");
-          if (bgLayer) {
-            updateLayer(bgLayer.id, { fill: value });
-          }
-        }}
-        value={project.background}
-      />
-
       <input
         ref={imageInputRef}
         accept={IMAGE_FILE_ACCEPT}
@@ -710,14 +714,14 @@ interface PhotoshopToolboxProps {
   onAddGeometry: () => void;
   onAddImage: () => void;
   onAddText: () => void;
+  onBackgroundColorChange: (color: string) => void;
   onDuplicate: () => void;
+  onForegroundColorChange: (color: string) => void;
   onRedo: () => void;
   onRemove: () => void;
   onSelectTool: (tool: "select" | "hand" | "pipette") => void;
   onUndo: () => void;
   selectedLayer: Layer | undefined;
-  foregroundColorInputRef: React.RefObject<HTMLInputElement | null>;
-  backgroundColorInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 function PhotoshopToolbox({
@@ -730,14 +734,14 @@ function PhotoshopToolbox({
   onAddGeometry,
   onAddImage,
   onAddText,
+  onBackgroundColorChange,
   onDuplicate,
+  onForegroundColorChange,
   onRedo,
   onRemove,
   onSelectTool,
   onUndo,
   selectedLayer,
-  foregroundColorInputRef,
-  backgroundColorInputRef,
 }: PhotoshopToolboxProps) {
   const canModify = selectedLayer !== undefined && !selectedLayer.locked;
   return (
@@ -784,30 +788,22 @@ function PhotoshopToolbox({
       >
         <Pipette className="size-[18px]" />
       </ToolboxButton>
-      <ToolboxButton
-        ariaLabel="Swatches / fill color"
-        onPress={() => foregroundColorInputRef.current?.click()}
-      >
-        <Palette className="size-[18px]" />
-      </ToolboxButton>
 
-      {/* Photoshop-style foreground/background swatches */}
+      {/* Photoshop-style foreground/background swatches — react-colorful */}
       <div className="relative my-1 flex size-9 items-center justify-center">
-        {/* Background swatch */}
-        <button
-          aria-label="Background color"
-          className="absolute top-1 left-1 size-5 rounded-sm border border-white/30 shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-white"
-          onClick={() => backgroundColorInputRef.current?.click()}
-          style={{ backgroundColor }}
-          type="button"
+        <ColorPicker
+          color={backgroundColor}
+          onChange={onBackgroundColorChange}
+          ariaLabel="Background color"
+          compact
+          className="absolute top-1 left-1 !size-5 !rounded-sm !border-white/30 !p-0 shadow-sm"
         />
-        {/* Foreground swatch */}
-        <button
-          aria-label="Foreground color"
-          className="absolute right-1 bottom-1 size-5 rounded-sm border border-white shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-white"
-          onClick={() => foregroundColorInputRef.current?.click()}
-          style={{ backgroundColor: foregroundColor }}
-          type="button"
+        <ColorPicker
+          color={foregroundColor}
+          onChange={onForegroundColorChange}
+          ariaLabel="Foreground color"
+          compact
+          className="absolute right-1 bottom-1 !size-5 !rounded-sm !border-white !p-0 shadow-sm"
         />
         {/* Swap icon hint */}
         <div className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-zinc-700" />
@@ -1616,11 +1612,7 @@ function TextProperties({
             </select>
           </label>
         </div>
-        <ColorField
-          label="Color"
-          onChange={(event) => onUpdate({ fill: event.target.value })}
-          value={layer.fill}
-        />
+        <ColorField label="Color" value={layer.fill} onChange={(color) => onUpdate({ fill: color })} />
         <div className="grid grid-cols-3 gap-1">
           <Button
             aria-label="Align left"
@@ -1676,11 +1668,7 @@ function GeometryProperties({
             <option value="circle">Ellipse</option>
           </select>
         </label>
-        <ColorField
-          label="Fill"
-          onChange={(event) => onUpdate({ fill: event.target.value })}
-          value={layer.fill}
-        />
+        <ColorField label="Fill" value={layer.fill} onChange={(color) => onUpdate({ fill: color })} />
         {layer.geometry === "rectangle" ? (
           <NumberField
             label="Radius"
@@ -1740,11 +1728,11 @@ function NumberField({
   value: number;
 }) {
   return (
-    <label className="flex items-center justify-between gap-1 rounded-md border border-input bg-input/20 px-2 py-0.5 text-[10px] text-muted-foreground">
-      <span>{label}</span>
-      <span className="flex min-w-0 items-center gap-1">
+    <label className="flex flex-col gap-1 text-[10px] leading-none">
+      <span className="font-medium text-muted-foreground">{label}</span>
+      <span className="flex items-center gap-1 rounded-md border border-input bg-input/20 px-2 py-1.5">
         <input
-          className="w-14 min-w-0 bg-transparent text-right text-xs text-foreground outline-none"
+          className="w-full min-w-0 bg-transparent text-right text-xs text-foreground outline-none"
           max={max}
           min={min}
           onChange={(event) => {
@@ -1757,32 +1745,7 @@ function NumberField({
           type="number"
           value={value}
         />
-        {suffix ? <span>{suffix}</span> : null}
-      </span>
-    </label>
-  );
-}
-
-function ColorField({
-  label,
-  onChange,
-  value,
-}: {
-  label: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  value: string;
-}) {
-  return (
-    <label className="flex items-center justify-between rounded-md border border-input bg-input/20 px-2 py-1 text-[10px] text-muted-foreground">
-      <span>{label}</span>
-      <span className="flex items-center gap-2 text-xs text-foreground">
-        <input
-          className="size-5 cursor-pointer rounded border-0 bg-transparent p-0"
-          onChange={onChange}
-          type="color"
-          value={value}
-        />
-        {value.toUpperCase()}
+        {suffix ? <span className="shrink-0 text-muted-foreground">{suffix}</span> : null}
       </span>
     </label>
   );
@@ -1826,13 +1789,13 @@ function PropertySection({
   label: string;
 }) {
   return (
-    <section className="border-b border-border py-4 first:pt-0 last:border-b-0">
-      <h2 className="mb-3 flex items-center gap-2 text-[11px] font-medium">
+    <details open className="group/section border-b border-border py-4 first:pt-0 last:border-b-0">
+      <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] font-medium marker:hidden select-none [&::-webkit-details-marker]:hidden">
         <Icon className="size-3.5 text-primary" />
         {label}
-        <ChevronDown className="ml-auto size-3.5 text-muted-foreground" />
-      </h2>
-      {children}
-    </section>
+        <ChevronDown className="ml-auto size-3.5 text-muted-foreground transition-transform group-open/section:rotate-180" />
+      </summary>
+      <div className="mt-3">{children}</div>
+    </details>
   );
 }

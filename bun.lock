@@ -21,6 +21,7 @@
     "common": {
       "name": "@jfa.dev/common",
       "dependencies": {
+        "@base-ui/react": "catalog:react",
         "@fontsource/google-sans-code": "catalog:fonts",
         "@fontsource/pretendard": "catalog:fonts",
         "@fontsource/zilla-slab": "catalog:fonts",
@@ -30,6 +31,7 @@
         "lucide-react": "catalog:ui",
         "react": "catalog:react",
         "react-aria-components": "catalog:react",
+        "react-colorful": "^5.6.1",
         "react-dom": "catalog:react",
         "react-resizable-panels": "catalog:ui",
         "sonner": "catalog:ui",
@@ -256,6 +258,7 @@
     "web/og-img-gen": {
       "name": "@jfa.dev/og-img-gen",
       "dependencies": {
+        "@base-ui/react": "catalog:react",
         "@jfa.dev/common": "workspace:*",
         "@tailwindcss/vite": "catalog:styling",
         "@tanstack/react-hotkeys": "catalog:tanstack",
@@ -269,6 +272,7 @@
         "lucide-react": "catalog:ui",
         "react": "catalog:react",
         "react-aria-components": "catalog:react",
+        "react-colorful": "^5.6.1",
         "react-dom": "catalog:react",
         "tailwindcss": "catalog:styling",
         "tw-animate-css": "catalog:styling",
@@ -2397,6 +2401,8 @@
     "react-aria": ["react-aria@3.51.0", "", { "dependencies": { "@internationalized/date": "^3.12.3", "@internationalized/number": "^3.6.7", "@internationalized/string": "^3.2.10", "@react-types/shared": "^3.36.1", "@swc/helpers": "^0.5.0", "aria-hidden": "^1.2.3", "clsx": "^2.0.0", "react-stately": "3.49.0", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1", "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1" } }, "sha512-AyWLw0XR38cFPwBu/ErgGaVrc5dupLEKmRlMXTGvFKOtbaGRQ2+yQJkjVhpdHhoRhU4+G+tJDFeHDTS8tK3bfQ=="],
 
     "react-aria-components": ["react-aria-components@1.20.0", "", { "dependencies": { "@internationalized/date": "^3.12.3", "@internationalized/string": "^3.2.10", "@react-types/shared": "^3.36.1", "@swc/helpers": "^0.5.0", "client-only": "^0.0.1", "react-aria": "3.51.0", "react-stately": "3.49.0" }, "peerDependencies": { "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1", "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1" } }, "sha512-BMbpIgoV9aELeBrB0Y120NgoigHb5OdcJwc+4e7uSnbTbamea6lo+gqcc4LAxzMaK3Jf+7LI1oCDE6yANsmxIQ=="],
+
+    "react-colorful": ["react-colorful@5.8.0", "", { "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-Wy9OzPfjSN9bF12OB8N7UQvlsZ0I+7wHxpN+bV5BjNQGxOj6IiwkRjevJK9yOBjJWGQvAaf1OXtn8rUeEatAng=="],
 
     "react-dom": ["react-dom@19.2.8", "", { "dependencies": { "scheduler": "^0.27.0" }, "peerDependencies": { "react": "^19.2.8" } }, "sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ=="],
 
