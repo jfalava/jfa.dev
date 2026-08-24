@@ -15,6 +15,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
+  Toggle,
 } from "@jfa.dev/common/ui";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -1597,10 +1598,10 @@ function TextProperties({
             suffix="px"
             value={layer.fontSize}
           />
-          <label className="flex flex-col gap-1 text-[10px] text-muted-foreground">
-            Weight
+          <label className="flex flex-col gap-1 text-[10px] leading-none">
+            <span className="font-medium text-muted-foreground">Weight</span>
             <select
-              className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground"
+              className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
               onChange={(event) => onUpdate({ fontWeight: Number(event.target.value) })}
               value={layer.fontWeight}
             >
@@ -1614,33 +1615,36 @@ function TextProperties({
         </div>
         <ColorField label="Color" value={layer.fill} onChange={(color) => onUpdate({ fill: color })} />
         <div className="grid grid-cols-3 gap-1">
-          <Button
+          <Toggle
             aria-label="Align left"
-            className={layer.textAlign === "left" ? "bg-primary/10 text-primary" : ""}
+            isSelected={layer.textAlign === "left"}
             onPress={() => onUpdate({ textAlign: "left" })}
-            size="icon-sm"
-            variant="ghost"
+            variant="outline"
+            size="sm"
           >
             <AlignLeft />
-          </Button>
-          <Button
+            Left
+          </Toggle>
+          <Toggle
             aria-label="Align center"
-            className={layer.textAlign === "center" ? "bg-primary/10 text-primary" : ""}
+            isSelected={layer.textAlign === "center"}
             onPress={() => onUpdate({ textAlign: "center" })}
-            size="icon-sm"
-            variant="ghost"
+            variant="outline"
+            size="sm"
           >
             <AlignCenter />
-          </Button>
-          <Button
+            Center
+          </Toggle>
+          <Toggle
             aria-label="Align right"
-            className={layer.textAlign === "right" ? "bg-primary/10 text-primary" : ""}
+            isSelected={layer.textAlign === "right"}
             onPress={() => onUpdate({ textAlign: "right" })}
-            size="icon-sm"
-            variant="ghost"
+            variant="outline"
+            size="sm"
           >
             <AlignRight />
-          </Button>
+            Right
+          </Toggle>
         </div>
       </div>
     </PropertySection>
@@ -1730,7 +1734,7 @@ function NumberField({
   return (
     <label className="flex flex-col gap-1 text-[10px] leading-none">
       <span className="font-medium text-muted-foreground">{label}</span>
-      <span className="flex items-center gap-1 rounded-md border border-input bg-input/20 px-2 py-1.5">
+      <span className="flex h-7 items-center gap-1 rounded-md border border-input bg-input/20 px-2">
         <input
           className="w-full min-w-0 bg-transparent text-right text-xs text-foreground outline-none"
           max={max}

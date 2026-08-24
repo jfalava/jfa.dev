@@ -40,6 +40,7 @@ export {
 export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
 export { ColorField, ColorPicker } from "./color-picker";
 export { Popover, PopoverAnchor, PopoverContent, PopoverPositioner, PopoverTrigger } from "./popover";
+export { Toggle, toggleVariants } from "./toggle";
 export { Toaster } from "./sonner";
 export {
   Table,
