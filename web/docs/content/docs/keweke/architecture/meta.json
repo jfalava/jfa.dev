@@ -1,0 +1,6 @@
+{
+  "title": "Architecture",
+  "description": "How Keweke works under the hood — identity, storage, and live collaboration",
+  "icon": "Blocks",
+  "pages": ["index", "identity", "collaboration", "storage", "meta-and-seo"]
+}

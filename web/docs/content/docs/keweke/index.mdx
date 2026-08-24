@@ -3,12 +3,9 @@ title: Keweke
 description: A small, shareable shopping-list app for friends.
 ---
 
-Keweke (`@jfa.dev/keweke`) is a small, shareable shopping-list app for
-friends. Lists use UUID7 identifiers so a list can be shared directly as a
-URL — no accounts, no lookup step.
+Keweke is a small, shareable shopping-list app for friends. No accounts, no lookup step — a list's link is its address.
 
-- `/keweke/` — the empty shell
-- `/keweke/:listId` — a loaded list
+- **Your lists** at `/keweke/` — the catalog stored on this browser
+- **A single list** at `/keweke/:listId` — open it, edit it, copy the link to share
 
-The UI is built on TanStack Start with Durable Object persistence behind the
-`/keweke` router mount.
+When you decide to share, the list becomes available on any device and stays in sync. How that works is explained in [Architecture](/docs/keweke/architecture).

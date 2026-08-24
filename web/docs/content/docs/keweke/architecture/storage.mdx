@@ -1,0 +1,42 @@
+---
+title: Storage
+description: Where Keweke keeps your lists — in the browser and on the edge — and how it chooses which copy to show.
+---
+
+Keweke is local-first, so your lists live in your browser by default. Remote storage only exists for lists you choose to share.
+
+## In the browser — IndexedDB
+
+All personal data is in IndexedDB on your device:
+
+- **Lists** live in a store keyed by their identifier. The app reads them sorted by last update, so the most recent list appears first.
+- **Identity** (your `userId`, `deviceId`, keypairs, and display name) lives in its own store. It survives page reloads and is isolated per browser.
+- **Data you can clear** — from `/user` you can clear _local lists + identity_ (this browser only) or _local lists for remote users_ — the service never deletes shared copies for other participants when you clear locally.
+
+When offline, you still read and edit your lists. Edits queue as local mutations and are written straight to IndexedDB.
+
+> Browser stores are in the [list store component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/lib/local-list-store.ts) and the [identity store component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/lib/local-identity.ts).
+
+## On the edge — Durable Objects + SQLite
+
+Each shared list is its own Durable Object with a small SQLite database:
+
+- one row for the list metadata (title, revision, alias, owner)
+- rows for active items and for recently deleted items
+- rows for the last ~100 applied mutation IDs (for idempotency) and for item history
+
+Because a Durable Object is single-threaded for its list, edits are applied one at a time and revision numbers stay sequential. If the object has never seen a list snapshot, importing one creates it; importing the same snapshot twice is idempotent.
+
+> The table layout and `writeSnapshot` / `writeMutationDelta` paths are in the [Keweke list object](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/server/keweke-list.ts).
+
+## How the app picks which copy to show
+
+- Opening `/keweke/` reads IndexedDB only — it shows your catalog, no network.
+- Opening `/keweke/:listId` first tries the local copy, then falls back to the remote snapshot via the server loader. A remote snapshot can become a cached copy in IndexedDB so later opens still feel instant.
+- Remote lists that disappear (owner deleted, or permission revoked) are removed from your local catalog on next sync.
+
+## Sharing and aliases
+
+A list's address is its identifier. Optionally, after you rename a local list the service can mint a short friendly alias; otherwise the raw identifier is the URL. Aliases are resolved via the same directory that registers new lists.
+
+> Alias handling is in the [alias component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/server/keweke-aliases.ts).

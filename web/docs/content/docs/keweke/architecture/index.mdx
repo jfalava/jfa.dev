@@ -1,0 +1,22 @@
+---
+title: Architecture
+description: Service-level overview of how Keweke stores, identifies, and syncs your shopping lists.
+---
+
+Keweke is built as a local-first app that can become collaborative without you changing how you use it. Most work happens in your browser; the service only steps in to keep shared copies in sync.
+
+## At a glance
+
+- **Your browser is the source of truth** for personal lists. They live in IndexedDB and work offline.
+- **Your identity is a key, not an email.** An Ed25519 keypair is created on first visit. The public key's fingerprint is your user and device identifier.
+- **Shared lists live on the edge.** Each list is a Durable Object with its own SQLite database. It broadcasts changes over WebSockets.
+- **No upload step for sharing** — a list's URL is its address. Copying the link shares it.
+
+## Where to go
+
+- [Identity](/docs/keweke/architecture/identity) — how a browser gets an identity, what anonymous / local / remote means, and why avatars change when you rename yourself.
+- [Collaboration](/docs/keweke/architecture/collaboration) — how editing a remote list turns into a signed mutation, how live updates flow over WebSockets, and what happens when two people edit at once.
+- [Storage](/docs/keweke/architecture/storage) — where personal and shared lists live (IndexedDB vs. Durable Object SQLite) and how the app decides which copy to show.
+- [Meta & SEO](/docs/keweke/architecture/meta-and-seo) — titles and link previews for shared lists.
+
+> These pages describe the service, not the code. When you want the implementation, follow the links to the components on GitHub — for example, the [identity storage component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/lib) or the [list live session component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/sync).

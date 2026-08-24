@@ -1,0 +1,20 @@
+---
+title: Meta & SEO
+description: How Keweke sets titles and link previews for lists.
+---
+
+Shared lists look good when you paste the link, but we keep it minimal.
+
+## What you see when you share a link
+
+- The browser title becomes `Your list name — KEWEKE`.
+- The description is a short summary like `12 items · 3 done`, or a short note when the list is empty.
+- If a list cannot be found, the page falls back to the generic Keweke title.
+
+We intentionally do not set a link image or a canonical URL in the preview — the service focuses on the list content rather than on generated visuals.
+
+## How it is rendered
+
+The list page loader fetches the list's metadata and builds the title and description before the page renders, so social scrapers and browsers see the same result. The same helpers are reused for the server-side share metadata.
+
+> The rendering lives in the [list route](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/routes/%24listId.tsx) and the [share helper component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/lib/share-meta.ts).

@@ -1,0 +1,42 @@
+---
+title: Identity
+description: How Keweke creates and uses an Ed25519 identity to sign your edits.
+---
+
+Keweke identifies you with cryptography, not with a password or email. The goal is simple: your browser can prove it is you, even offline, and other browsers can recognize you if you link them.
+
+## How your identity is made
+
+On your first visit your browser generates two Ed25519 keypairs:
+
+- a **user key** — represents you across devices
+- a **device key** — represents this browser specifically
+
+The public half of each key is hashed (SHA-256) to make your `userId` and `deviceId`. Those short fingerprints are what the service stores — never the private key. Private keys stay inside IndexedDB in your browser and are never sent over the network.
+
+You then pick a display name. That name is the only thing other people see. Changing it updates the name attached to your future edits.
+
+> Implementation lives in the [auth identity component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/lib) and the shared schemas in [common identities](https://github.com/jfalava/jfa.dev/tree/main/common/src/identities.ts).
+
+## The three states
+
+- **Anonymous** — no name yet. You can create lists and add items, but badges show as “unsigned.”
+- **Local** — you chose a name, but have not linked it to the service. Your lists work offline and your name appears locally.
+- **Remote** — your name is confirmed by the service and linked to your key. You can now publish lists, edit shared lists, and approve other browsers.
+
+Moving from local to remote happens when you ask the service to create or adopt a remote user. Your browser signs the request with your device key and the service verifies the signature.
+
+## Pairing another browser
+
+There are two ways to bring the same identity to a new device:
+
+- **Passkey** — if your remote user already has a passkey, the new browser can adopt it directly.
+- **Pairing code** — your new browser shows a ten-character code, an already-approved browser approves it, and the new browser is linked.
+
+After pairing the new browser holds the same `userId` and your display name, and its avatar — built from your `userId` plus your name — will match the other devices.
+
+## Avatars
+
+Avatars are deterministic shapes made from your `userId` and your current name. Rename yourself and the shape changes, but the identity behind it stays the same.
+
+> See the [user settings component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/components) for how the avatar and the “Anonymous / Local / Remote” badge are rendered.

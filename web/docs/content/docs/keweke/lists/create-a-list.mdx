@@ -1,0 +1,48 @@
+---
+title: Create a list
+description: Create a new Keweke shopping list from the empty state, header, or keyboard.
+---
+
+import { AfterCreatePreview } from "@/components/keweke/after-create-preview";
+import { EmptyListsPreview } from "@/components/keweke/empty-lists-preview";
+import { HeaderNewListPreview } from "@/components/keweke/header-new-list-preview";
+
+A list is a personal shopping document. You create it in your browser and it works right away — even offline.
+
+## When you have no lists yet
+
+When your browser has no lists, the catalog shows a single call to action. The preview below is a live component, not an image — it looks exactly like the app.
+
+<EmptyListsPreview />
+
+The button to make a new list is centered on purpose — it is the only action when there is nothing else to show.
+
+## When you already have lists
+
+Once you have at least one list, the **New list** button lives in the header at the top of the app.
+
+<HeaderNewListPreview />
+
+You can create a list three ways:
+
+- tap **Create a new list** in the empty state
+- tap **New list** in the header
+- press `⌘E` on Mac or `Ctrl+E` on Windows/Linux
+
+All three do the same thing: make a new list called “New list” and open it.
+
+## What happens after you create a list
+
+You are taken to the new list's page. It starts empty and shows the row where you add your first item.
+
+<AfterCreatePreview />
+
+- The URL contains the list's unique identifier — sharing that URL shares the list.
+- The title starts as “New list.” You can rename it at any time.
+- The table shows a draft row with a placeholder like “microwave popcorn.” Fill it in to add items.
+
+## Next step
+
+Add items, check them off, and when you are ready to collaborate, use **Publish** to make the list available on any device. See the [Architecture](/docs/keweke/architecture/collaboration) section for how publishing and live sync work.
+
+> The components for this page are [the empty state](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/empty-lists-state.tsx), the [header](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/app/components/keweke-header.tsx), and the [shopping table](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/shopping-table.tsx). The empty-state and draft-row previews above are static copies built for the docs.

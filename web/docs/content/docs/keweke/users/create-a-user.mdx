@@ -1,0 +1,54 @@
+---
+title: Create a user
+description: Create a display name, make it available on other browsers, or bring an existing user to a new browser.
+---
+
+import { UserDialogPreview } from "@/components/keweke/user-dialog-preview";
+import { UserSettingsPreview } from "@/components/keweke/user-settings-preview";
+
+You create a user from the same identity popup or from your settings page — they share the same controls.
+
+<UserDialogPreview />
+
+## Where to find it
+
+- **Header → User** — the round user icon in the top bar opens the identity popup.
+- **Publish prompt** — if you try to publish a list without a name, the same popup opens automatically and explains you need a name first.
+- **Settings** — open `/user` directly for a full-page version.
+
+## Create a name on this browser
+
+The first section of the popup is **Create a user**.
+
+1. Type a display name.
+2. Tap **Create**.
+
+That name is saved on this browser right away and shows up on items you add. You do not need network access for this step.
+
+## Make it a remote user
+
+To use the same name from another browser or to publish lists, promote it to a remote user. On the `/user` page this appears as the **Remote account** row when you have not yet promoted.
+
+<UserSettingsPreview variant="local" />
+
+Tap **Create remote user**. Your browser links your local name to the service so other devices can confirm it is really you. The settings header will then switch from “Local user” to “Remote user.”
+
+## Bring your user to a new browser
+
+If you already have a remote user, you can adopt it on a new device in two ways:
+
+- **With a passkey** — if you previously added a passkey, tap **Pair with passkey** on the new browser and approve with your platform prompt.
+- **With a pairing code** — tap **Show pairing code** on the new browser to display a short code, then enter and approve that code on an already-approved browser.
+
+After adoption the new browser shows the same name and avatar, and it can edit your shared lists.
+
+## How to check it worked
+
+Open `/user` on each browser:
+
+- The top badge should read **Local user** or **Remote user** with your name and avatar.
+- The table now shows rows for approving other browsers and managing devices or passkeys — those rows only appear for remote users.
+
+Next: [What you see](/docs/keweke/users/what-you-see) — every place your name and avatar appear.
+
+> These flows are built from the [user dialog](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/components/user-dialog.tsx), the [settings sections](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/components/user-settings-sections.tsx), and the shared [user manager hook](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/hooks/use-user-manager.ts).

@@ -3,5 +3,5 @@
   "description": "A small, shareable shopping-list app for friends.",
   "icon": "ShoppingBag",
   "root": true,
-  "pages": ["index", "lists", "meta-and-seo"]
+  "pages": ["index", "lists", "users", "architecture"]
 }

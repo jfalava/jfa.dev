@@ -1,0 +1,39 @@
+---
+title: Collaboration
+description: How shared lists stay in sync through signed mutations and WebSockets.
+---
+
+Local lists are just files in your browser. When you share one, it gets a second home on the edge that other browsers can subscribe to. Collaboration is built on three ideas: a single list service, signed edits, and live updates.
+
+## From local to shared
+
+Publishing takes your local snapshot and creates a copy in a Durable Object. That object becomes the authoritative source for that list URL. Your browser then refreshes its local copy to point at the remote one, so you keep seeing a single list.
+
+> The publish flow is implemented in the [list publish component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/server).
+
+## Edits are signed mutations
+
+Every change — add an item, check it off, rename the list — is a **mutation** that carries:
+
+- your `userId` and `deviceId`
+- a signature made with your device private key over the mutation payload
+
+The service checks the signature against the keys it knows for you and rejects edits from unknown or revoked devices. If two edits start from the same base revision, the first one wins and the second client refreshes its view. Revisions are strict, so there is no silent merge — you always see when the list changed elsewhere.
+
+> Signing helpers live in [common crypto](https://github.com/jfalava/jfa.dev/tree/main/common/src/crypto.ts) and the verification path is in the [list service object](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/server/keweke-list.ts).
+
+## Live updates over WebSockets
+
+When you open a shared list, the browser opens a WebSocket to that list's Durable Object:
+
+1. The object sends the full snapshot immediately, so you see the latest state.
+2. As others edit, it broadcasts lightweight mutation messages to all connected browsers.
+3. If your connection drops, the client reconnects with exponential backoff and re-validates via the snapshot. A manual “refresh” button forces a fresh snapshot when the socket cannot recover on its own.
+
+Item history — who changed what and when — is stored alongside the list and trimmed automatically so the service only keeps the recent window.
+
+> The client hook is in the [live sync component](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/sync), the durable logic in the [Keweke list object](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/server/keweke-list.ts), and the message shapes in [common lists](https://github.com/jfalava/jfa.dev/tree/main/common/src/lists.ts).
+
+## What you experience
+
+Most of the time it feels instant: you check an item, others see it checked a moment later. If two people edit the same item at the same instant, one edit will be applied and the other will be told the list changed and refresh — the same behavior you see when you try to publish a list that already exists elsewhere.

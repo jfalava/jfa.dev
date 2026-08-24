@@ -1,0 +1,6 @@
+{
+  "title": "Users",
+  "description": "Identity, pairing, and where the username appears",
+  "icon": "UserRound",
+  "pages": ["index", "create-a-user", "what-you-see"]
+}

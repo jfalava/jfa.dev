@@ -1,0 +1,6 @@
+{
+  "title": "Lists",
+  "description": "Create, open, and organize Keweke lists",
+  "icon": "List",
+  "pages": ["index", "create-a-list"]
+}

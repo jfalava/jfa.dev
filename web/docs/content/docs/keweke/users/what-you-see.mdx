@@ -1,0 +1,52 @@
+---
+title: What you see
+description: Every place the Keweke name and avatar appear, and how the badge chooses what to show.
+---
+
+import {
+  SignedBadgePreview,
+  HeaderUserButtonPreview,
+} from "@/components/keweke/signed-badge-preview";
+import { UserSettingsPreview } from "@/components/keweke/user-settings-preview";
+
+Your display name is visible in a handful of consistent places — you will learn to read them at a glance. All of them are live component previews, not screenshots.
+
+<HeaderUserButtonPreview />
+
+## 1) The header — User button
+
+The top bar always has a round **User** icon on the right. It opens the same identity popup you saw when creating a user. The app header and the docs site header look similar but are separate — the app shows Keweke navigation, the docs site shows Docs navigation — so the drop-down menus never mix.
+
+- If you are anonymous, the popup reminds you to create a name.
+- If you have a name, the popup shows your current name and quick actions.
+
+## 2) Settings — /user
+
+<UserSettingsPreview variant="remote" />
+
+The `/user` page has a header with your avatar and a label:
+
+- **Anonymous** / **Local user** / **Remote user** — tells you which state your browser is in.
+- Your display name — or “Anonymous” if you have not set one.
+- A table of settings that adapts to your state: it only shows rows that make sense for you (for example, “approve a browser” and “manage devices” only for remote users).
+
+## 3) The dialog you just used
+
+The identity dialog itself — whether opened from the header or from the publish prompt — shows the same sections as the settings page, but as a popup. It is the fastest way to create or pair without leaving the list you were viewing.
+
+## 4) The shopping list — signed badge
+
+Each row in the shopping list ends with a small badge that tells you who last touched that item.
+
+<SignedBadgePreview />
+
+- **Unsigned** — the item was created before the naming system existed or the author is unknown.
+- **Added by …** — plus icon, avatar, and name of the person who created the item.
+- **Edited by …** — pencil icon, avatar, and name of the person who last edited it.
+- When the item is yours, the badge prefers the name you have set locally, so renaming yourself updates your own badges immediately.
+
+## A note on publishing
+
+You only need a remote identity when you want to share a list beyond this browser. Trying to publish without a name simply re-opens the naming dialog — you do not lose anything. After you publish, the same signed badges continue to work for shared edits.
+
+> Live components for this page are the [header user control](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/app/components/keweke-header.tsx), the [settings page](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/components/user-settings-page.tsx), and the [signed badge](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-item-elements.tsx). How the names are verified and synced is covered in [Architecture — Identity](/docs/keweke/architecture/identity) and [Architecture — Collaboration](/docs/keweke/architecture/collaboration).

@@ -1,0 +1,43 @@
+---
+title: Users
+description: What a Keweke user is and when you need one.
+---
+
+import { SignedBadgePreview } from "@/components/keweke/signed-badge-preview";
+import { UserStateBadgePreview } from "@/components/keweke/user-settings-preview";
+
+A user in Keweke is a browser-based identity — not an email account. Your browser creates a personal key for you on first visit and remembers your display name. No passwords.
+
+## What it is
+
+- You pick a display name (1–48 characters). That name is what friends see next to items you add or edit.
+- Behind the scenes that name is backed by a browser-generated key, so the service can verify that edits really come from you.
+- Your avatar shape is derived from your identity plus your name — rename yourself and the shape updates.
+
+## The three states
+
+The settings page at `/user` shows which state you are in:
+
+<UserStateBadgePreview />
+
+- **Anonymous** — you have not chosen a name yet. You can still make lists; your items show as “unsigned.”
+- **Local** — you have a name on this browser only. It appears on items you create here.
+- **Remote** — your name is linked to the service. You can publish lists, edit shared lists, and approve your other browsers.
+
+<UserSettingsPreview variant="remote" />
+
+The table on that page adapts to your state — it shows only the rows that make sense for you.
+
+## Where your name appears
+
+Your name and avatar show up in places you already use:
+
+<SignedBadgePreview />
+
+- next to each item you add or last edited, in the shopping list
+- in the header of the `/user` settings page
+- in the small popup that explains who added an item
+
+For a complete tour, see [What you see](/docs/keweke/users/what-you-see). How identities and live sharing work under the hood is covered in [Architecture — Identity](/docs/keweke/architecture/identity).
+
+> The components used here — the settings table and the signed badge — come from the [auth components](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/auth/components) and the [list components](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-item-elements.tsx).
