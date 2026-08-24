@@ -1,0 +1,59 @@
+---
+title: Publishing a list
+description: Make a local list public — the button, the nudge, the dialog, and what changes when it is remote.
+---
+
+import { PublishButtonPreview, PublishNudgePreview, PublishDialogPreview, RemoteListPreview } from "@/components/keweke/publish-preview";
+
+A list starts on your browser. Publishing gives it a second home on the edge so anyone with the link can open it from anywhere. It is a one-way move — once published, the list stays remote.
+
+## The publish button — when it appears
+
+<PublishButtonPreview />
+
+- **Local list** — header shows an outlined **Publish** button (cloud upload icon, hotkey `⌘U` / `Ctrl+U`).
+- **Remote list** — the Publish button disappears and a **Share** button takes its place (copy icon). Local catalog rows show a cloud badge instead of the house badge for remote lists.
+
+If you click Publish without a display name, the app opens the [User](/docs/keweke/users/create-a-user) popup first with the message “You must create an user to publish remote lists.” — you do not lose your list.
+
+## The nudge — a gentle hint
+
+<PublishNudgePreview />
+
+The first time a local list looks shareable (you renamed it from “New list” or added enough items), a small tooltip appears under the Publish button:
+
+> “You can now publish this list to access it from anywhere.”
+
+Tap the tooltip or wait ten seconds — it dismisses itself and never shows again for that list. It is a hint, not a requirement.
+
+## The dialog — what you are making public
+
+<PublishDialogPreview />
+
+Tapping **Publish** opens a modal that confirms the public addresses before anything leaves your browser:
+
+- a short explainer that anyone with the ID or alias can open the list
+- a box listing the **public addresses** — the raw ID and, if present, the friendly alias
+- **Cancel** and **Publish list** — the publishing spinner shows while the service creates the Durable Object copy
+
+The dialog is the only step that writes to the network. Until you confirm, the list stays local.
+
+## What happens now — remote, public
+
+<RemoteListPreview />
+
+After you confirm:
+
+- **Your browser refreshes** to the same URL but now marked as `remote list · public`. The live indicator turns green and a WebSocket connects to the list's service object.
+- **The URL does not change** — your existing link now opens the remote copy for everyone. Your local cached copy stays so offline opens still feel instant.
+- **Sharing is live** — changes check off instantly for others viewing the same link. If your connection drops you see a **Reconnect** button next to search (see [Working with the list](/docs/keweke/lists/working-with-the-list)).
+- **No more local alias minting** — the alias you had is now frozen as the public alias.
+- **Ownership** — you are the owner. Deleting is handled through your `/user` settings or the admin view; visitors cannot delete your list. If the owner deletes it, your cached copy is removed on the next sync.
+
+> Remote lists keep sharing the same identifier space as local ones — there is no “shared vs personal” ID format. The difference is storage (browser IndexedDB vs edge SQLite) and the live channel. How that channel and its revision history work is covered in [Architecture — Collaboration](/docs/keweke/architecture/collaboration) and [Architecture — Storage](/docs/keweke/architecture/storage).
+
+### Components behind this flow
+
+- [Keweke header](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/app/components/keweke-header.tsx) — `Publish` button, `showPublishNudge` logic, and the `UserDialog` gate
+- [Publish dialog](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/publish-list-dialog.tsx) — modal with ID/alias and spinner
+- [List page header](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-page-header.tsx) — swaps `local list` / `remote list` and stats

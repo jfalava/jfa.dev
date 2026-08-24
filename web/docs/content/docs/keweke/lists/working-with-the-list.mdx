@@ -1,0 +1,66 @@
+---
+title: Working with the list
+description: Everything a list page shows you — title, alias, ID, search, and history — and how to use it.
+---
+
+import { ListHeaderPreview, ListAliasIdPreview, DeletedItemsPreview, ItemHistoryPreview, LiveDroppedPreview } from "@/components/keweke/list-details-preview";
+
+A list page is more than its items. The header, the search bar, and the history sections tell you where you are and what changed — all rendered as static previews below, not screenshots.
+
+## The header — title, alias, and counts
+
+<ListHeaderPreview />
+
+- **Title** — tap the pencil to rename. The list starts as “New list” and any name you type appears immediately for everyone on the shared copy.
+- **Alias vs. ID** — every list has both. The row below the title shows one at a time; the arrow button swaps between them, and copy copies the full URL for whichever is visible.
+
+<ListAliasIdPreview />
+
+- **Alias** — a short, friendly code like `weekend-groceries-a3k`. Minted automatically after you rename a local list, used for pretty links like `/keweke/weekend-groceries-a3k`.
+- **ID** — the raw UUIDv7 like `0199c2f0-…`. Always works, even before an alias exists. Share either — both open the same list.
+
+The right side shows `02 open · 01 done` — a quick count so you know how much is left without scanning the table.
+
+## Search and spreadsheet mode
+
+Below the header is a second bar:
+
+- **Search** — filters the visible rows as you type. It looks at name, category, unit and amount, and shows “no matching lines” when nothing matches.
+- **Excel Mode** — on desktop, toggles a spreadsheet-like table where you can tab through cells. Mobile stays in card mode.
+- **Help (?)** — opens tips for adding items.
+
+<LiveDroppedPreview />
+
+If the list is remote and your connection drops, a small **Reconnect** button appears next to search. Tap it to force a fresh snapshot — otherwise the app keeps retrying in the background.
+
+## History — what changed and what was deleted
+
+Two places help you audit a list. Both are local-first for personal lists and shared for remote ones.
+
+### Deleted items
+
+<DeletedItemsPreview />
+
+Every item you remove goes here, newest first. From each row you can:
+
+- **History** — open that item’s full revision log (remote lists only)
+- **Restore** — put the item back at the end of the list
+- **Delete forever** — wipe the archive copy (requires a second tap)
+
+### Item history
+
+<ItemHistoryPreview />
+
+Open history from any item's row (pencil menu → History) or from the deleted section. It shows one item's field-by-field changes:
+
+- **Field** — which part changed: name, quantity, unit, amount, category, checked
+- **Changed → New value** — red old value and green new value
+- **Updated** — who made the change and when, with the revision number
+
+Pages load 50 changes at a time; **Load older changes** fetches the next page. Remote lists keep roughly the last thousand revisions, older pages are trimmed.
+
+## Next
+
+When your list is ready to share beyond this browser, move it to the edge — see [Publishing a list](/docs/keweke/lists/publishing-a-list).
+
+> Live components here are built from the [list header](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-page-header.tsx), [alias switcher](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-header-controls.tsx), [deleted history](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/deleted-items-history.tsx), and [item history dialog](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/item-history-dialog.tsx). How revisions and history are stored is covered in [Architecture — Storage](/docs/keweke/architecture/storage).

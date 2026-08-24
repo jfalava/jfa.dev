@@ -8,6 +8,19 @@ import {
   NewListHotkeyPreview,
 } from "@/components/keweke/header-new-list-preview";
 import {
+  DeletedItemsPreview,
+  ItemHistoryPreview,
+  ListAliasIdPreview,
+  ListHeaderPreview,
+  LiveDroppedPreview,
+} from "@/components/keweke/list-details-preview";
+import {
+  PublishButtonPreview,
+  PublishDialogPreview,
+  PublishNudgePreview,
+  RemoteListPreview,
+} from "@/components/keweke/publish-preview";
+import {
   HeaderUserButtonPreview,
   SignedBadgePreview,
 } from "@/components/keweke/signed-badge-preview";
@@ -21,10 +34,19 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
     AfterCreatePreview,
+    DeletedItemsPreview,
     EmptyListsPreview,
     HeaderNewListPreview,
     HeaderUserButtonPreview,
+    ItemHistoryPreview,
+    ListAliasIdPreview,
+    ListHeaderPreview,
+    LiveDroppedPreview,
     NewListHotkeyPreview,
+    PublishButtonPreview,
+    PublishDialogPreview,
+    PublishNudgePreview,
+    RemoteListPreview,
     SignedBadgePreview,
     UserDialogPreview,
     UserSettingsPreview,

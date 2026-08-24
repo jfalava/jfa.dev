@@ -2,5 +2,5 @@
   "title": "Lists",
   "description": "Create, open, and organize Keweke lists",
   "icon": "List",
-  "pages": ["index", "create-a-list"]
+  "pages": ["create-a-list", "working-with-the-list", "publishing-a-list"]
 }
