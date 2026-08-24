@@ -112,6 +112,7 @@ interface EditorState {
   toggleLayerLocked: (id: string) => void;
   moveLayerBefore: (sourceId: string, targetId: string) => void;
   resetProject: () => void;
+  setCanvasSize: (width: number, height: number) => void;
   setNotice: (notice: string) => void;
   setBusy: (busy: boolean) => void;
   setHelpOpen: (isHelpOpen: boolean) => void;
@@ -632,6 +633,29 @@ export const useEditorStore = create<EditorState>((set) => ({
         // Keep same tab id but refresh project with same id
         const nextProject = { ...fresh, id: tab.project.id, name: tab.project.name };
         return commitProject(tab, projectSchema.parse(nextProject), "headline");
+      }),
+    ),
+
+  setCanvasSize: (width, height) =>
+    set((state) =>
+      withActiveTab(state, (tab) => {
+        const clampedWidth = Math.max(100, Math.min(8000, Math.round(width)));
+        const clampedHeight = Math.max(100, Math.min(8000, Math.round(height)));
+        if (clampedWidth === tab.project.width && clampedHeight === tab.project.height) {
+          return tab;
+        }
+        const nextLayers = tab.project.layers.map((layer) =>
+          layer.id === "background"
+            ? { ...layer, width: clampedWidth, height: clampedHeight, x: 0, y: 0 }
+            : layer,
+        );
+        const nextProject = projectSchema.parse({
+          ...tab.project,
+          width: clampedWidth,
+          height: clampedHeight,
+          layers: nextLayers,
+        });
+        return commitProject(tab, nextProject);
       }),
     ),
 

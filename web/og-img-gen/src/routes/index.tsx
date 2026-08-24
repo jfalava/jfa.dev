@@ -1139,6 +1139,81 @@ function LayerRow({
   );
 }
 
+const CANVAS_PRESETS = [
+  { id: "og-1200x630", label: "OG Banner", sub: "1200×630", width: 1200, height: 630, hint: "Facebook / LinkedIn" },
+  { id: "x-1200x675", label: "X Card", sub: "1200×675", width: 1200, height: 675, hint: "X / Twitter" },
+  { id: "thumb-1280x720", label: "YouTube", sub: "1280×720", width: 1280, height: 720, hint: "16:9 thumbnail" },
+  { id: "square-1080", label: "Square", sub: "1080×1080", width: 1080, height: 1080, hint: "Instagram" },
+  { id: "story-1080x1920", label: "Story", sub: "1080×1920", width: 1080, height: 1920, hint: "9:16 stories" },
+  { id: "wide-1600x900", label: "Wide", sub: "1600×900", width: 1600, height: 900, hint: "16:9 banner" },
+] as const;
+
+function CanvasSection() {
+  const project = useEditorStore((state) => state.project);
+  const setCanvasSize = useEditorStore((state) => state.setCanvasSize);
+  const isCustom = !CANVAS_PRESETS.some((p) => p.width === project.width && p.height === project.height);
+
+  return (
+    <details open className="group/canvas border-b border-border py-4 first:pt-0 last:border-b-0">
+      <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] font-medium marker:hidden [&::-webkit-details-marker]:hidden">
+        <Frame className="size-3.5 text-primary" />
+        Canvas
+        <span className="ml-auto flex items-center gap-2 text-[10px] font-normal text-muted-foreground">
+          {project.width}×{project.height}
+          <ChevronDown className="size-3.5 transition-transform group-open/canvas:rotate-180" />
+        </span>
+      </summary>
+      <div className="mt-3 space-y-3">
+        <div className="grid grid-cols-2 gap-2">
+          {CANVAS_PRESETS.map((preset) => {
+            const active = preset.width === project.width && preset.height === project.height;
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => setCanvasSize(preset.width, preset.height)}
+                className={`rounded-md border px-2 py-2 text-left transition-colors ${
+                  active
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-muted/20 text-foreground hover:border-primary/30 hover:bg-muted/40"
+                }`}
+              >
+                <span className="block text-xs font-medium leading-none">{preset.label}</span>
+                <span className="block text-[10px] leading-none text-muted-foreground">{preset.sub}</span>
+                <span className="block truncate text-[9px] leading-none text-muted-foreground/70">{preset.hint}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className={`rounded-md border p-2 ${isCustom ? "border-primary/20 bg-primary/[0.04]" : "border-dashed"}`}>
+          <p className="mb-2 text-[10px] font-medium text-muted-foreground">
+            Custom {isCustom ? <span className="text-primary">• active</span> : null}
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <NumberField
+              label="W"
+              min={100}
+              max={8000}
+              value={project.width}
+              onChange={(value) => setCanvasSize(value, project.height)}
+            />
+            <NumberField
+              label="H"
+              min={100}
+              max={8000}
+              value={project.height}
+              onChange={(value) => setCanvasSize(project.width, value)}
+            />
+          </div>
+          <p className="mt-2 text-[9px] leading-relaxed text-muted-foreground">
+            Any size from 100 to 8000 px. Background fills the canvas automatically.
+          </p>
+        </div>
+      </div>
+    </details>
+  );
+}
+
 interface PropertiesPanelProps {
   className?: string;
   customFonts: FontMeta[];
@@ -1160,13 +1235,15 @@ function PropertiesPanel({
       className={`flex min-h-0 flex-col bg-background ${className ?? ""}`}
     >
       <PanelHeader icon={SlidersHorizontal} label="Properties" />
-      {layer === undefined ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 p-6 text-center text-xs text-muted-foreground">
-          <MousePointer2 className="size-5" />
-          <p>Select a layer to edit its properties.</p>
-        </div>
-      ) : (
-        <div className="min-h-0 flex-1 overflow-auto p-3">
+      <div className="min-h-0 flex-1 overflow-auto p-3">
+        <CanvasSection />
+        {layer === undefined ? (
+          <div className="flex flex-col items-center justify-center gap-2 py-8 text-center text-xs text-muted-foreground">
+            <MousePointer2 className="size-5" />
+            <p>Select a layer to edit its properties.</p>
+          </div>
+        ) : (
+          <div className="mt-2">
           <PropertySection icon={Frame} label="Position & size">
             <div className="grid grid-cols-2 gap-2">
               <NumberField label="X" onChange={(value) => onUpdate({ x: value })} value={layer.x} />
@@ -1211,7 +1288,8 @@ function PropertiesPanel({
           {isGeometryLayer(layer) ? <GeometryProperties layer={layer} onUpdate={onUpdate} /> : null}
           {isImageLayer(layer) ? <ImageProperties layer={layer} onUpdate={onUpdate} /> : null}
         </div>
-      )}
+        )}
+      </div>
     </aside>
   );
 }
