@@ -40,6 +40,18 @@ function createNewTab(index: number): TabState {
   };
 }
 
+function createSsrInitialTab(): TabState {
+  // Workers forbid randomUUID / Math.random in global scope; use deterministic ID for SSR
+  const project = createInitialProject({ id: "project-ssr-initial", name: getTabDisplayName(0) });
+  return {
+    id: project.id,
+    project,
+    selectedLayerId: project.layers.at(-1)?.id ?? null,
+    past: [],
+    future: [],
+  };
+}
+
 function createTabFromProject(project: OgProject): TabState {
   return {
     id: project.id,
@@ -156,7 +168,7 @@ function withActiveTab(
   };
 }
 
-const initialTab = createNewTab(0);
+const initialTab = createSsrInitialTab();
 
 export const useEditorStore = create<EditorState>((set) => ({
   tabs: [initialTab],
