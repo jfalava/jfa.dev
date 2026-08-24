@@ -49,8 +49,11 @@ import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "r
 import { Pressable } from "react-aria-components";
 
 import { EditorCanvas, type EditorCanvasHandle } from "@/components/editor-canvas";
+import { ShortcutGuide } from "@/components/shortcut-guide";
 import { editorCanvasRef } from "@/editor/canvas-ref";
+import { projectInputRef } from "@/editor/project-input-ref";
 import { registerFontFile, registerStoredFont } from "@/editor/fonts";
+import { usePhotoshopHotkeys } from "@/hooks/use-photoshop-hotkeys";
 import {
   createInitialProject,
   type FontMeta,
@@ -140,6 +143,10 @@ function EditorPage() {
   const setBusy = useEditorStore((state) => state.setBusy);
   const notice = useEditorStore((state) => state.notice);
   const setNotice = useEditorStore((state) => state.setNotice);
+  const isHelpOpen = useEditorStore((state) => state.isHelpOpen);
+  const isHelpHeld = useEditorStore((state) => state.isHelpHeld);
+  const setHelpOpen = useEditorStore((state) => state.setHelpOpen);
+  const setHelpHeld = useEditorStore((state) => state.setHelpHeld);
   const [isImageDropTarget, setIsImageDropTarget] = useState(false);
   const [activeTool, setActiveTool] = useState<"select" | "hand" | "pipette">("select");
 
@@ -149,6 +156,105 @@ function EditorPage() {
   useEffect(() => {
     editorCanvasRef.current = canvasRef.current;
   }, []);
+
+  useEffect(() => {
+    // SAFETY: selector targets hidden file input rendered in this page; null is expected before mount
+    const el = document.querySelector<HTMLInputElement>('input[accept=".ogproj,application/zip"]');
+    projectInputRef.current = el;
+  }, []);
+
+  const isHelpVisible = isHelpOpen || isHelpHeld;
+
+  usePhotoshopHotkeys(
+    {
+      onToolSelect: setActiveTool,
+      onAddText: addTextLayer,
+      onAddGeometry: addGeometryLayer,
+      onAddImage: () => {
+        imageInputRef.current?.click();
+      },
+      onDuplicate: () => {
+        if (selectedLayerId) {
+          useEditorStore.getState().duplicateLayer(selectedLayerId);
+        } else {
+          duplicateSelectedLayer();
+        }
+      },
+      onDelete: () => {
+        if (selectedLayerId) {
+          useEditorStore.getState().removeLayer(selectedLayerId);
+        } else {
+          removeSelectedLayer();
+        }
+      },
+      onRename: () => {
+        useEditorStore.getState().startRenamingSelected();
+      },
+      onRefresh: () => {
+        if (selectedLayerId) {
+          useEditorStore.getState().resetLayer(selectedLayerId);
+        }
+      },
+      onUndo: undo,
+      onRedo: redo,
+      onImport: () => {
+        const el = document.querySelector<HTMLInputElement>('input[accept=".ogproj,application/zip"]');
+        el?.click();
+      },
+      onExportZip: () => {
+        const proj = useEditorStore.getState().project;
+        void (async () => {
+          setBusy(true);
+          try {
+            const { createProjectArchive, archiveFileName, downloadBlob } = await import("@/editor/archive");
+            const archive = await createProjectArchive(proj);
+            downloadBlob(archive, archiveFileName(proj));
+            setNotice("Project archive downloaded");
+          } catch {
+            setNotice("The project archive could not be created");
+          } finally {
+            setBusy(false);
+          }
+        })();
+      },
+      onExportPng: () => {
+        void (async () => {
+          setBusy(true);
+          try {
+            const { downloadBlob } = await import("@/editor/archive");
+            const blob = await editorCanvasRef.current?.download();
+            if (!blob) {
+              throw new Error("Canvas not ready");
+            }
+            const proj = useEditorStore.getState().project;
+            downloadBlob(blob, `${proj.name || "untitled-canvas"}.png`);
+            setNotice("PNG downloaded");
+          } catch {
+            setNotice("The PNG could not be rendered");
+          } finally {
+            setBusy(false);
+          }
+        })();
+      },
+      onNew: () => {
+        useEditorStore.getState().resetProject();
+      },
+      onZoomIn: () => {
+        setZoom((v) => Math.min(2, v + 0.1));
+      },
+      onZoomOut: () => {
+        setZoom((v) => Math.max(0.5, v - 0.1));
+      },
+      onZoomReset: () => {
+        setZoom(1);
+      },
+      onToggleHelp: () => {
+        setHelpOpen(!isHelpOpen);
+      },
+      onHelpHoldChange: setHelpHeld,
+    },
+    activeTool,
+  );
 
   // oxlint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -498,6 +604,8 @@ function EditorPage() {
         </div>
       </div>
 
+      <ShortcutGuide isOpen={isHelpVisible} onOpenChange={setHelpOpen} />
+
       {/* Hidden inputs for toolbox color swatches */}
       <input
         ref={foregroundColorInputRef}
@@ -750,9 +858,12 @@ function LayersPanel({
   selectedLayerId,
 }: LayersPanelProps) {
   const draggedLayerId = useRef<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingName, setEditingName] = useState("");
-  const updateLayer = useEditorStore((state) => state.updateLayer);
+  const editingId = useEditorStore((state) => state.editingLayerId);
+  const editingName = useEditorStore((state) => state.editingLayerName);
+  const setEditingLayerId = useEditorStore((state) => state.setEditingLayerId);
+  const setEditingLayerName = useEditorStore((state) => state.setEditingLayerName);
+  const commitRename = useEditorStore((state) => state.commitRename);
+  const cancelRename = useEditorStore((state) => state.cancelRename);
   const visibleLayers = project.layers
     .toReversed()
     .filter((layer) => layer.name.toLowerCase().includes(filter.toLowerCase()));
@@ -761,22 +872,16 @@ function LayersPanel({
     if (layer.locked) {
       return;
     }
-    setEditingId(layer.id);
-    setEditingName(layer.name);
+    setEditingLayerId(layer.id);
+    setEditingLayerName(layer.name);
   }
 
   function handleRenameCommit(): void {
-    if (editingId !== null) {
-      const trimmed = editingName.trim();
-      if (trimmed.length > 0) {
-        updateLayer(editingId, { name: trimmed });
-      }
-      setEditingId(null);
-    }
+    commitRename();
   }
 
   function handleRenameCancel(): void {
-    setEditingId(null);
+    cancelRename();
   }
 
   return (
@@ -820,7 +925,7 @@ function LayersPanel({
                   draggedLayerId.current = null;
                 }
               }}
-              onEditingNameChange={setEditingName}
+              onEditingNameChange={setEditingLayerName}
               onRenameCancel={handleRenameCancel}
               onRenameCommit={handleRenameCommit}
               onRenameStart={() => handleRenameStart(layer)}

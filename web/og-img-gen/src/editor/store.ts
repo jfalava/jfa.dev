@@ -21,6 +21,10 @@ interface EditorState {
   hydrated: boolean;
   notice: string;
   busy: boolean;
+  isHelpOpen: boolean;
+  isHelpHeld: boolean;
+  editingLayerId: string | null;
+  editingLayerName: string;
   hydrate: (project: OgProject) => void;
   selectLayer: (id: string | null) => void;
   updateProjectName: (name: string) => void;
@@ -40,6 +44,13 @@ interface EditorState {
   resetProject: () => void;
   setNotice: (notice: string) => void;
   setBusy: (busy: boolean) => void;
+  setHelpOpen: (isHelpOpen: boolean) => void;
+  setHelpHeld: (isHelpHeld: boolean) => void;
+  setEditingLayerId: (id: string | null) => void;
+  setEditingLayerName: (name: string) => void;
+  startRenamingSelected: () => void;
+  commitRename: () => void;
+  cancelRename: () => void;
   undo: () => void;
   redo: () => void;
 }
@@ -79,6 +90,10 @@ export const useEditorStore = create<EditorState>((set) => ({
   hydrated: false,
   notice: "Saved locally in this browser",
   busy: false,
+  isHelpOpen: false,
+  isHelpHeld: false,
+  editingLayerId: null,
+  editingLayerName: "",
 
   hydrate: (project) =>
     set({
@@ -318,6 +333,47 @@ export const useEditorStore = create<EditorState>((set) => ({
   setNotice: (notice) => set({ notice }),
 
   setBusy: (busy) => set({ busy }),
+
+  setHelpOpen: (isHelpOpen) => set({ isHelpOpen }),
+
+  setHelpHeld: (isHelpHeld) => set({ isHelpHeld }),
+
+  setEditingLayerId: (editingLayerId) => set({ editingLayerId }),
+
+  setEditingLayerName: (editingLayerName) => set({ editingLayerName }),
+
+  startRenamingSelected: () =>
+    set((state) => {
+      const layer = state.project.layers.find((l) => l.id === state.selectedLayerId);
+      if (!layer || layer.locked) {
+        return state;
+      }
+      return { editingLayerId: layer.id, editingLayerName: layer.name };
+    }),
+
+  commitRename: () =>
+    set((state) => {
+      if (state.editingLayerId === null) {
+        return state;
+      }
+      const trimmed = state.editingLayerName.trim();
+      if (trimmed.length === 0) {
+        return { editingLayerId: null, editingLayerName: "" };
+      }
+      const nextLayers = state.project.layers.map((l) =>
+        l.id === state.editingLayerId ? { ...l, name: trimmed } : l,
+      );
+      const nextProject = projectSchema.parse({ ...state.project, layers: nextLayers });
+      return {
+        project: nextProject,
+        past: [...state.past, state.project].slice(-HISTORY_LIMIT),
+        future: [],
+        editingLayerId: null,
+        editingLayerName: "",
+      };
+    }),
+
+  cancelRename: () => set({ editingLayerId: null, editingLayerName: "" }),
 
   undo: () =>
     set((state) => {
