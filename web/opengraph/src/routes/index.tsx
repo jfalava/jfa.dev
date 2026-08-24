@@ -60,9 +60,7 @@ import { EditorCanvas, type EditorCanvasHandle } from "@/components/editor-canva
 import { EditorTabsBar } from "@/components/editor-tabs";
 import { ShortcutGuide } from "@/components/shortcut-guide";
 import { editorCanvasRef } from "@/editor/canvas-ref";
-import { projectInputRef } from "@/editor/project-input-ref";
 import { registerFontFile, registerStoredFont } from "@/editor/fonts";
-import { usePhotoshopHotkeys } from "@/hooks/use-photoshop-hotkeys";
 import {
   createInitialProject,
   type FontMeta,
@@ -73,6 +71,7 @@ import {
   type LayerPatch,
   type OgProject,
 } from "@/editor/model";
+import { projectInputRef } from "@/editor/project-input-ref";
 import {
   createFontMeta,
   deleteProjectById,
@@ -94,6 +93,7 @@ import {
   type FontUploadOptions,
 } from "@/editor/storage";
 import { useEditorStore } from "@/editor/store";
+import { usePhotoshopHotkeys } from "@/hooks/use-photoshop-hotkeys";
 
 export const Route = createFileRoute("/")({ component: EditorPage });
 
@@ -209,7 +209,9 @@ function EditorPage() {
       onUndo: undo,
       onRedo: redo,
       onImport: () => {
-        const el = document.querySelector<HTMLInputElement>('input[accept=".ogproj,application/zip"]');
+        const el = document.querySelector<HTMLInputElement>(
+          'input[accept=".ogproj,application/zip"]',
+        );
         el?.click();
       },
       onExportZip: () => {
@@ -217,7 +219,8 @@ function EditorPage() {
         void (async () => {
           setBusy(true);
           try {
-            const { createProjectArchive, archiveFileName, downloadBlob } = await import("@/editor/archive");
+            const { createProjectArchive, archiveFileName, downloadBlob } =
+              await import("@/editor/archive");
             const archive = await createProjectArchive(proj);
             downloadBlob(archive, archiveFileName(proj));
             setNotice("Project archive downloaded");
@@ -301,10 +304,14 @@ function EditorPage() {
               }));
               // SAFETY: ordered non-empty checked above; activeId fallback is ordered[0] which is guaranteed
               // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- non-null assertion required after length check
-              const activeId = ordered.some((p) => p.id === meta.activeTabId) ? meta.activeTabId : ordered[0]!.id;
+              const activeId = ordered.some((p) => p.id === meta.activeTabId)
+                ? meta.activeTabId
+                : ordered[0].id;
               useEditorStore.getState().hydrateTabs(tabStates, activeId);
               if (failedFontCount > 0) {
-                setNotice(`${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`);
+                setNotice(
+                  `${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`,
+                );
               }
             }
             return;
@@ -317,7 +324,9 @@ function EditorPage() {
           if (!cancelled) {
             useEditorStore.getState().hydrate(storedProject);
             if (failedFontCount > 0) {
-              setNotice(`${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`);
+              setNotice(
+                `${failedFontCount} local font${failedFontCount === 1 ? "" : "s"} could not be loaded`,
+              );
             }
           }
           return;
@@ -988,7 +997,10 @@ function LayersPanel({
               <LockKeyhole />
               Lock all
             </DropdownMenuItem>
-            <DropdownMenuItem onAction={() => setAllLayersLocked(false)} textValue="Unlock all layers">
+            <DropdownMenuItem
+              onAction={() => setAllLayersLocked(false)}
+              textValue="Unlock all layers"
+            >
               <Unlock />
               Unlock all
             </DropdownMenuItem>
@@ -1175,7 +1187,7 @@ function LayerRow({
           </Button>
         </div>
       </Pressable>
-      <ContextMenu className="!w-auto !min-w-40 !max-w-52">
+      <ContextMenu className="!w-auto !max-w-52 !min-w-40">
         <ContextMenuItem onAction={onRenameStart} isDisabled={layer.locked}>
           <Pencil />
           Rename
@@ -1203,18 +1215,62 @@ function LayerRow({
 }
 
 const CANVAS_PRESETS = [
-  { id: "og-1200x630", label: "OG Banner", sub: "1200×630", width: 1200, height: 630, hint: "Facebook / LinkedIn" },
-  { id: "x-1200x675", label: "X Card", sub: "1200×675", width: 1200, height: 675, hint: "X / Twitter" },
-  { id: "thumb-1280x720", label: "YouTube", sub: "1280×720", width: 1280, height: 720, hint: "16:9 thumbnail" },
-  { id: "square-1080", label: "Square", sub: "1080×1080", width: 1080, height: 1080, hint: "Instagram" },
-  { id: "story-1080x1920", label: "Story", sub: "1080×1920", width: 1080, height: 1920, hint: "9:16 stories" },
-  { id: "wide-1600x900", label: "Wide", sub: "1600×900", width: 1600, height: 900, hint: "16:9 banner" },
+  {
+    id: "og-1200x630",
+    label: "OG Banner",
+    sub: "1200×630",
+    width: 1200,
+    height: 630,
+    hint: "Facebook / LinkedIn",
+  },
+  {
+    id: "x-1200x675",
+    label: "X Card",
+    sub: "1200×675",
+    width: 1200,
+    height: 675,
+    hint: "X / Twitter",
+  },
+  {
+    id: "thumb-1280x720",
+    label: "YouTube",
+    sub: "1280×720",
+    width: 1280,
+    height: 720,
+    hint: "16:9 thumbnail",
+  },
+  {
+    id: "square-1080",
+    label: "Square",
+    sub: "1080×1080",
+    width: 1080,
+    height: 1080,
+    hint: "Instagram",
+  },
+  {
+    id: "story-1080x1920",
+    label: "Story",
+    sub: "1080×1920",
+    width: 1080,
+    height: 1920,
+    hint: "9:16 stories",
+  },
+  {
+    id: "wide-1600x900",
+    label: "Wide",
+    sub: "1600×900",
+    width: 1600,
+    height: 900,
+    hint: "16:9 banner",
+  },
 ] as const;
 
 function CanvasSection() {
   const project = useEditorStore((state) => state.project);
   const setCanvasSize = useEditorStore((state) => state.setCanvasSize);
-  const isCustom = !CANVAS_PRESETS.some((p) => p.width === project.width && p.height === project.height);
+  const isCustom = !CANVAS_PRESETS.some(
+    (p) => p.width === project.width && p.height === project.height,
+  );
 
   return (
     <details open className="group/canvas border-b border-border py-4 first:pt-0 last:border-b-0">
@@ -1241,14 +1297,20 @@ function CanvasSection() {
                     : "border-border bg-muted/20 text-foreground hover:border-primary/30 hover:bg-muted/40"
                 }`}
               >
-                <span className="block text-xs font-medium leading-none">{preset.label}</span>
-                <span className="block text-[10px] leading-none text-muted-foreground">{preset.sub}</span>
-                <span className="block truncate text-[9px] leading-none text-muted-foreground/70">{preset.hint}</span>
+                <span className="block text-xs leading-none font-medium">{preset.label}</span>
+                <span className="block text-[10px] leading-none text-muted-foreground">
+                  {preset.sub}
+                </span>
+                <span className="block truncate text-[9px] leading-none text-muted-foreground/70">
+                  {preset.hint}
+                </span>
               </button>
             );
           })}
         </div>
-        <div className={`rounded-md border p-2 ${isCustom ? "border-primary/20 bg-primary/[0.04]" : "border-dashed"}`}>
+        <div
+          className={`rounded-md border p-2 ${isCustom ? "border-primary/20 bg-primary/[0.04]" : "border-dashed"}`}
+        >
           <p className="mb-2 text-[10px] font-medium text-muted-foreground">
             Custom {isCustom ? <span className="text-primary">• active</span> : null}
           </p>
@@ -1307,50 +1369,60 @@ function PropertiesPanel({
           </div>
         ) : (
           <div className="mt-2">
-          <PropertySection icon={Frame} label="Position & size">
-            <div className="grid grid-cols-2 gap-2">
-              <NumberField label="X" onChange={(value) => onUpdate({ x: value })} value={layer.x} />
-              <NumberField label="Y" onChange={(value) => onUpdate({ y: value })} value={layer.y} />
-              <NumberField
-                label="W"
-                min={1}
-                onChange={(value) => onUpdate({ width: value })}
-                value={layer.width}
-              />
-              <NumberField
-                label="H"
-                min={1}
-                onChange={(value) => onUpdate({ height: value })}
-                value={layer.height}
-              />
-              <NumberField
-                label="Rotation"
-                onChange={(value) => onUpdate({ rotation: value })}
-                suffix="°"
-                value={layer.rotation}
-              />
-              <NumberField
-                label="Opacity"
-                max={1}
-                min={0}
-                onChange={(value) => onUpdate({ opacity: value })}
-                step={0.05}
-                value={layer.opacity}
-              />
-            </div>
-          </PropertySection>
+            <PropertySection icon={Frame} label="Position & size">
+              <div className="grid grid-cols-2 gap-2">
+                <NumberField
+                  label="X"
+                  onChange={(value) => onUpdate({ x: value })}
+                  value={layer.x}
+                />
+                <NumberField
+                  label="Y"
+                  onChange={(value) => onUpdate({ y: value })}
+                  value={layer.y}
+                />
+                <NumberField
+                  label="W"
+                  min={1}
+                  onChange={(value) => onUpdate({ width: value })}
+                  value={layer.width}
+                />
+                <NumberField
+                  label="H"
+                  min={1}
+                  onChange={(value) => onUpdate({ height: value })}
+                  value={layer.height}
+                />
+                <NumberField
+                  label="Rotation"
+                  onChange={(value) => onUpdate({ rotation: value })}
+                  suffix="°"
+                  value={layer.rotation}
+                />
+                <NumberField
+                  label="Opacity"
+                  max={1}
+                  min={0}
+                  onChange={(value) => onUpdate({ opacity: value })}
+                  step={0.05}
+                  value={layer.opacity}
+                />
+              </div>
+            </PropertySection>
 
-          {isTextLayer(layer) ? (
-            <TextProperties
-              customFonts={customFonts}
-              layer={layer}
-              onAddFont={onAddFont}
-              onUpdate={onUpdate}
-            />
-          ) : null}
-          {isGeometryLayer(layer) ? <GeometryProperties layer={layer} onUpdate={onUpdate} /> : null}
-          {isImageLayer(layer) ? <ImageProperties layer={layer} onUpdate={onUpdate} /> : null}
-        </div>
+            {isTextLayer(layer) ? (
+              <TextProperties
+                customFonts={customFonts}
+                layer={layer}
+                onAddFont={onAddFont}
+                onUpdate={onUpdate}
+              />
+            ) : null}
+            {isGeometryLayer(layer) ? (
+              <GeometryProperties layer={layer} onUpdate={onUpdate} />
+            ) : null}
+            {isImageLayer(layer) ? <ImageProperties layer={layer} onUpdate={onUpdate} /> : null}
+          </div>
         )}
       </div>
     </aside>
@@ -1596,7 +1668,11 @@ function TextProperties({
             </select>
           </label>
         </div>
-        <ColorField label="Color" value={layer.fill} onChange={(color) => onUpdate({ fill: color })} />
+        <ColorField
+          label="Color"
+          value={layer.fill}
+          onChange={(color) => onUpdate({ fill: color })}
+        />
         <div className="grid grid-cols-3 gap-1">
           <Toggle
             aria-label="Align left"
@@ -1655,7 +1731,11 @@ function GeometryProperties({
             <option value="circle">Ellipse</option>
           </select>
         </label>
-        <ColorField label="Fill" value={layer.fill} onChange={(color) => onUpdate({ fill: color })} />
+        <ColorField
+          label="Fill"
+          value={layer.fill}
+          onChange={(color) => onUpdate({ fill: color })}
+        />
         {layer.geometry === "rectangle" ? (
           <NumberField
             label="Radius"
@@ -1777,7 +1857,7 @@ function PropertySection({
 }) {
   return (
     <details open className="group/section border-b border-border py-4 first:pt-0 last:border-b-0">
-      <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] font-medium marker:hidden select-none [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] font-medium select-none marker:hidden [&::-webkit-details-marker]:hidden">
         <Icon className="size-3.5 text-primary" />
         {label}
         <ChevronDown className="ml-auto size-3.5 text-muted-foreground transition-transform group-open/section:rotate-180" />

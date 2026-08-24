@@ -36,7 +36,10 @@ export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
               </span>
             </div>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Every tool and action mirrors Photoshop. Single keys switch tools, <span className="text-foreground">Alt</span> combos handle file and edit to avoid browser clashes (<span className="text-foreground">Mod</span> only for undo/redo/duplicate/zoom). Works only when not typing in an input.
+              Every tool and action mirrors Photoshop. Single keys switch tools,{" "}
+              <span className="text-foreground">Alt</span> combos handle file and edit to avoid
+              browser clashes (<span className="text-foreground">Mod</span> only for
+              undo/redo/duplicate/zoom). Works only when not typing in an input.
             </p>
           </div>
 
@@ -83,8 +86,12 @@ function ShortcutRow({ shortcut }: { shortcut: PhotoshopShortcut }) {
         <Icon className="size-3.5" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[13px] font-medium leading-none text-foreground">{shortcut.label}</span>
-        <span className="block truncate text-[11px] leading-none text-muted-foreground">{shortcut.description}</span>
+        <span className="block text-[13px] leading-none font-medium text-foreground">
+          {shortcut.label}
+        </span>
+        <span className="block truncate text-[11px] leading-none text-muted-foreground">
+          {shortcut.description}
+        </span>
       </span>
       <HotkeyKbd hotkey={shortcut.hotkey} className="shrink-0" />
     </li>

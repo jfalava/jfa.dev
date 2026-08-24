@@ -1,10 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import router, {
-  buildAssetPrefixes,
-  findMatchingRoute,
-  parseRoutesConfig,
-} from "./router";
+import router, { buildAssetPrefixes, findMatchingRoute, parseRoutesConfig } from "./router";
 
 const COUNTRY_BLOCKLIST_KEY = "blocked-countries";
 
@@ -99,8 +95,8 @@ describe("router configuration", () => {
       ASSET_PREFIXES: JSON.stringify(["/assets/", "/theme-init.js"]),
       LANDING: { fetch: async () => new Response("landing") },
       OPENGRAPH: {
-        fetch: async (request) => {
-          const requestUrl = request instanceof Request ? request.url : request.toString();
+        fetch: async (request: Request) => {
+          const requestUrl = request.url;
           forwardedPath = new URL(requestUrl).pathname;
           return new Response("asset", {
             headers: { "content-type": "application/javascript" },
@@ -128,8 +124,8 @@ describe("router configuration", () => {
       ASSET_PREFIXES: JSON.stringify(["/assets/", "/theme-init.js"]),
       LANDING: { fetch: async () => new Response("landing") },
       OPENGRAPH: {
-        fetch: async (request) => {
-          const requestUrl = request instanceof Request ? request.url : request.toString();
+        fetch: async (request: Request) => {
+          const requestUrl = request.url;
           forwardedPath = new URL(requestUrl).pathname;
           return new Response("editor");
         },

@@ -245,10 +245,14 @@ export async function deleteProjectById(projectId: string): Promise<void> {
 
 export async function deleteUnusedAssetsForAll(projects: readonly OgProject[]): Promise<void> {
   const usedAssetIds = new Set(
-    projects.flatMap((p) => p.layers.flatMap((layer) => (layer.type === "image" ? [layer.assetId] : []))),
+    projects.flatMap((p) =>
+      p.layers.flatMap((layer) => (layer.type === "image" ? [layer.assetId] : [])),
+    ),
   );
   const allAssets = await editorDatabase.assets.toArray();
-  const unusedIds = allAssets.filter((asset) => !usedAssetIds.has(asset.id)).map((asset) => asset.id);
+  const unusedIds = allAssets
+    .filter((asset) => !usedAssetIds.has(asset.id))
+    .map((asset) => asset.id);
   if (unusedIds.length > 0) {
     await editorDatabase.assets.bulkDelete(unusedIds);
   }

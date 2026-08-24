@@ -257,4 +257,11 @@ export const SHORTCUT_BY_CATEGORY = PHOTOSHOP_SHORTCUTS.reduce(
   {} as Record<ShortcutCategory, PhotoshopShortcut[]>,
 );
 
-export const CATEGORY_ORDER: ShortcutCategory[] = ["Tools", "Edit", "File", "View", "Layers", "Help"];
+export const CATEGORY_ORDER: ShortcutCategory[] = [
+  "Tools",
+  "Edit",
+  "File",
+  "View",
+  "Layers",
+  "Help",
+];

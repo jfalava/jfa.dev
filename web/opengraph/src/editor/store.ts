@@ -353,7 +353,9 @@ export const useEditorStore = create<EditorState>((set) => ({
       const existing = state.tabs.find((t) => t.id === project.id);
       const parsed = projectSchema.parse(project);
       // SAFETY: duplicate id gets regenerated via createId to keep tab keys unique
-      const projectToOpen = existing ? ({ ...parsed, id: createId("project") } as OgProject) : parsed;
+      const projectToOpen = existing
+        ? ({ ...parsed, id: createId("project") } as OgProject)
+        : parsed;
       const finalProject = existing ? projectSchema.parse(projectToOpen) : parsed;
       const newTab: TabState = {
         id: finalProject.id,
@@ -418,11 +420,7 @@ export const useEditorStore = create<EditorState>((set) => ({
           fill: "#2f302c",
           textAlign: "left",
         };
-        return commitProject(
-          tab,
-          { ...tab.project, layers: [...tab.project.layers, layer] },
-          id,
-        );
+        return commitProject(tab, { ...tab.project, layers: [...tab.project.layers, layer] }, id);
       }),
     ),
 
@@ -446,11 +444,7 @@ export const useEditorStore = create<EditorState>((set) => ({
           fill: "#a78bfa",
           cornerRadius: 16,
         };
-        return commitProject(
-          tab,
-          { ...tab.project, layers: [...tab.project.layers, layer] },
-          id,
-        );
+        return commitProject(tab, { ...tab.project, layers: [...tab.project.layers, layer] }, id);
       }),
     ),
 

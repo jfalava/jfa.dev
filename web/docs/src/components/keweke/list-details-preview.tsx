@@ -302,16 +302,19 @@ export function ItemHistoryPreview() {
                   <td className="px-3 py-3 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
                     {r.field}
                   </td>
+                  {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label */}
                   <td className="px-3 py-3">
                     <span className="inline-flex max-w-32 items-center gap-1 rounded-sm bg-destructive/10 px-2 py-1 font-mono text-[11px] text-destructive">
                       <span className="truncate line-through">{r.before}</span>
                     </span>
                   </td>
+                  {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label */}
                   <td className="px-3 py-3">
                     <span className="inline-flex max-w-32 items-center gap-1 rounded-sm bg-green-600/10 px-2 py-1 font-mono text-[11px] text-green-700">
                       <span className="truncate">{r.after}</span>
                     </span>
                   </td>
+                  {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label */}
                   <td className="px-3 py-3">
                     <div className="min-w-28">
                       <p className="flex items-center gap-1 truncate font-serif text-xs font-medium">

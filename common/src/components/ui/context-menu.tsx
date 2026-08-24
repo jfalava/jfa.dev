@@ -118,12 +118,12 @@ function ContextMenuItem({
       data-inset={inset}
       data-variant={variant}
       textValue={typeof children === "string" ? children : props.textValue}
-      className={composeRenderProps(className, (className, { selectionMode }) =>
-        cn(contextMenuItemVariants({ selectionMode }), className),
+      className={composeRenderProps(className, (composedClassName, { selectionMode }) =>
+        cn(contextMenuItemVariants({ selectionMode }), composedClassName),
       )}
       {...props}
     >
-      {composeRenderProps(children, (children, { isSelected, selectionMode }) => (
+      {composeRenderProps(children, (composedChildren, { isSelected, selectionMode }) => (
         <>
           {selectionMode !== "none" ? (
             <span
@@ -137,7 +137,7 @@ function ContextMenuItem({
               {isSelected ? <CheckIcon /> : null}
             </span>
           ) : null}
-          {children}
+          {composedChildren}
         </>
       ))}
     </MenuItemPrimitive>
@@ -167,9 +167,9 @@ function ContextMenuSubTrigger({
       )}
       {...props}
     >
-      {composeRenderProps(children, (children) => (
+      {composeRenderProps(children, (composedChildren) => (
         <>
-          {children}
+          {composedChildren}
           <ChevronRightIcon className="ml-auto" />
         </>
       ))}

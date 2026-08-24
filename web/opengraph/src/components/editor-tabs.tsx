@@ -45,7 +45,7 @@ export function EditorTabsBar() {
   return (
     <div className="flex h-8 shrink-0 items-center gap-2 border-b border-border bg-background px-2 text-[11px]">
       <Save className="size-3 shrink-0 text-muted-foreground" aria-hidden="true" />
-      <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto scrollbar-thin">
+      <div className="flex min-w-0 flex-1 scrollbar-thin items-center gap-1 overflow-x-auto">
         {tabs.map((tab) => {
           const isActive = tab.id === activeTabId;
           const isEditing = editingId === tab.id;
@@ -108,7 +108,10 @@ export function EditorTabsBar() {
           <Plus className="size-3" />
         </Button>
       </div>
-      <span className="hidden max-w-40 truncate text-[10px] text-muted-foreground sm:block" title={notice}>
+      <span
+        className="hidden max-w-40 truncate text-[10px] text-muted-foreground sm:block"
+        title={notice}
+      >
         {notice}
       </span>
     </div>
