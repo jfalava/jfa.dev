@@ -4,6 +4,7 @@ import { useFumadocsLoader } from "fumadocs-core/source/client";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/docs/page";
 import { Sidebar, SidebarTrigger, useSidebar } from "fumadocs-ui/layouts/docs/slots/sidebar";
+import { getLayoutTabs } from "fumadocs-ui/layouts/shared";
 import type { ReactNode } from "react";
 
 import { useMDXComponents } from "@/components/mdx";
@@ -69,6 +70,8 @@ export function DocsRouteView({ data }: { data: DocsLoaderData }) {
     <DocsLayout
       nav={{ enabled: false }}
       tree={resolved.pageTree}
+      tabs={getLayoutTabs(resolved.pageTree)}
+      tabMode="auto"
       // The shell header owns search and the sidebar toggle; keep both out of
       // the sidebar itself.
       searchToggle={{ enabled: false }}

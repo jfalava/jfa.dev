@@ -1,12 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { DocsRouteView, loadDocs } from "@/components/docs-page";
-
+/**
+ * The docs root has no landing page of its own — every docs URL belongs to a
+ * package section, so the sidebar can always show the package dropdown.
+ * Match cloudops-tools and send `/docs` straight to the first package.
+ */
 export const Route = createFileRoute("/")({
-  component: RouteComponent,
-  loader: () => loadDocs([]),
+  beforeLoad: () => {
+    throw redirect({ to: "/$", params: { _splat: "keweke" } });
+  },
 });
-
-function RouteComponent() {
-  return <DocsRouteView data={Route.useLoaderData()} />;
-}

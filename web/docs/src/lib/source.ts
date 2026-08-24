@@ -7,7 +7,9 @@ export const docs = defineDocs({
 });
 
 export const source = loader({
-  baseUrl: "/docs",
+  // Mount-relative (the router lives under the /docs base path), so page-tree
+  // URLs line up with TanStack Router links and location pathnames.
+  baseUrl: "/",
   plugins: [lucideIconsPlugin()],
   source: docs.toFumadocsSource(),
 });
