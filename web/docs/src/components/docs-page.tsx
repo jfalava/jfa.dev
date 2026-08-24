@@ -73,15 +73,17 @@ export function DocsRouteView({ data }: { data: DocsLoaderData }) {
       tabs={getLayoutTabs(resolved.pageTree)}
       tabMode="auto"
       // The shell header owns search and the sidebar toggle; keep both out of
-      // the sidebar itself.
+      // the sidebar itself. The fumadocs footer (theme toggle) is removed
+      // entirely in favor of the common ThemeToggle in the docs header.
       searchToggle={{ enabled: false }}
+      themeSwitch={{ enabled: false }}
       sidebar={{ collapsible: false }}
       slots={{
         sidebar: {
           provider: sidebarProviderSlot,
           root: Sidebar,
           trigger: SidebarTrigger,
-          // n-next-line react/hooks -- the slot contract passes the hook as a value
+          // oxlint-disable-next-line react/hooks -- the slot contract passes the hook as a value
           useSidebar,
         },
       }}

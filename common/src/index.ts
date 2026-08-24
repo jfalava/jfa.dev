@@ -1,4 +1,5 @@
 export { cn } from "./lib/utils";
+export * from "./hooks/use-theme";
 export * from "./aliases";
 export * from "./crypto";
 export * from "./identities";

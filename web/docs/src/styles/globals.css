@@ -58,14 +58,24 @@
  * Item hover/focus backgrounds paint above it and visually erase the line,
  * so lift the line above row backgrounds.
  */
+/* The shell header already exposes Search and the sidebar toggle, so the
+   floating collapsed-sidebar panel is redundant and overlaps content
+   (e.g. the "stack" heading) when the sidebar is collapsed. Hide it. */
+[data-sidebar-panel] {
+  display: none !important;
+}
+
 #nd-sidebar div[data-state].overflow-hidden.relative::before {
   z-index: 1;
 }
 
 html,
-body,
+body {
+  @apply m-0 min-h-dvh;
+}
+
 #root {
-  @apply m-0 h-full min-h-0;
+  @apply m-0 min-h-0;
 }
 
 body {

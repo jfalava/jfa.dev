@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@jfa.dev/common/hooks/use-theme";
 import appCss from "@styles/globals.css?url";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { SidebarProvider } from "fumadocs-ui/components/sidebar/base";
@@ -37,13 +38,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="flex min-h-screen flex-col">
-        <RootProvider>
-          {/* The sidebar context is hoisted here so the shell-level header can
-              toggle the docs sidebar mounted further down the tree. */}
-          <SidebarProvider>
-            <DocsSiteHeader />
-            <div className="flex flex-1 flex-col">{children}</div>
-          </SidebarProvider>
+        <RootProvider theme={{ enabled: false }}>
+          <ThemeProvider>
+            {/* The sidebar context is hoisted here so the shell-level header can
+                toggle the docs sidebar mounted further down the tree. */}
+            <SidebarProvider>
+              <DocsSiteHeader />
+              <div className="flex flex-1 flex-col">{children}</div>
+            </SidebarProvider>
+          </ThemeProvider>
         </RootProvider>
         <Scripts />
       </body>

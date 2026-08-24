@@ -1,4 +1,4 @@
-import { Button, Kbd, KbdGroup, SiteHeader } from "@jfa.dev/common/ui";
+import { Button, Kbd, KbdGroup, SiteHeader, ThemeToggle } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { useSidebar } from "fumadocs-ui/components/sidebar/base";
 import { useSearchContext } from "fumadocs-ui/contexts/search";
@@ -78,6 +78,7 @@ export function DocsSiteHeader() {
           <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">B</Kbd>
         </KbdGroup>
       </Button>
+      <ThemeToggle />
     </SiteHeader>
   );
 }

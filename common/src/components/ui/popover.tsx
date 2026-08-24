@@ -15,7 +15,12 @@ export function Popover(props: any) {
   const { open, isOpen, onOpenChange, children, ...rest } = props;
   const isOpenValue = isOpen ?? open;
   return (
-    <AriaDialogTrigger data-slot="popover" isOpen={isOpenValue} onOpenChange={onOpenChange} {...rest}>
+    <AriaDialogTrigger
+      data-slot="popover"
+      isOpen={isOpenValue}
+      onOpenChange={onOpenChange}
+      {...rest}
+    >
       {children}
     </AriaDialogTrigger>
   );
@@ -26,7 +31,10 @@ export function PopoverTrigger({ className, children, ...props }: any) {
   return (
     <AriaButton
       data-slot="popover-trigger"
-      className={cn("outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30", className)}
+      className={cn(
+        "outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30",
+        className,
+      )}
       {...props}
     >
       {children}

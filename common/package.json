@@ -39,6 +39,13 @@
       "default": "./src/preferences.ts"
     },
     "./styles.css": "./src/styles.css",
+    "./hooks/use-theme": {
+      "workerd": "./src/hooks/use-theme.tsx",
+      "worker": "./src/hooks/use-theme.tsx",
+      "browser": "./src/hooks/use-theme.tsx",
+      "import": "./src/hooks/use-theme.tsx",
+      "default": "./src/hooks/use-theme.tsx"
+    },
     "./ui": {
       "workerd": "./src/components/ui/index.ts",
       "worker": "./src/components/ui/index.ts",
@@ -69,6 +76,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui/react": "catalog:react",
     "@fontsource/google-sans-code": "catalog:fonts",
     "@fontsource/pretendard": "catalog:fonts",
     "@fontsource/zilla-slab": "catalog:fonts",
@@ -76,7 +84,6 @@
     "clsx": "catalog:styling",
     "js-cookie": "3.0.8",
     "lucide-react": "catalog:ui",
-    "@base-ui/react": "catalog:react",
     "react": "catalog:react",
     "react-aria-components": "catalog:react",
     "react-colorful": "^5.6.1",

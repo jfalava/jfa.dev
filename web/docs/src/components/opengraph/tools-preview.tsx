@@ -1,4 +1,12 @@
-import { Hand, Image as ImageIcon, MousePointer2, Palette, Pipette, Square, Type } from "lucide-react";
+import {
+  Hand,
+  Image as ImageIcon,
+  MousePointer2,
+  Palette,
+  Pipette,
+  Square,
+  Type,
+} from "lucide-react";
 
 import { PreviewShell } from "./preview-shell";
 
@@ -14,7 +22,10 @@ function Swatch({ color, pos }: { color: string; pos: "bg" | "fg" }) {
 
 export function ToolsPreview() {
   return (
-    <PreviewShell label="Toolbox — Photoshop map" caption="V Move, H Hand (hold Space), T Text, U Shape, P Image, I Eyedropper, G Fill. All are single keys — no Mod needed.">
+    <PreviewShell
+      label="Toolbox — Photoshop map"
+      caption="V Move, H Hand (hold Space), T Text, U Shape, P Image, I Eyedropper, G Fill. All are single keys — no Mod needed."
+    >
       <div className="flex justify-center bg-muted/20 p-6">
         <div className="flex w-[56px] flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 dark:bg-[#1e1e1e]">
           <span className="flex size-8 items-center justify-center rounded-[4px] border border-white/20 bg-white/15 text-white">
@@ -45,7 +56,9 @@ export function ToolsPreview() {
             <Swatch color="#d6ff48" pos="fg" />
             <span className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-zinc-700" />
           </div>
-          <span className="px-1 text-center text-[7px] leading-none tracking-wide text-zinc-400">FG/BG</span>
+          <span className="px-1 text-center text-[7px] leading-none tracking-wide text-zinc-400">
+            FG/BG
+          </span>
         </div>
       </div>
     </PreviewShell>
@@ -54,11 +67,16 @@ export function ToolsPreview() {
 
 export function ShortcutsPreview() {
   return (
-    <PreviewShell label="Shortcuts — hold ? to peek" caption="Every tool and action has a Photoshop-style shortcut. The guide is the same component you open with ? in the editor.">
+    <PreviewShell
+      label="Shortcuts — hold ? to peek"
+      caption="Every tool and action has a Photoshop-style shortcut. The guide is the same component you open with ? in the editor."
+    >
       <div className="p-4">
         <div className="rounded-lg border bg-popover p-4 text-popover-foreground">
           <div className="flex items-baseline gap-2 border-b pb-2">
-            <span className="font-mono text-[11px] tracking-[0.14em] text-primary uppercase">Shortcuts</span>
+            <span className="font-mono text-[11px] tracking-[0.14em] text-primary uppercase">
+              Shortcuts
+            </span>
             <span className="text-[11px] text-muted-foreground/75">/</span>
             <span className="text-[11px] text-muted-foreground/75">Photoshop map</span>
             <span className="ml-auto hidden items-center gap-1.5 text-[11px] text-muted-foreground sm:flex">
@@ -69,7 +87,8 @@ export function ShortcutsPreview() {
             <div className="space-y-1">
               <p className="border-b pb-1 font-mono text-[11px] uppercase">Tools</p>
               <p className="text-xs">
-                <span className="rounded bg-muted px-1 font-mono">V</span> Move · <span className="rounded bg-muted px-1 font-mono">H</span> Hand ·{" "}
+                <span className="rounded bg-muted px-1 font-mono">V</span> Move ·{" "}
+                <span className="rounded bg-muted px-1 font-mono">H</span> Hand ·{" "}
                 <span className="rounded bg-muted px-1 font-mono">T</span> Text
               </p>
             </div>

@@ -1,12 +1,12 @@
 "use client";
 
-import { Palette, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { HexColorPicker } from "react-colorful";
-
 import { Button } from "./button";
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+
+import { Palette, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { HexColorPicker } from "react-colorful";
 
 export function ColorPicker({
   color,
@@ -157,7 +157,9 @@ export function ColorField({ label, value, onChange }: ColorFieldProps) {
       <span className="font-medium text-muted-foreground">{label}</span>
       <div className="flex items-center gap-2 rounded-md border border-input bg-input/20 px-2 py-1.5">
         <ColorPicker compact color={normalized} onChange={onChange} ariaLabel={label} />
-        <span className="flex-1 text-right font-mono text-xs text-foreground">{normalized.toUpperCase()}</span>
+        <span className="flex-1 text-right font-mono text-xs text-foreground">
+          {normalized.toUpperCase()}
+        </span>
       </div>
     </div>
   );

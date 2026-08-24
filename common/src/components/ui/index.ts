@@ -39,9 +39,16 @@ export {
 } from "./context-menu";
 export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
 export { ColorField, ColorPicker } from "./color-picker";
-export { Popover, PopoverAnchor, PopoverContent, PopoverPositioner, PopoverTrigger } from "./popover";
+export {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverPositioner,
+  PopoverTrigger,
+} from "./popover";
 export { Toggle, toggleVariants } from "./toggle";
 export { Toaster } from "./sonner";
+export { ThemeToggle } from "./theme-toggle";
 export {
   Table,
   TableBody,
