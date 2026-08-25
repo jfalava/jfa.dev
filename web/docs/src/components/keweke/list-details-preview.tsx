@@ -1,4 +1,5 @@
 import { Button, Input } from "@jfa.dev/common/ui";
+import { blobatarUri } from "blobatar/uri";
 import {
   ArrowLeftRight,
   Check,
@@ -14,14 +15,22 @@ import { useState } from "react";
 
 import { PreviewShell } from "./preview-shell";
 
-function AvatarMock({ initial }: { initial: string }) {
+/**
+ * Mirrors `web/keweke/src/features/auth/lib/blobatar.ts:7` (`userAvatarSeed`).
+ */
+function userAvatarSeed(userId: string, username: string | null | undefined): string {
+  return `${userId}${username ?? ""}`;
+}
+
+function AvatarMock({ username }: { username: string }) {
   return (
-    <div
-      aria-hidden="true"
-      className="flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[9px] font-bold text-primary"
-    >
-      {initial}
-    </div>
+    <img
+      alt=""
+      className="size-4 shrink-0"
+      height={16}
+      width={16}
+      src={blobatarUri(userAvatarSeed(`preview-user-${username}`, username), { size: 16 })}
+    />
   );
 }
 
@@ -308,7 +317,7 @@ export function ItemHistoryPreview() {
                   <td className="px-3 py-3">
                     <div className="min-w-28">
                       <p className="flex items-center gap-1 truncate font-serif text-xs font-medium">
-                        <AvatarMock initial={r.actor.slice(0, 1).toUpperCase()} />
+                        <AvatarMock username={r.actor} />
                         {r.actor}
                       </p>
                       <p className="mt-0.5 font-mono text-[10px] tracking-[0.06em] whitespace-nowrap text-muted-foreground uppercase">

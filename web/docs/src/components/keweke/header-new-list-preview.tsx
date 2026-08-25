@@ -16,9 +16,9 @@ export function HeaderNewListPreview() {
         <div className="flex items-center gap-1.5">
           <Button
             aria-label="User"
-            size="icon-lg"
+            size="lg"
             variant="ghost"
-            className="w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
+            className="w-8 gap-1.5 px-2 text-muted-foreground hover:text-foreground sm:w-auto"
           >
             <UserRound aria-hidden="true" className="size-4" />
             <span className="hidden sm:inline">User</span>
@@ -26,26 +26,23 @@ export function HeaderNewListPreview() {
           <Button
             aria-label="Copy share link"
             size="lg"
-            variant="outline"
-            className="hidden h-8 sm:inline-flex"
+            variant="ghost"
+            className="hidden gap-1.5 px-2 text-muted-foreground hover:text-foreground sm:inline-flex"
           >
             <Copy className="size-4" />
             <span className="hidden sm:inline">Share</span>
           </Button>
           <Button
             aria-label="Create new list"
-            className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
-            size="icon-lg"
+            size="lg"
+            variant="ghost"
+            className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
           >
             <Plus className="size-4" />
             <span className="hidden sm:inline">New list</span>
             <KbdGroup className="hidden sm:inline-flex">
-              <Kbd className="h-4 min-w-4 bg-white/20 px-0.5 text-[10px] leading-none text-primary-foreground">
-                ⌘
-              </Kbd>
-              <Kbd className="h-4 min-w-4 bg-white/20 px-0.5 text-[10px] leading-none text-primary-foreground">
-                E
-              </Kbd>
+              <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">⌘</Kbd>
+              <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">E</Kbd>
             </KbdGroup>
           </Button>
         </div>

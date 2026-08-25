@@ -25,16 +25,13 @@ export function EmptyListsPreview() {
           </div>
           <Button
             aria-label="Create new list"
-            className="flex h-11 w-full gap-x-3 text-base sm:w-auto sm:px-8"
+            variant="ghost"
+            className="flex h-11 w-full gap-x-3 px-8 text-base text-muted-foreground hover:text-foreground sm:w-auto"
           >
             Create a new list
             <KbdGroup className="hidden sm:inline-flex">
-              <Kbd className="h-4 min-w-4 bg-white/20 px-0.5 text-[10px] leading-none text-primary-foreground">
-                ⌘
-              </Kbd>
-              <Kbd className="h-4 min-w-4 bg-white/20 px-0.5 text-[10px] leading-none text-primary-foreground">
-                E
-              </Kbd>
+              <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">⌘</Kbd>
+              <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">E</Kbd>
             </KbdGroup>
           </Button>
         </div>

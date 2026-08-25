@@ -1,4 +1,4 @@
-import { Button } from "@jfa.dev/common/ui";
+import { Button, Kbd, KbdGroup } from "@jfa.dev/common/ui";
 import { Check, CloudUpload, Copy } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
@@ -18,23 +18,24 @@ export function PublishButtonPreview() {
         <div className="flex items-center gap-1.5">
           <Button
             aria-label="Publish list to a remote list"
-            className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
-            size="icon-lg"
-            variant="outline"
+            size="lg"
+            variant="ghost"
+            className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
           >
             <CloudUpload className="size-4" />
             <span className="hidden sm:inline">Publish</span>
-            <span className="hidden rounded bg-muted px-1 py-0.5 font-mono text-[10px] leading-none text-muted-foreground sm:inline-flex">
-              ⌘U
-            </span>
+            <KbdGroup className="hidden sm:inline-flex">
+              <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">⌘</Kbd>
+              <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">U</Kbd>
+            </KbdGroup>
           </Button>
           <div className="hidden h-8 items-center gap-1.5 sm:flex">
             <span className="font-mono text-[10px] tracking-wide text-muted-foreground">vs</span>
             <Button
               aria-label="Copy share link"
-              className="h-8 min-w-0"
               size="lg"
-              variant="outline"
+              variant="ghost"
+              className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
             >
               <Copy className="size-4" />
               <span>Share</span>
@@ -115,10 +116,10 @@ export function PublishNudgePreview() {
           <Button
             aria-describedby={nudgeVisible ? "preview-publish-nudge" : undefined}
             aria-label="Publish list to a remote list"
-            className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
+            size="lg"
+            variant="ghost"
+            className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
             onClick={dismissNudge}
-            size="icon-lg"
-            variant="outline"
           >
             <CloudUpload className="size-4" />
             <span>Publish</span>
@@ -200,21 +201,21 @@ export function RemoteListPreview() {
           <div className="flex items-center gap-1.5">
             <Button
               aria-label="Copy share link"
-              className="h-8 gap-1.5"
-              size="sm"
-              variant="outline"
+              size="lg"
+              variant="ghost"
+              className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
             >
-              <Copy className="size-3.5" />
+              <Copy className="size-4" />
               Share
             </Button>
             <span className="font-mono text-[10px] tracking-wide text-muted-foreground">vs</span>
             <Button
               aria-label="Publish list to a remote list"
-              className="inline-flex opacity-30"
-              size="sm"
-              variant="outline"
+              size="lg"
+              variant="ghost"
+              className="gap-1.5 px-2 text-muted-foreground opacity-30 hover:text-foreground"
             >
-              <CloudUpload className="size-3.5" />
+              <CloudUpload className="size-4" />
               Publish
             </Button>
           </div>
