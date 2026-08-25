@@ -94,17 +94,17 @@
     "jsdom": "30.0.1"
   },
   "devDependencies": {
-    "@oxlint/plugins": "1.79.0",
+    "@oxlint/plugins": "1.80.0",
     "@types/bun": "1.4.0",
     "@types/jsdom": "30.0.0",
     "@types/node": "26.2.0",
     "oxfmt": "0.64.0",
-    "oxlint": "1.79.0",
+    "oxlint": "1.80.0",
     "typescript": "7.0.2",
-    "vite-plus": "0.2.9"
+    "vite-plus": "0.3.0"
   },
   "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.9"
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.3.0"
   },
   "packageManager": "bun@1.4.0"
 }

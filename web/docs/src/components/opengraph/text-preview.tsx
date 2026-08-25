@@ -4,6 +4,11 @@ import { useState } from "react";
 import { PreviewShell } from "./preview-shell";
 
 const FONT_FAMILIES = ["Pretendard", "Zilla Slab", "Google Sans Code"] as const;
+type FontFamily = (typeof FONT_FAMILIES)[number];
+const FONT_FAMILY_SET = new Set<string>(FONT_FAMILIES);
+function isFontFamily(value: string): value is FontFamily {
+  return FONT_FAMILY_SET.has(value);
+}
 const WEIGHT_OPTIONS = [
   [400, "Regular"],
   [500, "Medium"],
@@ -45,7 +50,12 @@ export function TextPreview() {
           <select
             id="preview-font"
             value={fontFamily}
-            onChange={(event) => setFontFamily(event.target.value as typeof fontFamily)}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (isFontFamily(value)) {
+                setFontFamily(value);
+              }
+            }}
             className="mt-1 flex h-7 w-full items-center rounded-md border border-input bg-input/20 px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
           >
             {FONT_FAMILIES.map((family) => (
@@ -113,8 +123,10 @@ export function TextPreview() {
             );
           })}
         </div>
-        <label className="flex items-center gap-2 rounded-md border bg-input/20 px-2 py-1.5 text-[10px] focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
-          <span className="font-medium text-muted-foreground">Color</span>
+        <div className="flex items-center gap-2 rounded-md border bg-input/20 px-2 py-1.5 text-[10px] focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+          <label className="font-medium text-muted-foreground" htmlFor="preview-color">
+            Color
+          </label>
           <span className="ml-auto flex items-center gap-2">
             <ColorPicker
               compact
@@ -124,6 +136,7 @@ export function TextPreview() {
               className="!size-5 !rounded-sm !p-0.5"
             />
             <Input
+              id="preview-color"
               aria-label="Text color"
               className="h-7 w-24 bg-transparent px-1 text-right font-mono text-xs shadow-none"
               value={color}
@@ -140,7 +153,7 @@ export function TextPreview() {
               placeholder="#2F302C"
             />
           </span>
-        </label>
+        </div>
       </div>
     </PreviewShell>
   );
