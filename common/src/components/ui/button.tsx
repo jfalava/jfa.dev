@@ -47,6 +47,7 @@ function Button({ className, variant = "default", size = "default", ...props }: 
   return (
     <AriaButton
       data-slot="button"
+      data-variant={variant}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
