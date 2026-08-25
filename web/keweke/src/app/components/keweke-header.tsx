@@ -129,9 +129,10 @@ export function KewekeHeader({
         to="/user"
         aria-label="User"
         className={buttonVariants({
-          variant: "default",
-          size: "icon-lg",
-          className: "w-8 sm:w-auto sm:gap-1.5 sm:px-2.5",
+          variant: "ghost",
+          size: "lg",
+          className:
+            "w-8 gap-1.5 px-2 text-muted-foreground hover:text-foreground sm:w-auto sm:gap-1.5",
         })}
       >
         <UserRound aria-hidden="true" className="size-4" />
@@ -142,11 +143,11 @@ export function KewekeHeader({
           <Button
             aria-describedby={showPublishNudge ? "publish-list-nudge" : undefined}
             aria-label="Publish list to a remote list"
-            className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
+            className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
             isDisabled={isMigrating}
             onPress={onMigrate}
-            size="icon-lg"
-            variant="outline"
+            size="lg"
+            variant="ghost"
           >
             <CloudUpload className="size-4" />
             <span className="hidden sm:inline">{isMigrating ? "Publishing" : "Publish"}</span>
@@ -175,10 +176,10 @@ export function KewekeHeader({
       {listId && backend === "remote" ? (
         <Button
           aria-label="Copy share link"
-          className="hidden h-8 min-w-0 sm:inline-flex"
+          className="hidden h-8 min-w-0 gap-1.5 px-2 text-muted-foreground hover:text-foreground sm:inline-flex"
           onPress={() => void copyShareLink()}
           size="lg"
-          variant="outline"
+          variant="ghost"
         >
           {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
           <span className="hidden sm:inline">{copied ? "Copied" : "Share"}</span>
@@ -187,10 +188,11 @@ export function KewekeHeader({
       {!hideNewListButton ? (
         <Button
           aria-label="Create new list"
-          className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
+          className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
           isDisabled={isCreating}
           onPress={() => void createList()}
-          size="icon-lg"
+          size="lg"
+          variant="ghost"
         >
           <Plus className="size-4" />
           <span className="hidden sm:inline">New list</span>

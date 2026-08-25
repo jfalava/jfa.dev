@@ -120,9 +120,9 @@ export function SiteHeader({
               rel="noopener noreferrer"
               aria-label="View source on GitHub"
               className={buttonVariants({
-                className:
-                  "gap-1.5 bg-action text-action-foreground hover:bg-action/80 sm:w-auto sm:gap-1.5 sm:px-2.5",
-                size: "icon-lg",
+                className: "gap-1.5 px-2 text-muted-foreground hover:text-foreground",
+                size: "lg",
+                variant: "ghost",
               })}
             >
               <CodeXml aria-hidden="true" className="size-4" />

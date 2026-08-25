@@ -66,7 +66,7 @@ export function DocsSiteHeader() {
         aria-expanded={mode === "drawer" ? open : !collapsed}
         variant="ghost"
         size="lg"
-        className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
+        className="gap-1.5 px-2 text-muted-foreground hover:text-foreground aria-expanded:bg-transparent aria-expanded:text-muted-foreground"
         onPress={toggleSidebar}
       >
         <PanelLeft aria-hidden="true" className="size-4" />

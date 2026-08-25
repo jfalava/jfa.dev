@@ -39,9 +39,9 @@ export function ThemeToggle() {
   return (
     <DropdownMenuTrigger>
       <Button
-        variant="outline"
-        size="icon-lg"
-        className="gap-1.5 px-2.5 text-primary hover:bg-primary/10 hover:text-primary sm:w-auto sm:gap-1.5 sm:px-2.5"
+        variant="ghost"
+        size="lg"
+        className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
         aria-label={`Theme: ${themeLabels[theme]}`}
       >
         <span className="flex items-center justify-center">{getThemeIcon()}</span>

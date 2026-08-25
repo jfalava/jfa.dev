@@ -42,9 +42,9 @@ export function LanguageToggle({ currentLang }: LanguageToggleProps) {
   return (
     <DropdownMenuTrigger>
       <Button
-        variant="outline"
+        variant="ghost"
         size="lg"
-        className="min-w-17 justify-between px-2.5 text-primary hover:bg-primary/10 hover:text-primary"
+        className="min-w-17 justify-between px-2 text-muted-foreground hover:text-foreground"
       >
         <span>{currentLang.toUpperCase()}</span>
         <ChevronDown className="size-4" />

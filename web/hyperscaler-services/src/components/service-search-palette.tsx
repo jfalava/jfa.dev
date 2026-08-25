@@ -378,8 +378,8 @@ export function ServiceSearchPalette({
       <Button
         type="button"
         variant="ghost"
-        size="icon-lg"
-        className="gap-1.5 rounded-md border border-border bg-background text-xs font-medium text-primary transition-colors outline-none hover:bg-primary/10 hover:text-primary focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30 sm:w-auto sm:gap-1.5 sm:px-2.5"
+        size="lg"
+        className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
         aria-label={translations.search}
       >
         <Search className="size-4" />
