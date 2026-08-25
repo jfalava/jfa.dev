@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@jfa.dev/common/ui";
-import { Blobatar } from "blobatar/react";
+import { blobatarUri } from "blobatar/uri";
 
 import { PreviewShell } from "./preview-shell";
 
@@ -192,11 +192,12 @@ export function UserSettingsPreview({
                 {meta.name}
               </p>
             </div>
-            <Blobatar
+            <img
               alt=""
               className="size-12 shrink-0 sm:size-14"
-              name={userAvatarSeed(meta.userId, meta.username)}
-              size={64}
+              height={64}
+              src={blobatarUri(userAvatarSeed(meta.userId, meta.username), { size: 64 })}
+              width={64}
             />
           </div>
         </div>
@@ -236,11 +237,12 @@ export function UserStateBadgePreview() {
       ).map((state) => (
         <div key={state.label} className="flex flex-col gap-2 rounded-md border bg-background p-3">
           <div className="flex items-center gap-3">
-            <Blobatar
+            <img
               alt=""
               className="size-10 shrink-0"
-              name={userAvatarSeed(state.userId, state.username)}
-              size={40}
+              height={40}
+              src={blobatarUri(userAvatarSeed(state.userId, state.username), { size: 40 })}
+              width={40}
             />
             <div>
               <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">

@@ -1,4 +1,4 @@
-import { Blobatar } from "blobatar/react";
+import { blobatarUri } from "blobatar/uri";
 import { Pencil, Plus } from "lucide-react";
 
 import { PreviewShell } from "./preview-shell";
@@ -52,11 +52,12 @@ export function SignedBadgePreview() {
                   title="Added by alice"
                 >
                   <Plus aria-hidden="true" className="size-3 shrink-0" />
-                  <Blobatar
+                  <img
                     alt=""
                     className="size-4 shrink-0"
-                    name={userAvatarSeed("preview-user-alice", "alice")}
-                    size={16}
+                    height={16}
+                    src={blobatarUri(userAvatarSeed("preview-user-alice", "alice"), { size: 16 })}
+                    width={16}
                   />
                   <span className="truncate font-serif">alice</span>
                 </span>
@@ -71,11 +72,12 @@ export function SignedBadgePreview() {
                   title="Added by alice · Last edited by bob"
                 >
                   <Pencil aria-hidden="true" className="size-3 shrink-0" />
-                  <Blobatar
+                  <img
                     alt=""
                     className="size-4 shrink-0"
-                    name={userAvatarSeed("preview-user-bob", "bob")}
-                    size={16}
+                    height={16}
+                    src={blobatarUri(userAvatarSeed("preview-user-bob", "bob"), { size: 16 })}
+                    width={16}
                   />
                   <span className="truncate font-serif">bob</span>
                 </span>
@@ -90,11 +92,12 @@ export function SignedBadgePreview() {
                   title="Added by Your username"
                 >
                   <Plus aria-hidden="true" className="size-3 shrink-0" />
-                  <Blobatar
+                  <img
                     alt=""
                     className="size-4 shrink-0"
-                    name={userAvatarSeed("preview-user-you", "Your username")}
-                    size={16}
+                    height={16}
+                    src={blobatarUri(userAvatarSeed("preview-user-you", "Your username"), { size: 16 })}
+                    width={16}
                   />
                   <span className="truncate font-serif">Your username</span>
                 </span>

@@ -18,11 +18,20 @@ const MOUNT_PATH = "/docs/";
 export default defineConfig({
   base: MOUNT_PATH,
   plugins: [fumadocsMdx(), tailwindcss(), tanstackStart(), viteReact({ compiler: true })],
+  optimizeDeps: {
+    exclude: ["cloudflare:workers"],
+  },
+  build: {
+    rolldownOptions: {
+      external: ["cloudflare:workers"],
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
     },
     tsconfigPaths: true,
+    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
   },
   fmt: {
     printWidth: 100,
