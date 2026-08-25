@@ -1,11 +1,24 @@
 import { Button, Input, TableCell } from "@jfa.dev/common/ui";
-import { Plus } from "lucide-react";
+import { Lock, Plus } from "lucide-react";
 
 import { PreviewShell } from "./preview-shell";
 
 export function AfterCreatePreview() {
   return (
     <PreviewShell>
+      {/* Browser omnibar — readonly */}
+      <div className="border-b bg-muted/40 px-3 py-2">
+        <div className="flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1">
+          <Lock aria-hidden="true" className="size-3 shrink-0 text-muted-foreground" />
+          <Input
+            aria-label="Browser address bar"
+            className="h-5 border-0 bg-transparent px-0 font-mono text-xs text-muted-foreground focus-visible:border-transparent focus-visible:ring-0"
+            readOnly
+            value="/keweke/0199a3b2-…"
+          />
+        </div>
+      </div>
+
       {/* Header mimics ListPageHeader */}
       <div className="invoice-rule flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5">
         <div className="min-w-0 flex-1">
@@ -19,9 +32,6 @@ export function AfterCreatePreview() {
             0 items · 0 done
           </p>
         </div>
-        <span className="rounded bg-muted px-2 py-1 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-          /keweke/0199a3b2-…
-        </span>
       </div>
 
       {/* Shopping table preview — desktop header + new item row */}
