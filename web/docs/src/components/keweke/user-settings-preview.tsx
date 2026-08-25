@@ -155,7 +155,7 @@ export function UserSettingsPreview({
     <PreviewShell>
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b bg-background px-3 py-2">
-          <span className="font-sans text-sm font-black tracking-tighter">KEWEKE</span>
+          <span className="font-sans text-sm font-black tracking-tighter text-primary">KEWEKE</span>
           <span className="font-mono text-[10px] tracking-wide text-muted-foreground">
             /keweke/user
           </span>

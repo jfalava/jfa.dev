@@ -192,7 +192,7 @@ export function DeletedItemsPreview() {
 export function ItemHistoryPreview() {
   return (
     <PreviewShell>
-      <div className="flex max-h-[32rem] flex-col overflow-hidden rounded-lg border bg-popover text-popover-foreground">
+      <div className="flex max-h-128 flex-col overflow-hidden rounded-lg border bg-popover text-popover-foreground">
         <div className="flex items-start justify-between gap-4 border-b px-5 py-4">
           <div className="min-w-0">
             <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
@@ -222,19 +222,19 @@ export function ItemHistoryPreview() {
           </Button>
         </div>
         <div className="overflow-auto">
-          <table className="w-full min-w-[640px] text-xs">
+          <table className="w-full min-w-160 text-xs">
             <thead>
               <tr className="border-b">
-                <th className="px-3 py-2 font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
+                <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
                   field
                 </th>
-                <th className="px-3 py-2 font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
+                <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
                   changed
                 </th>
-                <th className="px-3 py-2 font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
+                <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
                   new value
                 </th>
-                <th className="px-3 py-2 font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
+                <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
                   updated
                 </th>
               </tr>
