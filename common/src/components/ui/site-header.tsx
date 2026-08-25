@@ -6,21 +6,10 @@ import { DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 import { Kbd, KbdGroup } from "./kbd";
 
 import { ArrowUpRight, ChevronDown, CodeXml } from "lucide-react";
-import {
-  useEffect,
-  useState,
-  type ComponentProps,
-  type ReactNode,
-} from "react";
-import {
-  Menu as MenuPrimitive,
-  Popover as PopoverPrimitive,
-} from "react-aria-components";
+import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
+import { Menu as MenuPrimitive, Popover as PopoverPrimitive } from "react-aria-components";
 
-export interface SiteHeaderProps extends Omit<
-  ComponentProps<"header">,
-  "title"
-> {
+export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title"> {
   /** The full title displayed on larger screens. */
   title: string;
   /** The shorter title displayed on small screens. Defaults to `title`. */
@@ -66,14 +55,10 @@ export function SiteHeader({
       <span className="shrink-0 text-sm font-bold tracking-tight text-primary">
         <span className="hidden sm:inline">/{title}</span>
         <span className="inline sm:hidden">/{titleSmol}</span>
-        <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">
-          by JFA
-        </span>
+        <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
       </span>
       {subtitle ? (
-        <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">
-          /
-        </span>
+        <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
       ) : null}
       {subtitle ? (
         <span className="hidden truncate text-[11px] text-muted-foreground sm:inline">
@@ -108,10 +93,7 @@ export function SiteHeader({
     );
     if (titleHref) {
       brand = (
-        <a
-          href={titleHref}
-          className="min-w-0 cursor-pointer text-sm text-foreground"
-        >
+        <a href={titleHref} className="min-w-0 cursor-pointer text-sm text-foreground">
           {brand}
         </a>
       );
@@ -145,10 +127,7 @@ export function SiteHeader({
             >
               <CodeXml aria-hidden="true" className="size-4" />
               <span className="hidden sm:inline">Source</span>
-              <ArrowUpRight
-                aria-hidden="true"
-                className="hidden size-4 lg:inline"
-              />
+              <ArrowUpRight aria-hidden="true" className="hidden size-4 lg:inline" />
             </a>
           ) : null}
         </nav>
@@ -169,13 +148,7 @@ interface PackageSwitcherProps {
  * Brand typography shared verbatim by the switcher trigger and its menu items
  * so both always render at the same size, kerning, and weight.
  */
-function PackageBrand({
-  subtitle,
-  title,
-}: {
-  subtitle?: ReactNode;
-  title: string;
-}) {
+function PackageBrand({ subtitle, title }: { subtitle?: ReactNode; title: string }) {
   return (
     <span className="flex min-w-0 items-baseline gap-3 truncate font-sans">
       <span className="shrink-0 whitespace-nowrap text-sm font-bold tracking-tight text-primary">
@@ -240,9 +213,7 @@ function PackageSwitcher({
         </span>
         <ChevronDown aria-hidden="true" className="shrink-0 opacity-70" />
         <KbdGroup className="hidden shrink-0 gap-1 sm:inline-flex">
-          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">
-            {isMac ? "⌘" : "Ctrl"}
-          </Kbd>
+          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">{isMac ? "⌘" : "Ctrl"}</Kbd>
           <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">⇧</Kbd>
           <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">U</Kbd>
         </KbdGroup>
@@ -259,8 +230,7 @@ function PackageSwitcher({
         <MenuPrimitive className="max-h-[inherit] overflow-x-hidden overflow-y-auto outline-hidden">
           {packages.map((pkg) => {
             const routeSubtitle =
-              pkg.routes.find((route) => route.path === "/")?.title ??
-              pkg.routes[0]?.title;
+              pkg.routes.find((route) => route.path === "/")?.title ?? pkg.routes[0]?.title;
             return (
               <DropdownMenuItem
                 key={pkg.path}

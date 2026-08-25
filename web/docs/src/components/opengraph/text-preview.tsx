@@ -121,7 +121,7 @@ export function TextPreview() {
               color={swatchColor}
               onChange={setColor}
               ariaLabel="Text color"
-              className="!size-5 !p-0.5 !rounded-sm"
+              className="!size-5 !rounded-sm !p-0.5"
             />
             <Input
               aria-label="Text color"

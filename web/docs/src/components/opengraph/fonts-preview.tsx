@@ -22,14 +22,18 @@ export function FontsPreview() {
               sans — Pretendard
             </p>
             <p className="font-sans text-lg font-semibold">The quick fox — 500</p>
-            <p className="font-sans text-sm text-muted-foreground">Used for UI, body, and headings.</p>
+            <p className="font-sans text-sm text-muted-foreground">
+              Used for UI, body, and headings.
+            </p>
           </div>
           <div className="space-y-1">
             <p className="font-mono text-xs tracking-wide text-muted-foreground uppercase">
               serif — Zilla Slab
             </p>
             <p className="font-serif text-lg font-semibold">The quick fox — 500</p>
-            <p className="font-serif text-sm text-muted-foreground">Used for display and emphasis.</p>
+            <p className="font-serif text-sm text-muted-foreground">
+              Used for display and emphasis.
+            </p>
           </div>
           <div className="space-y-1">
             <p className="font-mono text-xs tracking-wide text-muted-foreground uppercase">

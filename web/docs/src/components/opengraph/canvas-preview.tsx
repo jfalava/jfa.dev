@@ -92,7 +92,7 @@ export function CanvasPreview() {
                     className={`rounded-md border px-2 py-2 text-left transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:outline-none ${
                       isSelected
                         ? "border-primary bg-primary/10 text-primary"
-                        : "border-border bg-muted/20 hover:bg-muted/40 hover:border-border/80 text-foreground"
+                        : "border-border bg-muted/20 text-foreground hover:border-border/80 hover:bg-muted/40"
                     }`}
                   >
                     <span className="block text-xs leading-none font-medium">{p.label}</span>
@@ -224,7 +224,7 @@ export function TabsPreview() {
     >
       <div className="flex h-8 shrink-0 items-center gap-2 border-b border-border bg-background px-2 text-[11px]">
         <Save className="size-3 shrink-0 text-muted-foreground" aria-hidden="true" />
-        <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto scrollbar-thin">
+        <div className="flex min-w-0 flex-1 scrollbar-thin items-center gap-1 overflow-x-auto">
           {tabs.map((tab) => {
             const isActive = tab.id === activeTabId;
             const isEditing = editingId === tab.id;

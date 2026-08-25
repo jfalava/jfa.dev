@@ -1,7 +1,7 @@
 import { Button } from "@jfa.dev/common/ui";
 import { Check, CloudUpload, Copy } from "lucide-react";
-import { createPortal } from "react-dom";
 import { useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { createPortal } from "react-dom";
 
 import { PreviewShell } from "./preview-shell";
 
@@ -124,7 +124,9 @@ export function PublishNudgePreview() {
             <span>Publish</span>
           </Button>
         </span>
-        {nudgeVisible ? <PublishNudgeTooltip anchorRef={anchorRef} onDismiss={dismissNudge} /> : null}
+        {nudgeVisible ? (
+          <PublishNudgeTooltip anchorRef={anchorRef} onDismiss={dismissNudge} />
+        ) : null}
       </div>
     </PreviewShell>
   );
@@ -196,7 +198,12 @@ export function RemoteListPreview() {
             <span className="hidden sm:inline">· WebSocket connected</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Button aria-label="Copy share link" className="h-8 gap-1.5" size="sm" variant="outline">
+            <Button
+              aria-label="Copy share link"
+              className="h-8 gap-1.5"
+              size="sm"
+              variant="outline"
+            >
               <Copy className="size-3.5" />
               Share
             </Button>

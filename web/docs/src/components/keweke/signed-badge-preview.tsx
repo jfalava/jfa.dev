@@ -96,7 +96,9 @@ export function SignedBadgePreview() {
                     alt=""
                     className="size-4 shrink-0"
                     height={16}
-                    src={blobatarUri(userAvatarSeed("preview-user-you", "Your username"), { size: 16 })}
+                    src={blobatarUri(userAvatarSeed("preview-user-you", "Your username"), {
+                      size: 16,
+                    })}
                     width={16}
                   />
                   <span className="truncate font-serif">Your username</span>

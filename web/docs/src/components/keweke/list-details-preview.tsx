@@ -59,12 +59,7 @@ export function ListHeaderPreview() {
               <h1 className="font-serif text-xl leading-none font-semibold tracking-tight sm:text-2xl">
                 Weekend groceries
               </h1>
-              <Button
-                aria-label="Edit list title"
-                size="icon"
-                variant="ghost"
-                className="size-7"
-              >
+              <Button aria-label="Edit list title" size="icon" variant="ghost" className="size-7">
                 <Pencil className="size-4" />
               </Button>
             </div>

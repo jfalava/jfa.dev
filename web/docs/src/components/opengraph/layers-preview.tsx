@@ -119,7 +119,9 @@ export function LayersPreview() {
         </div>
         <div className="p-2">
           {visibleLayers.length === 0 ? (
-            <p className="px-2 py-4 text-center text-xs text-muted-foreground">No matching layers</p>
+            <p className="px-2 py-4 text-center text-xs text-muted-foreground">
+              No matching layers
+            </p>
           ) : (
             visibleLayers.map((l) => {
               const Icon = l.type === "text" ? Type : Square;
@@ -193,7 +195,11 @@ export function LayersPreview() {
                     isDisabled={l.id === "5"}
                     onPress={() => toggleLocked(l.id)}
                   >
-                    {l.locked ? <LockKeyhole className="size-3.5" /> : <Unlock className="size-3.5" />}
+                    {l.locked ? (
+                      <LockKeyhole className="size-3.5" />
+                    ) : (
+                      <Unlock className="size-3.5" />
+                    )}
                   </Button>
                 </div>
               );

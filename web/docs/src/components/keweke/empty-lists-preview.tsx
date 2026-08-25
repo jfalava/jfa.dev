@@ -23,7 +23,10 @@ export function EmptyListsPreview() {
             <h2 className="text-lg font-semibold tracking-tight">No lists yet</h2>
             <p className="mt-1 text-sm text-muted-foreground">Create one when you need it.</p>
           </div>
-          <Button aria-label="Create new list" className="flex h-11 w-full gap-x-3 text-base sm:w-auto sm:px-8">
+          <Button
+            aria-label="Create new list"
+            className="flex h-11 w-full gap-x-3 text-base sm:w-auto sm:px-8"
+          >
             Create a new list
             <KbdGroup className="hidden sm:inline-flex">
               <Kbd className="h-4 min-w-4 bg-white/20 px-0.5 text-[10px] leading-none text-primary-foreground">

@@ -174,11 +174,7 @@ export function AfterCreatePreview() {
           <div className="mt-3 flex flex-col gap-2">
             <Input placeholder="microwave popcorn" aria-label="New item name" />
             <div className="flex gap-1">
-              <Input
-                className="w-16 text-right font-mono"
-                defaultValue="1"
-                aria-label="quantity"
-              />
+              <Input className="w-16 text-right font-mono" defaultValue="1" aria-label="quantity" />
               <Input placeholder="box" aria-label="unit" className="flex-1" />
               <Input placeholder="3 bags" aria-label="amount" className="flex-1" />
             </div>
