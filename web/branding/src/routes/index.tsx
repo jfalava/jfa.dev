@@ -25,6 +25,7 @@ const NAV = [
   { id: "table", label: "Table" },
   { id: "kbd", label: "KBD" },
   { id: "sonner", label: "Sonner" },
+  { id: "site-header", label: "SiteHeader" },
 ] as const;
 
 function BrandingPage() {
