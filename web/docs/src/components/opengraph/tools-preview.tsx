@@ -1,4 +1,4 @@
-import { Kbd, KbdGroup } from "@jfa.dev/common/ui";
+import { ColorPicker, Kbd, KbdGroup } from "@jfa.dev/common/ui";
 import {
   Hand,
   Image as ImageIcon,
@@ -8,20 +8,24 @@ import {
   Square,
   Type,
 } from "lucide-react";
+import { useState } from "react";
 
 import { PreviewShell } from "./preview-shell";
 
-function Swatch({ color, pos }: { color: string; pos: "bg" | "fg" }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`absolute size-5 rounded-sm border shadow-sm ${pos === "bg" ? "top-1 left-1 border-white/30" : "right-1 bottom-1 border-white"}`}
-      style={{ backgroundColor: color }}
-    />
-  );
-}
-
 export function ToolsPreview() {
+  // stub-local — mirrors web/opengraph/src/routes/index.tsx:PhotoshopToolbox active state, no wiring
+  const [active, setActive] = useState<
+    "move" | "hand" | "text" | "shape" | "image" | "pipette" | "fill"
+  >("move");
+  const [fgColor, setFgColor] = useState("#d6ff48");
+  const [bgColor, setBgColor] = useState("#f5f1ea");
+
+  const btnBase =
+    "flex size-8 items-center justify-center rounded-[4px] border text-zinc-400 transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none";
+  const activeCls = "border-white/20 bg-white/15 text-white shadow-inner";
+  const idleCls =
+    "border-transparent bg-transparent hover:border-white/10 hover:bg-white/10 hover:text-white";
+
   return (
     <PreviewShell
       label="Toolbox — Photoshop map"
@@ -29,32 +33,86 @@ export function ToolsPreview() {
     >
       <div className="flex justify-center bg-muted/20 p-6">
         <div className="flex w-[56px] flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 dark:bg-[#1e1e1e]">
-          <span className="flex size-8 items-center justify-center rounded-[4px] border border-white/20 bg-white/15 text-white">
+          <button
+            aria-label="Move tool (V)"
+            aria-pressed={active === "move"}
+            onClick={() => setActive("move")}
+            type="button"
+            className={`${btnBase} ${active === "move" ? activeCls : idleCls}`}
+          >
             <MousePointer2 className="size-[18px]" />
-          </span>
-          <span className="flex size-8 items-center justify-center rounded-[4px] border border-transparent text-zinc-400">
+          </button>
+          <button
+            aria-label="Hand tool (H)"
+            aria-pressed={active === "hand"}
+            onClick={() => setActive("hand")}
+            type="button"
+            className={`${btnBase} ${active === "hand" ? activeCls : idleCls}`}
+          >
             <Hand className="size-[18px]" />
-          </span>
+          </button>
           <div className="my-1 h-px w-8 bg-white/10" />
-          <span className="flex size-8 items-center justify-center rounded-[4px] border border-transparent text-zinc-400">
+          <button
+            aria-label="Add text (T)"
+            aria-pressed={active === "text"}
+            onClick={() => setActive("text")}
+            type="button"
+            className={`${btnBase} ${active === "text" ? activeCls : idleCls}`}
+          >
             <Type className="size-[18px]" />
-          </span>
-          <span className="flex size-8 items-center justify-center rounded-[4px] border border-transparent text-zinc-400">
+          </button>
+          <button
+            aria-label="Add shape (U)"
+            aria-pressed={active === "shape"}
+            onClick={() => setActive("shape")}
+            type="button"
+            className={`${btnBase} ${active === "shape" ? activeCls : idleCls}`}
+          >
             <Square className="size-[18px]" />
-          </span>
-          <span className="flex size-8 items-center justify-center rounded-[4px] border border-transparent text-zinc-400">
+          </button>
+          <button
+            aria-label="Add image (P)"
+            aria-pressed={active === "image"}
+            onClick={() => setActive("image")}
+            type="button"
+            className={`${btnBase} ${active === "image" ? activeCls : idleCls}`}
+          >
             <ImageIcon className="size-[18px]" />
-          </span>
+          </button>
           <div className="my-1 h-px w-8 bg-white/10" />
-          <span className="flex size-8 items-center justify-center rounded-[4px] border border-transparent text-zinc-400">
+          <button
+            aria-label="Eyedropper tool (I)"
+            aria-pressed={active === "pipette"}
+            onClick={() => setActive("pipette")}
+            type="button"
+            className={`${btnBase} ${active === "pipette" ? activeCls : idleCls}`}
+          >
             <Pipette className="size-[18px]" />
-          </span>
-          <span className="flex size-8 items-center justify-center rounded-[4px] border border-transparent text-zinc-400">
+          </button>
+          <button
+            aria-label="Fill / swatches (G)"
+            aria-pressed={active === "fill"}
+            onClick={() => setActive("fill")}
+            type="button"
+            className={`${btnBase} ${active === "fill" ? activeCls : idleCls}`}
+          >
             <Palette className="size-[18px]" />
-          </span>
+          </button>
           <div className="relative my-1 flex size-9 items-center justify-center">
-            <Swatch color="#f5f1ea" pos="bg" />
-            <Swatch color="#d6ff48" pos="fg" />
+            <ColorPicker
+              compact
+              color={bgColor}
+              onChange={setBgColor}
+              ariaLabel="Background color"
+              className="absolute top-1 left-1 !size-5 !rounded-sm !border-white/30 !p-0 shadow-sm"
+            />
+            <ColorPicker
+              compact
+              color={fgColor}
+              onChange={setFgColor}
+              ariaLabel="Foreground color"
+              className="absolute right-1 bottom-1 !size-5 !rounded-sm !border-white !p-0 shadow-sm"
+            />
             <span className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-zinc-700" />
           </div>
           <span className="px-1 text-center text-[7px] leading-none tracking-wide text-zinc-400">

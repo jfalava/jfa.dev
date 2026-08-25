@@ -30,6 +30,7 @@ import {
   UserStateBadgePreview,
 } from "@/components/keweke/user-settings-preview";
 import { CanvasPreview, TabsPreview } from "@/components/opengraph/canvas-preview";
+import { FontsPreview } from "@/components/opengraph/fonts-preview";
 import { ColorPickerPreview, LayersPreview } from "@/components/opengraph/layers-preview";
 import { PositionPreview, TextPreview } from "@/components/opengraph/text-preview";
 import { ShortcutsPreview, ToolsPreview } from "@/components/opengraph/tools-preview";
@@ -40,6 +41,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     AfterCreatePreview,
     CanvasPreview,
     ColorPickerPreview,
+    FontsPreview,
     DeletedItemsPreview,
     EmptyListsPreview,
     HeaderNewListPreview,

@@ -1,92 +1,182 @@
+import { ColorPicker, Input } from "@jfa.dev/common/ui";
+import { useState } from "react";
+
 import { PreviewShell } from "./preview-shell";
 
+const FONT_FAMILIES = ["Pretendard", "Zilla Slab", "Google Sans Code"] as const;
+const WEIGHT_OPTIONS = [
+  [400, "Regular"],
+  [500, "Medium"],
+  [600, "Semibold"],
+  [700, "Bold"],
+  [800, "Extra bold"],
+] as const;
+
 export function TextPreview() {
+  const [text, setText] = useState("Make it unmistakable.");
+  const [fontFamily, setFontFamily] = useState<(typeof FONT_FAMILIES)[number]>("Pretendard");
+  const [size, setSize] = useState("56");
+  const [weight, setWeight] = useState("600");
+  const [align, setAlign] = useState<"left" | "center" | "right">("left");
+  const [color, setColor] = useState("#2F302C");
+
+  const normalizedColor = color.startsWith("#") ? color : `#${color}`;
+  const isValidColor = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(normalizedColor);
+  const swatchColor = isValidColor ? normalizedColor : "#2F302C";
+
   return (
     <PreviewShell
       label="Typography — live controls"
       caption="Size and Weight share a line. Alignment shows Left, Center, and Right — the active choice is highlighted."
     >
       <div className="space-y-3 p-4">
-        <div>
-          <p className="block text-[10px] text-muted-foreground">Text</p>
-          <div className="mt-1 min-h-20 w-full rounded-md border bg-input/20 p-2 text-xs">
-            Make it unmistakable.
-          </div>
-        </div>
-        <div className="block text-[10px] text-muted-foreground">
+        <label className="block text-[10px] text-muted-foreground" htmlFor="preview-text">
+          Text
+        </label>
+        <textarea
+          id="preview-text"
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          className="mt-1 min-h-20 w-full resize-y rounded-md border border-input bg-input/20 px-2 py-1.5 text-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+          placeholder="Make it unmistakable."
+        />
+        <label className="block text-[10px] text-muted-foreground" htmlFor="preview-font">
           <span className="block">Font family</span>
-          <span className="mt-1 flex h-7 items-center rounded-md border bg-input/20 px-2 text-xs">
-            Pretendard
-          </span>
-        </div>
+          <select
+            id="preview-font"
+            value={fontFamily}
+            onChange={(event) => setFontFamily(event.target.value as typeof fontFamily)}
+            className="mt-1 flex h-7 w-full items-center rounded-md border border-input bg-input/20 px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+          >
+            {FONT_FAMILIES.map((family) => (
+              <option key={family} value={family}>
+                {family}
+              </option>
+            ))}
+          </select>
+        </label>
         <div className="grid grid-cols-2 gap-2">
-          <div className="flex flex-col gap-1 text-[10px] leading-none">
+          <label className="flex flex-col gap-1 text-[10px] leading-none">
             <span className="font-medium text-muted-foreground">Size</span>
-            <span className="flex h-7 items-center gap-1 rounded-md border bg-input/20 px-2">
-              <span className="w-full text-right text-xs">56 px</span>
+            <span className="flex h-7 items-center gap-1 rounded-md border border-input bg-input/20 px-2 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+              <input
+                aria-label="Font size"
+                inputMode="numeric"
+                value={size}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  if (next !== "" && !/^\d*\.?\d*$/.test(next)) {
+                    return;
+                  }
+                  setSize(next);
+                }}
+                className="w-full min-w-0 bg-transparent text-right text-xs outline-none"
+                placeholder="56"
+              />
+              <span className="shrink-0 text-xs text-muted-foreground">px</span>
             </span>
-          </div>
-          <div className="flex flex-col gap-1 text-[10px] leading-none">
+          </label>
+          <label className="flex flex-col gap-1 text-[10px] leading-none">
             <span className="font-medium text-muted-foreground">Weight</span>
-            <span className="flex h-7 items-center gap-1 rounded-md border bg-input/20 px-2 text-xs">
-              Semibold
-            </span>
-          </div>
+            <select
+              aria-label="Font weight"
+              value={weight}
+              onChange={(event) => setWeight(event.target.value)}
+              className="flex h-7 w-full items-center rounded-md border border-input bg-input/20 px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+            >
+              {WEIGHT_OPTIONS.map(([value, label]) => (
+                <option key={value} value={String(value)}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         <div className="grid grid-cols-3 gap-1">
-          <span className="inline-flex h-6 items-center justify-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-2 text-xs font-medium text-primary">
-            ≡ Left
-          </span>
-          <span className="inline-flex h-6 items-center justify-center gap-1.5 rounded-md border border-input bg-input/20 text-xs">
-            ≡ Center
-          </span>
-          <span className="inline-flex h-6 items-center justify-center gap-1.5 rounded-md border border-input bg-input/20 text-xs">
-            ≡ Right
-          </span>
+          {(["left", "center", "right"] as const).map((value) => {
+            const isActive = align === value;
+            const label = value === "left" ? "Left" : value === "center" ? "Center" : "Right";
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setAlign(value)}
+                className={`inline-flex h-6 items-center justify-center gap-1.5 rounded-md border px-2 text-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none ${
+                  isActive
+                    ? "border-primary/30 bg-primary/10 font-medium text-primary"
+                    : "border-input bg-input/20 hover:bg-input/40"
+                }`}
+              >
+                ≡ {label}
+              </button>
+            );
+          })}
         </div>
-        <div className="flex items-center gap-2 rounded-md border bg-input/20 px-2 py-1.5 text-[10px]">
+        <label className="flex items-center gap-2 rounded-md border bg-input/20 px-2 py-1.5 text-[10px] focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
           <span className="font-medium text-muted-foreground">Color</span>
           <span className="ml-auto flex items-center gap-2">
-            <span className="size-5 rounded border bg-[#2f302c]" />
-            <span className="font-mono text-xs">#2F302C</span>
+            <ColorPicker
+              compact
+              color={swatchColor}
+              onChange={setColor}
+              ariaLabel="Text color"
+              className="!size-5 !p-0.5 !rounded-sm"
+            />
+            <Input
+              aria-label="Text color"
+              className="h-7 w-24 bg-transparent px-1 text-right font-mono text-xs shadow-none"
+              value={color}
+              onChange={(event) => {
+                const next = event.target.value;
+                if (next.length > 7) {
+                  return;
+                }
+                if (next !== "" && !/^#?[0-9a-fA-F]*$/.test(next)) {
+                  return;
+                }
+                setColor(next);
+              }}
+              placeholder="#2F302C"
+            />
           </span>
-        </div>
+        </label>
       </div>
     </PreviewShell>
   );
 }
 
 export function PositionPreview() {
+  const [pos, setPos] = useState({ x: "759", y: "70", w: "282.75", h: "282.75" });
+
+  const handleChange = (key: keyof typeof pos, value: string) => {
+    if (value !== "" && !/^-?\d*\.?\d*$/.test(value)) {
+      return;
+    }
+    setPos((prev) => ({ ...prev, [key]: value }));
+  };
+
   return (
     <PreviewShell
       label="Position & size — labels on top"
       caption="Each field shows its label above the value, so large numbers stay readable."
     >
       <div className="grid grid-cols-2 gap-2 p-4">
-        <div className="flex flex-col gap-1 text-[10px] leading-none">
-          <span className="font-medium text-muted-foreground">X</span>
-          <span className="flex h-7 items-center justify-end rounded-md border bg-input/20 px-2 text-xs">
-            759
-          </span>
-        </div>
-        <div className="flex flex-col gap-1 text-[10px] leading-none">
-          <span className="font-medium text-muted-foreground">Y</span>
-          <span className="flex h-7 items-center justify-end rounded-md border bg-input/20 px-2 text-xs">
-            70
-          </span>
-        </div>
-        <div className="flex flex-col gap-1 text-[10px] leading-none">
-          <span className="font-medium text-muted-foreground">W</span>
-          <span className="flex h-7 items-center justify-end rounded-md border bg-input/20 px-2 text-xs">
-            282.75
-          </span>
-        </div>
-        <div className="flex flex-col gap-1 text-[10px] leading-none">
-          <span className="font-medium text-muted-foreground">H</span>
-          <span className="flex h-7 items-center justify-end rounded-md border bg-input/20 px-2 text-xs">
-            282.75
-          </span>
-        </div>
+        {(["x", "y", "w", "h"] as const).map((key) => (
+          <label key={key} className="flex flex-col gap-1 text-[10px] leading-none">
+            <span className="font-medium text-muted-foreground">{key.toUpperCase()}</span>
+            <span className="flex h-7 items-center justify-end rounded-md border border-input bg-input/20 px-2 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+              <input
+                aria-label={key.toUpperCase()}
+                inputMode="decimal"
+                value={pos[key]}
+                onChange={(event) => handleChange(key, event.target.value)}
+                className="w-full min-w-0 bg-transparent text-right text-xs outline-none"
+                placeholder="0"
+              />
+            </span>
+          </label>
+        ))}
       </div>
     </PreviewShell>
   );
