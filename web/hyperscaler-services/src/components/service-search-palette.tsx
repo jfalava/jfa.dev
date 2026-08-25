@@ -427,10 +427,10 @@ export function ServiceSearchPalette({
                 type="button"
                 onClick={() => applyScope(filter.scope)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                  "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
                   isActive
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
                 aria-pressed={isActive}
               >
@@ -439,10 +439,8 @@ export function ServiceSearchPalette({
                   hotkey={filter.hotkey}
                   className="hidden sm:inline-flex"
                   kbdClassName={cn(
-                    "h-5 min-h-0 px-1 text-[10px]",
-                    isActive
-                      ? "border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground"
-                      : "bg-muted text-muted-foreground",
+                    "h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none",
+                    isActive ? "text-foreground" : "text-muted-foreground",
                   )}
                 />
               </button>
