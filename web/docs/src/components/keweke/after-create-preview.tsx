@@ -14,7 +14,7 @@ export function AfterCreatePreview() {
             aria-label="Browser address bar"
             className="h-5 border-0 bg-transparent px-0 font-mono text-xs text-muted-foreground focus-visible:border-transparent focus-visible:ring-0"
             readOnly
-            value="/keweke/0199a3b2-…"
+            value="https://jfa.dev/keweke/0199c2f0-8a1b-7c3d-9e4f-2a1b3c4d5e6f"
           />
         </div>
       </div>
