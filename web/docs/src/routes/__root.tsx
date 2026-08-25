@@ -5,6 +5,7 @@ import { SidebarProvider } from "fumadocs-ui/components/sidebar/base";
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
 
 import { DocsSiteHeader } from "@/components/site-header";
+import { appPath } from "@/lib/site-paths";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -35,6 +36,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script src={appPath("/theme-init.js")}></script>
         <HeadContent />
       </head>
       <body className="flex min-h-screen flex-col">
