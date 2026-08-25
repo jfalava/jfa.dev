@@ -1,3 +1,4 @@
+/* oxlint-disable react/no-danger -- inline theme script/style required to prevent FOUC before hydration */
 import { ThemeProvider } from "@jfa.dev/common/hooks/use-theme";
 import appCss from "@styles/globals.css?url";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
@@ -49,20 +50,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
         title: "DOCS by JFA",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
       },
     ],
   }),
@@ -73,9 +61,12 @@ export const Route = createRootRoute({
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      <style dangerouslySetInnerHTML={{ __html: criticalSidebarCss }} />
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <style dangerouslySetInnerHTML={{ __html: criticalSidebarCss }} />
+        <link rel="stylesheet" href={appCss} />
         <HeadContent />
       </head>
       <body className="flex min-h-screen flex-col">
