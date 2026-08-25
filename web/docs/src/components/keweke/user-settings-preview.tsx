@@ -157,15 +157,15 @@ export function UserSettingsPreview({
       : variant === "local"
         ? {
             label: "Local user",
-            name: "alice",
-            username: "alice",
-            userId: "preview-user-alice",
+            name: "Jorge",
+            username: "Jorge",
+            userId: "preview-user-jorge",
           }
         : {
             label: "Remote user",
-            name: "alice",
-            username: "alice",
-            userId: "preview-user-alice",
+            name: "Jorge",
+            username: "Jorge",
+            userId: "preview-user-jorge",
           };
 
   return (
@@ -221,16 +221,16 @@ export function UserStateBadgePreview() {
           },
           {
             label: "Local user",
-            name: "alice",
-            username: "alice",
-            userId: "preview-user-alice",
-            desc: 'username="alice" stored locally only.',
+            name: "Jorge",
+            username: "Jorge",
+            userId: "preview-user-jorge",
+            desc: 'username="Jorge" stored locally only.',
           },
           {
             label: "Remote user",
-            name: "alice",
-            username: "alice",
-            userId: "preview-user-alice",
+            name: "Jorge",
+            username: "Jorge",
+            userId: "preview-user-jorge",
             desc: "remoteUsername confirmed. Can publish & sign remotely.",
           },
         ] as const

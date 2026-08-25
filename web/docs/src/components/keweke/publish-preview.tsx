@@ -10,8 +10,8 @@ export function PublishButtonPreview() {
     <PreviewShell>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-background px-3 py-2 sm:px-4">
         <div className="flex items-center gap-3">
-          <span className="font-sans text-sm font-black tracking-tighter text-primary">KEWEKE</span>
-          <span className="hidden font-mono text-[10px] tracking-wide text-muted-foreground sm:inline">
+          <span className="font-sans text-sm font-black tracking-tighter text-primary">/KEWEKE</span>
+          <span className="hidden font-sans text-[10px] tracking-wide text-muted-foreground sm:inline">
             Yet another collaborative shopping list
           </span>
         </div>

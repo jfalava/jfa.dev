@@ -129,13 +129,14 @@ export function OpengraphHeader() {
             aria-label="Show keyboard shortcuts (press ?)"
             onPress={() => setHelpOpen(true)}
             size="lg"
-            variant="outline"
+            variant="ghost"
+            className="max-h-[819px]:hidden hidden gap-1.5 px-2 text-muted-foreground hover:text-foreground max-[1179px]:hidden min-[1180px]:inline-flex"
           >
             <Keyboard />
             <span className="hidden sm:inline">Keybinds</span>
             <Kbd
               aria-hidden="true"
-              className="hidden h-4 min-w-4 px-1 text-[10px] leading-none sm:inline-flex"
+              className="hidden h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none sm:inline-flex"
             >
               ?
             </Kbd>
@@ -146,14 +147,21 @@ export function OpengraphHeader() {
             isDisabled={isBusy}
             onPress={() => projectInputRef.current?.click()}
             size="lg"
-            variant="outline"
+            variant="ghost"
+            className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
           >
             <FileUp />
             <span className="hidden sm:inline">Import</span>
           </Button>
 
           <DropdownMenuTrigger>
-            <Button aria-label="Export project" isDisabled={isBusy} size="lg" variant="default">
+            <Button
+              aria-label="Export project"
+              isDisabled={isBusy}
+              size="lg"
+              variant="ghost"
+              className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
+            >
               <FileDown />
               <span className="hidden sm:inline">Export</span>
             </Button>

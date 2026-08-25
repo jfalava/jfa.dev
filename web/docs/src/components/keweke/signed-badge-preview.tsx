@@ -115,17 +115,18 @@ export function SignedBadgePreview() {
 export function HeaderUserButtonPreview() {
   return (
     <div className="not-prose my-4 flex items-center gap-3 rounded-md border bg-muted/30 px-3 py-2.5">
-      <div className="flex items-center gap-2 rounded-md border bg-background px-2 py-1">
-        <span
-          aria-hidden="true"
-          className="flex size-5 items-center justify-center rounded-full bg-primary/15 font-mono text-[10px] font-bold text-primary"
-        >
-          U
-        </span>
+      <div className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-muted-foreground">
+        <img
+          alt=""
+          className="size-5 shrink-0"
+          height={20}
+          width={20}
+          src={blobatarUri(userAvatarSeed("preview-user-jorge", "Jorge"), { size: 20 })}
+        />
         <span className="font-mono text-[11px] tracking-wide">User</span>
       </div>
       <span className="font-mono text-[11px] tracking-wide text-muted-foreground">
-        in KewekeHeader — opens the device identity dialog.
+        in KEWEKE?S — opens the device identity dialog.
       </span>
     </div>
   );
