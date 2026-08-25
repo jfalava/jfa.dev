@@ -73,9 +73,9 @@ export const Route = createRootRoute({
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      <style dangerouslySetInnerHTML={{ __html: criticalSidebarCss }} />
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        <style dangerouslySetInnerHTML={{ __html: criticalSidebarCss }} />
         <HeadContent />
       </head>
       <body className="flex min-h-screen flex-col">
