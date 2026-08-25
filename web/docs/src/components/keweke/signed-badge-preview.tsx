@@ -13,7 +13,7 @@ function AvatarMock({ initial }: { initial: string }) {
 
 export function SignedBadgePreview() {
   return (
-    <PreviewShell caption="SignedItemBadge as rendered in the shopping table (sheet & signed columns). Real app uses Blobatar + Pencil/Plus; docs mock uses initials to avoid extra deps. Title shows provenance.">
+    <PreviewShell>
       <div className="overflow-x-auto p-4">
         <table className="w-full border-collapse text-left">
           <thead>
@@ -89,11 +89,6 @@ export function SignedBadgePreview() {
             </tr>
           </tbody>
         </table>
-        <p className="mt-3 font-mono text-[10px] leading-relaxed text-muted-foreground">
-          Logic: web/keweke/src/features/lists/components/list-item-elements.tsx:24 — wasEdited =
-          updatedAt≠createdAt or createdBy≠updatedBy. identityDisplayName() prefers
-          currentIdentity.remoteUsername ?? username when actor.id === local userId.
-        </p>
       </div>
     </PreviewShell>
   );
@@ -112,8 +107,7 @@ export function HeaderUserButtonPreview() {
         <span className="font-mono text-[11px] tracking-wide">User</span>
       </div>
       <span className="font-mono text-[11px] tracking-wide text-muted-foreground">
-        in KewekeHeader — opens the device identity dialog. Docs header has its own SiteHeader
-        (activePackagePath=&quot;/docs&quot;) and never reuses Keweke&apos;s dropdown.
+        in KewekeHeader — opens the device identity dialog.
       </span>
     </div>
   );

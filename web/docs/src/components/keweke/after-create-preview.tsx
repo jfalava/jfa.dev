@@ -5,7 +5,7 @@ import { PreviewShell } from "./preview-shell";
 
 export function AfterCreatePreview() {
   return (
-    <PreviewShell caption="Newly created list at /keweke/:listId — title “New list”, alias pending, shopping table shows the draft row.">
+    <PreviewShell>
       {/* Header mimics ListPageHeader */}
       <div className="invoice-rule flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5">
         <div className="min-w-0 flex-1">
@@ -85,9 +85,6 @@ export function AfterCreatePreview() {
                   aria-label="New item name"
                   className="h-9 min-w-32 font-serif text-base sm:text-xs"
                   placeholder="microwave popcorn"
-                  disabled
-                  value=""
-                  readOnly
                 />
               </TableCell>
               <TableCell className="px-3 py-3">
@@ -95,16 +92,13 @@ export function AfterCreatePreview() {
                   <Input
                     aria-label="New item quantity"
                     className="h-9 w-16 text-right font-mono text-base sm:text-xs"
-                    disabled
-                    value="1"
-                    readOnly
+                    defaultValue="1"
                   />
                   <span className="flex flex-col">
                     <Button
                       aria-label="Increase quantity"
                       size="icon-sm"
                       variant="ghost"
-                      isDisabled
                       className="size-6 p-0"
                     >
                       <span className="text-[10px]">▲</span>
@@ -113,7 +107,6 @@ export function AfterCreatePreview() {
                       aria-label="Decrease quantity"
                       size="icon-sm"
                       variant="ghost"
-                      isDisabled
                       className="size-6 p-0"
                     >
                       <span className="text-[10px]">▼</span>
@@ -126,9 +119,6 @@ export function AfterCreatePreview() {
                   aria-label="New item unit"
                   className="h-9 w-20 font-serif text-base sm:text-xs"
                   placeholder="box"
-                  disabled
-                  value=""
-                  readOnly
                 />
               </TableCell>
               <TableCell className="px-3 py-3">
@@ -136,18 +126,13 @@ export function AfterCreatePreview() {
                   aria-label="New item amount each"
                   className="h-9 w-28 font-serif text-base sm:text-xs"
                   placeholder="3 bags"
-                  disabled
-                  value=""
-                  readOnly
                 />
               </TableCell>
               <TableCell className="px-3 py-3">
                 <Input
                   aria-label="New item category"
                   className="h-9 w-28 font-serif text-base sm:text-[10px]"
-                  disabled
-                  value="GENERAL"
-                  readOnly
+                  defaultValue="GENERAL"
                 />
               </TableCell>
               <TableCell className="px-3 py-3">
@@ -161,7 +146,7 @@ export function AfterCreatePreview() {
                 </span>
               </TableCell>
               <TableCell className="px-3 py-3">
-                <Button aria-label="Add item" size="icon-sm" isDisabled>
+                <Button aria-label="Add item" size="icon-sm">
                   <Plus />
                 </Button>
               </TableCell>
@@ -177,40 +162,18 @@ export function AfterCreatePreview() {
             new
           </p>
           <div className="mt-3 flex flex-col gap-2">
-            <Input
-              placeholder="microwave popcorn"
-              aria-label="New item name"
-              disabled
-              value=""
-              readOnly
-            />
+            <Input placeholder="microwave popcorn" aria-label="New item name" />
             <div className="flex gap-1">
               <Input
                 className="w-16 text-right font-mono"
-                value="1"
+                defaultValue="1"
                 aria-label="quantity"
-                disabled
-                readOnly
               />
-              <Input
-                placeholder="box"
-                aria-label="unit"
-                disabled
-                value=""
-                className="flex-1"
-                readOnly
-              />
-              <Input
-                placeholder="3 bags"
-                aria-label="amount"
-                disabled
-                value=""
-                className="flex-1"
-                readOnly
-              />
+              <Input placeholder="box" aria-label="unit" className="flex-1" />
+              <Input placeholder="3 bags" aria-label="amount" className="flex-1" />
             </div>
-            <Input value="GENERAL" aria-label="category" disabled readOnly />
-            <Button aria-label="Add item" isDisabled className="h-11 w-full">
+            <Input defaultValue="GENERAL" aria-label="category" />
+            <Button aria-label="Add item" className="h-11 w-full">
               <Plus /> Add item
             </Button>
           </div>

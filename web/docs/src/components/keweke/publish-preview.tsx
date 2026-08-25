@@ -1,14 +1,16 @@
 import { Button } from "@jfa.dev/common/ui";
-import { Check, CloudUpload, Copy, RefreshCw } from "lucide-react";
+import { Check, CloudUpload, Copy } from "lucide-react";
+import { createPortal } from "react-dom";
+import { useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 import { PreviewShell } from "./preview-shell";
 
 export function PublishButtonPreview() {
   return (
-    <PreviewShell caption="Publish button in Keweke header — shown only for local lists. Hotkey Mod+U. Share/Copy appears only for remote lists.">
+    <PreviewShell>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-background px-3 py-2 sm:px-4">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-sm font-black tracking-tighter">KEWEKE</span>
+          <span className="font-sans text-sm font-black tracking-tighter text-primary">KEWEKE</span>
           <span className="hidden font-mono text-[10px] tracking-wide text-muted-foreground sm:inline">
             Yet another collaborative shopping list
           </span>
@@ -17,7 +19,6 @@ export function PublishButtonPreview() {
           <Button
             aria-label="Publish list to a remote list"
             className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
-            isDisabled
             size="icon-lg"
             variant="outline"
           >
@@ -32,7 +33,6 @@ export function PublishButtonPreview() {
             <Button
               aria-label="Copy share link"
               className="h-8 min-w-0"
-              isDisabled
               size="lg"
               variant="outline"
             >
@@ -42,56 +42,75 @@ export function PublishButtonPreview() {
           </div>
         </div>
       </div>
-      <div className="flex gap-4 px-4 py-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-        <span>
-          <span className="inline-flex size-2 rounded-full bg-primary align-middle" /> local →
-          Publish
-        </span>
-        <span>
-          <span className="inline-flex size-2 rounded-full bg-amber-500 align-middle" /> remote →
-          Share
-        </span>
-      </div>
     </PreviewShell>
   );
 }
 
+const NUDGE_TOOLTIP_CLASSES =
+  "absolute z-50 w-64 rounded-md border border-border bg-popover px-3 py-2 text-left text-xs leading-relaxed text-popover-foreground shadow-lg before:absolute before:-top-1 before:right-3 before:size-2 before:rotate-45 before:border-t before:border-l before:border-border before:bg-popover before:content-[''] sm:before:right-10";
+
+function PublishNudgeTooltip({ anchorRef }: { anchorRef: RefObject<HTMLSpanElement | null> }) {
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const update = () => {
+      const rect = anchorRef.current?.getBoundingClientRect();
+      if (rect) {
+        setPos({
+          top: rect.bottom + window.scrollY + 8,
+          right: document.documentElement.clientWidth - rect.right,
+        });
+      }
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [anchorRef]);
+
+  if (!pos) {
+    return null;
+  }
+
+  return createPortal(
+    <div
+      className={NUDGE_TOOLTIP_CLASSES}
+      id="preview-publish-nudge"
+      role="tooltip"
+      style={{ top: pos.top, right: pos.right }}
+    >
+      You can now publish this list to access it from anywhere.
+    </div>,
+    document.body,
+  );
+}
+
 export function PublishNudgePreview() {
+  const anchorRef = useRef<HTMLSpanElement>(null);
+
   return (
-    <PreviewShell caption="Publish nudge — tooltip under the Publish button the first time a local list looks shareable. Auto-dismisses after 10s.">
+    <PreviewShell>
       <div className="flex justify-end bg-background p-6">
-        <div className="relative">
+        <span ref={anchorRef} className="inline-flex">
           <Button
             aria-describedby="preview-publish-nudge"
             aria-label="Publish list to a remote list"
-            className="inline-flex sm:gap-1.5 sm:px-2.5"
-            isDisabled
+            className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
             size="icon-lg"
             variant="outline"
           >
             <CloudUpload className="size-4" />
             <span>Publish</span>
           </Button>
-          <div
-            className="absolute top-full right-0 z-10 mt-2 w-64 rounded-md border border-border bg-popover px-3 py-2 text-left text-xs leading-relaxed text-popover-foreground shadow-lg before:absolute before:-top-1 before:right-3 before:size-2 before:rotate-45 before:border-t before:border-l before:border-border before:bg-popover before:content-[''] sm:before:right-10"
-            id="preview-publish-nudge"
-            role="tooltip"
-          >
-            You can now publish this list to access it from anywhere.
-          </div>
-        </div>
+        </span>
+        <PublishNudgeTooltip anchorRef={anchorRef} />
       </div>
-      <p className="border-t bg-muted/30 px-3 py-2 font-mono text-[10px] leading-relaxed text-muted-foreground">
-        Shown when a local list has enough items / the title was changed from “New list.” Dismiss to
-        hide forever.
-      </p>
     </PreviewShell>
   );
 }
 
 export function PublishDialogPreview() {
   return (
-    <PreviewShell caption="Publish dialog — confirms public addresses before the list leaves this browser.">
+    <PreviewShell>
       <div className="overflow-hidden rounded-lg border bg-popover text-popover-foreground">
         <div className="border-b px-4 py-4">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -127,27 +146,18 @@ export function PublishDialogPreview() {
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button isDisabled variant="ghost">
-              Cancel
-            </Button>
-            <Button isDisabled>
-              <RefreshCw aria-hidden="true" className="size-3.5 animate-spin" />
-              Publishing…
-            </Button>
+            <Button variant="ghost">Cancel</Button>
+            <Button>Publish</Button>
           </div>
         </div>
       </div>
-      <p className="border-t bg-muted/30 px-3 py-2 font-mono text-[10px] leading-relaxed text-muted-foreground">
-        Needs a named user — if you have none, the User dialog opens first (
-        <span className="text-foreground">“You must create an user to publish”</span>).
-      </p>
     </PreviewShell>
   );
 }
 
 export function RemoteListPreview() {
   return (
-    <PreviewShell caption="After publishing — the list is now remote and collaborative. Header swaps Publish → Share (copy link), catalog shows Cloud badge.">
+    <PreviewShell>
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b bg-background px-3 py-2 sm:px-4">
           <span className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
@@ -164,13 +174,7 @@ export function RemoteListPreview() {
             <span className="hidden sm:inline">· WebSocket connected</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Button
-              aria-label="Copy share link"
-              className="h-8 gap-1.5"
-              isDisabled
-              size="sm"
-              variant="outline"
-            >
+            <Button aria-label="Copy share link" className="h-8 gap-1.5" size="sm" variant="outline">
               <Copy className="size-3.5" />
               Share
             </Button>
@@ -178,7 +182,6 @@ export function RemoteListPreview() {
             <Button
               aria-label="Publish list to a remote list"
               className="inline-flex opacity-30"
-              isDisabled
               size="sm"
               variant="outline"
             >

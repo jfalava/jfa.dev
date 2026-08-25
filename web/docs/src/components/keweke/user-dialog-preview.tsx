@@ -15,7 +15,7 @@ function OrDivider() {
 
 export function UserDialogPreview() {
   return (
-    <PreviewShell caption="Device identity dialog at /keweke — opened from the header User button or the Publish nudge. Static placeholder: input is readOnly, buttons are isDisabled so no IndexedDB write occurs in docs.">
+    <PreviewShell>
       <div className="flex flex-col rounded-lg border bg-popover text-popover-foreground">
         <div className="border-b px-4 py-4">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -48,20 +48,11 @@ export function UserDialogPreview() {
               <div className="min-w-0 flex-1">
                 <Input
                   className="mt-1.5 h-10 font-serif text-base sm:text-sm"
-                  disabled
                   placeholder="Your username"
-                  readOnly
-                  value=""
                 />
               </div>
-              <Button className="h-10 min-w-24 px-5 text-sm" isDisabled>
-                Create
-              </Button>
+              <Button className="h-10 min-w-24 px-5 text-sm">Create</Button>
             </div>
-            <p className="font-mono text-[10px] tracking-wide text-muted-foreground">
-              Saves via saveLocalIdentity() → keweke-local-identity-v2 IndexedDB. If a remote user
-              already exists, also signs userRenameSigningPayload.
-            </p>
           </section>
 
           <section className="space-y-3">
@@ -82,13 +73,9 @@ export function UserDialogPreview() {
               code.
             </p>
             <div className="flex flex-col items-stretch gap-3">
-              <Button className="h-10 gap-1.5 px-5 text-sm" isDisabled>
-                Pair with passkey
-              </Button>
+              <Button className="h-10 gap-1.5 px-5 text-sm">Pair with passkey</Button>
               <OrDivider />
-              <Button className="h-10 min-w-24 px-5 text-sm" isDisabled>
-                Show pairing code
-              </Button>
+              <Button className="h-10 min-w-24 px-5 text-sm">Show pairing code</Button>
             </div>
             <div className="border border-border bg-muted/40 p-3">
               <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
@@ -100,7 +87,7 @@ export function UserDialogPreview() {
               <p className="mt-2 text-xs text-muted-foreground">
                 Waiting for approval on your other device…
               </p>
-              <Button className="mt-3" isDisabled size="sm">
+              <Button className="mt-3" size="sm">
                 Use this username
               </Button>
             </div>
@@ -118,15 +105,11 @@ export function InlineUserCreationPreview() {
         quick create
       </p>
       <div className="flex items-end gap-2">
-        <Input className="h-9 flex-1" disabled placeholder="Your username" readOnly value="" />
-        <Button isDisabled size="sm" className="h-9">
+        <Input className="h-9 flex-1" placeholder="Your username" />
+        <Button size="sm" className="h-9">
           Create
         </Button>
       </div>
-      <p className="font-mono text-[10px] leading-relaxed text-muted-foreground">
-        Calls saveLocalIdentity(username) — fingerprint stays, display name updates. Required before
-        remote publish.
-      </p>
     </div>
   );
 }

@@ -5,10 +5,10 @@ import { PreviewShell } from "./preview-shell";
 
 export function HeaderNewListPreview() {
   return (
-    <PreviewShell caption="Keweke header (/keweke and /keweke/:listId). The “New list” button is always available unless the store is empty — hidden to keep the empty state as the single call to action.">
+    <PreviewShell>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-background px-3 py-2 sm:px-4">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-sm font-black tracking-tighter">KEWEKE</span>
+          <span className="font-sans text-sm font-black tracking-tighter text-primary">KEWEKE</span>
           <span className="hidden font-mono text-[10px] tracking-wide text-muted-foreground sm:inline">
             Yet another collaborative shopping list
           </span>
@@ -18,7 +18,6 @@ export function HeaderNewListPreview() {
             aria-label="User"
             size="icon-lg"
             variant="ghost"
-            isDisabled
             className="w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
           >
             <UserRound aria-hidden="true" className="size-4" />
@@ -28,7 +27,6 @@ export function HeaderNewListPreview() {
             aria-label="Copy share link"
             size="lg"
             variant="outline"
-            isDisabled
             className="hidden h-8 sm:inline-flex"
           >
             <Copy className="size-4" />
@@ -37,7 +35,6 @@ export function HeaderNewListPreview() {
           <Button
             aria-label="Create new list"
             className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
-            isDisabled
             size="icon-lg"
           >
             <Plus className="size-4" />
@@ -52,11 +49,6 @@ export function HeaderNewListPreview() {
             </KbdGroup>
           </Button>
         </div>
-      </div>
-      <div className="px-4 py-3">
-        <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-          Hotkey: Mod+E (⌘E / Ctrl+E) triggers the same createLocalList() call.
-        </p>
       </div>
     </PreviewShell>
   );

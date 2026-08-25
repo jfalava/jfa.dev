@@ -115,17 +115,9 @@ function SettingsTableMock() {
               <TableCell className="py-6 align-top">
                 <div>
                   <p className="text-sm text-muted-foreground">{row.description}</p>
-                  <div className="mt-3 rounded border border-dashed border-muted-foreground/20 bg-muted/20 px-2 py-1.5 font-mono text-[10px] leading-relaxed text-muted-foreground">
-                    static placeholder — real row renders Input / pairing code / DevicesTable
-                  </div>
                   {row.actionLabel ? (
                     <div className="mt-3 sm:hidden">
-                      <Button
-                        isDisabled
-                        size="sm"
-                        variant={row.actionVariant ?? "default"}
-                        className="w-full"
-                      >
+                      <Button size="sm" variant={row.actionVariant ?? "default"} className="w-full">
                         {row.actionLabel}
                       </Button>
                     </div>
@@ -134,7 +126,7 @@ function SettingsTableMock() {
               </TableCell>
               <TableCell className="hidden py-6 align-top sm:table-cell">
                 {row.actionLabel ? (
-                  <Button isDisabled size="sm" variant={row.actionVariant ?? "default"}>
+                  <Button size="sm" variant={row.actionVariant ?? "default"}>
                     {row.actionLabel}
                   </Button>
                 ) : null}
@@ -160,10 +152,10 @@ export function UserSettingsPreview({
         : { label: "Remote user", name: "alice", initial: "A", username: "alice" };
 
   return (
-    <PreviewShell caption='User settings at /keweke/user — KewekeHeader (activePackagePath="/keweke") plus UserSettingsPage. The table is a static placeholder built on @jfa.dev/common/ui Table; each row maps to a create*Section() helper.'>
+    <PreviewShell>
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b bg-background px-3 py-2">
-          <span className="font-mono text-sm font-black tracking-tighter">KEWEKE</span>
+          <span className="font-sans text-sm font-black tracking-tighter">KEWEKE</span>
           <span className="font-mono text-[10px] tracking-wide text-muted-foreground">
             /keweke/user
           </span>

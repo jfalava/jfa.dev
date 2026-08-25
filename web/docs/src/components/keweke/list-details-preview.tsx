@@ -25,7 +25,7 @@ function AvatarMock({ initial }: { initial: string }) {
 
 export function ListHeaderPreview() {
   return (
-    <PreviewShell caption="List header at /keweke/:listId — title, alias/ID switcher, and counts. Static placeholder; pencil opens inline rename, arrows toggle alias ↔ id, copy copies full URL.">
+    <PreviewShell>
       <div className="flex flex-col">
         <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6">
           <div className="min-w-0">
@@ -40,7 +40,6 @@ export function ListHeaderPreview() {
                 aria-label="Edit list title"
                 size="icon"
                 variant="ghost"
-                isDisabled
                 className="size-7"
               >
                 <Pencil className="size-4" />
@@ -50,7 +49,6 @@ export function ListHeaderPreview() {
               <Button
                 aria-label="Show ID"
                 className="h-7 gap-1 px-1 text-[10px] tracking-[0.08em] text-muted-foreground uppercase"
-                isDisabled
                 size="sm"
                 variant="ghost"
               >
@@ -66,17 +64,12 @@ export function ListHeaderPreview() {
               <Button
                 aria-label="Copy full Alias URL"
                 className="size-7 p-0 text-primary"
-                isDisabled
                 size="icon"
                 variant="ghost"
               >
                 <Copy aria-hidden="true" className="size-3.5" />
               </Button>
             </div>
-            <p className="mt-2 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
-              alias shown — tap the arrow to see the underlying ID{" "}
-              <span className="font-mono text-primary">0199c2f0-…</span> and copy either.
-            </p>
           </div>
           <p className="font-mono text-[11px] tracking-[0.08em] whitespace-nowrap text-muted-foreground uppercase">
             02 open · 01 done
@@ -93,29 +86,19 @@ export function ListHeaderPreview() {
               <Input
                 aria-label="Search items"
                 className="w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
-                disabled
                 placeholder="Search items"
-                readOnly
-                value=""
               />
             </div>
             <Button
               aria-label="Enter spreadsheet mode"
               className="hidden shrink-0 md:inline-flex md:w-auto md:gap-1 md:px-2"
-              isDisabled
               size="icon"
               variant="ghost"
             >
               <FileSpreadsheet aria-hidden="true" className="size-4" />
               <span className="hidden sm:inline">Excel Mode</span>
             </Button>
-            <Button
-              aria-label="How to add items"
-              className="shrink-0"
-              isDisabled
-              size="icon"
-              variant="ghost"
-            >
+            <Button aria-label="How to add items" className="shrink-0" size="icon" variant="ghost">
               <Info aria-hidden="true" className="size-4" />
             </Button>
           </div>
@@ -137,9 +120,6 @@ export function ListAliasIdPreview() {
           Friendly short code minted after you rename a local list. Used for pretty URLs like{" "}
           <span className="text-foreground">/keweke/weekend-groceries-a3k</span>.
         </p>
-        <p className="mt-2 font-mono text-[10px] leading-relaxed text-muted-foreground">
-          Static placeholder — real toggle is the arrow button in the header.
-        </p>
       </div>
       <div className="rounded-lg border bg-card p-3">
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
@@ -159,7 +139,7 @@ export function ListAliasIdPreview() {
 
 export function DeletedItemsPreview() {
   return (
-    <PreviewShell caption="Deleted items — the bottom section of a list, every removed line stays recoverable until you delete it forever.">
+    <PreviewShell>
       <section className="border-t border-destructive/30 px-4 py-6 sm:px-6">
         <div className="border-b border-border pb-3">
           <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
@@ -190,34 +170,20 @@ export function DeletedItemsPreview() {
                 </p>
               </div>
               <div className="flex items-center gap-1.5">
-                <Button
-                  aria-label={`Show history for ${row.name}`}
-                  isDisabled
-                  size="sm"
-                  variant="ghost"
-                >
+                <Button aria-label={`Show history for ${row.name}`} size="sm" variant="ghost">
                   <History className="size-3.5" />
                   History
                 </Button>
-                <Button aria-label={`Restore ${row.name}`} isDisabled size="sm" variant="outline">
+                <Button aria-label={`Restore ${row.name}`} size="sm" variant="outline">
                   Restore
                 </Button>
-                <Button
-                  aria-label={`Delete ${row.name} forever`}
-                  isDisabled
-                  size="sm"
-                  variant="destructive"
-                >
+                <Button aria-label={`Delete ${row.name} forever`} size="sm" variant="destructive">
                   Delete forever
                 </Button>
               </div>
             </div>
           ))}
         </div>
-        <p className="mt-3 font-mono text-[10px] leading-relaxed text-muted-foreground">
-          Restore puts the item back at the end of the list. Delete forever removes the archive
-          copy.
-        </p>
       </section>
     </PreviewShell>
   );
@@ -225,7 +191,7 @@ export function DeletedItemsPreview() {
 
 export function ItemHistoryPreview() {
   return (
-    <PreviewShell caption="Item history dialog — recorded changes for one item, paged by revision. Static placeholder.">
+    <PreviewShell>
       <div className="flex max-h-[32rem] flex-col overflow-hidden rounded-lg border bg-popover text-popover-foreground">
         <div className="flex items-start justify-between gap-4 border-b px-5 py-4">
           <div className="min-w-0">
@@ -249,7 +215,6 @@ export function ItemHistoryPreview() {
           <Button
             aria-label="Close history"
             className="size-7 shrink-0 px-0"
-            isDisabled
             size="icon"
             variant="ghost"
           >
@@ -332,7 +297,7 @@ export function ItemHistoryPreview() {
           </table>
         </div>
         <div className="border-t px-5 py-3">
-          <Button className="w-full" isDisabled size="sm" variant="outline">
+          <Button className="w-full" size="sm" variant="outline">
             <History aria-hidden="true" className="size-3.5" />
             Load older changes
           </Button>
@@ -352,7 +317,7 @@ export function LiveDroppedPreview() {
       <span className="font-mono text-[11px] tracking-wide text-amber-900">
         Live updates dropped —
       </span>
-      <Button isDisabled size="sm" variant="outline" className="h-7 gap-1">
+      <Button size="sm" variant="outline" className="h-7 gap-1">
         <RefreshCw aria-hidden="true" className="size-3.5" />
         Reconnect
       </Button>
