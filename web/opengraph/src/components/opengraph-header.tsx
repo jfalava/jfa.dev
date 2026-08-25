@@ -148,7 +148,7 @@ export function OpengraphHeader() {
             onPress={() => projectInputRef.current?.click()}
             size="lg"
             variant="ghost"
-            className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
+            className="max-h-[819px]:hidden hidden gap-1.5 px-2 text-muted-foreground hover:text-foreground max-[1179px]:hidden min-[1180px]:inline-flex"
           >
             <FileUp />
             <span className="hidden sm:inline">Import</span>
@@ -160,7 +160,7 @@ export function OpengraphHeader() {
               isDisabled={isBusy}
               size="lg"
               variant="ghost"
-              className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
+              className="max-h-[819px]:hidden hidden gap-1.5 px-2 text-muted-foreground hover:text-foreground max-[1179px]:hidden min-[1180px]:inline-flex"
             >
               <FileDown />
               <span className="hidden sm:inline">Export</span>
