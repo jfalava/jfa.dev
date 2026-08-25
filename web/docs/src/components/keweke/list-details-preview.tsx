@@ -1,6 +1,7 @@
 import { Button, Input } from "@jfa.dev/common/ui";
 import {
   ArrowLeftRight,
+  Check,
   Copy,
   FileSpreadsheet,
   History,
@@ -9,6 +10,7 @@ import {
   RefreshCw,
   Search,
 } from "lucide-react";
+import { useState } from "react";
 
 import { PreviewShell } from "./preview-shell";
 
@@ -23,7 +25,28 @@ function AvatarMock({ initial }: { initial: string }) {
   );
 }
 
+const MOCK_ALIAS = "weekend-groceries-a3k";
+const MOCK_LIST_ID = "0199c2f0-8a1b-7c3d-9e4f-2a1b3c4d5e6f";
+
 export function ListHeaderPreview() {
+  const [showId, setShowId] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const value = showId ? MOCK_LIST_ID : MOCK_ALIAS;
+
+  const copyUrl = () => {
+    const clip = navigator.clipboard?.writeText(`/keweke/${value}`);
+    if (clip) {
+      void clip.then(
+        () => {
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 1500);
+          return undefined;
+        },
+        () => undefined,
+      );
+    }
+  };
+
   return (
     <PreviewShell>
       <div className="flex flex-col">
@@ -47,27 +70,34 @@ export function ListHeaderPreview() {
             </div>
             <div className="mt-2 flex max-w-full min-w-0 items-center gap-1 overflow-hidden font-mono text-[10px] tracking-[0.08em] uppercase">
               <Button
-                aria-label="Show ID"
+                aria-label={showId ? "Show alias" : "Show ID"}
+                aria-pressed={showId}
                 className="h-7 gap-1 px-1 text-[10px] tracking-[0.08em] text-muted-foreground uppercase"
+                onClick={() => setShowId((v) => !v)}
                 size="sm"
                 variant="ghost"
               >
-                Alias
+                {showId ? "ID" : "Alias"}
                 <ArrowLeftRight aria-hidden="true" className="size-2.5" />
               </Button>
               <span aria-hidden="true" className="shrink-0 text-muted-foreground">
                 /
               </span>
-              <span className="min-w-0 flex-1 truncate text-primary" title="weekend-groceries-a3k">
-                weekend-groceries-a3k
+              <span className="min-w-0 flex-1 truncate text-primary" title={value}>
+                {value}
               </span>
               <Button
-                aria-label="Copy full Alias URL"
+                aria-label={copied ? "Copied" : `Copy full ${showId ? "ID" : "Alias"} URL`}
                 className="size-7 p-0 text-primary"
+                onClick={copyUrl}
                 size="icon"
                 variant="ghost"
               >
-                <Copy aria-hidden="true" className="size-3.5" />
+                {copied ? (
+                  <Check aria-hidden="true" className="size-3.5" />
+                ) : (
+                  <Copy aria-hidden="true" className="size-3.5" />
+                )}
               </Button>
             </div>
           </div>
