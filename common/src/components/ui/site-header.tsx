@@ -213,9 +213,11 @@ function PackageSwitcher({
         </span>
         <ChevronDown aria-hidden="true" className="shrink-0 opacity-70" />
         <KbdGroup className="hidden shrink-0 gap-1 sm:inline-flex">
-          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">{isMac ? "⌘" : "Ctrl"}</Kbd>
-          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">⇧</Kbd>
-          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">U</Kbd>
+          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">
+            {isMac ? "⌘" : "Ctrl"}
+          </Kbd>
+          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">⇧</Kbd>
+          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">U</Kbd>
         </KbdGroup>
       </Button>
       <PopoverPrimitive

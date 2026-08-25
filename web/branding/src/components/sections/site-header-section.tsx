@@ -83,9 +83,7 @@ export function SiteHeaderSection() {
           </Button>
         </Preview>
         <div className="space-y-3 px-6 py-4 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            All header actions share one visual language.
-          </p>
+          <p>All header actions share one visual language.</p>
         </div>
       </Card>
     </Section>
