@@ -7,18 +7,20 @@ import {
   TableHeader,
   TableRow,
 } from "@jfa.dev/common/ui";
+import { Blobatar } from "blobatar/react";
 
 import { PreviewShell } from "./preview-shell";
 
-function AvatarMock({ initial, size = "size-12" }: { initial: string; size?: string }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={`${size} flex shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-xs font-bold text-primary`}
-    >
-      {initial}
-    </div>
-  );
+/**
+ * The blobatar seed for a Keweke user: the stable internal user id followed
+ * by the user-chosen username, so every avatar is anchored to its user but
+ * changes shape when the user picks a new username. Without a username the
+ * seed is the user id alone.
+ *
+ * Mirrors `web/keweke/src/features/auth/lib/blobatar.ts:7` (`userAvatarSeed`).
+ */
+function userAvatarSeed(userId: string, username: string | null | undefined): string {
+  return `${userId}${username ?? ""}`;
 }
 
 type MockRow = {
@@ -146,10 +148,25 @@ export function UserSettingsPreview({
 }) {
   const meta =
     variant === "anonymous"
-      ? { label: "Anonymous", name: "Anonymous", initial: "?", username: null }
+      ? {
+          label: "Anonymous",
+          name: "Anonymous",
+          username: null,
+          userId: "anonymous-preview-id",
+        }
       : variant === "local"
-        ? { label: "Local user", name: "alice", initial: "A", username: "alice" }
-        : { label: "Remote user", name: "alice", initial: "A", username: "alice" };
+        ? {
+            label: "Local user",
+            name: "alice",
+            username: "alice",
+            userId: "preview-user-alice",
+          }
+        : {
+            label: "Remote user",
+            name: "alice",
+            username: "alice",
+            userId: "preview-user-alice",
+          };
 
   return (
     <PreviewShell>
@@ -175,7 +192,12 @@ export function UserSettingsPreview({
                 {meta.name}
               </p>
             </div>
-            <AvatarMock initial={meta.initial} />
+            <Blobatar
+              alt=""
+              className="size-12 shrink-0 sm:size-14"
+              name={userAvatarSeed(meta.userId, meta.username)}
+              size={64}
+            />
           </div>
         </div>
         <SettingsTableMock />
@@ -192,26 +214,34 @@ export function UserStateBadgePreview() {
           {
             label: "Anonymous",
             name: "Anonymous",
-            initial: "?",
+            username: null,
+            userId: "anonymous-preview-id",
             desc: "No username yet. signed badges show unsigned.",
           },
           {
             label: "Local user",
             name: "alice",
-            initial: "A",
+            username: "alice",
+            userId: "preview-user-alice",
             desc: 'username="alice" stored locally only.',
           },
           {
             label: "Remote user",
             name: "alice",
-            initial: "A",
+            username: "alice",
+            userId: "preview-user-alice",
             desc: "remoteUsername confirmed. Can publish & sign remotely.",
           },
         ] as const
       ).map((state) => (
         <div key={state.label} className="flex flex-col gap-2 rounded-md border bg-background p-3">
           <div className="flex items-center gap-3">
-            <AvatarMock initial={state.initial} size="size-10" />
+            <Blobatar
+              alt=""
+              className="size-10 shrink-0"
+              name={userAvatarSeed(state.userId, state.username)}
+              size={40}
+            />
             <div>
               <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
                 {state.label}

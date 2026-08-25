@@ -1,14 +1,18 @@
+import { Blobatar } from "blobatar/react";
+import { Pencil, Plus } from "lucide-react";
+
 import { PreviewShell } from "./preview-shell";
 
-function AvatarMock({ initial }: { initial: string }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/15 font-mono text-[9px] font-bold text-primary"
-    >
-      {initial}
-    </div>
-  );
+/**
+ * The blobatar seed for a Keweke user: the stable internal user id followed
+ * by the user-chosen username, so every avatar is anchored to its user but
+ * changes shape when the user picks a new username. Without a username the
+ * seed is the user id alone.
+ *
+ * Mirrors `web/keweke/src/features/auth/lib/blobatar.ts:7` (`userAvatarSeed`).
+ */
+function userAvatarSeed(userId: string, username: string | null | undefined): string {
+  return `${userId}${username ?? ""}`;
 }
 
 export function SignedBadgePreview() {
@@ -47,10 +51,13 @@ export function SignedBadgePreview() {
                   className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
                   title="Added by alice"
                 >
-                  <span aria-hidden="true" className="size-3">
-                    ＋
-                  </span>
-                  <AvatarMock initial="A" />
+                  <Plus aria-hidden="true" className="size-3 shrink-0" />
+                  <Blobatar
+                    alt=""
+                    className="size-4 shrink-0"
+                    name={userAvatarSeed("preview-user-alice", "alice")}
+                    size={16}
+                  />
                   <span className="truncate font-serif">alice</span>
                 </span>
               </td>
@@ -63,10 +70,13 @@ export function SignedBadgePreview() {
                   className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
                   title="Added by alice · Last edited by bob"
                 >
-                  <span aria-hidden="true" className="size-3">
-                    ✎
-                  </span>
-                  <AvatarMock initial="B" />
+                  <Pencil aria-hidden="true" className="size-3 shrink-0" />
+                  <Blobatar
+                    alt=""
+                    className="size-4 shrink-0"
+                    name={userAvatarSeed("preview-user-bob", "bob")}
+                    size={16}
+                  />
                   <span className="truncate font-serif">bob</span>
                 </span>
               </td>
@@ -79,10 +89,13 @@ export function SignedBadgePreview() {
                   className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
                   title="Added by Your username"
                 >
-                  <span aria-hidden="true" className="size-3">
-                    ＋
-                  </span>
-                  <AvatarMock initial="Y" />
+                  <Plus aria-hidden="true" className="size-3 shrink-0" />
+                  <Blobatar
+                    alt=""
+                    className="size-4 shrink-0"
+                    name={userAvatarSeed("preview-user-you", "Your username")}
+                    size={16}
+                  />
                   <span className="truncate font-serif">Your username</span>
                 </span>
               </td>
