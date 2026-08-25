@@ -4,6 +4,7 @@ description: Choose a preset or type any size. Multiple canvases live in tabs.
 icon: Frame
 ---
 
+import { Kbd } from "@jfa.dev/common/ui";
 import { CanvasPreview, TabsPreview } from "@/components/opengraph/canvas-preview";
 
 The canvas is the page. Everything else — text, shapes, images — sits on it.
@@ -21,7 +22,7 @@ The editor ships with the sizes you use most for banners and thumbnails:
 - **Story 1080×1920** — 9:16 for stories and reels.
 - **Wide 1600×900** — 16:9 wide banner.
 
-Pick a preset and the canvas updates. The background fills the new size. Undo with `Alt+Z`.
+Pick a preset and the canvas updates. The background fills the new size. Undo with <Kbd>Alt</Kbd> + <Kbd>Z</Kbd>.
 
 ## Custom size
 
@@ -35,7 +36,7 @@ You can keep several canvases in one session. Each tab has its own layers, size,
 
 - Click a tab to switch.
 - Double-click its name to rename.
-- **+** makes a fresh canvas.
-- **×** closes the tab. Closing the last tab starts a new blank canvas.
+- <Kbd>+</Kbd> makes a fresh canvas.
+- <Kbd>×</Kbd> closes the tab. Closing the last tab starts a new blank canvas.
 
 All tabs are saved locally in this browser.

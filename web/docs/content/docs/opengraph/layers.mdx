@@ -4,6 +4,7 @@ description: Stack, hide, lock, and reorder.
 icon: Layers
 ---
 
+import { Kbd } from "@jfa.dev/common/ui";
 import { LayersPreview } from "@/components/opengraph/layers-preview";
 
 <LayersPreview />
@@ -14,17 +15,17 @@ Layers are drawn bottom to top. **Background** is always at the bottom and locke
 
 ## The header
 
-- **+** — open the create menu: **New text layer**, **New shape layer**, **New image layer**.
-- **⋯** — open the manage menu: show or hide all, lock or unlock all, sort A→Z, reverse order, delete hidden, delete all.
+- <Kbd>+</Kbd> — open the create menu: **New text layer**, **New shape layer**, **New image layer**.
+- <Kbd>⋯</Kbd> — open the manage menu: show or hide all, lock or unlock all, sort A→Z, reverse order, delete hidden, delete all.
 
 ## The row
 
 Each row shows the icon, name, kind (**Text**, **Shape**, **Image**), and two toggles:
 
-- **Eye** — hide or show. Hidden layers stay in the file but do not appear on the canvas or in exports.
-- **Lock** — prevent selection, dragging, and deletion. Background is always locked.
+- <Kbd>Eye</Kbd> — hide or show. Hidden layers stay in the file but do not appear on the canvas or in exports.
+- <Kbd>Lock</Kbd> — prevent selection, dragging, and deletion. Background is always locked.
 
-Right-click a row for **Rename**, **Duplicate**, **Refresh** (reset position), and **Delete**. Double-click the name to rename inline.
+Right-click a row for <Kbd>Rename</Kbd>, <Kbd>Duplicate</Kbd>, <Kbd>Refresh</Kbd> (reset position), and <Kbd>Delete</Kbd>. Double-click the name to rename inline.
 
 ## The footer
 
@@ -32,4 +33,4 @@ The bar under the list shows the layer count on the left and the canvas size on 
 
 ## Right-click menu
 
-Right-click any layer to open the context menu with **Rename**, **Duplicate**, **Refresh**, and **Delete**.
+Right-click any layer to open the context menu with <Kbd>Rename</Kbd>, <Kbd>Duplicate</Kbd>, <Kbd>Refresh</Kbd>, and <Kbd>Delete</Kbd>.

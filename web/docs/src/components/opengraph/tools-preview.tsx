@@ -1,3 +1,4 @@
+import { Kbd, KbdGroup } from "@jfa.dev/common/ui";
 import {
   Hand,
   Image as ImageIcon,
@@ -80,23 +81,29 @@ export function ShortcutsPreview() {
             <span className="text-[11px] text-muted-foreground/75">/</span>
             <span className="text-[11px] text-muted-foreground/75">Photoshop map</span>
             <span className="ml-auto hidden items-center gap-1.5 text-[11px] text-muted-foreground sm:flex">
-              Hold <span className="rounded bg-muted px-1 font-mono text-xs">?</span> to preview
+              Hold <Kbd>?</Kbd> to preview
             </span>
           </div>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             <div className="space-y-1">
               <p className="border-b pb-1 font-mono text-[11px] uppercase">Tools</p>
               <p className="text-xs">
-                <span className="rounded bg-muted px-1 font-mono">V</span> Move ·{" "}
-                <span className="rounded bg-muted px-1 font-mono">H</span> Hand ·{" "}
-                <span className="rounded bg-muted px-1 font-mono">T</span> Text
+                <Kbd>V</Kbd> Move · <Kbd>H</Kbd> Hand · <Kbd>T</Kbd> Text
               </p>
             </div>
             <div className="space-y-1">
               <p className="border-b pb-1 font-mono text-[11px] uppercase">File</p>
               <p className="text-xs">
-                <span className="rounded bg-muted px-1 font-mono">Alt+S</span> Export ZIP ·{" "}
-                <span className="rounded bg-muted px-1 font-mono">Alt+N</span> New
+                <KbdGroup>
+                  <Kbd>Alt</Kbd>
+                  <Kbd>S</Kbd>
+                </KbdGroup>{" "}
+                Export ZIP ·{" "}
+                <KbdGroup>
+                  <Kbd>Alt</Kbd>
+                  <Kbd>N</Kbd>
+                </KbdGroup>{" "}
+                New
               </p>
             </div>
           </div>
