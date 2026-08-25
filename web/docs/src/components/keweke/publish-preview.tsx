@@ -49,7 +49,13 @@ export function PublishButtonPreview() {
 const NUDGE_TOOLTIP_CLASSES =
   "absolute z-50 w-64 rounded-md border border-border bg-popover px-3 py-2 text-left text-xs leading-relaxed text-popover-foreground shadow-lg before:absolute before:-top-1 before:right-3 before:size-2 before:rotate-45 before:border-t before:border-l before:border-border before:bg-popover before:content-[''] sm:before:right-10";
 
-function PublishNudgeTooltip({ anchorRef }: { anchorRef: RefObject<HTMLSpanElement | null> }) {
+function PublishNudgeTooltip({
+  anchorRef,
+  onDismiss,
+}: {
+  anchorRef: RefObject<HTMLSpanElement | null>;
+  onDismiss: () => void;
+}) {
   const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
 
   useLayoutEffect(() => {
@@ -67,34 +73,50 @@ function PublishNudgeTooltip({ anchorRef }: { anchorRef: RefObject<HTMLSpanEleme
     return () => window.removeEventListener("resize", update);
   }, [anchorRef]);
 
+  useLayoutEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Tab" || event.key === "Escape") {
+        onDismiss();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onDismiss]);
+
   if (!pos) {
     return null;
   }
 
   return createPortal(
-    <div
-      className={NUDGE_TOOLTIP_CLASSES}
+    <button
+      className={`${NUDGE_TOOLTIP_CLASSES} block cursor-pointer text-left`}
       id="preview-publish-nudge"
-      role="tooltip"
+      onClick={onDismiss}
       style={{ top: pos.top, right: pos.right }}
+      type="button"
     >
       You can now publish this list to access it from anywhere.
-    </div>,
+    </button>,
     document.body,
   );
 }
 
 export function PublishNudgePreview() {
   const anchorRef = useRef<HTMLSpanElement>(null);
+  const [nudgeVisible, setNudgeVisible] = useState(true);
+  const dismissNudge = () => {
+    setNudgeVisible(false);
+  };
 
   return (
     <PreviewShell>
       <div className="flex justify-end bg-background p-6">
         <span ref={anchorRef} className="inline-flex">
           <Button
-            aria-describedby="preview-publish-nudge"
+            aria-describedby={nudgeVisible ? "preview-publish-nudge" : undefined}
             aria-label="Publish list to a remote list"
             className="inline-flex w-8 sm:w-auto sm:gap-1.5 sm:px-2.5"
+            onClick={dismissNudge}
             size="icon-lg"
             variant="outline"
           >
@@ -102,7 +124,7 @@ export function PublishNudgePreview() {
             <span>Publish</span>
           </Button>
         </span>
-        <PublishNudgeTooltip anchorRef={anchorRef} />
+        {nudgeVisible ? <PublishNudgeTooltip anchorRef={anchorRef} onDismiss={dismissNudge} /> : null}
       </div>
     </PreviewShell>
   );
