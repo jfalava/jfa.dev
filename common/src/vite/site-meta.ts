@@ -21,7 +21,19 @@ const AUTHOR = "Jorge Fernando Álava";
 const SITE_NAME = "JFA";
 
 /** Identity URLs every worker advertises via rel=me. */
-const REL_ME_URLS = ["https://github.com/jfalava"] as const;
+const REL_ME_URLS = [
+  "https://github.com/jfalava",
+  "https://bsky.app/profile/jfa.dev",
+  "https://x.com/jorgefalava",
+] as const;
+
+/**
+ * Author identity advertised via the fediverse:creator meta tag on every
+ * worker. Mastodon only renders the tag for resolvable "@user@instance"
+ * handles; this Bluesky profile URL is a placeholder until a fediverse
+ * handle exists.
+ */
+const FEDIVERSE_CREATOR = "https://bsky.app/profile/jfa.dev";
 
 const siteMetaOptionsSchema = z.object({
   /** Page title; also used for og:title and twitter:title. */
@@ -61,7 +73,10 @@ type SiteHead = {
  * @param mountPath - Normalized mount path with trailing slash, e.g. "/docs/".
  * @returns The head object consumed by TanStack Router's `head` function.
  */
-function buildHead(options: z.output<typeof siteMetaOptionsSchema>, mountPath: string): SiteHead {
+function buildHead(
+  options: z.output<typeof siteMetaOptionsSchema>,
+  mountPath: string,
+): SiteHead {
   const canonical = `${options.origin}${mountPath}`;
   const meta: SiteHeadTag[] = [
     { charSet: "utf-8" },
@@ -70,6 +85,7 @@ function buildHead(options: z.output<typeof siteMetaOptionsSchema>, mountPath: s
     { name: "description", content: options.description },
     { name: "author", content: AUTHOR },
     { name: "theme-color", content: options.themeColor },
+    { name: "fediverse:creator", content: FEDIVERSE_CREATOR },
     { property: "og:title", content: options.title },
     { property: "og:description", content: options.description },
     { property: "og:type", content: "website" },
@@ -120,11 +136,7 @@ export function siteMeta(options: SiteMetaOptions): Plugin {
     config(userConfig) {
       // userConfig.base can be a string, false, or a function; anything that
       // is not a mount path string falls back to the root mount.
-      const base = z
-        .string()
-        .default("/")
-        .catch("/")
-        .parse(userConfig.base);
+      const base = z.string().default("/").catch("/").parse(userConfig.base);
       const head = buildHead(parsed, toMountPath(base));
       return {
         define: {
