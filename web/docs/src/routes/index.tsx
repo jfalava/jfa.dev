@@ -45,13 +45,13 @@ function RouteComponent() {
           alt="A court jester dancing"
           width={350}
           height={320}
-          className="w-56 rounded-2xl border shadow-lg sm:w-64"
+          className="w-56 sm:w-64"
         />
         <div className="space-y-2">
-          <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-            DOCS
+          <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter sm:text-6xl">
+            The Knowledge Base: DOCS by JFA
           </h1>
-          <p className="text-muted-foreground">The Knowledge Base.</p>
+          <p className="text-muted-foreground text-sm">why do u need this lmao</p>
         </div>
       </main>
     </DocsLandingView>
