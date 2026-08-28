@@ -252,7 +252,7 @@ export function PlaylistHeader() {
 
   return (
     <header className="shrink-0 border-b border-border bg-background px-4 py-6 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8 margin-y-auto">
         <div className="min-w-0 flex-1">
           <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">playlist</p>
           <h1 id="playlist-heading" className={`mt-2 ${DISPLAY_TITLE_CLASS_NAME}`}>
@@ -269,21 +269,12 @@ export function PlaylistHeader() {
             <span>
               {snapshot.subtitle} · {snapshot.trackCount} tracks
             </span>
-            <span className="text-xs">
-              Source{" "}
-              <a
-                href={snapshot.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="underline underline-offset-4"
-              >
-                Apple Music
-              </a>{" "}
-              · updated {new Date(snapshot.fetchedAt).toLocaleDateString()}
+            <span>
+              Updated <span className="font-mono">{new Date(snapshot.fetchedAt).toLocaleDateString()}</span>
             </span>
           </p>
         </div>
-        <div className="w-full shrink-0 lg:w-[520px]">
+        <div className="w-full shrink-0 lg:w-130">
           <NowPlayingWidget />
         </div>
       </div>
@@ -307,13 +298,13 @@ export function TwentyTracksTable() {
 
   return (
     <div className="catalog-scroll">
-      <table className="w-full min-w-[56rem] border-collapse">
+      <table className="w-full min-w-4xl border-collapse">
         <colgroup>
-          <col className="w-[3.5rem]" />
+          <col className="w-14" />
           <col className="w-[26%]" />
           <col className="w-[20%]" />
           <col className="w-[26%]" />
-          <col className="w-[5rem]" />
+          <col className="w-20" />
           <col className="w-[8rem]" />
         </colgroup>
         <thead className="bg-background">
