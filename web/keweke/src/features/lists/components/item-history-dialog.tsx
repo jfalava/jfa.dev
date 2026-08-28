@@ -234,13 +234,13 @@ function HistoryTable({ events }: { events: readonly ListItemHistoryEvent[] }) {
   });
 
   return (
-    <Table className="min-w-[640px] text-xs">
+    <Table className="min-w-160 text-xs">
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow className="hover:bg-transparent" key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <TableHead
-                className="h-9 bg-popover px-3 font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase"
+                className="h-9 bg-popover px-3 font-mono text-[10px] tracking-widest text-muted-foreground uppercase"
                 key={header.id}
               >
                 {header.isPlaceholder ? null : <table.FlexRender header={header} />}
