@@ -115,7 +115,7 @@ function EmptyState() {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
       <KewekeHeader hideNewListButton={!isLoading && lists.length === 0} />
       <main className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain">
         <ListsPageHeader listCount={lists.length} />

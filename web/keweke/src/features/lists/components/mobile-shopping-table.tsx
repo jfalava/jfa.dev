@@ -47,7 +47,7 @@ export function MobileShoppingTable({
 
   return (
     <div className="md:hidden">
-      <table className="w-full border-collapse">
+      <table className="w-full border-collapse [&_td:first-child]:pl-4 sm:[&_td:first-child]:pl-6 lg:[&_td:first-child]:pl-8 [&_td:last-child]:pr-4 sm:[&_td:last-child]:pr-6 lg:[&_td:last-child]:pr-8 [&_th:first-child]:pl-4 sm:[&_th:first-child]:pl-6 lg:[&_th:first-child]:pl-8 [&_th:last-child]:pr-4 sm:[&_th:last-child]:pr-6 lg:[&_th:last-child]:pr-8">
         <caption className="sr-only">Shopping list items</caption>
         <thead className="sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (

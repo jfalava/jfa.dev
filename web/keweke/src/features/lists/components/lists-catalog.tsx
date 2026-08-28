@@ -14,6 +14,20 @@ import { ChevronRight, Cloud, House, List, ListChecks, Trash2 } from "lucide-rea
 import { useMemo } from "react";
 
 const listsTableFeatures = tableFeatures({});
+
+/**
+ * Aligns the table's outer columns with the page gutter used by
+ * `ListsPageHeader` and every other section (`px-4 sm:px-6 lg:px-8`).
+ */
+function columnGutterClass(index: number, columnCount: number): string | undefined {
+  if (index === 0) {
+    return "pl-4 sm:pl-6 lg:pl-8";
+  }
+  if (index === columnCount - 1) {
+    return "pr-4 sm:pr-6 lg:pr-8";
+  }
+  return undefined;
+}
 const listsColumnHelper = createColumnHelper<typeof listsTableFeatures, ListSummary>();
 
 export type ListsCatalogProps = {
@@ -155,8 +169,11 @@ function ListsTable({
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow className="hover:bg-transparent" key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
+            {headerGroup.headers.map((header, index) => (
+              <TableHead
+                className={columnGutterClass(index, headerGroup.headers.length)}
+                key={header.id}
+              >
                 {header.isPlaceholder ? null : <table.FlexRender header={header} />}
               </TableHead>
             ))}
@@ -166,8 +183,8 @@ function ListsTable({
       <TableBody>
         {table.getRowModel().rows.map((row) => (
           <TableRow key={row.id}>
-            {row.getAllCells().map((cell) => (
-              <TableCell key={cell.id}>
+            {row.getAllCells().map((cell, index, cells) => (
+              <TableCell className={columnGutterClass(index, cells.length)} key={cell.id}>
                 <table.FlexRender cell={cell} />
               </TableCell>
             ))}
@@ -195,7 +212,7 @@ function MobileListsList({
         const BackendIcon = list.backend === "remote" ? Cloud : House;
         return (
           <li key={list.id}>
-            <div className="flex items-center gap-2 px-4 py-3">
+            <div className="flex items-center gap-2 px-4 py-3 sm:px-6">
               <Link
                 className="group flex min-w-0 flex-1 items-center gap-3"
                 params={{ listId: list.alias ?? list.id }}

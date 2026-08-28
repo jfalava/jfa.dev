@@ -229,7 +229,7 @@ export function ShoppingTable({
           onNewItemKeyDown={submitNewItemOnEnter}
         />
         <div className="hidden w-full overflow-x-auto md:block">
-          <table className="w-full min-w-190 border-collapse">
+          <table className="w-full min-w-190 border-collapse [&_td:first-child]:pl-4 sm:[&_td:first-child]:pl-6 lg:[&_td:first-child]:pl-8 [&_td:last-child]:pr-4 sm:[&_td:last-child]:pr-6 lg:[&_td:last-child]:pr-8 [&_th:first-child]:pl-4 sm:[&_th:first-child]:pl-6 lg:[&_th:first-child]:pl-8 [&_th:last-child]:pr-4 sm:[&_th:last-child]:pr-6 lg:[&_th:last-child]:pr-8">
             <colgroup>
               <col className="w-24" />
               <col className="w-10" />

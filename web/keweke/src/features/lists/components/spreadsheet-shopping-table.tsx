@@ -392,7 +392,7 @@ export function SpreadsheetShoppingTable({
         </p>
       </div>
       <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-210 border-collapse">
+        <table className="w-full min-w-210 border-collapse [&_td:first-child]:pl-4 sm:[&_td:first-child]:pl-6 lg:[&_td:first-child]:pl-8 [&_td:last-child]:pr-4 sm:[&_td:last-child]:pr-6 lg:[&_td:last-child]:pr-8 [&_th:first-child]:pl-4 sm:[&_th:first-child]:pl-6 lg:[&_th:first-child]:pl-8 [&_th:last-child]:pr-4 sm:[&_th:last-child]:pr-6 lg:[&_th:last-child]:pr-8">
           <caption className="sr-only">Spreadsheet editor for shopping list items</caption>
           <colgroup>
             <col className="w-16" />

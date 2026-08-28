@@ -1,7 +1,7 @@
 {
-  "name": "Jorge Fernando Álava",
-  "short_name": "JFA",
-  "description": "Jorge Fernando Álava's personal webpage",
+  "name": "KEWEKE by JFA",
+  "short_name": "KEWEKE",
+  "description": "Yet another collaborative shopping list",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -19,7 +19,7 @@
       "type": "image/x-icon"
     }
   ],
-  "start_url": "/",
+  "start_url": "/keweke/",
   "display": "standalone",
   "theme_color": "oklch(0.511 0.262 276.966)",
   "background_color": "oklch(0.511 0.262 276.966)"

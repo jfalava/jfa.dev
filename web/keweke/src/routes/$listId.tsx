@@ -562,7 +562,7 @@ function ListPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
         <KewekeHeader listId={listId} />
         <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
           <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
@@ -575,7 +575,7 @@ function ListPage() {
 
   if (!snapshot) {
     return (
-      <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
         <KewekeHeader listId={listId} />
         <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
           <section className="invoice-paper invoice-rule border border-t-4 border-t-destructive">
@@ -598,7 +598,7 @@ function ListPage() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
       <KewekeHeader
         backend={loadedList.backend}
         isMigrating={isMigrating}

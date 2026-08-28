@@ -73,7 +73,7 @@ function Home() {
   };
 
   return (
-    <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-background text-foreground">
+    <div className="mx-auto flex h-dvh min-h-0 w-full max-w-screen-2xl flex-col overflow-hidden border-x border-border bg-background text-foreground">
       <CatalogHeader
         activeQuery={activeQuery}
         currentLang={currentLang}

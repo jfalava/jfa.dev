@@ -204,7 +204,7 @@ export function ServicesTable({
   return (
     <div className="catalog-scroll">
       {searchQuery.trim() ? (
-        <output className="block border-b border-border bg-muted/20 px-4 py-2 text-[11px] text-muted-foreground sm:px-6">
+        <output className="block border-b border-border bg-muted/20 px-4 py-2 text-[11px] text-muted-foreground sm:px-6 lg:px-8">
           {translations.filteredResults(visibleServices.length)}
         </output>
       ) : null}
@@ -236,7 +236,8 @@ export function ServicesTable({
                   key={header.id}
                   className={cn(
                     "relative sticky top-0 z-10 h-10 bg-background px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border sm:px-4",
-                    header.index === 0 && "pl-4 sm:pl-6",
+                    header.index === 0 && "pl-4 sm:pl-6 lg:pl-8",
+                    header.index === headerGroup.headers.length - 1 && "pr-4 sm:pr-6 lg:pr-8",
                   )}
                 >
                   {header.isPlaceholder ? null : <table.FlexRender header={header} />}
@@ -256,8 +257,8 @@ export function ServicesTable({
                   key={cell.id}
                   className={cn(
                     "max-w-65 px-3 py-2.5 align-top text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
-                    cell.column.id === "category" && "pl-4 sm:pl-6",
-                    cell.column.id === "description" && "pr-5",
+                    cell.column.id === "category" && "pl-4 sm:pl-6 lg:pl-8",
+                    cell.column.id === "description" && "pr-4 sm:pr-6 lg:pr-8",
                   )}
                 >
                   <table.FlexRender cell={cell} />

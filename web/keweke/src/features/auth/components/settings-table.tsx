@@ -30,6 +30,24 @@ function settingsColumnClassName(id: string): string | undefined {
   return isSettingsColumnId(id) ? SETTINGS_COLUMN_CLASSNAMES[id] : undefined;
 }
 
+function settingsColumnGutterClassName(id: string): string | undefined {
+  if (id === "setting") {
+    return "pl-4 sm:pl-6 lg:pl-8";
+  }
+  if (id === "details") {
+    return "pr-4 sm:pr-3";
+  }
+  if (id === "action") {
+    return "pr-4 sm:pr-6 lg:pr-8";
+  }
+  return undefined;
+}
+
+function joinClassNames(...classNames: Array<string | undefined>): string | undefined {
+  const className = classNames.filter(Boolean).join(" ");
+  return className || undefined;
+}
+
 const settingsColumns = settingsColumnHelper.columns([
   settingsColumnHelper.display({
     id: "setting",
@@ -90,11 +108,12 @@ export function SettingsTable({ rows }: { rows: SettingsSectionRow[] }) {
             <TableRow className="hover:bg-transparent" key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead
-                  className={
+                  className={joinClassNames(
                     header.column.id === "setting"
                       ? "w-56 sm:w-72"
-                      : settingsColumnClassName(header.column.id)
-                  }
+                      : settingsColumnClassName(header.column.id),
+                    settingsColumnGutterClassName(header.column.id),
+                  )}
                   key={header.id}
                 >
                   {header.isPlaceholder ? null : <table.FlexRender header={header} />}
@@ -108,7 +127,11 @@ export function SettingsTable({ rows }: { rows: SettingsSectionRow[] }) {
             <TableRow className="hover:bg-transparent" key={row.id}>
               {row.getAllCells().map((cell) => (
                 <TableCell
-                  className={`py-6 align-top ${settingsColumnClassName(cell.column.id) ?? ""}`}
+                  className={joinClassNames(
+                    "py-6 align-top",
+                    settingsColumnClassName(cell.column.id),
+                    settingsColumnGutterClassName(cell.column.id),
+                  )}
                   key={cell.id}
                 >
                   <table.FlexRender cell={cell} />

@@ -13,7 +13,7 @@ export function UserSettingsPage() {
   const rows = createUserSettingsRows(manager);
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
       <KewekeHeader />
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">

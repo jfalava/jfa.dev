@@ -68,8 +68,8 @@ export function ListPageHeader({
       </div>
 
       <div className="invoice-rule border-b px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-1.5">
-          <div className="relative min-w-0 flex-1">
+        <div className="flex items-center justify-between gap-1.5">
+          <div className="relative min-w-0 flex-1 lg:max-w-5xl">
             <Search
               aria-hidden="true"
               className="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-muted-foreground"

@@ -5,7 +5,7 @@ import { Button, buttonVariants } from "./button";
 import { DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 import { Kbd, KbdGroup } from "./kbd";
 
-import { ArrowUpRight, ChevronDown, CodeXml } from "lucide-react";
+import { ArrowUpRight, ChevronDown, CodeXml, Home } from "lucide-react";
 import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
 import { Menu as MenuPrimitive, Popover as PopoverPrimitive } from "react-aria-components";
 
@@ -50,6 +50,12 @@ export function SiteHeader({
   titleSmol = title,
   ...props
 }: SiteHeaderProps) {
+  const homeHref = activePackagePath
+    ? activePackagePath === "/"
+      ? "/"
+      : `${activePackagePath.replace(/\/+$/, "")}/`
+    : "/";
+
   const brandBody = (
     <>
       <span className="shrink-0 text-sm font-bold tracking-tight text-primary">
@@ -108,8 +114,21 @@ export function SiteHeader({
       )}
       {...props}
     >
-      <div className="flex min-h-11 items-center justify-between gap-4 px-4 sm:gap-6 sm:px-6 lg:gap-8 lg:px-8">
-        {brand}
+      <div className="flex min-h-11 items-center justify-between gap-4 px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
+        <div className="flex min-w-0 items-center gap-1">
+          <a
+            href={homeHref}
+            aria-label="Home"
+            className={buttonVariants({
+              className: "text-muted-foreground hover:text-foreground",
+              size: "icon-lg",
+              variant: "ghost",
+            })}
+          >
+            <Home aria-hidden="true" />
+          </a>
+          {brand}
+        </div>
 
         <nav className="flex shrink-0 items-center gap-1" aria-label={navLabel}>
           {children}
