@@ -1,6 +1,7 @@
 import type { ListSummary } from "@jfa.dev/common/lists";
+import { useHotkeys } from "@tanstack/react-hotkeys";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { KewekeHeader } from "@/app/components/keweke-header";
@@ -113,6 +114,19 @@ function EmptyState() {
       setIsCreating(false);
     }
   };
+
+  useHotkeys(
+    useMemo(
+      () =>
+        lists.slice(0, 9).map((list, index) => ({
+          hotkey: { key: `${index + 1}`, mod: true, shift: true },
+          callback: () =>
+            void navigate({ to: "/$listId", params: { listId: list.alias ?? list.id } }),
+        })),
+      [lists, navigate],
+    ),
+    { enabled: !isLoading && lists.length > 0 },
+  );
 
   return (
     <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">

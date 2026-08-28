@@ -13,6 +13,8 @@ import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-tab
 import { ChevronRight, Cloud, House, List, ListChecks, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 
+import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+
 const listsTableFeatures = tableFeatures({});
 
 /**
@@ -47,6 +49,28 @@ function createListsColumns({
   onRemove,
 }: Omit<ListsCatalogProps, "lists">) {
   return listsColumnHelper.columns([
+    listsColumnHelper.display({
+      id: "order",
+      header: "#",
+      cell: ({ row }) => {
+        const index = row.index;
+        if (index >= 9) {
+          return (
+            <span className="font-mono text-[11px] text-muted-foreground">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+          );
+        }
+        return (
+          <span className="inline-flex items-center gap-1.5">
+            <span className="font-mono text-[11px] text-muted-foreground">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <HotkeyKbd hotkey={`Mod+Shift+${index + 1}`} />
+          </span>
+        );
+      },
+    }),
     listsColumnHelper.display({
       id: "list",
       header: "List",
@@ -205,7 +229,7 @@ function MobileListsList({
 }: ListsCatalogProps) {
   return (
     <ul className="divide-y divide-border md:hidden">
-      {lists.map((list) => {
+      {lists.map((list, index) => {
         const isForgetOnly = list.backend === "remote" && list.remoteRole !== "owner";
         const isConfirming = confirmingListId === list.id;
         const isDeleting = deletingListId === list.id;
@@ -218,6 +242,10 @@ function MobileListsList({
                 params={{ listId: list.alias ?? list.id }}
                 to="/$listId"
               >
+                <span className="hidden items-center gap-1.5 font-mono text-[10px] text-muted-foreground sm:inline-flex">
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  {index < 9 ? <HotkeyKbd hotkey={`Mod+Shift+${index + 1}`} /> : null}
+                </span>
                 <BackendIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-serif text-base font-semibold tracking-tight group-hover:text-primary">

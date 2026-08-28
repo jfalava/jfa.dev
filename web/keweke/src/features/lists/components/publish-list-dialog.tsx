@@ -37,7 +37,7 @@ export function PublishListDialog({
         >
           <div className="border-b border-border px-4 py-4">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="text-[10px] tracking-[0.12em] text-primary uppercase">
+              <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
                 publish to remote
               </p>
               <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -56,7 +56,9 @@ export function PublishListDialog({
             </p>
 
             <div className="space-y-2 border border-border bg-muted/40 p-3 text-[11px]">
-              <p className="tracking-widest text-muted-foreground uppercase">public addresses</p>
+              <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+                public addresses
+              </p>
               <div className="flex gap-3">
                 <span className="w-12 shrink-0 text-muted-foreground uppercase">id</span>
                 <span className="min-w-0 font-mono break-all text-primary">{listId}</span>

@@ -128,7 +128,7 @@ export function UserDialog({
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-4">
           <section className="space-y-3" aria-labelledby="create-user-heading">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
+              <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
                 create a user
               </p>
               <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -146,7 +146,7 @@ export function UserDialog({
                 <div className="min-w-0 flex-1">
                   <Input
                     autoComplete="nickname"
-                    className="mt-1.5 h-10 font-serif text-base sm:text-sm"
+                    className="mt-1.5 h-8 font-serif text-sm"
                     disabled={!identity || isSaving}
                     id="user-username"
                     maxLength={48}
@@ -159,8 +159,9 @@ export function UserDialog({
                   />
                 </div>
                 <Button
-                  className="h-10 min-w-24 px-5 text-sm"
+                  className="min-w-24"
                   isDisabled={!identity || isSaving}
+                  size="lg"
                   type="submit"
                 >
                   {isSaving ? "Creating…" : "Create"}
@@ -174,7 +175,7 @@ export function UserDialog({
             <section className="space-y-3" aria-labelledby="pair-user-heading">
               <OrDivider />
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
+                <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
                   pair a user
                 </p>
                 <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
@@ -194,18 +195,19 @@ export function UserDialog({
               <div className="flex flex-col items-stretch gap-3">
                 {passkeyAvailable ? (
                   <Button
-                    className="h-10 gap-1.5 px-5 text-sm"
                     isDisabled={isAdoptingPasskey}
                     onPress={() => void adoptWithPasskey()}
+                    size="lg"
                   >
                     {isAdoptingPasskey ? "Waiting…" : "Pair with passkey"}
                   </Button>
                 ) : null}
                 {passkeyAvailable ? <OrDivider size="small" /> : null}
                 <Button
-                  className="h-10 min-w-24 px-5 text-sm"
+                  className="min-w-24"
                   isDisabled={isStartingPairing}
                   onPress={() => void startPairing()}
+                  size="lg"
                 >
                   {isStartingPairing ? "Creating…" : "Show code"}
                 </Button>
@@ -232,7 +234,12 @@ export function UserDialog({
                             : "Checking status…"}
                   </p>
                   {pairingStatus?.status === "approved" ? (
-                    <Button className="mt-3" isDisabled={isAdopting} onPress={() => void adopt()}>
+                    <Button
+                      className="mt-3"
+                      isDisabled={isAdopting}
+                      onPress={() => void adopt()}
+                      size="sm"
+                    >
                       {isAdopting ? "Saving…" : "Use this username"}
                     </Button>
                   ) : null}
