@@ -187,7 +187,7 @@ function NowPlayingWidget() {
     return (
       <div className="flex items-center gap-2 rounded-lg border border-dashed bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
         <span className="size-2 shrink-0 rounded-full bg-muted-foreground/30" aria-hidden />
-        <span className="font-mono text-xs tracking-wide">Not scrobbling — play something</span>
+        <span className="font-mono text-xs tracking-wide">Not scrobbling anything atm</span>
       </div>
     );
   }
