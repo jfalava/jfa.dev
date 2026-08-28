@@ -73,10 +73,7 @@ type SiteHead = {
  * @param mountPath - Normalized mount path with trailing slash, e.g. "/docs/".
  * @returns The head object consumed by TanStack Router's `head` function.
  */
-function buildHead(
-  options: z.output<typeof siteMetaOptionsSchema>,
-  mountPath: string,
-): SiteHead {
+function buildHead(options: z.output<typeof siteMetaOptionsSchema>, mountPath: string): SiteHead {
   const canonical = `${options.origin}${mountPath}`;
   const meta: SiteHeadTag[] = [
     { charSet: "utf-8" },

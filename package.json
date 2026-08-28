@@ -81,13 +81,13 @@
   },
   "type": "module",
   "scripts": {
-    "fetch:playlist": "bun run scripts/fetch-apple-playlist.ts",
-    "check:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects check",
+    "check:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects --filter @jfa.dev/playlist check",
     "deploy": "bun run --filter @jfa.dev/iac deploy",
     "dev": "bun run --filter @jfa.dev/iac dev",
-    "format:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects format",
+    "fetch:playlist": "bun run scripts/fetch-apple-playlist.ts",
+    "format:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects --filter @jfa.dev/playlist format",
     "iac:plan": "bun run --filter @jfa.dev/iac plan",
-    "lint:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects lint",
+    "lint:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects --filter @jfa.dev/playlist lint",
     "predeploy": "bun run lint:global && bun run test:global",
     "test:global": "bun run --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router test"
   },

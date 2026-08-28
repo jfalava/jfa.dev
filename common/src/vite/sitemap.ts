@@ -88,9 +88,7 @@ export function sitemap(options: SitemapOptions = {}): Plugin {
     if (robots) {
       result.robots = buildRobotsTxt(
         origin,
-        sitemapIndex
-          ? undefined
-          : { disallow, sitemap: `${origin}${mountPath}sitemap.xml` },
+        sitemapIndex ? undefined : { disallow, sitemap: `${origin}${mountPath}sitemap.xml` },
       );
     }
     return result;

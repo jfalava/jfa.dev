@@ -51,7 +51,7 @@ function RouteComponent() {
           <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter sm:text-6xl">
             The Knowledge Base: DOCS by JFA
           </h1>
-          <p className="text-muted-foreground text-sm">why do u need this lmao</p>
+          <p className="text-sm text-muted-foreground">why do u need this lmao</p>
         </div>
       </main>
     </DocsLandingView>
