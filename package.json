@@ -81,12 +81,13 @@
   },
   "type": "module",
   "scripts": {
-    "check:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects check",
+    "fetch:playlist": "bun run scripts/fetch-apple-playlist.ts",
+    "check:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects check",
     "deploy": "bun run --filter @jfa.dev/iac deploy",
     "dev": "bun run --filter @jfa.dev/iac dev",
-    "format:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects format",
+    "format:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects format",
     "iac:plan": "bun run --filter @jfa.dev/iac plan",
-    "lint:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects lint",
+    "lint:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlist --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects lint",
     "predeploy": "bun run lint:global && bun run test:global",
     "test:global": "bun run --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router test"
   },

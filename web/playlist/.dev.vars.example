@@ -1,0 +1,9 @@
+# Local bindings for `wrangler dev` / `alchemy dev` (read by the Vite cloudflare plugin).
+# Copy to `.dev.vars` and fill:
+#   cp .dev.vars.example .dev.vars
+#
+# Both values are server-only secrets — never exposed to the client.
+# LASTFM_API_KEY from https://www.last.fm/api/account/create (free, 5 req/s)
+LASTFM_API_KEY=""
+# Last.fm username is also a secret (used only in server function `getNowPlaying`)
+LASTFM_USER=""

@@ -1,0 +1,43 @@
+{
+  "name": "@jfa.dev/playlist",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "check": "vp check --fix",
+    "dev": "bun run --cwd ../../iac dev",
+    "dev:app": "bun run --cwd ../../iac dev",
+    "format": "vp fmt",
+    "lint": "vp lint",
+    "preview": "vp preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jfa.dev/common": "workspace:*",
+    "@tailwindcss/vite": "catalog:styling",
+    "@tanstack/react-query": "catalog:tanstack",
+    "@tanstack/react-router": "catalog:tanstack",
+    "@tanstack/react-start": "catalog:tanstack",
+    "@tanstack/react-table": "catalog:tanstack",
+    "class-variance-authority": "catalog:styling",
+    "clsx": "catalog:styling",
+    "lucide-react": "catalog:ui",
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "tailwind-merge": "catalog:styling",
+    "tailwindcss": "catalog:styling",
+    "tw-animate-css": "catalog:styling",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:types",
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/react-dom": "catalog:types",
+    "@vitejs/plugin-react": "catalog:build",
+    "oxc-transform-react": "catalog:build",
+    "typescript": "catalog:build",
+    "vite": "catalog:build",
+    "vite-plus": "catalog:build"
+  }
+}

@@ -13,6 +13,7 @@ export type Bindings = {
   KEWEKE: WorkerFetcher;
   BRANDING: WorkerFetcher;
   DOCS: WorkerFetcher;
+  PLAYLIST: WorkerFetcher;
   ROUTES: string;
   ASSET_PREFIXES?: string;
   COUNTRY_BLOCKLIST?: CountryBlocklistBinding;

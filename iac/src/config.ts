@@ -30,6 +30,7 @@ export type StageConfig = {
     kewekeMounted: WorkerConfig;
     brandingMounted: WorkerConfig;
     docsMounted: WorkerConfig;
+    playlistMounted: WorkerConfig;
     redirects: WorkerConfig;
   };
 };
@@ -66,6 +67,12 @@ const routeDefinitions = {
     {
       binding: "DOCS",
       path: "/docs",
+      preload: true,
+      preserveMount: true,
+    },
+    {
+      binding: "PLAYLIST",
+      path: "/playlist",
       preload: true,
       preserveMount: true,
     },
@@ -217,6 +224,13 @@ export function getStageConfig(stage: string | undefined): StageConfig {
         workersDev: normalizedStage !== "production",
         basePath: "/docs",
         assetBasePath: "/docs",
+      }),
+      playlistMounted: worker("jfa-dev-playlist", normalizedStage, {
+        compatibilityDate: compatibilityDate(normalizedStage, "2026-08-13"),
+        observability: true,
+        workersDev: normalizedStage !== "production",
+        basePath: "/playlist",
+        assetBasePath: "/playlist",
       }),
       redirects: worker("jfa-redirects", normalizedStage, {
         compatibilityDate: "2026-01-01",

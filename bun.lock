@@ -294,6 +294,37 @@
         "vitest": "catalog:build",
       },
     },
+    "web/playlist": {
+      "name": "@jfa.dev/playlist",
+      "dependencies": {
+        "@jfa.dev/common": "workspace:*",
+        "@tailwindcss/vite": "catalog:styling",
+        "@tanstack/react-query": "catalog:tanstack",
+        "@tanstack/react-router": "catalog:tanstack",
+        "@tanstack/react-start": "catalog:tanstack",
+        "@tanstack/react-table": "catalog:tanstack",
+        "class-variance-authority": "catalog:styling",
+        "clsx": "catalog:styling",
+        "lucide-react": "catalog:ui",
+        "react": "catalog:react",
+        "react-dom": "catalog:react",
+        "tailwind-merge": "catalog:styling",
+        "tailwindcss": "catalog:styling",
+        "tw-animate-css": "catalog:styling",
+        "zod": "4.4.3",
+      },
+      "devDependencies": {
+        "@cloudflare/workers-types": "catalog:types",
+        "@types/node": "catalog:types",
+        "@types/react": "catalog:types",
+        "@types/react-dom": "catalog:types",
+        "@vitejs/plugin-react": "catalog:build",
+        "oxc-transform-react": "catalog:build",
+        "typescript": "catalog:build",
+        "vite": "catalog:build",
+        "vite-plus": "catalog:build",
+      },
+    },
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@0.3.0",
@@ -718,6 +749,8 @@
     "@jfa.dev/landing": ["@jfa.dev/landing@workspace:web/landing"],
 
     "@jfa.dev/opengraph": ["@jfa.dev/opengraph@workspace:web/opengraph"],
+
+    "@jfa.dev/playlist": ["@jfa.dev/playlist@workspace:web/playlist"],
 
     "@jfa.dev/redirects": ["@jfa.dev/redirects@workspace:function/redirects"],
 

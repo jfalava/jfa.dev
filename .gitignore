@@ -7,3 +7,4 @@ node_modules
 .env
 .amp/portals/
 dist/
+.dev.vars
