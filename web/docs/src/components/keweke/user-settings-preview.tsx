@@ -32,6 +32,8 @@ type MockRow = {
   actionVariant?: "default" | "outline" | "destructive";
 };
 
+const SETTINGS_ACTION_COLUMN_WIDTH = 192;
+
 const mockRows: MockRow[] = [
   {
     eyebrow: "username",
@@ -93,7 +95,10 @@ function SettingsTableMock() {
           <TableRow className="hover:bg-transparent">
             <TableHead className="w-56 sm:w-72">Setting</TableHead>
             <TableHead>Details</TableHead>
-            <TableHead className="hidden sm:table-cell" />
+            <TableHead
+              className="hidden sm:table-cell"
+              style={{ width: SETTINGS_ACTION_COLUMN_WIDTH }}
+            />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -126,11 +131,16 @@ function SettingsTableMock() {
                   ) : null}
                 </div>
               </TableCell>
-              <TableCell className="hidden py-6 align-top sm:table-cell">
+              <TableCell
+                className="hidden py-6 align-top sm:table-cell"
+                style={{ width: SETTINGS_ACTION_COLUMN_WIDTH }}
+              >
                 {row.actionLabel ? (
-                  <Button size="sm" variant={row.actionVariant ?? "default"}>
-                    {row.actionLabel}
-                  </Button>
+                  <div className="w-full [&_button]:w-full">
+                    <Button size="sm" variant={row.actionVariant ?? "default"}>
+                      {row.actionLabel}
+                    </Button>
+                  </div>
                 ) : null}
               </TableCell>
             </TableRow>

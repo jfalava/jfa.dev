@@ -104,3 +104,14 @@ code {
   font-family:
     "Google Sans Code", source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+@layer components {
+  /* Keep custom previews independent from the document heading treatment. */
+  .prose :where(h2, h3, h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-family: var(--font-sans);
+    line-height: 0.95;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+  }
+}
