@@ -39,7 +39,7 @@ export function ListTitleEditor({
 
   return (
     <form
-      className="mt-1 flex w-full max-w-none items-end gap-1.5"
+      className="mt-1 flex w-full max-w-none items-stretch gap-1.5"
       onSubmit={(event) => {
         event.preventDefault();
         const nextTitle = value.trim();
@@ -61,24 +61,26 @@ export function ListTitleEditor({
       <Input
         id="list-title"
         aria-label="List title"
-        className="h-14 min-w-0 flex-1 py-1 font-serif text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:h-20 sm:min-w-64 sm:text-6xl md:text-6xl"
+        className="h-auto min-h-14 min-w-0 flex-1 py-1 font-serif text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:min-h-20 sm:min-w-64 sm:text-6xl md:text-6xl"
         disabled={isSaving}
         maxLength={160}
         onChange={(event) => setValue(event.target.value)}
         value={value}
       />
-      <Button isDisabled={isSaving} size="lg" type="submit">
-        {isSaving ? "Saving" : "Save"}
-      </Button>
-      <Button
-        isDisabled={isSaving}
-        onPress={() => setIsEditing(false)}
-        size="lg"
-        type="button"
-        variant="outline"
-      >
-        Cancel
-      </Button>
+      <div className="flex min-h-14 flex-col items-stretch justify-between gap-1.5 sm:min-h-20">
+        <Button isDisabled={isSaving} size="lg" type="submit">
+          {isSaving ? "Saving" : "Save"}
+        </Button>
+        <Button
+          isDisabled={isSaving}
+          onPress={() => setIsEditing(false)}
+          size="lg"
+          type="button"
+          variant="outline"
+        >
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 }
