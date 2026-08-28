@@ -52,6 +52,10 @@ export default defineConfig({
     ],
     rules: {
       "react/react-in-jsx-scope": "off",
+      "eslint/no-underscore-dangle": [
+        "error",
+        { allow: ["__JFA_SITE_HEAD__"] },
+      ],
       "typescript/no-explicit-any": "error",
       "typescript/no-unsafe-assignment": "error",
       "typescript/no-unsafe-call": "error",

@@ -1,3 +1,4 @@
+import { siteHead } from "@jfa.dev/common/site-head";
 import { Toaster } from "@jfa.dev/common/ui";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
@@ -7,21 +8,10 @@ import { appPath } from "@/app/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1, viewport-fit=cover",
-      },
-      {
-        name: "description",
-        content: "Yet another collaborative shopping list",
-      },
-      { title: "KEWEKE by JFA" },
-    ],
-    links: [{ rel: "stylesheet", href: appCss }],
-  }),
+  head: () =>
+    siteHead({
+      links: [{ rel: "stylesheet", href: appCss }],
+    }),
   notFoundComponent: () => (
     <div className="flex min-h-screen items-center justify-center p-6">
       <div className="text-center">

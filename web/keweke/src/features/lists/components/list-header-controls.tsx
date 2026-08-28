@@ -128,7 +128,7 @@ export function ListAlias({ alias, listId }: { alias: string | null; listId: str
       </span>
       <Button
         aria-label={isCopied ? "Copied list URL" : `Copy full ${label} URL`}
-        className="size-7 shrink-0 p-0 text-primary relative -top-0.5"
+        className="relative -top-0.5 size-7 shrink-0 p-0 text-primary"
         onPress={() => void copyUrl()}
         size="icon"
         variant="ghost"

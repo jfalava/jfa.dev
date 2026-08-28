@@ -1,3 +1,4 @@
+import { siteHead } from "@jfa.dev/common/site-head";
 import type { QueryClient } from "@tanstack/react-query";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import type { ReactNode } from "react";
@@ -13,26 +14,10 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1, viewport-fit=cover",
-      },
-      {
-        name: "description",
-        content: "Create OpenGraph images from scratch with a layer-based editor.",
-      },
-      { title: "OpenGraph by JFA" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
+  head: () =>
+    siteHead({
+      links: [{ rel: "stylesheet", href: appCss }],
+    }),
   notFoundComponent: () => (
     <div className="flex min-h-dvh items-center justify-center bg-background p-6 text-foreground">
       <div className="text-center">

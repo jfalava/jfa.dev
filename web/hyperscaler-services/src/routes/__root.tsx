@@ -1,3 +1,4 @@
+import { siteHead } from "@jfa.dev/common/site-head";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 /// <reference types="vite/client" />
@@ -19,44 +20,10 @@ const queryClient = new QueryClient({
 });
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        name: "description",
-        content:
-          "An open-source directory of equivalent services across AWS, Azure, GCP, Oracle Cloud and Cloudflare",
-      },
-      {
-        title: "Hyperscaler Services",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      {
-        rel: "manifest",
-        href: appPath("/manifest.json"),
-      },
-      {
-        rel: "icon",
-        href: appPath("/favicon.ico"),
-        type: "image/x-icon",
-      },
-      {
-        rel: "apple-touch-icon",
-        href: appPath("/apple-touch-icon.png"),
-      },
-    ],
-  }),
+  head: () =>
+    siteHead({
+      links: [{ rel: "stylesheet", href: appCss }],
+    }),
   notFoundComponent: () => (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="text-center">

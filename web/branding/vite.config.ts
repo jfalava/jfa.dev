@@ -1,7 +1,8 @@
 import path from "path";
 
-import tailwindcss from "@tailwindcss/vite";
+import { siteMeta } from "@jfa.dev/common/vite/site-meta";
 import { sitemap } from "@jfa.dev/common/vite/sitemap";
+import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
@@ -15,6 +16,11 @@ export default defineConfig({
     tanstackStart(),
     viteReact({ compiler: true }),
     sitemap(),
+    siteMeta({
+      title: "Branding by JFA",
+      description: "Single-page showcase of every component in the JFA design system",
+      viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
+    }),
   ],
   resolve: {
     alias: {

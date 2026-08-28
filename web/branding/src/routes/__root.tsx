@@ -1,3 +1,4 @@
+import { siteHead } from "@jfa.dev/common/site-head";
 import { SiteHeader, Toaster } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
@@ -9,21 +10,10 @@ import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1, viewport-fit=cover",
-      },
-      {
-        name: "description",
-        content: "Single-page showcase of every component in the JFA design system",
-      },
-      { title: "Branding by JFA" },
-    ],
-    links: [{ rel: "stylesheet", href: appCss }],
-  }),
+  head: () =>
+    siteHead({
+      links: [{ rel: "stylesheet", href: appCss }],
+    }),
   component: RootComponent,
 });
 

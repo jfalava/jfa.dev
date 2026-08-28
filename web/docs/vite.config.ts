@@ -1,7 +1,8 @@
 import path from "path";
 
-import tailwindcss from "@tailwindcss/vite";
+import { siteMeta } from "@jfa.dev/common/vite/site-meta";
 import { sitemap } from "@jfa.dev/common/vite/sitemap";
+import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { fumadocsMdx } from "fumadocs-mdx/vite";
@@ -24,6 +25,10 @@ export default defineConfig({
     tanstackStart(),
     viteReact({ compiler: true }),
     sitemap({ contentDir: "content/docs" }),
+    siteMeta({
+      title: "DOCS by JFA",
+      description: "Documentation, notes, and guides by Jorge Fernando Álava",
+    }),
   ],
   optimizeDeps: {
     exclude: ["cloudflare:workers"],

@@ -1,5 +1,6 @@
 /* oxlint-disable react/no-danger -- inline theme script/style required to prevent FOUC before hydration */
 import { ThemeProvider } from "@jfa.dev/common/hooks/use-theme";
+import { siteHead } from "@jfa.dev/common/site-head";
 import appCss from "@styles/globals.css?url";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { SidebarProvider } from "fumadocs-ui/components/sidebar/base";
@@ -47,13 +48,7 @@ html.dark #nd-sidebar{--color-fd-card:oklch(0.18 0 0);--color-fd-background:oklc
 `;
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      {
-        title: "DOCS by JFA",
-      },
-    ],
-  }),
+  head: () => siteHead(),
 
   shellComponent: RootDocument,
 });
@@ -62,8 +57,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <style dangerouslySetInnerHTML={{ __html: criticalSidebarCss }} />
         <link rel="stylesheet" href={appCss} />

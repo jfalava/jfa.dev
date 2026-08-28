@@ -118,7 +118,22 @@ describe("buildRobotsTxt", () => {
   test("allows all agents and points at the sitemap index", () => {
     const txt = buildRobotsTxt("https://jfa.dev");
     expect(txt).toContain("User-agent: *");
-    expect(txt).toContain("Allow: /");
+    expect(txt).toContain("Disallow:");
     expect(txt).toContain("Sitemap: https://jfa.dev/sitemap_index.xml");
+  });
+
+  test("points at the app sitemap when provided", () => {
+    const txt = buildRobotsTxt("https://jfa.dev", {
+      sitemap: "https://jfa.dev/keweke/sitemap.xml",
+    });
+    expect(txt).toContain("Sitemap: https://jfa.dev/keweke/sitemap.xml");
+  });
+
+  test("emits one Disallow line per disallowed path", () => {
+    const txt = buildRobotsTxt("https://jfa.dev", {
+      disallow: ["/user", "/admin"],
+    });
+    expect(txt).toContain("Disallow: /user");
+    expect(txt).toContain("Disallow: /admin");
   });
 });

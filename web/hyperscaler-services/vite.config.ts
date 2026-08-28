@@ -1,8 +1,9 @@
 import path from "path";
 
-import tailwindcss from "@tailwindcss/vite";
 import { pwaManifest } from "@jfa.dev/common/vite/pwa-manifest";
+import { siteMeta } from "@jfa.dev/common/vite/site-meta";
 import { sitemap } from "@jfa.dev/common/vite/sitemap";
+import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
@@ -26,6 +27,12 @@ export default defineConfig({
       name: "Hyperscaler Services by JFA",
       shortName: "Hyperscaler Services",
       description: "Browse similar services between cloud hyperscalers",
+    }),
+    siteMeta({
+      title: "Hyperscaler Services",
+      description:
+        "An open-source directory of equivalent services across AWS, Azure, GCP, Oracle Cloud and Cloudflare",
+      pwa: true,
     }),
     sitemap(),
   ],

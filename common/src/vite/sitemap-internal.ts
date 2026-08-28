@@ -180,6 +180,19 @@ export function buildSitemapIndex(origin: string, mountPath: string, siblings: s
 }
 
 /** Builds the robots.txt pointing crawlers at the sitemap index. */
-export function buildRobotsTxt(origin: string): string {
-  return ["User-agent: *", "Allow: /", "", `Sitemap: ${origin}/sitemap_index.xml`, ""].join("\n");
+export function buildRobotsTxt(
+  origin: string,
+  options?: { disallow?: string[]; sitemap?: string },
+): string {
+  const disallow = options?.disallow ?? [];
+  const lines = ["User-agent: *"];
+  if (disallow.length > 0) {
+    for (const disallowedPath of disallow) {
+      lines.push(`Disallow: ${disallowedPath}`);
+    }
+  } else {
+    lines.push("Disallow:");
+  }
+  lines.push("", `Sitemap: ${options?.sitemap ?? `${origin}/sitemap_index.xml`}`, "");
+  return lines.join("\n");
 }

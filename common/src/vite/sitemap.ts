@@ -46,6 +46,10 @@ const sitemapOptionsSchema = z.object({
    * it. Only meaningful for the app mounted at `/`.
    */
   sitemapIndex: z.array(z.string()).optional(),
+  /** Emits `robots.txt` alongside the sitemap. Defaults to true. */
+  robots: z.boolean().default(true),
+  /** Paths to disallow in the generated `robots.txt`, e.g. ["/user"]. */
+  disallow: z.array(z.string()).default([]),
 });
 
 export type SitemapOptions = z.input<typeof sitemapOptionsSchema>;
@@ -66,7 +70,7 @@ type SitemapFiles = {
  * @returns Vite plugin emitting `sitemap.xml` (and optionally the index files) at the mount path.
  */
 export function sitemap(options: SitemapOptions = {}): Plugin {
-  const { origin, exclude, include, contentDir, sitemapIndex } =
+  const { origin, exclude, include, contentDir, sitemapIndex, robots, disallow } =
     sitemapOptionsSchema.parse(options);
 
   let mountPath = "/";
@@ -80,7 +84,14 @@ export function sitemap(options: SitemapOptions = {}): Plugin {
     };
     if (sitemapIndex) {
       result.index = buildSitemapIndex(origin, mountPath, sitemapIndex);
-      result.robots = buildRobotsTxt(origin);
+    }
+    if (robots) {
+      result.robots = buildRobotsTxt(
+        origin,
+        sitemapIndex
+          ? undefined
+          : { disallow, sitemap: `${origin}${mountPath}sitemap.xml` },
+      );
     }
     return result;
   };

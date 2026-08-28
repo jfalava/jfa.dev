@@ -31,6 +31,13 @@
       "import": "./src/identities.ts",
       "default": "./src/identities.ts"
     },
+    "./site-head": {
+      "workerd": "./src/site-head.ts",
+      "worker": "./src/site-head.ts",
+      "browser": "./src/site-head.ts",
+      "import": "./src/site-head.ts",
+      "default": "./src/site-head.ts"
+    },
     "./preferences": {
       "workerd": "./src/preferences.ts",
       "worker": "./src/preferences.ts",
@@ -45,6 +52,13 @@
       "browser": "./src/vite/pwa-manifest.ts",
       "import": "./src/vite/pwa-manifest.ts",
       "default": "./src/vite/pwa-manifest.ts"
+    },
+    "./vite/site-meta": {
+      "workerd": "./src/vite/site-meta.ts",
+      "worker": "./src/vite/site-meta.ts",
+      "browser": "./src/vite/site-meta.ts",
+      "import": "./src/vite/site-meta.ts",
+      "default": "./src/vite/site-meta.ts"
     },
     "./vite/sitemap": {
       "workerd": "./src/vite/sitemap.ts",

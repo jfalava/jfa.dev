@@ -105,8 +105,8 @@ export function OpenListCommand() {
         variant="ghost"
         className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
       >
-       <Search className="size-4"/>
-        <span className="sm:block hidden">Open list</span>
+        <Search className="size-4" />
+        <span className="hidden sm:block">Open list</span>
         <HotkeyKbd className="hidden sm:inline-flex" hotkey={OPEN_LIST_HOTKEY} />
       </Button>
       <ModalOverlay

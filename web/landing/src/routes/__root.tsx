@@ -1,3 +1,4 @@
+import { siteHead } from "@jfa.dev/common/site-head";
 import appCss from "@styles/globals.css?url";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 
@@ -6,43 +7,10 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { appPath } from "@/lib/site-paths";
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "Jorge Fernando Álava",
-      },
-      {
-        name: "theme-color",
-        content: "#4f46e5",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      {
-        rel: "manifest",
-        href: "/manifest.json",
-      },
-      {
-        rel: "icon",
-        href: "/favicon.ico",
-        type: "image/x-icon",
-      },
-      {
-        rel: "apple-touch-icon",
-        href: "/apple-touch-icon.png",
-      },
-    ],
-  }),
+  head: () =>
+    siteHead({
+      links: [{ rel: "stylesheet", href: appCss }],
+    }),
 
   shellComponent: RootDocument,
   notFoundComponent: NotFoundPage,
@@ -59,9 +27,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <ThemeProvider>{children}</ThemeProvider>
         <Scripts />
-        <a href="https://github.com/jfalava" className="sr-only" rel="me">
-          GitHub
-        </a>
       </body>
     </html>
   );
