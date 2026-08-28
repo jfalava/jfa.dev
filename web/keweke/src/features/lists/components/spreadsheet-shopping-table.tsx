@@ -1,5 +1,5 @@
 import type { ListItem } from "@jfa.dev/common/lists";
-import { Button, Checkbox, Input, TableCell } from "@jfa.dev/common/ui";
+import { Button, Checkbox, Input, Kbd, KbdGroup, TableCell } from "@jfa.dev/common/ui";
 import { useHotkey, useHotkeys } from "@tanstack/react-hotkeys";
 import { History, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent } from "react";
@@ -378,15 +378,23 @@ export function SpreadsheetShoppingTable({
           spreadsheet mode · edits save when you leave a row
         </p>
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] tracking-[0.06em] text-muted-foreground uppercase">
-          <span>
+          <span className="inline-flex items-center gap-1">
             <HotkeyKbd hotkey="Tab" /> next
           </span>
-          <span>↑↓ rows</span>
-          <span>↵ down</span>
-          <span>
+          <span className="inline-flex items-center gap-1">
+            <KbdGroup>
+              <Kbd>↑</Kbd>
+              <Kbd>↓</Kbd>
+            </KbdGroup>{" "}
+            rows
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Kbd>↵</Kbd> down
+          </span>
+          <span className="inline-flex items-center gap-1">
             <HotkeyKbd hotkey="Mod+Backspace" /> delete row
           </span>
-          <span>
+          <span className="inline-flex items-center gap-1">
             <HotkeyKbd hotkey="Escape" /> exit
           </span>
         </p>

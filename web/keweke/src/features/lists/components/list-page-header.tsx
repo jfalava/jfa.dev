@@ -77,7 +77,7 @@ export function ListPageHeader({
             <Input
               id="filter-items"
               aria-label="Search items"
-              className="w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
+              className="h-8 w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
               onChange={(event) => onFilterChange(event.target.value)}
               placeholder="Search items"
               value={filter}
@@ -98,9 +98,9 @@ export function ListPageHeader({
           <Button
             aria-label={isSpreadsheetMode ? "Exit spreadsheet mode" : "Enter spreadsheet mode"}
             aria-pressed={isSpreadsheetMode}
-            className="hidden shrink-0 md:inline-flex md:w-auto md:gap-1 md:px-2"
+            className="hidden shrink-0 md:inline-flex"
             onPress={() => onSpreadsheetModeChange(!isSpreadsheetMode)}
-            size="icon"
+            size="lg"
             variant={isSpreadsheetMode ? "default" : "ghost"}
           >
             <FileSpreadsheet aria-hidden="true" />
