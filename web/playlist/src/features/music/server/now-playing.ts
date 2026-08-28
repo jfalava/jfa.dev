@@ -1,12 +1,3 @@
-/* oxlint-disable anti-slop/no-unknown-parameters -- resolveSecret is the I/O boundary parser for SecretsStoreSecret|string */
-/* oxlint-disable anti-slop/no-unsafe-dictionary-type -- env is `Record<string, unknown>` from workerd or process.env */
-/* oxlint-disable anti-slop/no-runtime-typeof -- branching on SecretsStoreSecret vs string is the domain contract */
-/* oxlint-disable anti-slop/require-safety-comment-for-type-assertion -- SAFETY comments below cover each `as` */
-/* oxlint-disable anti-slop/no-chained-type-assertions -- workerd env + process.env narrow via `as unknown` */
-/* oxlint-disable typescript/no-base-to-string -- Redacted intentionally stringifies to "<redacted>" */
-/* oxlint-disable typescript/no-unnecessary-type-assertion -- narrow `unknown` env / record for `get` */
-/* oxlint-disable eslint/no-undef -- `process` is Node global available in workerd/Vite dev via `node` env */
-/* oxlint-disable eslint/curly -- minimal early-returns use single-line form for readability */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -68,87 +59,66 @@ function toTrack(track: LastfmTrack): NowPlayingTrack {
 // Secrets are injected via Alchemy Secrets Store. At runtime Cloudflare
 // exposes them as `SecretsStoreSecret` with an async `.get()` — but for
 // `alchemy dev` the values are seeded from `web/playlist/.dev.vars` via
-// `effect/Config`, and may appear as plain strings. Support both shapes so
-// no secret ever leaks to the client and local dev stays simple (edit
-// `.dev.vars`).
+// `effect/Config`, and may appear as plain strings. The environment record
+// is the I/O boundary: `lastfmEnvSchema` below decodes both shapes into
+// plain trimmed strings, and anything else (e.g. an unmaterialized Effect
+// `Redacted`) fails to parse and is treated as unavailable, so no secret
+// ever leaks to the client.
 
-async function resolveSecret(value: unknown): Promise<string> {
-  if (typeof value === "string") {
-    return value.trim();
-  }
-  if (
-    value !== null &&
-    typeof value === "object" &&
-    "get" in value &&
-    // SAFETY: `unknown` env record guaranteed to have `get` if `"get" in value` passed
-        typeof (value as { get: unknown }).get === "function"
-  ) {
-    try {
-      const raw = await (value as { get(): Promise<string> }).get();
-      return typeof raw === "string" ? raw.trim() : "";
-    } catch {
-      return "";
-    }
-  }
-  // Effect Redacted that wasn't materialized (shouldn't happen in prod)
-  // SAFETY: Redacted intentionally stringifies to "<redacted>" for availability check
-    if (
-    value !== null &&
-    typeof value === "object" &&
-    String(value).startsWith("<redacted")
-  ) {
-    return "";
-  }
-  return "";
-}
+const secretValueSchema = z.union([
+  z.string().transform((value) => value.trim()),
+  z
+    .object({
+      get: z.function({ output: z.promise(z.string()) }),
+    })
+    .transform(async (binding) => {
+      try {
+        return (await binding.get()).trim();
+      } catch {
+        return "";
+      }
+    }),
+]);
 
-const lastfmEnvSchema = z
-  .object({
-    LASTFM_API_KEY: z.unknown().optional(),
-    LASTFM_USER: z.unknown().optional(),
-  })
-  .passthrough();
+const lastfmEnvSchema = z.object({
+  LASTFM_API_KEY: secretValueSchema.optional(),
+  LASTFM_USER: secretValueSchema.optional(),
+});
 
-async function getServerEnv(): Promise<Record<string, unknown>> {
-  // Workerd (alchemy dev / prod): real `cloudflare:workers` env with SecretsStoreSecret
+async function loadServerEnv() {
+  // Workerd (alchemy dev / prod): the real `cloudflare:workers` env, whose
+  // secrets are Secrets Store bindings.
   try {
-    // @vite-ignore – `cloudflare:workers` only exists in workerd, not in plain Vite dev (5173)
-    const cw = (await import("cloudflare:workers")) as unknown as {
-      env: Record<string, unknown>;
-    };
-    if (cw?.env) {
-      return cw.env;
-    }
+    // @vite-ignore — `cloudflare:workers` only exists in workerd, not in plain Vite dev (5173)
+    return (await import("cloudflare:workers")).env;
   } catch {
-    // fall through to process.env
+    // Vite dev (5173) or any Node fallback: `process.env`, populated from
+    // `web/playlist/.dev.vars` via `iac/src/workers.ts:loadDevVarsForLocal`
+    // (alchemy dev) or from Vite's own `web/playlist/vite.config.ts` dev-vars loader.
+    return globalThis.process?.env ?? null;
   }
-  // Vite dev (5173) or any Node fallback: `process.env` populated from
-  // `web/playlist/.dev.vars` via `iac/src/workers.ts:loadDevVarsForLocal` (alchemy dev)
-  // or from Vite's own `web/playlist/vite.config.ts` dev-vars loader.
-  if (typeof process !== "undefined" && process.env) {
-    return process.env as unknown as Record<string, unknown>;
-  }
-  return {};
 }
 
 /**
- * Reads server-only Last.fm bindings. Both values are secrets — nothing is
- * exposed to the client (`createServerFn` runs only on the server).
- * Supports Secrets Store (`env.*.get()`) in prod and plain strings from
- * `.dev.vars` in `alchemy dev` / Vite dev.
+ * Reads server-only Last.fm bindings and decodes them to plain strings.
+ * Both values are secrets — nothing is exposed to the client
+ * (`createServerFn` runs only on the server). Supports Secrets Store
+ * (`env.*.get()`) in prod and plain strings from `.dev.vars` in
+ * `alchemy dev` / Vite dev.
  */
 async function readLastfmBindings(): Promise<{ apiKey: string; user: string }> {
-  const env = await getServerEnv();
-  // SAFETY: env is `Record<string, unknown>` from workerd or process.env; safeParse validates it
-  const parsed = lastfmEnvSchema.safeParse(env);
-  if (!parsed.success) {
-    return { apiKey: "", user: "" } as const;
+  const env = await loadServerEnv();
+  if (env === null) {
+    return { apiKey: "", user: "" };
   }
-  const [apiKey, user] = await Promise.all([
-    resolveSecret(parsed.data.LASTFM_API_KEY),
-    resolveSecret(parsed.data.LASTFM_USER),
-  ]);
-  return { apiKey, user } as const;
+  const parsed = await lastfmEnvSchema.safeParseAsync(env);
+  if (!parsed.success) {
+    return { apiKey: "", user: "" };
+  }
+  return {
+    apiKey: parsed.data.LASTFM_API_KEY ?? "",
+    user: parsed.data.LASTFM_USER ?? "",
+  };
 }
 
 export const getNowPlaying = createServerFn({ method: "GET" }).handler(

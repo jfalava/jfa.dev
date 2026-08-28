@@ -49,7 +49,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
             height={44}
             loading="lazy"
             decoding="async"
-            className="size-full aspect-square object-cover"
+            className="aspect-square size-full object-cover"
           />
         </a>
       ),
@@ -123,10 +123,14 @@ function NowPlayingWidget() {
   const status = nowPlaying?.status;
   const activeTrack =
     // SAFETY: narrowed by `status === "playing"` discriminated union check
-    status === "playing" ? (nowPlaying as Extract<NonNullable<typeof nowPlaying>, { status: "playing" }>).track : null;
+    status === "playing"
+      ? (nowPlaying as Extract<NonNullable<typeof nowPlaying>, { status: "playing" }>).track
+      : null;
   const recentTrack =
     // SAFETY: narrowed by `status === "recent"` discriminated union check
-    status === "recent" ? (nowPlaying as Extract<NonNullable<typeof nowPlaying>, { status: "recent" }>).track : null;
+    status === "recent"
+      ? (nowPlaying as Extract<NonNullable<typeof nowPlaying>, { status: "recent" }>).track
+      : null;
 
   const matched = activeTrack
     ? (twentySnapshot.tracks.find((t) => isNowPlayingMatch(t, activeTrack)) ?? null)
@@ -142,7 +146,9 @@ function NowPlayingWidget() {
   const durationMs = matched?.durationMs ?? null;
   const isPlaying = status === "playing" && activeTrack !== null;
 
-  const [elapsedMs, setElapsedMs] = useState<number>(() => (durationMs ? Math.floor(durationMs * 0.36) : 0));
+  const [elapsedMs, setElapsedMs] = useState<number>(() =>
+    durationMs ? Math.floor(durationMs * 0.36) : 0,
+  );
 
   useEffect(() => {
     if (durationMs) {
@@ -203,7 +209,7 @@ function NowPlayingWidget() {
             height={64}
             loading="lazy"
             decoding="async"
-            className="size-full aspect-square object-cover"
+            className="aspect-square size-full object-cover"
           />
         </TitleLink>
       ) : (
@@ -225,7 +231,7 @@ function NowPlayingWidget() {
         </div>
         <TitleLink
           {...(trackUrl ? { href: trackUrl, target: "_blank", rel: "noreferrer" } : {})}
-          className="mt-1 block truncate font-sans text-base font-semibold leading-tight text-foreground hover:underline"
+          className="mt-1 block truncate font-sans text-base leading-tight font-semibold text-foreground hover:underline"
         >
           {displayTitle}
         </TitleLink>
@@ -252,9 +258,11 @@ export function PlaylistHeader() {
 
   return (
     <header className="shrink-0 border-b border-border bg-background px-4 py-6 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8 margin-y-auto">
+      <div className="margin-y-auto flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">playlist</p>
+          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+            playlist
+          </p>
           <h1 id="playlist-heading" className={`mt-2 ${DISPLAY_TITLE_CLASS_NAME}`}>
             <a
               href={snapshot.sourceUrl}
@@ -270,7 +278,8 @@ export function PlaylistHeader() {
               {snapshot.subtitle} · {snapshot.trackCount} tracks
             </span>
             <span>
-              Updated <span className="font-mono">{new Date(snapshot.fetchedAt).toLocaleDateString()}</span>
+              Updated{" "}
+              <span className="font-mono">{new Date(snapshot.fetchedAt).toLocaleDateString()}</span>
             </span>
           </p>
         </div>
@@ -305,7 +314,7 @@ export function TwentyTracksTable() {
           <col className="w-[20%]" />
           <col className="w-[26%]" />
           <col className="w-20" />
-          <col className="w-[8rem]" />
+          <col className="w-32" />
         </colgroup>
         <thead className="bg-background">
           {table.getHeaderGroups().map((headerGroup) => (
