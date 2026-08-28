@@ -397,6 +397,12 @@ export function SpreadsheetShoppingTable({
           <span className="inline-flex items-center gap-1">
             <HotkeyKbd hotkey="Escape" /> exit
           </span>
+          <span className="inline-flex items-center gap-1">
+            <HotkeyKbd hotkey="F" /> search
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <HotkeyKbd hotkey="N" /> new
+          </span>
         </p>
       </div>
       <div className="w-full overflow-x-auto">
@@ -610,8 +616,8 @@ function SpreadsheetNewItemRow({
         <span className="font-mono text-[11px] font-semibold text-primary">+</span>
       </TableCell>
       <TableCell className="px-3 py-3">
-        <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-          new
+        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+          new <HotkeyKbd hotkey="N" />
         </span>
       </TableCell>
       <TableCell className="px-2 py-3">

@@ -4,6 +4,7 @@ import {
   type ListItem,
   type ListSnapshot,
 } from "@jfa.dev/common/lists";
+import { useHotkeys } from "@tanstack/react-hotkeys";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ import type { ItemEditDraft, NewItemDraft } from "@/features/lists/components/li
 import { ListPageHeader } from "@/features/lists/components/list-page-header";
 import { PublishListDialog } from "@/features/lists/components/publish-list-dialog";
 import { ShoppingTable } from "@/features/lists/components/shopping-table";
+import { NEW_SPREADSHEET_ROW_ID } from "@/features/lists/components/spreadsheet-mode";
 import {
   hasItemDraftErrors,
   validateItemDraft,
@@ -48,6 +50,9 @@ import { useRemoteListLiveSession } from "@/features/sync/hooks/use-remote-list-
 
 type HistoryTarget = { itemId: string; itemName: string };
 const EMPTY_ITEMS: ListItem[] = [];
+
+export const FOCUS_SEARCH_HOTKEY = "F";
+export const FOCUS_NEW_ITEM_HOTKEY = "N";
 
 export const Route = createFileRoute("/$listId")({
   beforeLoad: ({ params }) => {
@@ -125,6 +130,40 @@ function ListPage() {
       setIsSpreadsheetMode(isActive);
     },
     [isDesktop],
+  );
+
+  const focusSearchInput = useCallback((): void => {
+    const element = document.getElementById("filter-items");
+    if (element instanceof HTMLInputElement) {
+      element.focus();
+      element.select();
+    }
+  }, []);
+
+  const focusNewItemInput = useCallback((): void => {
+    const spreadsheetElement = document.querySelector<HTMLInputElement>(
+      `[data-spreadsheet-row-id="${NEW_SPREADSHEET_ROW_ID}"][data-spreadsheet-field="name"]`,
+    );
+    const candidates = Array.from(
+      document.querySelectorAll<HTMLInputElement>('input[aria-label="New item name"]'),
+    );
+    const visibleCandidates = candidates.filter(
+      (element) => element.offsetParent !== null && !element.disabled,
+    );
+    const visible = visibleCandidates[0] ?? spreadsheetElement;
+    const target = visible ?? candidates[0] ?? spreadsheetElement;
+    if (target) {
+      target.focus();
+      target.select();
+    }
+  }, []);
+
+  useHotkeys(
+    [
+      { hotkey: FOCUS_SEARCH_HOTKEY, callback: focusSearchInput },
+      { hotkey: FOCUS_NEW_ITEM_HOTKEY, callback: focusNewItemInput },
+    ],
+    { enabled: true },
   );
 
   useEffect(() => {

@@ -95,6 +95,17 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
                 the current row. Escape exits.
               </p>
             </div>
+
+            <div className="space-y-2 border border-border bg-muted/40 p-3">
+              <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                quick focus
+              </p>
+              <p className="text-[13px] leading-snug text-muted-foreground">
+                <HotkeyKbd hotkey="F" /> focuses search, <HotkeyKbd hotkey="N" /> jumps to the new
+                item name. Both work in list and spreadsheet mode and avoid browser shortcuts like
+                new tab or new window.
+              </p>
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 border-t border-border px-4 py-3">

@@ -2,6 +2,7 @@ import { Button, Input, TableCell } from "@jfa.dev/common/ui";
 import { Plus, Save, X } from "lucide-react";
 import type { KeyboardEvent } from "react";
 
+import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
 
 import {
@@ -301,8 +302,8 @@ function MobileNewItemRow({
     <tr className="border-b-2 border-primary/20 bg-primary/5 align-top">
       <TableCell className="px-2 py-3" colSpan={3}>
         <div className="flex flex-col gap-2">
-          <span className="font-mono text-[10px] font-semibold tracking-[0.08em] text-primary uppercase">
-            new
+          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-[0.08em] text-primary uppercase">
+            new <HotkeyKbd hotkey="N" />
           </span>
           <label className="flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">

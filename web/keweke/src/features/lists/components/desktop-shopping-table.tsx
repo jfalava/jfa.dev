@@ -2,6 +2,7 @@ import { Button, Input, TableCell } from "@jfa.dev/common/ui";
 import { Plus } from "lucide-react";
 import type { KeyboardEvent } from "react";
 
+import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
 
 import { ItemFieldError, NewQuantityStepper } from "./list-item-elements";
@@ -26,12 +27,13 @@ export function DesktopNewItemRow({
         <span className="font-mono text-[11px] font-semibold text-primary">+</span>
       </TableCell>
       <TableCell className="px-3 py-3">
-        <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-          new
+        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+          new <HotkeyKbd hotkey="N" />
         </span>
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
+          id="new-item-desktop"
           aria-label="New item name"
           aria-describedby={errors.name ? "new-item-name-error" : undefined}
           aria-invalid={errors.name ? true : undefined}

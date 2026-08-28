@@ -7,6 +7,8 @@ import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 import { ListAlias, ListTitleEditor } from "./list-header-controls";
 
 export const SPREADSHEET_MODE_HOTKEY = "Mod+Shift+E";
+export const FOCUS_SEARCH_HOTKEY = "F";
+export const FOCUS_NEW_ITEM_HOTKEY = "N";
 
 export type ListPageHeaderProps = {
   activeCount: number;
@@ -77,11 +79,14 @@ export function ListPageHeader({
             <Input
               id="filter-items"
               aria-label="Search items"
-              className="h-8 w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
+              className="h-8 w-full max-w-none pr-10 pl-10 font-serif text-base sm:text-[11px]"
               onChange={(event) => onFilterChange(event.target.value)}
               placeholder="Search items"
               value={filter}
             />
+            <span className="pointer-events-none absolute top-1/2 right-2 hidden -translate-y-1/2 sm:inline-flex">
+              <HotkeyKbd hotkey={FOCUS_SEARCH_HOTKEY} />
+            </span>
           </div>
           {isLiveDropped ? (
             <Button
