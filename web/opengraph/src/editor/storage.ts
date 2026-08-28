@@ -1,4 +1,5 @@
 import DexieDatabase, { type EntityTable } from "dexie";
+import * as Schema from "effect/Schema";
 
 import {
   createId,
@@ -122,7 +123,7 @@ export function createFontMeta(file: File, options: FontUploadOptions): FontMeta
     throw new Error("Choose a WOFF2, WOFF, TTF, or OTF font file.");
   }
 
-  return fontMetaSchema.parse({
+  return Schema.decodeUnknownSync(fontMetaSchema)({
     ...options,
     id: createId("font"),
     mime,
@@ -168,7 +169,7 @@ async function readImageDimensions(file: File): Promise<{ height: number; width:
 
 export async function loadProject(): Promise<OgProject | null> {
   const record = await editorDatabase.projects.get(PROJECT_ID);
-  return record === undefined ? null : projectSchema.parse(record.project);
+  return record === undefined ? null : Schema.decodeUnknownSync(projectSchema)(record.project);
 }
 
 export async function saveProject(project: OgProject): Promise<void> {
@@ -224,7 +225,7 @@ export function saveTabsMeta(meta: TabsMeta): void {
 export async function loadAllProjects(): Promise<OgProject[]> {
   const records = await editorDatabase.projects.toArray();
   // Filter out legacy duplicate if we have real tabs
-  return records.map((r) => projectSchema.parse(r.project));
+  return records.map((r) => Schema.decodeUnknownSync(projectSchema)(r.project));
 }
 
 export async function saveAllProjects(projects: readonly OgProject[]): Promise<void> {
@@ -310,7 +311,7 @@ export async function saveFontAsset(file: File, font: FontMeta): Promise<void> {
     throw new Error("Choose a WOFF2, WOFF, TTF, or OTF font file.");
   }
   await editorDatabase.fonts.put({
-    ...fontMetaSchema.parse(font),
+    ...Schema.decodeUnknownSync(fontMetaSchema)(font),
     blob: file,
     createdAt: Date.now(),
   });

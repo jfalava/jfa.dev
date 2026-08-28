@@ -1,6 +1,8 @@
 import { listIdSchema } from "@jfa.dev/common/lists";
 import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
 import { env } from "cloudflare:workers";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
 
 export { KewekeList } from "./features/lists/server/keweke-list";
 export { KewekeAliasDirectory } from "./features/lists/server/keweke-aliases";
@@ -20,8 +22,10 @@ function getLiveListId(request: Request): string | null {
   }
 
   try {
-    const result = listIdSchema.safeParse(decodeURIComponent(segments[lastIndex - 1] ?? ""));
-    return result.success ? result.data : null;
+    const result = Schema.decodeUnknownResult(listIdSchema)(
+      decodeURIComponent(segments[lastIndex - 1] ?? ""),
+    );
+    return Result.isSuccess(result) ? result.success : null;
   } catch {
     return null;
   }

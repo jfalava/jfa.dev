@@ -21,6 +21,7 @@ import {
 } from "@jfa.dev/common/lists";
 import { runInDurableObject } from "cloudflare:test";
 import { env } from "cloudflare:workers";
+import * as Schema from "effect/Schema";
 import { describe, expect, it } from "vitest";
 
 import { KewekeList } from "../src/features/lists/server/keweke-list";
@@ -349,7 +350,7 @@ describe("public-key list authorization", () => {
 
     const socket = response.webSocket;
     socket.accept();
-    const initial = listLiveMessageSchema.parse(await nextLiveMessage(socket));
+    const initial = Schema.decodeUnknownSync(listLiveMessageSchema)(await nextLiveMessage(socket));
     expect(initial).toEqual({ type: "snapshot", snapshot });
 
     const nextMessage = nextLiveMessage(socket);
@@ -362,7 +363,7 @@ describe("public-key list authorization", () => {
       }),
     );
     expect(applied.status).toBe("ok");
-    const streamed = listLiveMessageSchema.parse(await nextMessage);
+    const streamed = Schema.decodeUnknownSync(listLiveMessageSchema)(await nextMessage);
     expect(streamed.type).toBe("mutation");
     if (streamed.type === "mutation") {
       expect(streamed.mutation.baseRevision).toBe(snapshot.revision);

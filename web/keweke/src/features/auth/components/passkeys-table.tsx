@@ -9,7 +9,7 @@ type PasskeyRow = {
   id: string;
   index: number;
   synced: boolean;
-  transports: string[];
+  transports: readonly string[];
 };
 
 const passkeysTableFeatures = tableFeatures({});

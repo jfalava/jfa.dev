@@ -1,8 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+import * as Effect from "effect/Effect";
+import * as Schema from "effect/Schema";
 import type { Plugin } from "vite";
-import { z } from "zod";
 
 /**
  * Shared PWA web app manifest and icon set generator for mounted workers.
@@ -39,25 +40,29 @@ const MANIFEST_ICONS = [
   },
 ];
 
-const pwaManifestOptionsSchema = z.object({
+const pwaManifestOptionsSchema = Schema.Struct({
   /** Full application name, e.g. "KEWEKE by JFA". */
-  name: z.string().min(1),
+  name: Schema.String.check(Schema.isMinLength(1)),
   /** Short name shown under the home screen icon. */
-  shortName: z.string().min(1),
+  shortName: Schema.String.check(Schema.isMinLength(1)),
   /** Application description. */
-  description: z.string().optional(),
+  description: Schema.optional(Schema.String),
   /** Theme and background color; both are set to the same value. */
-  themeColor: z.string().default(DEFAULT_THEME_COLOR),
+  themeColor: Schema.String.pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed(DEFAULT_THEME_COLOR)),
+  ),
   /** Display mode. */
-  display: z.enum(["fullscreen", "standalone", "minimal-ui", "browser"]).default("standalone"),
+  display: Schema.Literals(["fullscreen", "standalone", "minimal-ui", "browser"]).pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed("standalone")),
+  ),
   /**
    * Directory containing the icon set to emit. Defaults to the canonical set
    * in `common/src/vite/pwa-assets`, resolved relative to the app root.
    */
-  iconsDir: z.string().optional(),
+  iconsDir: Schema.optional(Schema.String),
 });
 
-export type PwaManifestOptions = z.input<typeof pwaManifestOptionsSchema>;
+export type PwaManifestOptions = Schema.Codec.Encoded<typeof pwaManifestOptionsSchema>;
 
 type WebAppManifest = {
   name: string;
@@ -107,7 +112,7 @@ function resolveIconsDir(configRoot: string, iconsDir?: string): string {
  */
 export function pwaManifest(options: PwaManifestOptions): Plugin {
   const { name, shortName, description, themeColor, display, iconsDir } =
-    pwaManifestOptionsSchema.parse(options);
+    Schema.decodeUnknownSync(pwaManifestOptionsSchema)(options);
 
   let mountPath = "/";
   let assetsDir = "";

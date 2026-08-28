@@ -1,5 +1,10 @@
-import { listSnapshotSchema, type ListItemHistoryPage } from "@jfa.dev/common/lists";
+import {
+  listSnapshotSchema,
+  type ListItemHistoryPage,
+  type ListSnapshot,
+} from "@jfa.dev/common/lists";
 import { env } from "cloudflare:workers";
+import * as Schema from "effect/Schema";
 
 const ALIAS_DIRECTORY_NAME = "directory";
 
@@ -11,11 +16,11 @@ export async function readRemoteList(listId: string) {
 
   const alias = await env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME).getAlias(listId);
   return resolveActorNames(
-    listSnapshotSchema.parse({ ...snapshot, alias: alias ?? snapshot.alias }),
+    Schema.decodeUnknownSync(listSnapshotSchema)({ ...snapshot, alias: alias ?? snapshot.alias }),
   );
 }
 
-export async function resolveActorNames(snapshot: ReturnType<typeof listSnapshotSchema.parse>) {
+export async function resolveActorNames(snapshot: ListSnapshot) {
   const userIds = new Set<string>();
   for (const item of snapshot.items) {
     if (item.createdBy) {
@@ -52,7 +57,7 @@ export async function resolveActorNames(snapshot: ReturnType<typeof listSnapshot
   const currentIdentity = (identity: { id: string; username: string | null } | null) =>
     identity ? { ...identity, username: usernames.get(identity.id) ?? identity.username } : null;
 
-  return listSnapshotSchema.parse({
+  return Schema.decodeUnknownSync(listSnapshotSchema)({
     ...snapshot,
     items: snapshot.items.map((item) => ({
       ...item,

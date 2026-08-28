@@ -16,6 +16,8 @@ import {
 } from "@jfa.dev/common/identities";
 import { listIdSchema } from "@jfa.dev/common/lists";
 import { DurableObject } from "cloudflare:workers";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
 
 interface UserRow {
   [key: string]: string | number | null;
@@ -103,7 +105,7 @@ export class KewekeUserDirectory extends DurableObject {
   }
 
   async getProfile(userId: string): Promise<UserProfile | null> {
-    const normalizedUserId = identityIdSchema.parse(userId);
+    const normalizedUserId = Schema.decodeUnknownSync(identityIdSchema)(userId);
     return this.readProfile(normalizedUserId);
   }
 
@@ -116,13 +118,13 @@ export class KewekeUserDirectory extends DurableObject {
     auth: unknown;
     payload: string;
   }): Promise<UserListIndexEntry[] | null> {
-    const auth = identityAuthSchema.safeParse(input.auth);
-    if (!auth.success) {
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)(input.auth);
+    if (Result.isFailure(auth)) {
       return null;
     }
 
     const authorization = await this.authorizeDevice({
-      auth: auth.data,
+      auth: auth.success,
       payload: input.payload,
     });
     if (!authorization) {
@@ -145,14 +147,14 @@ export class KewekeUserDirectory extends DurableObject {
     listId: string;
     payload: string;
   }): Promise<RemoteListRemovalResult> {
-    const auth = identityAuthSchema.safeParse(input.auth);
-    const listId = listIdSchema.safeParse(input.listId);
-    if (!auth.success || !listId.success) {
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)(input.auth);
+    const listId = Schema.decodeUnknownResult(listIdSchema)(input.listId);
+    if (Result.isFailure(auth) || Result.isFailure(listId)) {
       return { status: "unauthorized" };
     }
 
     const authorization = await this.authorizeDevice({
-      auth: auth.data,
+      auth: auth.success,
       payload: input.payload,
     });
     if (!authorization) {
@@ -162,7 +164,7 @@ export class KewekeUserDirectory extends DurableObject {
     const indexedList = this.ctx.storage.sql
       .exec<UserListRow>(
         "SELECT list_id, created_at FROM user_lists WHERE list_id = ?",
-        listId.data,
+        listId.success,
       )
       .toArray()[0];
     if (!indexedList) {
@@ -170,25 +172,25 @@ export class KewekeUserDirectory extends DurableObject {
     }
 
     if (indexedList.created_at === null) {
-      this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", listId.data);
+      this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", listId.success);
       return { status: "forgotten" };
     }
 
-    const deletion = await this.env.KEWEKE_LISTS.getByName(listId.data).deleteOwnedList(
+    const deletion = await this.env.KEWEKE_LISTS.getByName(listId.success).deleteOwnedList(
       authorization.userId,
     );
     if (deletion.status === "unauthorized") {
       return { status: "unauthorized" };
     }
 
-    await this.env.KEWEKE_ALIASES.getByName("directory").releaseAlias(listId.data);
-    this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", listId.data);
+    await this.env.KEWEKE_ALIASES.getByName("directory").releaseAlias(listId.success);
+    this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", listId.success);
     return { status: deletion.status };
   }
 
   async deleteAccount(input: { auth: unknown; payload: string }): Promise<AccountDeletionResult> {
-    const auth = identityAuthSchema.safeParse(input.auth);
-    if (!auth.success) {
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)(input.auth);
+    if (Result.isFailure(auth)) {
       return { status: "unauthorized" };
     }
 
@@ -198,7 +200,7 @@ export class KewekeUserDirectory extends DurableObject {
     }
 
     const authorization = await this.authorizeDevice({
-      auth: auth.data,
+      auth: auth.success,
       payload: input.payload,
       allowDeleting: true,
     });
@@ -210,12 +212,12 @@ export class KewekeUserDirectory extends DurableObject {
   }
 
   async deleteAccountAsAdmin(userId: string): Promise<{ status: "deleted" | "failed" }> {
-    const normalizedUserId = identityIdSchema.parse(userId);
+    const normalizedUserId = Schema.decodeUnknownSync(identityIdSchema)(userId);
     return this.deleteAccountData(normalizedUserId);
   }
 
   async removeListAsAdmin(listId: string): Promise<void> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     this.ctx.storage.sql.exec("DELETE FROM user_lists WHERE list_id = ?", normalizedListId);
   }
 
@@ -259,7 +261,7 @@ export class KewekeUserDirectory extends DurableObject {
     if (this.readAccountState()) {
       throw new Error("Remote user is unavailable");
     }
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const now = new Date().toISOString();
     this.ctx.storage.sql.exec(
       `INSERT INTO user_lists (list_id, created_at, touched_at)
@@ -274,7 +276,7 @@ export class KewekeUserDirectory extends DurableObject {
   }
 
   async recordListTouched(listId: string): Promise<void> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const now = new Date().toISOString();
     this.ctx.storage.sql.exec(
       `INSERT INTO user_lists (list_id, created_at, touched_at)
@@ -286,19 +288,19 @@ export class KewekeUserDirectory extends DurableObject {
   }
 
   async authorizePublish(input: { auth: unknown; payload: string }): Promise<PublishAuthorization> {
-    const auth = publishAuthSchema.safeParse(input.auth);
-    if (!auth.success) {
+    const auth = Schema.decodeUnknownResult(publishAuthSchema)(input.auth);
+    if (Result.isFailure(auth)) {
       return { status: "unauthorized" };
     }
 
     const identityMatches =
-      (await publicKeyFingerprint(auth.data.userPublicKey)) === auth.data.userId &&
-      (await publicKeyFingerprint(auth.data.devicePublicKey)) === auth.data.deviceId;
+      (await publicKeyFingerprint(auth.success.userPublicKey)) === auth.success.userId &&
+      (await publicKeyFingerprint(auth.success.devicePublicKey)) === auth.success.deviceId;
     if (!identityMatches) {
       return { status: "unauthorized" };
     }
 
-    const current = await this.readProfile(auth.data.userId);
+    const current = await this.readProfile(auth.success.userId);
     if (!current) {
       const creation = await this.createUser(input);
       if (!("profile" in creation)) {
@@ -306,7 +308,7 @@ export class KewekeUserDirectory extends DurableObject {
       }
 
       const device = creation.profile.devices.find(
-        (candidate) => candidate.deviceId === auth.data.deviceId,
+        (candidate) => candidate.deviceId === auth.success.deviceId,
       );
       if (!device) {
         return { status: "unauthorized" };
@@ -325,8 +327,8 @@ export class KewekeUserDirectory extends DurableObject {
     }
 
     if (
-      current.userPublicKey !== auth.data.userPublicKey ||
-      current.username !== auth.data.username
+      current.userPublicKey !== auth.success.userPublicKey ||
+      current.username !== auth.success.username
     ) {
       return { status: "unauthorized" };
     }
@@ -336,50 +338,53 @@ export class KewekeUserDirectory extends DurableObject {
     }
 
     const authorization = await this.authorizeDevice({
-      auth: auth.data,
+      auth: auth.success,
       payload: input.payload,
     });
     return authorization ? { status: "authorized", authorization } : { status: "unauthorized" };
   }
 
   async createUser(input: { auth: unknown; payload: string }): Promise<RemoteUserCreationResult> {
-    const auth = publishAuthSchema.safeParse(input.auth);
-    if (!auth.success) {
+    const auth = Schema.decodeUnknownResult(publishAuthSchema)(input.auth);
+    if (Result.isFailure(auth)) {
       return { status: "unauthorized" };
     }
 
     const identityMatches =
-      (await publicKeyFingerprint(auth.data.userPublicKey)) === auth.data.userId &&
-      (await publicKeyFingerprint(auth.data.devicePublicKey)) === auth.data.deviceId;
+      (await publicKeyFingerprint(auth.success.userPublicKey)) === auth.success.userId &&
+      (await publicKeyFingerprint(auth.success.devicePublicKey)) === auth.success.deviceId;
     if (!identityMatches || this.readAccountState()) {
       return { status: "unauthorized" };
     }
 
-    const current = await this.readProfile(auth.data.userId);
+    const current = await this.readProfile(auth.success.userId);
     if (current) {
       if (
-        current.userPublicKey !== auth.data.userPublicKey ||
-        current.username !== auth.data.username
+        current.userPublicKey !== auth.success.userPublicKey ||
+        current.username !== auth.success.username
       ) {
         return { status: "conflict" };
       }
 
       const device = current.devices.find(
         (candidate) =>
-          candidate.deviceId === auth.data.deviceId &&
-          candidate.publicKey === auth.data.devicePublicKey &&
+          candidate.deviceId === auth.success.deviceId &&
+          candidate.publicKey === auth.success.devicePublicKey &&
           candidate.revokedAt === null,
       );
-      if (!device || !(await verifyPayload(device.publicKey, auth.data.signature, input.payload))) {
+      if (
+        !device ||
+        !(await verifyPayload(device.publicKey, auth.success.signature, input.payload))
+      ) {
         return { status: "unauthorized" };
       }
-      await this.registerWithDirectory(auth.data.userId);
+      await this.registerWithDirectory(auth.success.userId);
       return { status: "existing", profile: current };
     }
 
     const signatureValid = await verifyPayload(
-      auth.data.devicePublicKey,
-      auth.data.signature,
+      auth.success.devicePublicKey,
+      auth.success.signature,
       input.payload,
     );
     if (!signatureValid) {
@@ -391,22 +396,22 @@ export class KewekeUserDirectory extends DurableObject {
       this.ctx.storage.sql.exec(
         `INSERT INTO user_profile (id, user_id, user_public_key, username)
          VALUES (1, ?, ?, ?)`,
-        auth.data.userId,
-        auth.data.userPublicKey,
-        auth.data.username,
+        auth.success.userId,
+        auth.success.userPublicKey,
+        auth.success.username,
       );
       this.ctx.storage.sql.exec(
         `INSERT INTO devices (device_id, public_key, approved_at, approved_by, revoked_at)
          VALUES (?, ?, ?, NULL, NULL)`,
-        auth.data.deviceId,
-        auth.data.devicePublicKey,
+        auth.success.deviceId,
+        auth.success.devicePublicKey,
         now,
       );
     });
 
-    const profile = await this.readProfile(auth.data.userId);
+    const profile = await this.readProfile(auth.success.userId);
     if (profile) {
-      await this.registerWithDirectory(auth.data.userId);
+      await this.registerWithDirectory(auth.success.userId);
     }
     return profile ? { status: "created", profile } : { status: "unauthorized" };
   }
@@ -415,11 +420,11 @@ export class KewekeUserDirectory extends DurableObject {
     auth: unknown;
     payload: string;
   }): Promise<AuthorizedDevice | null> {
-    const auth = identityAuthSchema.safeParse(input.auth);
-    if (!auth.success) {
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)(input.auth);
+    if (Result.isFailure(auth)) {
       return null;
     }
-    return this.authorizeDevice({ auth: auth.data, payload: input.payload });
+    return this.authorizeDevice({ auth: auth.success, payload: input.payload });
   }
 
   async updateUsername(input: {
@@ -427,38 +432,41 @@ export class KewekeUserDirectory extends DurableObject {
     username: string;
     payload: string;
   }): Promise<UserProfile | null> {
-    const auth = identityAuthSchema.safeParse(input.auth);
-    const username = usernameSchema.safeParse(input.username);
-    if (!auth.success || !username.success) {
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)(input.auth);
+    const username = Schema.decodeUnknownResult(usernameSchema)(input.username);
+    if (Result.isFailure(auth) || Result.isFailure(username)) {
       return null;
     }
 
     const authorization = await this.authorizeDevice({
-      auth: auth.data,
+      auth: auth.success,
       payload: input.payload,
     });
     if (!authorization) {
       return null;
     }
 
-    this.ctx.storage.sql.exec("UPDATE user_profile SET username = ? WHERE id = 1", username.data);
-    return this.readProfile(auth.data.userId);
+    this.ctx.storage.sql.exec(
+      "UPDATE user_profile SET username = ? WHERE id = 1",
+      username.success,
+    );
+    return this.readProfile(auth.success.userId);
   }
 
   async getPasskeyCredential(input: {
     userId: string;
     credentialId: string;
   }): Promise<PasskeyCredential | null> {
-    const userId = identityIdSchema.safeParse(input.userId);
-    const credentialId = passkeyCredentialIdSchema.safeParse(input.credentialId);
-    if (!userId.success || !credentialId.success || this.readAccountState()) {
+    const userId = Schema.decodeUnknownResult(identityIdSchema)(input.userId);
+    const credentialId = Schema.decodeUnknownResult(passkeyCredentialIdSchema)(input.credentialId);
+    if (Result.isFailure(userId) || Result.isFailure(credentialId) || this.readAccountState()) {
       return null;
     }
-    if (!(await this.readProfile(userId.data))) {
+    if (!(await this.readProfile(userId.success))) {
       return null;
     }
 
-    const row = this.readPasskey(credentialId.data);
+    const row = this.readPasskey(credentialId.success);
     return row ? this.toPasskeyCredential(row) : null;
   }
 
@@ -466,20 +474,20 @@ export class KewekeUserDirectory extends DurableObject {
     userId: string;
     credential: PasskeyCredential;
   }): Promise<PasskeyRegistrationResult> {
-    const userId = identityIdSchema.safeParse(input.userId);
-    const credential = passkeyCredentialSchema.safeParse(input.credential);
-    if (!userId.success || !credential.success || this.readAccountState()) {
+    const userId = Schema.decodeUnknownResult(identityIdSchema)(input.userId);
+    const credential = Schema.decodeUnknownResult(passkeyCredentialSchema)(input.credential);
+    if (Result.isFailure(userId) || Result.isFailure(credential) || this.readAccountState()) {
       return { status: "unauthorized" };
     }
-    if (!(await this.readProfile(userId.data))) {
+    if (!(await this.readProfile(userId.success))) {
       return { status: "unauthorized" };
     }
 
-    const existing = this.readPasskey(credential.data.id);
+    const existing = this.readPasskey(credential.success.id);
     if (existing) {
       const existingCredential = this.toPasskeyCredential(existing);
-      return existingCredential.publicKey === credential.data.publicKey &&
-        existingCredential.algorithm === credential.data.algorithm
+      return existingCredential.publicKey === credential.success.publicKey &&
+        existingCredential.algorithm === credential.success.algorithm
         ? { status: "existing" }
         : { status: "unauthorized" };
     }
@@ -488,12 +496,12 @@ export class KewekeUserDirectory extends DurableObject {
       `INSERT INTO passkeys (
          credential_id, public_key, algorithm, transports, counter, synced, created_at, last_used_at
        ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL)`,
-      credential.data.id,
-      credential.data.publicKey,
-      credential.data.algorithm,
-      JSON.stringify(credential.data.transports),
-      credential.data.counter,
-      credential.data.synced ? 1 : 0,
+      credential.success.id,
+      credential.success.publicKey,
+      credential.success.algorithm,
+      JSON.stringify(credential.success.transports),
+      credential.success.counter,
+      credential.success.synced ? 1 : 0,
       new Date().toISOString(),
     );
     return { status: "registered" };
@@ -506,32 +514,34 @@ export class KewekeUserDirectory extends DurableObject {
     credentialId: string;
     counter: number;
   }): Promise<DeviceApprovalResult> {
-    const userId = identityIdSchema.safeParse(input.userId);
-    const targetDeviceId = identityIdSchema.safeParse(input.targetDeviceId);
-    const targetPublicKey = publicKeySchema.safeParse(input.targetDevicePublicKey);
-    const credentialId = passkeyCredentialIdSchema.safeParse(input.credentialId);
+    const userId = Schema.decodeUnknownResult(identityIdSchema)(input.userId);
+    const targetDeviceId = Schema.decodeUnknownResult(identityIdSchema)(input.targetDeviceId);
+    const targetPublicKey = Schema.decodeUnknownResult(publicKeySchema)(
+      input.targetDevicePublicKey,
+    );
+    const credentialId = Schema.decodeUnknownResult(passkeyCredentialIdSchema)(input.credentialId);
     if (
-      !userId.success ||
-      !targetDeviceId.success ||
-      !targetPublicKey.success ||
-      !credentialId.success ||
+      Result.isFailure(userId) ||
+      Result.isFailure(targetDeviceId) ||
+      Result.isFailure(targetPublicKey) ||
+      Result.isFailure(credentialId) ||
       !Number.isSafeInteger(input.counter) ||
       input.counter < 0
     ) {
       return { status: "unauthorized" };
     }
 
-    if ((await publicKeyFingerprint(targetPublicKey.data)) !== targetDeviceId.data) {
+    if ((await publicKeyFingerprint(targetPublicKey.success)) !== targetDeviceId.success) {
       return { status: "unauthorized" };
     }
 
-    const profile = await this.readProfile(userId.data);
-    const passkey = this.readPasskey(credentialId.data);
+    const profile = await this.readProfile(userId.success);
+    const passkey = this.readPasskey(credentialId.success);
     if (!profile || this.readAccountState() || !passkey) {
       return { status: "unauthorized" };
     }
 
-    const existing = profile.devices.find((device) => device.deviceId === targetDeviceId.data);
+    const existing = profile.devices.find((device) => device.deviceId === targetDeviceId.success);
     if (existing?.revokedAt !== null && existing !== undefined) {
       return { status: "unauthorized" };
     }
@@ -545,30 +555,30 @@ export class KewekeUserDirectory extends DurableObject {
         input.counter,
         input.counter,
         new Date().toISOString(),
-        credentialId.data,
+        credentialId.success,
       );
       if (!existing) {
         this.ctx.storage.sql.exec(
           `INSERT INTO devices (device_id, public_key, approved_at, approved_by, revoked_at)
            VALUES (?, ?, ?, NULL, NULL)`,
-          targetDeviceId.data,
-          targetPublicKey.data,
+          targetDeviceId.success,
+          targetPublicKey.success,
           new Date().toISOString(),
         );
       }
     });
 
-    const updated = await this.readProfile(userId.data);
+    const updated = await this.readProfile(userId.success);
     return updated ? { status: "approved", profile: updated } : { status: "unauthorized" };
   }
 
   async listPasskeys(input: { auth: unknown; payload: string }): Promise<PasskeyProfile[] | null> {
-    const auth = identityAuthSchema.safeParse(input.auth);
-    if (!auth.success) {
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)(input.auth);
+    if (Result.isFailure(auth)) {
       return null;
     }
     const authorization = await this.authorizeDevice({
-      auth: auth.data,
+      auth: auth.success,
       payload: input.payload,
     });
     if (!authorization) {
@@ -589,20 +599,20 @@ export class KewekeUserDirectory extends DurableObject {
     credentialId: string;
     payload: string;
   }): Promise<PasskeyProfile[] | null> {
-    const auth = identityAuthSchema.safeParse(input.auth);
-    const credentialId = passkeyCredentialIdSchema.safeParse(input.credentialId);
-    if (!auth.success || !credentialId.success) {
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)(input.auth);
+    const credentialId = Schema.decodeUnknownResult(passkeyCredentialIdSchema)(input.credentialId);
+    if (Result.isFailure(auth) || Result.isFailure(credentialId)) {
       return null;
     }
     const authorization = await this.authorizeDevice({
-      auth: auth.data,
+      auth: auth.success,
       payload: input.payload,
     });
     if (!authorization) {
       return null;
     }
 
-    this.ctx.storage.sql.exec("DELETE FROM passkeys WHERE credential_id = ?", credentialId.data);
+    this.ctx.storage.sql.exec("DELETE FROM passkeys WHERE credential_id = ?", credentialId.success);
     return this.ctx.storage.sql
       .exec<PasskeyRow>(
         `SELECT credential_id, public_key, algorithm, transports, counter, synced, created_at, last_used_at
@@ -620,29 +630,31 @@ export class KewekeUserDirectory extends DurableObject {
     signature: string;
     payload: string;
   }): Promise<DeviceApprovalResult> {
-    const userId = identityIdSchema.safeParse(input.userId);
-    const approverDeviceId = identityIdSchema.safeParse(input.approverDeviceId);
-    const targetDeviceId = identityIdSchema.safeParse(input.targetDeviceId);
-    const targetPublicKey = publicKeySchema.safeParse(input.targetDevicePublicKey);
+    const userId = Schema.decodeUnknownResult(identityIdSchema)(input.userId);
+    const approverDeviceId = Schema.decodeUnknownResult(identityIdSchema)(input.approverDeviceId);
+    const targetDeviceId = Schema.decodeUnknownResult(identityIdSchema)(input.targetDeviceId);
+    const targetPublicKey = Schema.decodeUnknownResult(publicKeySchema)(
+      input.targetDevicePublicKey,
+    );
     if (
-      !userId.success ||
-      !approverDeviceId.success ||
-      !targetDeviceId.success ||
-      !targetPublicKey.success
+      Result.isFailure(userId) ||
+      Result.isFailure(approverDeviceId) ||
+      Result.isFailure(targetDeviceId) ||
+      Result.isFailure(targetPublicKey)
     ) {
       return { status: "unauthorized" };
     }
 
-    if ((await publicKeyFingerprint(targetPublicKey.data)) !== targetDeviceId.data) {
+    if ((await publicKeyFingerprint(targetPublicKey.success)) !== targetDeviceId.success) {
       return { status: "unauthorized" };
     }
 
-    const profile = await this.readProfile(userId.data);
+    const profile = await this.readProfile(userId.success);
     if (this.readAccountState()) {
       return { status: "unauthorized" };
     }
     const approver = profile?.devices.find(
-      (device) => device.deviceId === approverDeviceId.data && device.revokedAt === null,
+      (device) => device.deviceId === approverDeviceId.success && device.revokedAt === null,
     );
     if (!profile || !approver) {
       return { status: "unauthorized" };
@@ -653,7 +665,7 @@ export class KewekeUserDirectory extends DurableObject {
       return { status: "unauthorized" };
     }
 
-    const existing = profile.devices.find((device) => device.deviceId === targetDeviceId.data);
+    const existing = profile.devices.find((device) => device.deviceId === targetDeviceId.success);
     if (existing?.revokedAt !== null && existing !== undefined) {
       return { status: "unauthorized" };
     }
@@ -661,14 +673,14 @@ export class KewekeUserDirectory extends DurableObject {
       this.ctx.storage.sql.exec(
         `INSERT INTO devices (device_id, public_key, approved_at, approved_by, revoked_at)
          VALUES (?, ?, ?, ?, NULL)`,
-        targetDeviceId.data,
-        targetPublicKey.data,
+        targetDeviceId.success,
+        targetPublicKey.success,
         new Date().toISOString(),
-        approverDeviceId.data,
+        approverDeviceId.success,
       );
     }
 
-    const updated = await this.readProfile(userId.data);
+    const updated = await this.readProfile(userId.success);
     return updated ? { status: "approved", profile: updated } : { status: "unauthorized" };
   }
 
@@ -679,22 +691,25 @@ export class KewekeUserDirectory extends DurableObject {
     signature: string;
     payload: string;
   }): Promise<UserProfile | null> {
-    const auth = identityAuthSchema.safeParse({
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)({
       userId: input.userId,
       deviceId: input.approverDeviceId,
       signature: input.signature,
     });
-    const targetDeviceId = identityIdSchema.safeParse(input.targetDeviceId);
-    if (!auth.success || !targetDeviceId.success) {
+    const targetDeviceId = Schema.decodeUnknownResult(identityIdSchema)(input.targetDeviceId);
+    if (Result.isFailure(auth) || Result.isFailure(targetDeviceId)) {
       return null;
     }
 
-    const authorization = await this.authorizeDevice({ auth: auth.data, payload: input.payload });
+    const authorization = await this.authorizeDevice({
+      auth: auth.success,
+      payload: input.payload,
+    });
     if (!authorization) {
       return null;
     }
-    const targetExists = (await this.readProfile(auth.data.userId))?.devices.some(
-      (device) => device.deviceId === targetDeviceId.data,
+    const targetExists = (await this.readProfile(auth.success.userId))?.devices.some(
+      (device) => device.deviceId === targetDeviceId.success,
     );
     if (!targetExists) {
       return null;
@@ -703,9 +718,9 @@ export class KewekeUserDirectory extends DurableObject {
     this.ctx.storage.sql.exec(
       "UPDATE devices SET revoked_at = COALESCE(revoked_at, ?) WHERE device_id = ?",
       new Date().toISOString(),
-      targetDeviceId.data,
+      targetDeviceId.success,
     );
-    return this.readProfile(auth.data.userId);
+    return this.readProfile(auth.success.userId);
   }
 
   async forgetDevice(input: {
@@ -715,29 +730,32 @@ export class KewekeUserDirectory extends DurableObject {
     signature: string;
     payload: string;
   }): Promise<UserProfile | null> {
-    const auth = identityAuthSchema.safeParse({
+    const auth = Schema.decodeUnknownResult(identityAuthSchema)({
       userId: input.userId,
       deviceId: input.approverDeviceId,
       signature: input.signature,
     });
-    const targetDeviceId = identityIdSchema.safeParse(input.targetDeviceId);
-    if (!auth.success || !targetDeviceId.success) {
+    const targetDeviceId = Schema.decodeUnknownResult(identityIdSchema)(input.targetDeviceId);
+    if (Result.isFailure(auth) || Result.isFailure(targetDeviceId)) {
       return null;
     }
 
-    const authorization = await this.authorizeDevice({ auth: auth.data, payload: input.payload });
+    const authorization = await this.authorizeDevice({
+      auth: auth.success,
+      payload: input.payload,
+    });
     if (!authorization) {
       return null;
     }
-    const target = (await this.readProfile(auth.data.userId))?.devices.find(
-      (device) => device.deviceId === targetDeviceId.data,
+    const target = (await this.readProfile(auth.success.userId))?.devices.find(
+      (device) => device.deviceId === targetDeviceId.success,
     );
     if (!target || target.revokedAt === null) {
       return null;
     }
 
-    this.ctx.storage.sql.exec("DELETE FROM devices WHERE device_id = ?", targetDeviceId.data);
-    return this.readProfile(auth.data.userId);
+    this.ctx.storage.sql.exec("DELETE FROM devices WHERE device_id = ?", targetDeviceId.success);
+    return this.readProfile(auth.success.userId);
   }
 
   private async authorizeDevice(input: {
@@ -849,7 +867,7 @@ export class KewekeUserDirectory extends DurableObject {
         revokedAt: device.revoked_at,
       }));
 
-    return userProfileSchema.parse({
+    return Schema.decodeUnknownSync(userProfileSchema)({
       userId: user.user_id,
       userPublicKey: user.user_public_key,
       username: user.username,
@@ -869,7 +887,7 @@ export class KewekeUserDirectory extends DurableObject {
 
   private toPasskeyCredential(row: PasskeyRow): PasskeyCredential {
     const transports: unknown = JSON.parse(row.transports);
-    return passkeyCredentialSchema.parse({
+    return Schema.decodeUnknownSync(passkeyCredentialSchema)({
       id: row.credential_id,
       publicKey: row.public_key,
       algorithm: row.algorithm,
@@ -881,7 +899,7 @@ export class KewekeUserDirectory extends DurableObject {
 
   private toPasskeyProfile(row: PasskeyRow): PasskeyProfile {
     const transports: unknown = JSON.parse(row.transports);
-    return passkeyProfileSchema.parse({
+    return Schema.decodeUnknownSync(passkeyProfileSchema)({
       id: row.credential_id,
       transports,
       synced: row.synced === 1,

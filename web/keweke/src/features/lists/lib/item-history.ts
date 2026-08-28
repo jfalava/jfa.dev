@@ -31,7 +31,7 @@ export function describeHistoryEvent(command: ListCommand): string {
       return "added this item";
     case "update-item": {
       const parts = Object.entries(command.changes).map(([field, value]) => {
-        // SAFETY: change keys come from the zod itemChangesSchema whose fields
+        // SAFETY: change keys come from the itemChangesSchema whose fields
         // map 1:1 to CHANGE_FIELD_LABELS; unknown keys fall back to the raw name.
         const label = CHANGE_FIELD_LABELS[field as keyof typeof CHANGE_FIELD_LABELS] ?? field;
         return `${label} → ${value === "" ? "—" : value}`;
@@ -57,7 +57,7 @@ export function describeHistoryEvent(command: ListCommand): string {
  * Turns newest-first history events into compact before/after rows for the
  * history table. Older events seed the state used to describe newer changes.
  */
-export function buildHistoryTableRows(events: ListItemHistoryEvent[]): HistoryTableRow[] {
+export function buildHistoryTableRows(events: readonly ListItemHistoryEvent[]): HistoryTableRow[] {
   const state: HistoryState = {};
   const rowsByEventId = new Map<string, HistoryTableRow[]>();
   const chronologicalEvents = events.toSorted(

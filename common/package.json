@@ -88,6 +88,13 @@
       "import": "./src/lists.ts",
       "default": "./src/lists.ts"
     },
+    "./validator": {
+      "workerd": "./src/validator.ts",
+      "worker": "./src/validator.ts",
+      "browser": "./src/validator.ts",
+      "import": "./src/validator.ts",
+      "default": "./src/validator.ts"
+    },
     "./web-packages": {
       "workerd": "./src/web-packages.ts",
       "worker": "./src/web-packages.ts",
@@ -110,6 +117,7 @@
     "@fontsource/zilla-slab": "catalog:fonts",
     "class-variance-authority": "catalog:styling",
     "clsx": "catalog:styling",
+    "effect": "catalog:iac",
     "js-cookie": "3.0.8",
     "lucide-react": "catalog:ui",
     "react": "catalog:react",
@@ -118,8 +126,7 @@
     "react-dom": "catalog:react",
     "react-resizable-panels": "catalog:ui",
     "sonner": "catalog:ui",
-    "tailwind-merge": "catalog:styling",
-    "zod": "4.4.3"
+    "tailwind-merge": "catalog:styling"
   },
   "devDependencies": {
     "@types/js-cookie": "3.0.6",

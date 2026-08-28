@@ -41,7 +41,7 @@ export function SpreadsheetShoppingTable({
 }: {
   emptyMessage?: string;
   isActive: boolean;
-  items: ListItem[];
+  items: readonly ListItem[];
   newItem: NewItemDraft;
   newItemErrors: ItemDraftErrors;
   onAdd: () => Promise<boolean>;

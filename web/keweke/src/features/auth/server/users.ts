@@ -18,9 +18,10 @@ import {
   usernameSchema,
 } from "@jfa.dev/common/identities";
 import { listIdSchema, type ListSnapshot } from "@jfa.dev/common/lists";
+import { effectValidator } from "@jfa.dev/common/validator";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { z } from "zod";
+import * as Schema from "effect/Schema";
 
 import { readRemoteList } from "@/features/lists/server/remote-list";
 
@@ -40,7 +41,7 @@ export {
   startPasskeyRegistration,
 } from "./passkeys";
 
-const pairingStartInputSchema = z.object({
+const pairingStartInputSchema = Schema.Struct({
   code: pairingCodeSchema,
   targetDeviceId: identityIdSchema,
   targetDevicePublicKey: publicKeySchema,
@@ -48,45 +49,45 @@ const pairingStartInputSchema = z.object({
 
 const pairingStatusInputSchema = pairingCodeSchema;
 
-const pairingApprovalInputSchema = z.object({
+const pairingApprovalInputSchema = Schema.Struct({
   code: pairingCodeSchema,
   auth: identityAuthSchema,
   targetDeviceId: identityIdSchema,
   targetDevicePublicKey: publicKeySchema,
 });
 
-const renameInputSchema = z.object({
+const renameInputSchema = Schema.Struct({
   auth: identityAuthSchema,
   username: usernameSchema,
 });
 
-const revokeInputSchema = z.object({
+const revokeInputSchema = Schema.Struct({
   auth: identityAuthSchema,
   targetDeviceId: identityIdSchema,
 });
 
-const forgetInputSchema = z.object({
+const forgetInputSchema = Schema.Struct({
   auth: identityAuthSchema,
   targetDeviceId: identityIdSchema,
 });
 
-const userListsInputSchema = z.object({ auth: identityAuthSchema });
-const remoteListRemovalInputSchema = z.object({
+const userListsInputSchema = Schema.Struct({ auth: identityAuthSchema });
+const remoteListRemovalInputSchema = Schema.Struct({
   listId: listIdSchema,
   auth: identityAuthSchema,
 });
-const deleteRemoteUserInputSchema = z.object({ auth: identityAuthSchema });
-const createRemoteUserInputSchema = z.object({ auth: publishAuthSchema });
+const deleteRemoteUserInputSchema = Schema.Struct({ auth: identityAuthSchema });
+const createRemoteUserInputSchema = Schema.Struct({ auth: publishAuthSchema });
 
 export const getUserProfile = createServerFn()
-  .validator(identityIdSchema)
+  .validator(effectValidator(identityIdSchema))
   .handler(async ({ data }) => {
     const profile = await env.KEWEKE_USERS.getByName(data).getProfile(data);
-    return profile ? userProfileSchema.parse(profile) : null;
+    return profile ? Schema.decodeUnknownSync(userProfileSchema)(profile) : null;
   });
 
 export const createRemoteUser = createServerFn({ method: "POST" })
-  .validator(createRemoteUserInputSchema)
+  .validator(effectValidator(createRemoteUserInputSchema))
   .handler(async ({ data }): Promise<RemoteUserCreationResult> => {
     const payload = userCreateSigningPayload({
       userId: data.auth.userId,
@@ -104,7 +105,7 @@ export const createRemoteUser = createServerFn({ method: "POST" })
   });
 
 export const getUserLists = createServerFn()
-  .validator(userListsInputSchema)
+  .validator(effectValidator(userListsInputSchema))
   .handler(async ({ data }) => {
     const payload = userListsSigningPayload({
       userId: data.auth.userId,
@@ -131,7 +132,7 @@ export const getUserLists = createServerFn()
   });
 
 export const removeRemoteList = createServerFn({ method: "POST" })
-  .validator(remoteListRemovalInputSchema)
+  .validator(effectValidator(remoteListRemovalInputSchema))
   .handler(async ({ data }): Promise<RemoteListRemovalResult> => {
     const payload = listDeletionSigningPayload({
       listId: data.listId,
@@ -146,7 +147,7 @@ export const removeRemoteList = createServerFn({ method: "POST" })
   });
 
 export const deleteRemoteUser = createServerFn({ method: "POST" })
-  .validator(deleteRemoteUserInputSchema)
+  .validator(effectValidator(deleteRemoteUserInputSchema))
   .handler(async ({ data }) => {
     const payload = userDeleteSigningPayload({
       userId: data.auth.userId,
@@ -161,7 +162,7 @@ export const deleteRemoteUser = createServerFn({ method: "POST" })
   });
 
 export const updateUserProfile = createServerFn({ method: "POST" })
-  .validator(renameInputSchema)
+  .validator(effectValidator(renameInputSchema))
   .handler(async ({ data }) => {
     const payload = userRenameSigningPayload({
       userId: data.auth.userId,
@@ -174,12 +175,15 @@ export const updateUserProfile = createServerFn({ method: "POST" })
       payload,
     });
     return profile
-      ? { status: "updated" as const, profile: userProfileSchema.parse(profile) }
+      ? {
+          status: "updated" as const,
+          profile: Schema.decodeUnknownSync(userProfileSchema)(profile),
+        }
       : { status: "unauthorized" as const };
   });
 
 export const startDevicePairing = createServerFn({ method: "POST" })
-  .validator(pairingStartInputSchema)
+  .validator(effectValidator(pairingStartInputSchema))
   .handler(async ({ data }) => {
     const result = await env.KEWEKE_PAIRING.getByName(data.code).start(data);
     // SAFETY: The Durable Object returns the PairingStatus contract across the server boundary.
@@ -187,7 +191,7 @@ export const startDevicePairing = createServerFn({ method: "POST" })
   });
 
 export const getDevicePairingStatus = createServerFn()
-  .validator(pairingStatusInputSchema)
+  .validator(effectValidator(pairingStatusInputSchema))
   .handler(async ({ data }) => {
     const result = await env.KEWEKE_PAIRING.getByName(data).getStatus(data);
     // SAFETY: The Durable Object returns the PairingStatus contract across the server boundary.
@@ -195,7 +199,7 @@ export const getDevicePairingStatus = createServerFn()
   });
 
 export const approveDevicePairing = createServerFn({ method: "POST" })
-  .validator(pairingApprovalInputSchema)
+  .validator(effectValidator(pairingApprovalInputSchema))
   .handler(async ({ data }) => {
     const payload = pairingApprovalSigningPayload({
       code: data.code,
@@ -218,7 +222,7 @@ export const approveDevicePairing = createServerFn({ method: "POST" })
   });
 
 export const revokeUserDevice = createServerFn({ method: "POST" })
-  .validator(revokeInputSchema)
+  .validator(effectValidator(revokeInputSchema))
   .handler(async ({ data }) => {
     const payload = deviceRevocationSigningPayload({
       userId: data.auth.userId,
@@ -233,12 +237,15 @@ export const revokeUserDevice = createServerFn({ method: "POST" })
       payload,
     });
     return profile
-      ? { status: "revoked" as const, profile: userProfileSchema.parse(profile) }
+      ? {
+          status: "revoked" as const,
+          profile: Schema.decodeUnknownSync(userProfileSchema)(profile),
+        }
       : { status: "unauthorized" as const };
   });
 
 export const forgetUserDevice = createServerFn({ method: "POST" })
-  .validator(forgetInputSchema)
+  .validator(effectValidator(forgetInputSchema))
   .handler(async ({ data }) => {
     const payload = deviceForgetSigningPayload({
       userId: data.auth.userId,
@@ -253,6 +260,9 @@ export const forgetUserDevice = createServerFn({ method: "POST" })
       payload,
     });
     return profile
-      ? { status: "forgotten" as const, profile: userProfileSchema.parse(profile) }
+      ? {
+          status: "forgotten" as const,
+          profile: Schema.decodeUnknownSync(userProfileSchema)(profile),
+        }
       : { status: "unauthorized" as const };
   });

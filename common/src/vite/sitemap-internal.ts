@@ -41,7 +41,7 @@ export function escapeXml(value: string): string {
 }
 
 /** Whether an excluded prefix matches the route path exactly or as a directory. */
-export function isExcluded(routePath: string, exclude: string[]): boolean {
+export function isExcluded(routePath: string, exclude: readonly string[]): boolean {
   return exclude.some((prefix) => routePath === prefix || routePath.startsWith(`${prefix}/`));
 }
 
@@ -111,8 +111,8 @@ export function collectContentPaths(contentDir: string): string[] {
 export function buildPaths(
   routesDir: string,
   contentDir: string | undefined,
-  exclude: string[],
-  include: string[],
+  exclude: readonly string[],
+  include: readonly string[],
 ): string[] {
   const paths = new Set<string>();
   for (const routePath of collectRoutePaths(routesDir)) {
@@ -165,7 +165,11 @@ export function buildUrlset(origin: string, mountPath: string, paths: string[]):
 }
 
 /** Builds the `<sitemapindex>` referencing every mounted worker's sitemap. */
-export function buildSitemapIndex(origin: string, mountPath: string, siblings: string[]): string {
+export function buildSitemapIndex(
+  origin: string,
+  mountPath: string,
+  siblings: readonly string[],
+): string {
   const mounts = [mountPath, ...siblings.map(toMountPath)];
   const entries = [...new Set(mounts)].map(
     (mount) => `  <sitemap><loc>${escapeXml(`${origin}${mount}sitemap.xml`)}</loc></sitemap>`,
@@ -182,7 +186,7 @@ export function buildSitemapIndex(origin: string, mountPath: string, siblings: s
 /** Builds the robots.txt pointing crawlers at the sitemap index. */
 export function buildRobotsTxt(
   origin: string,
-  options?: { disallow?: string[]; sitemap?: string },
+  options?: { disallow?: readonly string[]; sitemap?: string },
 ): string {
   const disallow = options?.disallow ?? [];
   const lines = ["User-agent: *"];

@@ -33,6 +33,8 @@ import {
   type LiveListMutation,
 } from "@jfa.dev/common/lists";
 import { DurableObject } from "cloudflare:workers";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
 import { uuidv7 } from "uuidv7";
 
 interface ListMetadataRow {
@@ -158,7 +160,7 @@ export class KewekeList extends DurableObject {
   }
 
   async getSnapshot(listId: string): Promise<ListSnapshot | null> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const snapshot = this.readSnapshot();
     if (!snapshot || snapshot.id !== normalizedListId) {
       return null;
@@ -167,7 +169,7 @@ export class KewekeList extends DurableObject {
   }
 
   async getAdminSummary(listId: string): Promise<AdminListSummary | null> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const metadata = this.readMetadata();
     if (!metadata || metadata.list_id !== normalizedListId) {
       return null;
@@ -199,8 +201,8 @@ export class KewekeList extends DurableObject {
     listId: string,
     query: ListItemHistoryQuery,
   ): Promise<ListItemHistoryResult> {
-    const normalizedListId = listIdSchema.parse(listId);
-    const parsedQuery = listItemHistoryQuerySchema.parse(query);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
+    const parsedQuery = Schema.decodeUnknownSync(listItemHistoryQuerySchema)(query);
     const metadata = this.readMetadata();
     if (!metadata || metadata.list_id !== normalizedListId) {
       return { status: "missing" };
@@ -224,7 +226,7 @@ export class KewekeList extends DurableObject {
 
     const hasMore = rows.length > parsedQuery.limit;
     const events = rows.slice(0, parsedQuery.limit).flatMap((row) => {
-      const parsed = listItemHistoryEventSchema.safeParse({
+      const parsed = Schema.decodeUnknownResult(listItemHistoryEventSchema)({
         id: row.id,
         mutationId: row.mutation_id,
         itemId: row.item_id,
@@ -233,7 +235,7 @@ export class KewekeList extends DurableObject {
         command: parseStoredCommand(row.command),
         appliedAt: row.applied_at,
       });
-      return parsed.success ? [parsed.data] : [];
+      return Result.isSuccess(parsed) ? [parsed.success] : [];
     });
 
     return {
@@ -246,7 +248,7 @@ export class KewekeList extends DurableObject {
   }
 
   async deleteOwnedList(ownerUserId: string): Promise<ListDeletionResult> {
-    const normalizedOwnerUserId = identityIdSchema.parse(ownerUserId);
+    const normalizedOwnerUserId = Schema.decodeUnknownSync(identityIdSchema)(ownerUserId);
     const metadata = this.readMetadata();
     if (!metadata) {
       return { status: "missing", alias: null };
@@ -255,12 +257,12 @@ export class KewekeList extends DurableObject {
       return { status: "unauthorized", alias: null };
     }
 
-    const normalizedListId = listIdSchema.parse(metadata.list_id);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(metadata.list_id);
     return this.deleteStoredList(normalizedListId, metadata.alias);
   }
 
   async deleteAsAdmin(listId: string): Promise<{ status: "deleted" | "missing" }> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const metadata = this.readMetadata();
     if (!metadata || metadata.list_id !== normalizedListId) {
       return { status: "missing" };
@@ -299,8 +301,8 @@ export class KewekeList extends DurableObject {
   }
 
   async setAlias(listId: string, alias: string): Promise<ListSnapshot | null> {
-    const normalizedListId = listIdSchema.parse(listId);
-    const normalizedAlias = listAliasSchema.parse(alias);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
+    const normalizedAlias = Schema.decodeUnknownSync(listAliasSchema)(alias);
     const current = this.readSnapshot();
     if (!current || current.id !== normalizedListId) {
       return null;
@@ -316,7 +318,7 @@ export class KewekeList extends DurableObject {
   }
 
   async applyMutation(listId: string, mutation: ListMutation): Promise<ApplyMutationResult> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const parsedMutation = parseListMutation(mutation);
 
     if (!parsedMutation.auth) {
@@ -418,19 +420,19 @@ export class KewekeList extends DurableObject {
     auth: PublishAuth,
     payload: string,
   ): Promise<ImportSnapshotResult> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const snapshot = parseListSnapshot(value);
     if (snapshot.id !== normalizedListId) {
       throw new Error("Snapshot list identifier does not match the requested list");
     }
 
-    const parsedAuth = publishAuthSchema.safeParse(auth);
-    if (!parsedAuth.success) {
+    const parsedAuth = Schema.decodeUnknownResult(publishAuthSchema)(auth);
+    if (Result.isFailure(parsedAuth)) {
       return { status: "unauthorized" };
     }
     const authorization = await this.env.KEWEKE_USERS.getByName(
-      parsedAuth.data.userId,
-    ).authorizePublish({ auth: parsedAuth.data, payload });
+      parsedAuth.success.userId,
+    ).authorizePublish({ auth: parsedAuth.success, payload });
     if (authorization.status === "unauthorized") {
       return { status: "unauthorized" };
     }
@@ -861,14 +863,14 @@ function readIdentity(id: string | null, username: string | null): ListIdentity 
     return null;
   }
 
-  const result = listIdentitySchema.safeParse({ id, username });
-  return result.success ? result.data : null;
+  const result = Schema.decodeUnknownResult(listIdentitySchema)({ id, username });
+  return Result.isSuccess(result) ? result.success : null;
 }
 
 function parseStoredCommand(value: string): ListCommand | null {
   try {
-    const parsed = listCommandSchema.safeParse(JSON.parse(value));
-    return parsed.success ? parsed.data : null;
+    const parsed = Schema.decodeUnknownResult(listCommandSchema)(JSON.parse(value));
+    return Result.isSuccess(parsed) ? parsed.success : null;
   } catch {
     return null;
   }

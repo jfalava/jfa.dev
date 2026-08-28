@@ -1,4 +1,7 @@
 import { listItemFieldsSchema } from "@jfa.dev/common/lists";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
+import type * as SchemaIssue from "effect/SchemaIssue";
 
 /**
  * The string-based draft of an editable item row, as held by the new-item and
@@ -74,14 +77,14 @@ function isItemDraftField(value: PropertyKey | undefined): value is ItemDraftFie
  * result means the draft passes the schema unchanged.
  */
 export function validateItemDraft(draft: ItemDraft): ItemDraftErrors {
-  const result = listItemFieldsSchema.safeParse({
+  const result = Schema.decodeUnknownResult(listItemFieldsSchema, { errors: "all" })({
     name: draft.name,
     quantity: Number(draft.quantity),
     unit: draft.unit,
     amount: draft.amount,
     category: draft.category,
   });
-  if (result.success) {
+  if (Result.isSuccess(result)) {
     return {};
   }
 
@@ -89,23 +92,72 @@ export function validateItemDraft(draft: ItemDraft): ItemDraftErrors {
   if (draft.quantity.trim() === "") {
     errors.quantity = "Enter a quantity";
   }
-  for (const issue of result.error.issues) {
-    const field = issue.path[0];
+  for (const { field, kind } of collectFieldIssues(result.failure.issue)) {
     if (!isItemDraftField(field) || errors[field]) {
       continue;
     }
     const problem = FIELD_PROBLEMS[field];
-    if (issue.code === "too_small") {
+    if (kind === "too-small") {
       errors[field] = problem.tooSmall ?? problem.fallback;
-    } else if (issue.code === "too_big") {
+    } else if (kind === "too-big") {
       errors[field] = problem.tooBig ?? problem.fallback;
-    } else if (issue.code === "invalid_type") {
+    } else if (kind === "invalid") {
       errors[field] = problem.invalid ?? problem.fallback;
     } else {
       errors[field] = problem.fallback;
     }
   }
   return errors;
+}
+
+type DraftIssueKind = "too-small" | "too-big" | "invalid" | "other";
+
+/**
+ * Flattens an Effect schema failure into per-field issue kinds. Filter issues
+ * carry the check id (e.g. `effect/schema/isMinLength`) that maps back to the
+ * draft problem taxonomy; missing keys behave like an empty value.
+ */
+function collectFieldIssues(failure: SchemaIssue.Issue): Array<{
+  field: PropertyKey | undefined;
+  kind: DraftIssueKind;
+}> {
+  const collected: Array<{ field: PropertyKey | undefined; kind: DraftIssueKind }> = [];
+  const walk = (issue: SchemaIssue.Issue, path: ReadonlyArray<PropertyKey>): void => {
+    if (issue._tag === "Pointer") {
+      walk(issue.issue, [...path, ...issue.path]);
+      return;
+    }
+    if (issue._tag === "Composite" || issue._tag === "AnyOf") {
+      for (const inner of issue.issues ?? []) {
+        walk(inner, path);
+      }
+      return;
+    }
+    const field = path[0];
+    collected.push({ field, kind: issueKind(issue) });
+  };
+  walk(failure, []);
+  return collected;
+}
+
+function issueKind(issue: SchemaIssue.Issue): DraftIssueKind {
+  if (issue._tag === "MissingKey") {
+    return "too-small";
+  }
+  if (issue._tag === "Filter") {
+    const id = issue.filter.annotations?.representation?.id;
+    if (id?.includes("isMinLength") || id?.includes("isGreaterThanOrEqualTo")) {
+      return "too-small";
+    }
+    if (id?.includes("isMaxLength") || id?.includes("isLessThanOrEqualTo")) {
+      return "too-big";
+    }
+    return "other";
+  }
+  if (issue._tag === "InvalidType" || issue._tag === "InvalidValue") {
+    return "invalid";
+  }
+  return "other";
 }
 
 export function hasItemDraftErrors(errors: ItemDraftErrors): boolean {

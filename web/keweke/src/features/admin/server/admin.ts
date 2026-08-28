@@ -1,8 +1,10 @@
 import { identityIdSchema, userProfileSchema } from "@jfa.dev/common/identities";
 import { listIdSchema } from "@jfa.dev/common/lists";
+import { effectValidator } from "@jfa.dev/common/validator";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { z } from "zod";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
 
 import type { AdminListSummary } from "@/features/lists/server/keweke-list";
 
@@ -30,8 +32,8 @@ export type AdminDeletionResult =
   | { status: "failed" }
   | { status: "missing" };
 
-const adminUserInputSchema = z.object({ userId: identityIdSchema });
-const adminListInputSchema = z.object({ listId: listIdSchema });
+const adminUserInputSchema = Schema.Struct({ userId: identityIdSchema });
+const adminListInputSchema = Schema.Struct({ listId: listIdSchema });
 
 export const getAdminOverview = createServerFn().handler(
   async (): Promise<AdminOverview | null> => {
@@ -53,20 +55,20 @@ export const getAdminOverview = createServerFn().handler(
 
     const users = profiles
       .flatMap((profile) => {
-        const parsed = userProfileSchema.safeParse(profile);
-        if (!parsed.success) {
+        const parsed = Schema.decodeUnknownResult(userProfileSchema)(profile);
+        if (Result.isFailure(parsed)) {
           return [];
         }
-        const approvedAt = parsed.data.devices
+        const approvedAt = parsed.success.devices
           .map((device) => device.approvedAt)
           .toSorted((left, right) => left.localeCompare(right));
         return [
           {
-            userId: parsed.data.userId,
-            username: parsed.data.username,
+            userId: parsed.success.userId,
+            username: parsed.success.username,
             createdAt: approvedAt[0] ?? new Date(0).toISOString(),
-            deviceCount: parsed.data.devices.length,
-            activeDeviceCount: parsed.data.devices.filter((device) => device.revokedAt === null)
+            deviceCount: parsed.success.devices.length,
+            activeDeviceCount: parsed.success.devices.filter((device) => device.revokedAt === null)
               .length,
           },
         ];
@@ -107,7 +109,7 @@ export const getAdminOverview = createServerFn().handler(
 );
 
 export const deleteAdminUser = createServerFn({ method: "POST" })
-  .validator(adminUserInputSchema)
+  .validator(effectValidator(adminUserInputSchema))
   .handler(async ({ data }): Promise<AdminDeletionResult> => {
     await assertKewekeAdminAccess();
     const result = await env.KEWEKE_USERS.getByName(data.userId).deleteAccountAsAdmin(data.userId);
@@ -116,7 +118,7 @@ export const deleteAdminUser = createServerFn({ method: "POST" })
   });
 
 export const deleteAdminList = createServerFn({ method: "POST" })
-  .validator(adminListInputSchema)
+  .validator(effectValidator(adminListInputSchema))
   .handler(async ({ data }): Promise<AdminDeletionResult> => {
     await assertKewekeAdminAccess();
 

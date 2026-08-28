@@ -1,7 +1,8 @@
 import { toMountPath } from "./sitemap-internal.ts";
 
+import * as Effect from "effect/Effect";
+import * as Schema from "effect/Schema";
 import type { Plugin } from "vite";
-import { z } from "zod";
 
 /**
  * Shared root-route head metadata generator for TanStack Start workers.
@@ -35,28 +36,41 @@ const REL_ME_URLS = [
  */
 const FEDIVERSE_CREATOR = "https://bsky.app/profile/jfa.dev";
 
-const siteMetaOptionsSchema = z.object({
+const stringRecordSchema = Schema.Record(Schema.String, Schema.String);
+
+/** Check that mirrors `z.url()`: the value must parse as an absolute URL. */
+const isHttpUrl = Schema.makeFilter((url: string) =>
+  url.startsWith("http://") || url.startsWith("https://") ? undefined : false,
+);
+
+const siteMetaOptionsSchema = Schema.Struct({
   /** Page title; also used for og:title and twitter:title. */
-  title: z.string().min(1),
+  title: Schema.String.check(Schema.isMinLength(1)),
   /** Page description; also used for og:description and twitter:description. */
-  description: z.string().min(1),
+  description: Schema.String.check(Schema.isMinLength(1)),
   /** Public origin canonical URLs are built from. */
-  origin: z.url().default(DEFAULT_ORIGIN),
+  origin: Schema.String.check(isHttpUrl).pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed(DEFAULT_ORIGIN)),
+  ),
   /** Viewport meta content; defaults to "width=device-width, initial-scale=1". */
-  viewport: z.string().default("width=device-width, initial-scale=1"),
+  viewport: Schema.String.pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed("width=device-width, initial-scale=1")),
+  ),
   /** Theme color emitted as the `theme-color` meta tag. */
-  themeColor: z.string().default(DEFAULT_THEME_COLOR),
+  themeColor: Schema.String.pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed(DEFAULT_THEME_COLOR)),
+  ),
   /** Absolute URL or mount-relative path (leading slash) for og:image. */
-  ogImage: z.string().optional(),
+  ogImage: Schema.optional(Schema.String),
   /** Adds manifest, favicon, and apple-touch-icon links at the mount path. */
-  pwa: z.boolean().default(false),
+  pwa: Schema.Boolean.pipe(Schema.withDecodingDefaultKey(Effect.succeed(false))),
   /** Extra meta tags appended after the generated ones. */
-  meta: z.array(z.record(z.string(), z.string())).default([]),
+  meta: Schema.Array(stringRecordSchema).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
   /** Extra link tags appended after the generated ones. */
-  links: z.array(z.record(z.string(), z.string())).default([]),
+  links: Schema.Array(stringRecordSchema).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
 });
 
-export type SiteMetaOptions = z.input<typeof siteMetaOptionsSchema>;
+export type SiteMetaOptions = Schema.Codec.Encoded<typeof siteMetaOptionsSchema>;
 
 type SiteHeadTag = Record<string, string>;
 
@@ -73,7 +87,10 @@ type SiteHead = {
  * @param mountPath - Normalized mount path with trailing slash, e.g. "/docs/".
  * @returns The head object consumed by TanStack Router's `head` function.
  */
-function buildHead(options: z.output<typeof siteMetaOptionsSchema>, mountPath: string): SiteHead {
+function buildHead(
+  options: Schema.Schema.Type<typeof siteMetaOptionsSchema>,
+  mountPath: string,
+): SiteHead {
   const canonical = `${options.origin}${mountPath}`;
   const meta: SiteHeadTag[] = [
     { charSet: "utf-8" },
@@ -126,14 +143,15 @@ function buildHead(options: z.output<typeof siteMetaOptionsSchema>, mountPath: s
  * @returns Vite plugin defining `__JFA_SITE_HEAD__` for `@jfa.dev/common/site-head`.
  */
 export function siteMeta(options: SiteMetaOptions): Plugin {
-  const parsed = siteMetaOptionsSchema.parse(options);
+  const parsed = Schema.decodeUnknownSync(siteMetaOptionsSchema)(options);
 
   return {
     name: "jfa-dev:site-meta",
     config(userConfig) {
       // userConfig.base can be a string, false, or a function; anything that
       // is not a mount path string falls back to the root mount.
-      const base = z.string().default("/").catch("/").parse(userConfig.base);
+      // oxlint-disable-next-line anti-slop/no-runtime-typeof -- narrows Vite's own typed `base` union (string | false | undefined), not unparsed data
+      const base = typeof userConfig.base === "string" ? userConfig.base : "/";
       const head = buildHead(parsed, toMountPath(base));
       return {
         define: {

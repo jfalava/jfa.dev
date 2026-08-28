@@ -7,6 +7,7 @@ import {
 import { identityIdSchema } from "@jfa.dev/common/identities";
 import { listIdSchema } from "@jfa.dev/common/lists";
 import { DurableObject } from "cloudflare:workers";
+import * as Schema from "effect/Schema";
 
 interface AliasRow {
   [key: string]: string;
@@ -40,7 +41,7 @@ export class KewekeAliasDirectory extends DurableObject {
   }
 
   async reserveAlias(listId: string, listTitle: string): Promise<AliasReservationResult> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const normalizedBase = normalizeListAliasBase(listTitle);
     const existing = this.ctx.storage.sql
       .exec<AliasRow>("SELECT alias, list_id FROM aliases WHERE list_id = ?", normalizedListId)
@@ -78,8 +79,8 @@ export class KewekeAliasDirectory extends DurableObject {
   }
 
   async claimAlias(listId: string, alias: string): Promise<AliasClaimResult> {
-    const normalizedListId = listIdSchema.parse(listId);
-    const normalizedAlias = listAliasSchema.parse(alias);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
+    const normalizedAlias = Schema.decodeUnknownSync(listAliasSchema)(alias);
     const existingForList = this.ctx.storage.sql
       .exec<AliasRow>("SELECT alias, list_id FROM aliases WHERE list_id = ?", normalizedListId)
       .toArray()[0];
@@ -103,7 +104,7 @@ export class KewekeAliasDirectory extends DurableObject {
   }
 
   async getAlias(listId: string): Promise<string | null> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     const row = this.ctx.storage.sql
       .exec<AliasRow>("SELECT alias, list_id FROM aliases WHERE list_id = ?", normalizedListId)
       .toArray()[0];
@@ -111,12 +112,12 @@ export class KewekeAliasDirectory extends DurableObject {
   }
 
   async releaseAlias(listId: string): Promise<void> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     this.ctx.storage.sql.exec("DELETE FROM aliases WHERE list_id = ?", normalizedListId);
   }
 
   async registerUser(userId: string): Promise<void> {
-    const normalizedUserId = identityIdSchema.parse(userId);
+    const normalizedUserId = Schema.decodeUnknownSync(identityIdSchema)(userId);
     this.ctx.storage.sql.exec(
       "INSERT INTO registered_users (user_id, registered_at) VALUES (?, ?) ON CONFLICT(user_id) DO NOTHING",
       normalizedUserId,
@@ -125,7 +126,7 @@ export class KewekeAliasDirectory extends DurableObject {
   }
 
   async unregisterUser(userId: string): Promise<void> {
-    const normalizedUserId = identityIdSchema.parse(userId);
+    const normalizedUserId = Schema.decodeUnknownSync(identityIdSchema)(userId);
     this.ctx.storage.sql.exec("DELETE FROM registered_users WHERE user_id = ?", normalizedUserId);
   }
 
@@ -139,7 +140,7 @@ export class KewekeAliasDirectory extends DurableObject {
   }
 
   async registerList(listId: string): Promise<void> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     this.ctx.storage.sql.exec(
       "INSERT INTO registered_lists (list_id, registered_at) VALUES (?, ?) ON CONFLICT(list_id) DO NOTHING",
       normalizedListId,
@@ -148,7 +149,7 @@ export class KewekeAliasDirectory extends DurableObject {
   }
 
   async unregisterList(listId: string): Promise<void> {
-    const normalizedListId = listIdSchema.parse(listId);
+    const normalizedListId = Schema.decodeUnknownSync(listIdSchema)(listId);
     this.ctx.storage.sql.exec("DELETE FROM registered_lists WHERE list_id = ?", normalizedListId);
   }
 

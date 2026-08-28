@@ -1,7 +1,14 @@
 import { listAliasSchema } from "./aliases";
-import { identityAuthSchema, listIdentitySchema, type ListIdentity } from "./identities";
+import {
+  identityAuthSchema,
+  listIdentitySchema,
+  timestampSchema,
+  type ListIdentity,
+} from "./identities";
 
-import { z } from "zod";
+import * as Effect from "effect/Effect";
+import * as Schema from "effect/Schema";
+import * as SchemaGetter from "effect/SchemaGetter";
 
 const UUID_V7_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -16,118 +23,150 @@ export const MAX_DELETED_ITEMS = 100 as const;
  */
 export const MAX_ITEM_HISTORY_REVISIONS = 1000 as const;
 
-export const listIdSchema = z
-  .string()
-  .regex(UUID_V7_PATTERN, "Expected a UUID7 list identifier")
-  .transform((value) => value.toLowerCase());
+export const listIdSchema = Schema.String.check(Schema.isPattern(UUID_V7_PATTERN)).pipe(
+  Schema.decode({
+    decode: SchemaGetter.transform((value: string) => value.toLowerCase()),
+    encode: SchemaGetter.transform((value: string) => value),
+  }),
+);
 
-const itemIdSchema = z.string().min(1).max(128);
-const archiveIdSchema = z.string().min(1).max(160);
-const timestampSchema = z.string().datetime({ offset: true });
+const itemIdSchema = Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(128));
+const archiveIdSchema = Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(160));
 
-export const listItemSchema = z.object({
+/** Present-or-absent identity that always decodes to an explicit `null`. */
+const listIdentityField = Schema.NullOr(listIdentitySchema).pipe(
+  Schema.withDecodingDefault(Effect.succeed(null)),
+);
+
+const nameField = Schema.Trim.check(Schema.isMinLength(1), Schema.isMaxLength(200));
+const quantityField = Schema.Int.check(
+  Schema.isGreaterThanOrEqualTo(1),
+  Schema.isLessThanOrEqualTo(100_000),
+);
+const unitField = Schema.Trim.check(Schema.isMinLength(1), Schema.isMaxLength(32));
+const amountField = Schema.Trim.check(Schema.isMaxLength(64));
+const categoryField = Schema.Trim.check(Schema.isMinLength(1), Schema.isMaxLength(64));
+const titleField = Schema.Trim.check(Schema.isMinLength(1), Schema.isMaxLength(160));
+
+const listItemFields = {
   id: itemIdSchema,
-  name: z.string().trim().min(1).max(200),
-  quantity: z.number().int().min(1).max(100_000),
-  unit: z.string().trim().min(1).max(32),
-  amount: z.string().trim().max(64),
-  category: z.string().trim().min(1).max(64),
-  checked: z.boolean(),
-  position: z.number().int().min(0),
+  name: nameField,
+  quantity: quantityField,
+  unit: unitField,
+  amount: amountField,
+  category: categoryField,
+  checked: Schema.Boolean,
+  position: Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
-  createdBy: listIdentitySchema.nullable().default(null),
-  updatedBy: listIdentitySchema.nullable().default(null),
-});
+  createdBy: listIdentityField,
+  updatedBy: listIdentityField,
+};
 
-export const deletedListItemSchema = listItemSchema.extend({
+export const listItemSchema = Schema.Struct(listItemFields);
+
+export const deletedListItemSchema = Schema.Struct({
+  ...listItemFields,
   archiveId: archiveIdSchema,
   deletedAt: timestampSchema,
-  deletedBy: listIdentitySchema.nullable().default(null),
+  deletedBy: listIdentityField,
 });
 
-export const listSnapshotSchema = z.object({
-  schemaVersion: z.literal(LIST_SCHEMA_VERSION),
+const nullableAliasField = Schema.NullOr(listAliasSchema).pipe(
+  Schema.withDecodingDefault(Effect.succeed(null)),
+);
+
+export const listSnapshotSchema = Schema.Struct({
+  schemaVersion: Schema.Literal(LIST_SCHEMA_VERSION),
   id: listIdSchema,
-  alias: listAliasSchema.nullable().default(null),
-  title: z.string().trim().min(1).max(160),
-  items: z.array(listItemSchema).max(10_000),
-  deletedItems: z.array(deletedListItemSchema).default([]),
-  revision: z.number().int().min(0),
+  alias: nullableAliasField,
+  title: titleField,
+  items: Schema.Array(listItemSchema).check(Schema.isMaxLength(10_000)),
+  deletedItems: Schema.Array(deletedListItemSchema).pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed([])),
+  ),
+  revision: Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });
 
 /** Editable item fields, shared by add/update commands and client-side draft validation. */
-export const listItemFieldsSchema = z.object({
-  name: z.string().trim().min(1).max(200),
-  quantity: z.number().int().min(1).max(100_000),
-  unit: z.string().trim().min(1).max(32),
-  amount: z.string().trim().max(64),
-  category: z.string().trim().min(1).max(64),
-});
+const listItemFieldSpecs = {
+  name: nameField,
+  quantity: quantityField,
+  unit: unitField,
+  amount: amountField,
+  category: categoryField,
+};
 
-const itemInputSchema = listItemFieldsSchema.extend({
+export const listItemFieldsSchema = Schema.Struct(listItemFieldSpecs);
+
+const itemInputSchema = Schema.Struct({
+  ...listItemFieldSpecs,
   id: itemIdSchema,
 });
 
-const itemChangesSchema = itemInputSchema.omit({ id: true }).partial();
+const itemChangesSchema = Schema.Struct({
+  name: Schema.optional(nameField),
+  quantity: Schema.optional(quantityField),
+  unit: Schema.optional(unitField),
+  amount: Schema.optional(amountField),
+  category: Schema.optional(categoryField),
+});
 
-export const listCommandSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("add-item"), item: itemInputSchema }),
-  z.object({
-    type: z.literal("update-item"),
+export const listCommandSchema = Schema.Union([
+  Schema.Struct({ type: Schema.Literal("add-item"), item: itemInputSchema }),
+  Schema.Struct({
+    type: Schema.Literal("update-item"),
     itemId: itemIdSchema,
     changes: itemChangesSchema,
   }),
-  z.object({
-    type: z.literal("set-item-checked"),
+  Schema.Struct({
+    type: Schema.Literal("set-item-checked"),
     itemId: itemIdSchema,
-    checked: z.boolean(),
+    checked: Schema.Boolean,
   }),
-  z.object({ type: z.literal("remove-item"), itemId: itemIdSchema }),
-  z.object({
-    type: z.literal("restore-item"),
-    archiveId: archiveIdSchema,
-  }),
-  z.object({
-    type: z.literal("purge-deleted-item"),
-    archiveId: archiveIdSchema,
-  }),
-  z.object({
-    type: z.literal("rename-list"),
-    title: z.string().trim().min(1).max(160),
-  }),
+  Schema.Struct({ type: Schema.Literal("remove-item"), itemId: itemIdSchema }),
+  Schema.Struct({ type: Schema.Literal("restore-item"), archiveId: archiveIdSchema }),
+  Schema.Struct({ type: Schema.Literal("purge-deleted-item"), archiveId: archiveIdSchema }),
+  Schema.Struct({ type: Schema.Literal("rename-list"), title: titleField }),
 ]);
 
-export const listMutationSchema = z.object({
-  id: z.string().min(1).max(128),
-  baseRevision: z.number().int().min(0),
-  actor: listIdentitySchema.nullable().optional(),
-  auth: identityAuthSchema.nullable().optional(),
+const listMutationBaseFields = {
+  id: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(128)),
+  baseRevision: Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)),
+  actor: Schema.optional(Schema.NullOr(listIdentitySchema)),
+};
+
+export const listMutationSchema = Schema.Struct({
+  ...listMutationBaseFields,
+  auth: Schema.optional(Schema.NullOr(identityAuthSchema)),
   command: listCommandSchema,
 });
 
 /** Mutation shape broadcast to live sessions (no auth signature). */
-export const liveListMutationSchema = listMutationSchema.omit({ auth: true });
+export const liveListMutationSchema = Schema.Struct({
+  ...listMutationBaseFields,
+  command: listCommandSchema,
+});
 
-export const listLiveMessageSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("snapshot"), snapshot: listSnapshotSchema }),
-  z.object({
-    type: z.literal("mutation"),
+export const listLiveMessageSchema = Schema.Union([
+  Schema.Struct({ type: Schema.Literal("snapshot"), snapshot: listSnapshotSchema }),
+  Schema.Struct({
+    type: Schema.Literal("mutation"),
     mutation: liveListMutationSchema,
     appliedAt: timestampSchema,
   }),
-  z.object({ type: z.literal("deleted"), listId: listIdSchema }),
+  Schema.Struct({ type: Schema.Literal("deleted"), listId: listIdSchema }),
 ]);
 
-export type ListItem = z.infer<typeof listItemSchema>;
-export type DeletedListItem = z.infer<typeof deletedListItemSchema>;
-export type ListSnapshot = z.infer<typeof listSnapshotSchema>;
-export type ListLiveMessage = z.infer<typeof listLiveMessageSchema>;
-export type ListCommand = z.infer<typeof listCommandSchema>;
-export type ListMutation = z.infer<typeof listMutationSchema>;
-export type LiveListMutation = z.infer<typeof liveListMutationSchema>;
+export type ListItem = Schema.Schema.Type<typeof listItemSchema>;
+export type DeletedListItem = Schema.Schema.Type<typeof deletedListItemSchema>;
+export type ListSnapshot = Schema.Schema.Type<typeof listSnapshotSchema>;
+export type ListLiveMessage = Schema.Schema.Type<typeof listLiveMessageSchema>;
+export type ListCommand = Schema.Schema.Type<typeof listCommandSchema>;
+export type ListMutation = Schema.Schema.Type<typeof listMutationSchema>;
+export type LiveListMutation = Schema.Schema.Type<typeof liveListMutationSchema>;
 
 export type ListBackend = "local" | "remote";
 export type RemoteListRole = "owner" | "collaborator";
@@ -170,31 +209,35 @@ export interface AppliedListMutation {
   noop: boolean;
 }
 
-export const listItemHistoryEventSchema = z.object({
-  id: z.string().min(1).max(160),
-  mutationId: z.string().min(1).max(128),
+export const listItemHistoryEventSchema = Schema.Struct({
+  id: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(160)),
+  mutationId: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(128)),
   itemId: itemIdSchema,
-  revision: z.number().int().min(1),
-  actor: listIdentitySchema.nullable(),
+  revision: Schema.Int.check(Schema.isGreaterThanOrEqualTo(1)),
+  actor: Schema.NullOr(listIdentitySchema),
   command: listCommandSchema,
   appliedAt: timestampSchema,
 });
 
-export const listItemHistoryPageSchema = z.object({
-  events: z.array(listItemHistoryEventSchema),
+export const listItemHistoryPageSchema = Schema.Struct({
+  events: Schema.Array(listItemHistoryEventSchema),
   /** Revision of the oldest returned event; pass as `beforeRevision` for the next page. */
-  nextCursor: z.number().int().min(1).nullable(),
+  nextCursor: Schema.NullOr(Schema.Int.check(Schema.isGreaterThanOrEqualTo(1))),
 });
 
-export const listItemHistoryQuerySchema = z.object({
+export const listItemHistoryQuerySchema = Schema.Struct({
   itemId: itemIdSchema,
-  limit: z.number().int().min(1).max(100).default(50),
-  beforeRevision: z.number().int().min(0).nullish(),
+  limit: Schema.Int.check(Schema.isGreaterThanOrEqualTo(1), Schema.isLessThanOrEqualTo(100)).pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed(50)),
+  ),
+  beforeRevision: Schema.optional(
+    Schema.NullishOr(Schema.Int.check(Schema.isGreaterThanOrEqualTo(0))),
+  ),
 });
 
-export type ListItemHistoryEvent = z.infer<typeof listItemHistoryEventSchema>;
-export type ListItemHistoryPage = z.infer<typeof listItemHistoryPageSchema>;
-export type ListItemHistoryQuery = z.input<typeof listItemHistoryQuerySchema>;
+export type ListItemHistoryEvent = Schema.Schema.Type<typeof listItemHistoryEventSchema>;
+export type ListItemHistoryPage = Schema.Schema.Type<typeof listItemHistoryPageSchema>;
+export type ListItemHistoryQuery = Schema.Codec.Encoded<typeof listItemHistoryQuerySchema>;
 
 export type ListItemHistoryResult =
   | { status: "ok"; page: ListItemHistoryPage }
@@ -238,7 +281,7 @@ export function createListSnapshot(
   const now = options.now ?? new Date().toISOString();
   return {
     schemaVersion: LIST_SCHEMA_VERSION,
-    id: listIdSchema.parse(id),
+    id: Schema.decodeUnknownSync(listIdSchema)(id),
     alias: null,
     title: options.title ?? "New list",
     items: [],
@@ -348,8 +391,10 @@ export function applyListMutationWithDiff(
     return null;
   }
 
-  const command = listCommandSchema.parse(mutation.command);
-  const actor = mutation.actor ? listIdentitySchema.parse(mutation.actor) : null;
+  const command = Schema.decodeUnknownSync(listCommandSchema)(mutation.command);
+  const actor = mutation.actor
+    ? Schema.decodeUnknownSync(listIdentitySchema)(mutation.actor)
+    : null;
   let nextItems = snapshot.items;
   let nextDeletedItems = snapshot.deletedItems;
   let nextTitle = snapshot.title;
@@ -450,19 +495,21 @@ export function applyListMutationWithDiff(
   };
 }
 
-export function parseListSnapshot(value: z.input<typeof listSnapshotSchema>): ListSnapshot {
-  return listSnapshotSchema.parse(value);
+export function parseListSnapshot(
+  value: Schema.Codec.Encoded<typeof listSnapshotSchema>,
+): ListSnapshot {
+  return Schema.decodeUnknownSync(listSnapshotSchema)(value);
 }
 
 type ItemFieldCommand = Extract<ListCommand, { type: "update-item" | "set-item-checked" }>;
 
 function mapCheckedOrUpdatedItem(
-  items: ListItem[],
+  items: readonly ListItem[],
   command: ItemFieldCommand,
   actor: ListIdentity | null,
   now: string,
   diff: ListSnapshotDiff,
-): ListItem[] | null {
+): readonly ListItem[] | null {
   const current = items.find((item) => item.id === command.itemId);
   if (!current) {
     return null;
@@ -491,7 +538,10 @@ function mapCheckedOrUpdatedItem(
   );
 }
 
-function itemChangesDiffer(item: ListItem, changes: z.infer<typeof itemChangesSchema>): boolean {
+function itemChangesDiffer(
+  item: ListItem,
+  changes: Schema.Schema.Type<typeof itemChangesSchema>,
+): boolean {
   return (
     (changes.name !== undefined && changes.name !== item.name) ||
     (changes.quantity !== undefined && changes.quantity !== item.quantity) ||
@@ -502,11 +552,11 @@ function itemChangesDiffer(item: ListItem, changes: z.infer<typeof itemChangesSc
 }
 
 function mapUpdatedItem(
-  items: ListItem[],
+  items: readonly ListItem[],
   itemId: string,
   update: (item: ListItem) => ListItem,
   diff: ListSnapshotDiff,
-): ListItem[] {
+): readonly ListItem[] {
   return items.map((item) => {
     if (item.id !== itemId) {
       return item;
@@ -541,7 +591,10 @@ function buildRestoredItem(
   };
 }
 
-function trimDeletedItems(items: DeletedListItem[], diff: ListSnapshotDiff): DeletedListItem[] {
+function trimDeletedItems(
+  items: readonly DeletedListItem[],
+  diff: ListSnapshotDiff,
+): readonly DeletedListItem[] {
   if (items.length <= MAX_DELETED_ITEMS) {
     return items;
   }
@@ -592,6 +645,8 @@ function listItemsEqual(left: ListItem, right: ListItem): boolean {
   );
 }
 
-export function parseListMutation(value: z.input<typeof listMutationSchema>): ListMutation {
-  return listMutationSchema.parse(value);
+export function parseListMutation(
+  value: Schema.Codec.Encoded<typeof listMutationSchema>,
+): ListMutation {
+  return Schema.decodeUnknownSync(listMutationSchema)(value);
 }

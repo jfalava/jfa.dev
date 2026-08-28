@@ -1,76 +1,81 @@
-import { z } from "zod";
+import * as Effect from "effect/Effect";
+import * as Schema from "effect/Schema";
 
 const BASE64URL_PATTERN = /^[A-Za-z0-9_-]+$/;
 const PASSKEY_BASE64URL_PATTERN = /^[A-Za-z0-9_-]+=*$/;
 const IDENTITY_ID_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
-export const identityIdSchema = z
-  .string()
-  .regex(IDENTITY_ID_PATTERN, "Expected a SHA-256 identity fingerprint");
+/** ISO-8601 datetime string with a `Z` or numeric offset, as produced by `Date.toISOString()`. */
+const ISO_DATETIME_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+
+export const timestampSchema = Schema.String.check(Schema.isPattern(ISO_DATETIME_PATTERN));
+
+export const identityIdSchema = Schema.String.check(Schema.isPattern(IDENTITY_ID_PATTERN));
 
 // Keweke stores Ed25519 public keys as base64url-encoded SPKI bytes.
-export const publicKeySchema = z
-  .string()
-  .regex(BASE64URL_PATTERN, "Expected a base64url public key")
-  .min(20)
-  .max(256);
+export const publicKeySchema = Schema.String.check(
+  Schema.isPattern(BASE64URL_PATTERN),
+  Schema.isMinLength(20),
+  Schema.isMaxLength(256),
+);
 
-export const signatureSchema = z
-  .string()
-  .regex(BASE64URL_PATTERN, "Expected a base64url signature")
-  .min(20)
-  .max(256);
+export const signatureSchema = Schema.String.check(
+  Schema.isPattern(BASE64URL_PATTERN),
+  Schema.isMinLength(20),
+  Schema.isMaxLength(256),
+);
 
-export const usernameSchema = z.string().trim().min(1).max(48);
+export const usernameSchema = Schema.Trim.check(Schema.isMinLength(1), Schema.isMaxLength(48));
 
 export const listIdentityIdSchema = identityIdSchema;
 
-export const listIdentitySchema = z.object({
+export const listIdentitySchema = Schema.Struct({
   id: identityIdSchema,
-  username: usernameSchema.nullable(),
+  username: Schema.NullOr(usernameSchema),
 });
 
-export const identityAuthSchema = z.object({
+const identityAuthFields = {
   userId: identityIdSchema,
   deviceId: identityIdSchema,
   signature: signatureSchema,
-});
+};
 
-export const publishAuthSchema = identityAuthSchema.extend({
+export const identityAuthSchema = Schema.Struct(identityAuthFields);
+
+export const publishAuthSchema = Schema.Struct({
+  ...identityAuthFields,
   userPublicKey: publicKeySchema,
   devicePublicKey: publicKeySchema,
   username: usernameSchema,
 });
 
-export const deviceProfileSchema = z.object({
+export const deviceProfileSchema = Schema.Struct({
   deviceId: identityIdSchema,
   publicKey: publicKeySchema,
-  approvedAt: z.string().datetime({ offset: true }),
-  approvedBy: identityIdSchema.nullable(),
-  revokedAt: z.string().datetime({ offset: true }).nullable(),
+  approvedAt: timestampSchema,
+  approvedBy: Schema.NullOr(identityIdSchema),
+  revokedAt: Schema.NullOr(timestampSchema),
 });
 
-export const userProfileSchema = z.object({
+export const userProfileSchema = Schema.Struct({
   userId: identityIdSchema,
   userPublicKey: publicKeySchema,
   username: usernameSchema,
-  devices: z.array(deviceProfileSchema),
+  devices: Schema.Array(deviceProfileSchema),
 });
 
-export const pairingCodeSchema = z
-  .string()
-  .regex(/^[A-Za-z0-9]{10}$/, "Expected a ten-character pairing code");
+export const pairingCodeSchema = Schema.String.check(Schema.isPattern(/^[A-Za-z0-9]{10}$/));
 
-const passkeyBase64UrlSchema = z
-  .string()
-  .regex(PASSKEY_BASE64URL_PATTERN, "Expected a base64url WebAuthn value")
-  .min(1)
-  .max(2048);
+const passkeyBase64UrlSchema = Schema.String.check(
+  Schema.isPattern(PASSKEY_BASE64URL_PATTERN),
+  Schema.isMinLength(1),
+  Schema.isMaxLength(2048),
+);
 
-export const passkeySessionIdSchema = z.string().uuid();
+export const passkeySessionIdSchema = Schema.String.check(Schema.isUUID());
 export const passkeyCredentialIdSchema = passkeyBase64UrlSchema;
 
-export const passkeyTransportSchema = z.enum([
+export const passkeyTransportSchema = Schema.Literals([
   "usb",
   "nfc",
   "ble",
@@ -79,70 +84,78 @@ export const passkeyTransportSchema = z.enum([
   "smart-card",
 ]);
 
-export const passkeyAlgorithmSchema = z.enum(["ES256", "RS256"]);
+export const passkeyAlgorithmSchema = Schema.Literals(["ES256", "RS256"]);
 
-const passkeyUserSchema = z.object({
-  id: z.string().min(1).max(64),
-  name: z.string().min(1).max(128),
-  displayName: z.string().min(1).max(128),
+const passkeyUserSchema = Schema.Struct({
+  id: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(64)),
+  name: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(128)),
+  displayName: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(128)),
 });
 
-const passkeyClientExtensionResultsSchema = z.record(z.string(), z.unknown()).default({});
+const passkeyClientExtensionResultsSchema = Schema.Record(Schema.String, Schema.Unknown).pipe(
+  Schema.withDecodingDefaultKey(Effect.succeed({})),
+);
 
-export const passkeyRegistrationSchema = z.object({
+export const passkeyRegistrationSchema = Schema.Struct({
   id: passkeyCredentialIdSchema,
   rawId: passkeyCredentialIdSchema,
-  response: z.object({
+  response: Schema.Struct({
     attestationObject: passkeyBase64UrlSchema,
     authenticatorData: passkeyBase64UrlSchema,
     clientDataJSON: passkeyBase64UrlSchema,
-    transports: z.array(passkeyTransportSchema).default([]),
+    transports: Schema.Array(passkeyTransportSchema).pipe(
+      Schema.withDecodingDefaultKey(Effect.succeed([])),
+    ),
     publicKey: passkeyBase64UrlSchema,
-    publicKeyAlgorithm: z.number().int(),
+    publicKeyAlgorithm: Schema.Int,
   }),
-  authenticatorAttachment: z.enum(["platform", "cross-platform"]).nullable().optional(),
+  authenticatorAttachment: Schema.optional(
+    Schema.NullishOr(Schema.Literals(["platform", "cross-platform"])),
+  ),
   clientExtensionResults: passkeyClientExtensionResultsSchema,
-  type: z.literal("public-key"),
+  type: Schema.Literal("public-key"),
   user: passkeyUserSchema,
 });
 
-export const passkeyAuthenticationSchema = z.object({
+export const passkeyAuthenticationSchema = Schema.Struct({
   id: passkeyCredentialIdSchema,
   rawId: passkeyCredentialIdSchema,
-  response: z.object({
+  response: Schema.Struct({
     authenticatorData: passkeyBase64UrlSchema,
     clientDataJSON: passkeyBase64UrlSchema,
     signature: passkeyBase64UrlSchema,
-    userHandle: passkeyBase64UrlSchema.optional(),
+    userHandle: Schema.optional(passkeyBase64UrlSchema),
   }),
-  authenticatorAttachment: z.enum(["platform", "cross-platform"]).nullable().optional(),
+  authenticatorAttachment: Schema.optional(
+    Schema.NullishOr(Schema.Literals(["platform", "cross-platform"])),
+  ),
   clientExtensionResults: passkeyClientExtensionResultsSchema,
-  type: z.literal("public-key"),
+  type: Schema.Literal("public-key"),
 });
 
-export const passkeyCredentialSchema = z.object({
+export const passkeyCredentialSchema = Schema.Struct({
   id: passkeyCredentialIdSchema,
   publicKey: passkeyBase64UrlSchema,
   algorithm: passkeyAlgorithmSchema,
-  transports: z.array(passkeyTransportSchema),
-  counter: z.number().int().nonnegative(),
-  synced: z.boolean(),
+  transports: Schema.Array(passkeyTransportSchema),
+  counter: Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)),
+  synced: Schema.Boolean,
 });
 
-export const passkeyProfileSchema = z.object({
+export const passkeyProfileSchema = Schema.Struct({
   id: passkeyCredentialIdSchema,
-  transports: z.array(passkeyTransportSchema),
-  synced: z.boolean(),
-  createdAt: z.string().datetime({ offset: true }),
-  lastUsedAt: z.string().datetime({ offset: true }).nullable(),
+  transports: Schema.Array(passkeyTransportSchema),
+  synced: Schema.Boolean,
+  createdAt: timestampSchema,
+  lastUsedAt: Schema.NullOr(timestampSchema),
 });
 
-export type ListIdentity = z.infer<typeof listIdentitySchema>;
-export type IdentityAuth = z.infer<typeof identityAuthSchema>;
-export type PublishAuth = z.infer<typeof publishAuthSchema>;
-export type DeviceProfile = z.infer<typeof deviceProfileSchema>;
-export type UserProfile = z.infer<typeof userProfileSchema>;
-export type PasskeyRegistration = z.infer<typeof passkeyRegistrationSchema>;
-export type PasskeyAuthentication = z.infer<typeof passkeyAuthenticationSchema>;
-export type PasskeyCredential = z.infer<typeof passkeyCredentialSchema>;
-export type PasskeyProfile = z.infer<typeof passkeyProfileSchema>;
+export type ListIdentity = Schema.Schema.Type<typeof listIdentitySchema>;
+export type IdentityAuth = Schema.Schema.Type<typeof identityAuthSchema>;
+export type PublishAuth = Schema.Schema.Type<typeof publishAuthSchema>;
+export type DeviceProfile = Schema.Schema.Type<typeof deviceProfileSchema>;
+export type UserProfile = Schema.Schema.Type<typeof userProfileSchema>;
+export type PasskeyRegistration = Schema.Schema.Type<typeof passkeyRegistrationSchema>;
+export type PasskeyAuthentication = Schema.Schema.Type<typeof passkeyAuthenticationSchema>;
+export type PasskeyCredential = Schema.Schema.Type<typeof passkeyCredentialSchema>;
+export type PasskeyProfile = Schema.Schema.Type<typeof passkeyProfileSchema>;

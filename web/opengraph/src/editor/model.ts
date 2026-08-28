@@ -1,87 +1,90 @@
-import { z } from "zod";
+import * as Effect from "effect/Effect";
+import * as Schema from "effect/Schema";
 
 export const CANVAS_WIDTH = 1200;
 export const CANVAS_HEIGHT = 630;
 
-const layerBaseSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  visible: z.boolean(),
-  locked: z.boolean(),
-  x: z.number(),
-  y: z.number(),
-  width: z.number().positive(),
-  height: z.number().positive(),
-  rotation: z.number(),
-  opacity: z.number().min(0).max(1),
+const nonEmptyString = Schema.String.check(Schema.isMinLength(1));
+const positiveNumber = Schema.Number.check(Schema.isGreaterThan(0));
+
+const layerBaseSchema = Schema.Struct({
+  id: nonEmptyString,
+  name: nonEmptyString,
+  visible: Schema.Boolean,
+  locked: Schema.Boolean,
+  x: Schema.Number,
+  y: Schema.Number,
+  width: positiveNumber,
+  height: positiveNumber,
+  rotation: Schema.Number,
+  opacity: Schema.Number.check(Schema.isGreaterThanOrEqualTo(0), Schema.isLessThanOrEqualTo(1)),
 });
 
-const textLayerSchema = layerBaseSchema.extend({
-  type: z.literal("text"),
-  text: z.string(),
-  fontFamily: z.string().min(1),
-  fontSize: z.number().positive(),
-  fontWeight: z.number().int().min(100).max(900),
-  fill: z.string().min(1),
-  textAlign: z.enum(["left", "center", "right"]),
+const textLayerSchema = Schema.Struct({
+  ...layerBaseSchema.fields,
+  type: Schema.Literal("text"),
+  text: Schema.String,
+  fontFamily: nonEmptyString,
+  fontSize: positiveNumber,
+  fontWeight: Schema.Int.check(Schema.isGreaterThanOrEqualTo(100), Schema.isLessThanOrEqualTo(900)),
+  fill: nonEmptyString,
+  textAlign: Schema.Literals(["left", "center", "right"]),
 });
 
-const geometryLayerSchema = layerBaseSchema.extend({
-  type: z.literal("shape"),
-  geometry: z.enum(["rectangle", "circle"]),
-  fill: z.string().min(1),
-  cornerRadius: z.number().min(0),
+const geometryLayerSchema = Schema.Struct({
+  ...layerBaseSchema.fields,
+  type: Schema.Literal("shape"),
+  geometry: Schema.Literals(["rectangle", "circle"]),
+  fill: nonEmptyString,
+  cornerRadius: Schema.Number.check(Schema.isGreaterThanOrEqualTo(0)),
 });
 
-const imageLayerSchema = layerBaseSchema.extend({
-  type: z.literal("image"),
-  assetId: z.string().min(1),
-  fit: z.enum(["cover", "contain"]),
+const imageLayerSchema = Schema.Struct({
+  ...layerBaseSchema.fields,
+  type: Schema.Literal("image"),
+  assetId: nonEmptyString,
+  fit: Schema.Literals(["cover", "contain"]),
 });
 
-export const layerSchema = z.discriminatedUnion("type", [
-  textLayerSchema,
-  geometryLayerSchema,
-  imageLayerSchema,
-]);
+export const layerSchema = Schema.Union([textLayerSchema, geometryLayerSchema, imageLayerSchema]);
 
-export const assetMetaSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  mime: z.string().min(1),
-  width: z.number().positive(),
-  height: z.number().positive(),
+export const assetMetaSchema = Schema.Struct({
+  id: nonEmptyString,
+  name: nonEmptyString,
+  mime: nonEmptyString,
+  width: positiveNumber,
+  height: positiveNumber,
 });
 
-export const fontMetaSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  family: z.string().min(1),
-  mime: z.string().min(1),
-  weight: z.number().int().min(100).max(900),
-  style: z.enum(["normal", "italic"]),
-  variable: z.boolean(),
+export const fontMetaSchema = Schema.Struct({
+  id: nonEmptyString,
+  name: nonEmptyString,
+  family: nonEmptyString,
+  mime: nonEmptyString,
+  weight: Schema.Int.check(Schema.isGreaterThanOrEqualTo(100), Schema.isLessThanOrEqualTo(900)),
+  style: Schema.Literals(["normal", "italic"]),
+  variable: Schema.Boolean,
 });
 
-export const projectSchema = z.object({
-  version: z.literal(1),
-  id: z.string().min(1),
-  name: z.string().min(1),
-  width: z.number().positive(),
-  height: z.number().positive(),
-  background: z.string().min(1),
-  layers: z.array(layerSchema),
-  assets: z.array(assetMetaSchema),
-  fonts: z.array(fontMetaSchema).default([]),
+export const projectSchema = Schema.Struct({
+  version: Schema.Literal(1),
+  id: nonEmptyString,
+  name: nonEmptyString,
+  width: positiveNumber,
+  height: positiveNumber,
+  background: nonEmptyString,
+  layers: Schema.Array(layerSchema),
+  assets: Schema.Array(assetMetaSchema),
+  fonts: Schema.Array(fontMetaSchema).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
 });
 
-export type Layer = z.infer<typeof layerSchema>;
-export type TextLayer = z.infer<typeof textLayerSchema>;
-export type GeometryLayer = z.infer<typeof geometryLayerSchema>;
-export type ImageLayer = z.infer<typeof imageLayerSchema>;
-export type AssetMeta = z.infer<typeof assetMetaSchema>;
-export type FontMeta = z.infer<typeof fontMetaSchema>;
-export type OgProject = z.infer<typeof projectSchema>;
+export type Layer = Schema.Schema.Type<typeof layerSchema>;
+export type TextLayer = Schema.Schema.Type<typeof textLayerSchema>;
+export type GeometryLayer = Schema.Schema.Type<typeof geometryLayerSchema>;
+export type ImageLayer = Schema.Schema.Type<typeof imageLayerSchema>;
+export type AssetMeta = Schema.Schema.Type<typeof assetMetaSchema>;
+export type FontMeta = Schema.Schema.Type<typeof fontMetaSchema>;
+export type OgProject = Schema.Schema.Type<typeof projectSchema>;
 
 export type LayerPatch = Partial<{
   name: string;

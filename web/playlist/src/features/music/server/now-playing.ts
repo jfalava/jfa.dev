@@ -1,32 +1,35 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import * as Effect from "effect/Effect";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
+import * as SchemaGetter from "effect/SchemaGetter";
 
-const lastfmTrackSchema = z.object({
-  name: z.string(),
-  artist: z.object({ "#text": z.string(), mbid: z.string() }),
-  album: z.object({ "#text": z.string(), mbid: z.string() }),
-  image: z.array(z.object({ "#text": z.string(), size: z.string() })),
-  url: z.url(),
-  date: z.object({ uts: z.string(), "#text": z.string() }).optional(),
-  "@attr": z.object({ nowplaying: z.string() }).optional(),
+const lastfmTrackSchema = Schema.Struct({
+  name: Schema.String,
+  artist: Schema.Struct({ "#text": Schema.String, mbid: Schema.String }),
+  album: Schema.Struct({ "#text": Schema.String, mbid: Schema.String }),
+  image: Schema.Array(Schema.Struct({ "#text": Schema.String, size: Schema.String })),
+  url: Schema.String,
+  date: Schema.optional(Schema.Struct({ uts: Schema.String, "#text": Schema.String })),
+  "@attr": Schema.optional(Schema.Struct({ nowplaying: Schema.String })),
 });
 
-const lastfmRecentTracksSchema = z.object({
-  recenttracks: z.object({
-    track: z.array(lastfmTrackSchema),
-    "@attr": z.object({
-      user: z.string(),
-      total: z.string(),
-      page: z.string(),
-      perPage: z.string(),
-      totalPages: z.string(),
+const lastfmRecentTracksSchema = Schema.Struct({
+  recenttracks: Schema.Struct({
+    track: Schema.Array(lastfmTrackSchema),
+    "@attr": Schema.Struct({
+      user: Schema.String,
+      total: Schema.String,
+      page: Schema.String,
+      perPage: Schema.String,
+      totalPages: Schema.String,
     }),
   }),
-  error: z.number().optional(),
-  message: z.string().optional(),
+  error: Schema.optional(Schema.Number),
+  message: Schema.optional(Schema.String),
 });
 
-type LastfmTrack = z.output<typeof lastfmTrackSchema>;
+type LastfmTrack = Schema.Schema.Type<typeof lastfmTrackSchema>;
 
 export type NowPlayingTrack = {
   title: string;
@@ -56,33 +59,51 @@ function toTrack(track: LastfmTrack): NowPlayingTrack {
   };
 }
 
-// Secrets are injected via Alchemy Secrets Store. At runtime Cloudflare
-// exposes them as `SecretsStoreSecret` with an async `.get()` — but for
-// `alchemy dev` the values are seeded from `web/playlist/.dev.vars` via
-// `effect/Config`, and may appear as plain strings. The environment record
-// is the I/O boundary: `lastfmEnvSchema` below decodes both shapes into
-// plain trimmed strings, and anything else (e.g. an unmaterialized Effect
-// `Redacted`) fails to parse and is treated as unavailable, so no secret
-// ever leaks to the client.
+/** Plain string binding; the value is trimmed on decode. */
+const trimmedString = Schema.String.pipe(
+  Schema.decode({
+    decode: SchemaGetter.transform((value: string) => value.trim()),
+    encode: SchemaGetter.transform((value: string) => value),
+  }),
+);
 
-const secretValueSchema = z.union([
-  z.string().transform((value) => value.trim()),
-  z
-    .object({
-      get: z.function({ output: z.promise(z.string()) }),
-    })
-    .transform(async (binding) => {
-      try {
-        return (await binding.get()).trim();
-      } catch {
-        return "";
-      }
-    }),
-]);
+/** Secrets Store binding (`env.*.get()`), resolved to a trimmed string. */
+const secretBindingSchema = Schema.Struct({ get: Schema.Any });
 
-const lastfmEnvSchema = z.object({
-  LASTFM_API_KEY: secretValueSchema.optional(),
-  LASTFM_USER: secretValueSchema.optional(),
+const secretFromBinding = Schema.decodeTo<typeof Schema.String, typeof secretBindingSchema>(
+  Schema.String,
+  {
+    decode: SchemaGetter.transformOrFail((binding: { readonly get: unknown }) =>
+      Effect.promise(async () => {
+        try {
+          // SAFETY: Secrets Store bindings are exactly `{ get(): Promise<string> }`
+          return (await (binding.get as () => Promise<string>)()).trim();
+        } catch {
+          return "";
+        }
+      }),
+    ),
+    encode: SchemaGetter.transform((value: string) => ({
+      get: () => Promise.resolve(value),
+    })),
+  },
+)(secretBindingSchema);
+
+/**
+ * Secrets are injected via Alchemy Secrets Store. At runtime Cloudflare
+ * exposes them as `SecretsStoreSecret` with an async `.get()` — but for
+ * `alchemy dev` the values are seeded from `web/playlist/.dev.vars` via
+ * `effect/Config`, and may appear as plain strings. The environment record
+ * is the I/O boundary: `secretValueSchema` below decodes both shapes into
+ * plain trimmed strings, and anything else (e.g. an unmaterialized Effect
+ * `Redacted`) fails to decode and is treated as unavailable, so no secret
+ * ever leaks to the client.
+ */
+const secretValueSchema = Schema.Union([trimmedString, secretFromBinding]);
+
+const lastfmEnvSchema = Schema.Struct({
+  LASTFM_API_KEY: Schema.optional(secretValueSchema),
+  LASTFM_USER: Schema.optional(secretValueSchema),
 });
 
 async function loadServerEnv() {
@@ -111,14 +132,11 @@ async function readLastfmBindings(): Promise<{ apiKey: string; user: string }> {
   if (env === null) {
     return { apiKey: "", user: "" };
   }
-  const parsed = await lastfmEnvSchema.safeParseAsync(env);
-  if (!parsed.success) {
-    return { apiKey: "", user: "" };
-  }
-  return {
-    apiKey: parsed.data.LASTFM_API_KEY ?? "",
-    user: parsed.data.LASTFM_USER ?? "",
-  };
+  // The bindings are untyped on `Env` (Secrets Store keys are not declared);
+  // `lastfmEnvSchema` is the narrowing boundary and strips every other key
+  // before the values reach the handler.
+  const { LASTFM_API_KEY, LASTFM_USER } = await Schema.decodeUnknownPromise(lastfmEnvSchema)(env);
+  return { apiKey: LASTFM_API_KEY ?? "", user: LASTFM_USER ?? "" };
 }
 
 export const getNowPlaying = createServerFn({ method: "GET" }).handler(
@@ -146,11 +164,11 @@ export const getNowPlaying = createServerFn({ method: "GET" }).handler(
     }
 
     const raw = await response.json();
-    const parsed = lastfmRecentTracksSchema.safeParse(raw);
-    if (!parsed.success) {
+    const parsed = Schema.decodeUnknownResult(lastfmRecentTracksSchema)(raw);
+    if (Result.isFailure(parsed)) {
       return { status: "unavailable", reason: "Last.fm returned unexpected shape" };
     }
-    const json = parsed.data;
+    const json = parsed.success;
     if (json.error !== undefined) {
       return { status: "unavailable", reason: json.message ?? `Last.fm error ${json.error}` };
     }

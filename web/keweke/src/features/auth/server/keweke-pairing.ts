@@ -7,6 +7,7 @@ import {
   type UserProfile,
 } from "@jfa.dev/common/identities";
 import { DurableObject } from "cloudflare:workers";
+import * as Schema from "effect/Schema";
 
 interface PairingRow {
   [key: string]: string | number | null;
@@ -57,9 +58,11 @@ export class KewekePairingSession extends DurableObject {
     targetDeviceId: string;
     targetDevicePublicKey: string;
   }): Promise<PairingStatus> {
-    const code = pairingCodeSchema.parse(input.code);
-    const targetDeviceId = identityIdSchema.parse(input.targetDeviceId);
-    const targetDevicePublicKey = publicKeySchema.parse(input.targetDevicePublicKey);
+    const code = Schema.decodeUnknownSync(pairingCodeSchema)(input.code);
+    const targetDeviceId = Schema.decodeUnknownSync(identityIdSchema)(input.targetDeviceId);
+    const targetDevicePublicKey = Schema.decodeUnknownSync(publicKeySchema)(
+      input.targetDevicePublicKey,
+    );
     if ((await publicKeyFingerprint(targetDevicePublicKey)) !== targetDeviceId) {
       throw new Error("Pairing device fingerprint does not match its public key");
     }
@@ -105,7 +108,7 @@ export class KewekePairingSession extends DurableObject {
   }
 
   async getStatus(codeValue: string): Promise<PairingStatus> {
-    const code = pairingCodeSchema.parse(codeValue);
+    const code = Schema.decodeUnknownSync(pairingCodeSchema)(codeValue);
     const row = this.readRow();
     if (!row || (await sha256Base64Url(code)) !== row.code_hash) {
       return { status: "missing", code };
@@ -129,7 +132,7 @@ export class KewekePairingSession extends DurableObject {
     signature: string;
     payload: string;
   }): Promise<PairingApprovalStatus> {
-    const code = pairingCodeSchema.parse(input.code);
+    const code = Schema.decodeUnknownSync(pairingCodeSchema)(input.code);
     const row = this.readRow();
     if (!row || (await sha256Base64Url(code)) !== row.code_hash) {
       return { status: "missing", code };
@@ -173,7 +176,7 @@ export class KewekePairingSession extends DurableObject {
 
   private async profile(userId: string): Promise<UserProfile | null> {
     const profile = await this.env.KEWEKE_USERS.getByName(userId).getProfile(userId);
-    return profile ? userProfileSchema.parse(profile) : null;
+    return profile ? Schema.decodeUnknownSync(userProfileSchema)(profile) : null;
   }
 
   private async toApprovedStatus(code: string, row: PairingRow): Promise<PairingStatus> {

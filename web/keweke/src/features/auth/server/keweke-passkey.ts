@@ -2,6 +2,7 @@ import { publicKeyFingerprint } from "@jfa.dev/common/crypto";
 import { identityIdSchema, publicKeySchema } from "@jfa.dev/common/identities";
 import { server } from "@passwordless-id/webauthn";
 import { DurableObject } from "cloudflare:workers";
+import * as Schema from "effect/Schema";
 
 const PASSKEY_SESSION_TTL_MS = 5 * 60 * 1000;
 
@@ -43,9 +44,9 @@ export class KewekePasskeySession extends DurableObject {
     deviceId: string;
     devicePublicKey: string;
   }): Promise<PasskeySession> {
-    const userId = identityIdSchema.parse(input.userId);
-    const deviceId = identityIdSchema.parse(input.deviceId);
-    const devicePublicKey = publicKeySchema.parse(input.devicePublicKey);
+    const userId = Schema.decodeUnknownSync(identityIdSchema)(input.userId);
+    const deviceId = Schema.decodeUnknownSync(identityIdSchema)(input.deviceId);
+    const devicePublicKey = Schema.decodeUnknownSync(publicKeySchema)(input.devicePublicKey);
     await this.assertDeviceFingerprint(deviceId, devicePublicKey);
 
     const current = this.readRow();
@@ -76,8 +77,10 @@ export class KewekePasskeySession extends DurableObject {
     targetDeviceId: string;
     targetDevicePublicKey: string;
   }): Promise<PasskeySession> {
-    const targetDeviceId = identityIdSchema.parse(input.targetDeviceId);
-    const targetDevicePublicKey = publicKeySchema.parse(input.targetDevicePublicKey);
+    const targetDeviceId = Schema.decodeUnknownSync(identityIdSchema)(input.targetDeviceId);
+    const targetDevicePublicKey = Schema.decodeUnknownSync(publicKeySchema)(
+      input.targetDevicePublicKey,
+    );
     await this.assertDeviceFingerprint(targetDeviceId, targetDevicePublicKey);
 
     const current = this.readRow();

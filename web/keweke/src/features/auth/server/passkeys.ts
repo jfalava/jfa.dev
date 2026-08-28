@@ -23,6 +23,7 @@ import {
   type PasskeyRegistration,
   type UserProfile,
 } from "@jfa.dev/common/identities";
+import { effectValidator } from "@jfa.dev/common/validator";
 import {
   server,
   type AuthenticationJSON,
@@ -32,32 +33,32 @@ import {
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestUrl } from "@tanstack/react-start/server";
 import { env } from "cloudflare:workers";
-import { z } from "zod";
+import * as Schema from "effect/Schema";
 
 import type { PasskeySession } from "./keweke-passkey";
 
-const registrationStartInputSchema = z.object({ auth: identityAuthSchema });
+const registrationStartInputSchema = Schema.Struct({ auth: identityAuthSchema });
 
-const registrationFinishInputSchema = z.object({
+const registrationFinishInputSchema = Schema.Struct({
   sessionId: passkeySessionIdSchema,
   auth: identityAuthSchema,
   registration: passkeyRegistrationSchema,
 });
 
-const adoptionStartInputSchema = z.object({
+const adoptionStartInputSchema = Schema.Struct({
   targetDeviceId: identityIdSchema,
   targetDevicePublicKey: publicKeySchema,
 });
 
-const adoptionFinishInputSchema = z.object({
+const adoptionFinishInputSchema = Schema.Struct({
   sessionId: passkeySessionIdSchema,
   authentication: passkeyAuthenticationSchema,
   deviceSignature: signatureSchema,
 });
 
-const listInputSchema = z.object({ auth: identityAuthSchema });
+const listInputSchema = Schema.Struct({ auth: identityAuthSchema });
 
-const deleteInputSchema = z.object({
+const deleteInputSchema = Schema.Struct({
   auth: identityAuthSchema,
   credentialId: passkeyCredentialIdSchema,
 });
@@ -107,7 +108,7 @@ function toRegistrationJSON(registration: PasskeyRegistration): RegistrationJSON
       attestationObject: registration.response.attestationObject,
       authenticatorData: registration.response.authenticatorData,
       clientDataJSON: registration.response.clientDataJSON,
-      transports: registration.response.transports,
+      transports: [...registration.response.transports],
       publicKey: registration.response.publicKey,
       publicKeyAlgorithm: registration.response.publicKeyAlgorithm,
     },
@@ -139,7 +140,7 @@ function credentialInfo(credential: PasskeyCredential): CredentialInfo {
     id: credential.id,
     publicKey: credential.publicKey,
     algorithm: credential.algorithm,
-    transports: credential.transports,
+    transports: [...credential.transports],
   };
 }
 
@@ -148,7 +149,7 @@ function credentialFromRegistration(info: {
   authenticator: { counter: number };
   synced: boolean;
 }): PasskeyCredential {
-  return passkeyCredentialSchema.parse({
+  return Schema.decodeUnknownSync(passkeyCredentialSchema)({
     id: info.credential.id,
     publicKey: info.credential.publicKey,
     algorithm: info.credential.algorithm,
@@ -165,8 +166,7 @@ function userIdFromHandle(userHandle: string | undefined): string | null {
 
   try {
     const decoded = new TextDecoder().decode(base64UrlDecode(userHandle));
-    const parsed = identityIdSchema.safeParse(decoded);
-    return parsed.success ? parsed.data : null;
+    return Schema.is(identityIdSchema)(decoded) ? decoded : null;
   } catch {
     return null;
   }
@@ -177,7 +177,7 @@ async function getSession(sessionId: string): Promise<PasskeySession | null> {
 }
 
 export const startPasskeyRegistration = createServerFn({ method: "POST" })
-  .validator(registrationStartInputSchema)
+  .validator(effectValidator(registrationStartInputSchema))
   .handler(async ({ data }): Promise<PasskeyReadyRegistration | { status: "unauthorized" }> => {
     const payload = passkeyRegistrationStartSigningPayload({
       userId: data.auth.userId,
@@ -211,7 +211,7 @@ export const startPasskeyRegistration = createServerFn({ method: "POST" })
   });
 
 export const completePasskeyRegistration = createServerFn({ method: "POST" })
-  .validator(registrationFinishInputSchema)
+  .validator(effectValidator(registrationFinishInputSchema))
   .handler(async ({ data }): Promise<PasskeyFinishStatus> => {
     const session = await getSession(data.sessionId);
     if (!session || session.flow !== "registration") {
@@ -276,7 +276,7 @@ export const completePasskeyRegistration = createServerFn({ method: "POST" })
   });
 
 export const startPasskeyAdoption = createServerFn({ method: "POST" })
-  .validator(adoptionStartInputSchema)
+  .validator(effectValidator(adoptionStartInputSchema))
   .handler(async ({ data }): Promise<PasskeyReadyAdoption> => {
     const sessionId = crypto.randomUUID();
     const session = await env.KEWEKE_PASSKEY_SESSIONS.getByName(sessionId).startAdoption(data);
@@ -292,7 +292,7 @@ export const startPasskeyAdoption = createServerFn({ method: "POST" })
   });
 
 export const completePasskeyAdoption = createServerFn({ method: "POST" })
-  .validator(adoptionFinishInputSchema)
+  .validator(effectValidator(adoptionFinishInputSchema))
   .handler(async ({ data }): Promise<PasskeyAdoptionStatus> => {
     const session = await getSession(data.sessionId);
     if (!session || session.flow !== "adoption") {
@@ -373,7 +373,7 @@ export const completePasskeyAdoption = createServerFn({ method: "POST" })
   });
 
 export const listPasskeys = createServerFn()
-  .validator(listInputSchema)
+  .validator(effectValidator(listInputSchema))
   .handler(
     async ({
       data,
@@ -397,7 +397,7 @@ export const listPasskeys = createServerFn()
   );
 
 export const deletePasskey = createServerFn({ method: "POST" })
-  .validator(deleteInputSchema)
+  .validator(effectValidator(deleteInputSchema))
   .handler(
     async ({
       data,

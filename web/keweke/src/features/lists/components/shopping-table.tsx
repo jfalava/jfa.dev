@@ -40,7 +40,7 @@ export function ShoppingTable({
   emptyMessage?: string;
   identity?: LocalIdentity;
   isSpreadsheetMode: boolean;
-  items: ListItem[];
+  items: readonly ListItem[];
   newItem: NewItemDraft;
   newItemErrors: ItemDraftErrors;
   onAdd: () => Promise<boolean>;

@@ -1341,7 +1341,7 @@ function CanvasSection() {
 
 interface PropertiesPanelProps {
   className?: string;
-  customFonts: FontMeta[];
+  customFonts: readonly FontMeta[];
   layer: Layer | undefined;
   onAddFont: (file: File, options: FontUploadOptions) => Promise<void>;
   onUpdate: (patch: LayerPatch) => void;
@@ -1458,7 +1458,7 @@ function TextProperties({
   onAddFont,
   onUpdate,
 }: {
-  customFonts: FontMeta[];
+  customFonts: readonly FontMeta[];
   layer: Extract<Layer, { type: "text" }>;
   onAddFont: (file: File, options: FontUploadOptions) => Promise<void>;
   onUpdate: (patch: LayerPatch) => void;

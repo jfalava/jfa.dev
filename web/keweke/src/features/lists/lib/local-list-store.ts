@@ -12,6 +12,7 @@ import {
   type ListSummary,
   type RemoteListRole,
 } from "@jfa.dev/common/lists";
+import * as Schema from "effect/Schema";
 import { deleteDB, openDB, type DBSchema, type IDBPDatabase } from "idb";
 import { uuidv7 } from "uuidv7";
 
@@ -72,7 +73,7 @@ export async function getLocalListRecord(listId: string): Promise<LocalListRecor
 }
 
 export async function getLocalListByAlias(alias: string): Promise<LocalListRecord | undefined> {
-  const normalizedAlias = listAliasSchema.parse(alias.trim().toLowerCase());
+  const normalizedAlias = Schema.decodeUnknownSync(listAliasSchema)(alias.trim().toLowerCase());
   const database = await getDatabase();
   const records = await database.getAll("lists");
   return records

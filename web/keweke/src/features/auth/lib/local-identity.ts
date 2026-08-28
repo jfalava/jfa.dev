@@ -5,6 +5,7 @@ import {
   signPayload,
 } from "@jfa.dev/common/crypto";
 import { usernameSchema, userProfileSchema, type UserProfile } from "@jfa.dev/common/identities";
+import * as Schema from "effect/Schema";
 import { deleteDB, openDB, type DBSchema, type IDBPDatabase } from "idb";
 
 const DATABASE_NAME = "keweke-local-identity-v2";
@@ -140,7 +141,7 @@ export async function ensureLocalIdentity(): Promise<LocalIdentity | undefined> 
 }
 
 export async function saveLocalIdentity(username: string): Promise<LocalIdentity> {
-  const normalizedUsername = usernameSchema.parse(username);
+  const normalizedUsername = Schema.decodeUnknownSync(usernameSchema)(username);
   const existing = await readRecord();
   const record = existing ?? (await createRecord());
   const next = { ...record, username: normalizedUsername };
@@ -149,7 +150,7 @@ export async function saveLocalIdentity(username: string): Promise<LocalIdentity
 }
 
 export async function confirmRemoteUsername(username: string): Promise<LocalIdentity> {
-  const normalizedUsername = usernameSchema.parse(username);
+  const normalizedUsername = Schema.decodeUnknownSync(usernameSchema)(username);
   const record = await readRecord();
   if (!record) {
     throw new Error("Local identity is unavailable");
@@ -169,7 +170,7 @@ export async function confirmRemoteUsername(username: string): Promise<LocalIden
 }
 
 export async function adoptLocalIdentity(profileValue: UserProfile): Promise<LocalIdentity> {
-  const profile = userProfileSchema.parse(profileValue);
+  const profile = Schema.decodeUnknownSync(userProfileSchema)(profileValue);
   const record = await readRecord();
   if (!record) {
     throw new Error("Local identity is unavailable");

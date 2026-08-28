@@ -11,6 +11,7 @@ import {
   type PasskeyProfile,
 } from "@jfa.dev/common/identities";
 import { client } from "@passwordless-id/webauthn";
+import * as Schema from "effect/Schema";
 
 import {
   adoptLocalIdentity,
@@ -56,7 +57,7 @@ export async function registerLocalPasskey() {
     throw new Error("The current device is not authorized to register a passkey");
   }
 
-  const registration = passkeyRegistrationSchema.parse(
+  const registration = Schema.decodeUnknownSync(passkeyRegistrationSchema)(
     await client.register({
       challenge: start.challenge,
       user: {
@@ -106,7 +107,7 @@ export async function adoptLocalIdentityWithPasskey(): Promise<
     throw new Error("Unable to start passkey adoption");
   }
 
-  const authentication = passkeyAuthenticationSchema.parse(
+  const authentication = Schema.decodeUnknownSync(passkeyAuthenticationSchema)(
     await client.authenticate({
       challenge: start.challenge,
       allowCredentials: [],

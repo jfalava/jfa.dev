@@ -2,9 +2,10 @@ import { listAliasSchema } from "@jfa.dev/common/aliases";
 import { aliasSigningPayload, listPublishSigningPayload } from "@jfa.dev/common/crypto";
 import { identityAuthSchema, publishAuthSchema } from "@jfa.dev/common/identities";
 import { listIdSchema, listMutationSchema, listSnapshotSchema } from "@jfa.dev/common/lists";
+import { effectValidator } from "@jfa.dev/common/validator";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { z } from "zod";
+import * as Schema from "effect/Schema";
 
 import { isUuidV7, normalizeListAddress } from "@/features/lists/lib/list-id";
 import { listShareMetaFromSnapshot, type ListShareMeta } from "@/features/lists/lib/share-meta";
@@ -13,43 +14,45 @@ import { readRemoteList, resolveActorNames, resolveHistoryActorNames } from "./r
 
 const ALIAS_DIRECTORY_NAME = "directory";
 
-const remoteMutationInputSchema = z.object({
+const remoteMutationInputSchema = Schema.Struct({
   listId: listIdSchema,
   mutation: listMutationSchema,
 });
 
-const remoteImportInputSchema = z.object({
+const remoteImportInputSchema = Schema.Struct({
   listId: listIdSchema,
   snapshot: listSnapshotSchema,
-  migrationId: z.string().min(1).max(128),
+  migrationId: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(128)),
   auth: publishAuthSchema,
 });
 
-const remoteAliasInputSchema = z.object({
+const remoteAliasInputSchema = Schema.Struct({
   listId: listIdSchema,
   auth: identityAuthSchema,
 });
 
-const remoteItemHistoryInputSchema = z.object({
+const remoteItemHistoryInputSchema = Schema.Struct({
   listId: listIdSchema,
-  itemId: z.string().min(1).max(128),
-  limit: z.number().int().min(1).max(100).optional(),
-  beforeRevision: z.number().int().min(0).optional(),
+  itemId: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(128)),
+  limit: Schema.optional(
+    Schema.Int.check(Schema.isGreaterThanOrEqualTo(1), Schema.isLessThanOrEqualTo(100)),
+  ),
+  beforeRevision: Schema.optional(Schema.Int.check(Schema.isGreaterThanOrEqualTo(0))),
 });
 
 export const getRemoteList = createServerFn()
-  .validator(listIdSchema)
+  .validator(effectValidator(listIdSchema))
   .handler(async ({ data }) => readRemoteList(data));
 
 export const getRemoteListByAlias = createServerFn()
-  .validator(listAliasSchema)
+  .validator(effectValidator(listAliasSchema))
   .handler(async ({ data }) => {
     const listId = await env.KEWEKE_ALIASES.getByName(ALIAS_DIRECTORY_NAME).getListId(data);
     return listId ? readRemoteList(listId) : null;
   });
 
 export const getRemoteItemHistory = createServerFn()
-  .validator(remoteItemHistoryInputSchema)
+  .validator(effectValidator(remoteItemHistoryInputSchema))
   .handler(async ({ data }) => {
     const result = await env.KEWEKE_LISTS.getByName(data.listId).getItemHistory(data.listId, {
       itemId: data.itemId,
@@ -62,10 +65,10 @@ export const getRemoteItemHistory = createServerFn()
     return { status: "ok" as const, page: await resolveHistoryActorNames(result.page) };
   });
 
-const listShareMetaInputSchema = z.string().trim().min(1).max(200);
+const listShareMetaInputSchema = Schema.Trim.check(Schema.isMinLength(1), Schema.isMaxLength(200));
 
 export const getListShareMeta = createServerFn()
-  .validator(listShareMetaInputSchema)
+  .validator(effectValidator(listShareMetaInputSchema))
   .handler(async ({ data }): Promise<ListShareMeta | null> => {
     const normalizedAddress = normalizeListAddress(data);
     const listId = isUuidV7(normalizedAddress)
@@ -80,7 +83,7 @@ export const getListShareMeta = createServerFn()
   });
 
 export const ensureRemoteListAlias = createServerFn({ method: "POST" })
-  .validator(remoteAliasInputSchema)
+  .validator(effectValidator(remoteAliasInputSchema))
   .handler(async ({ data }) => {
     const listStub = env.KEWEKE_LISTS.getByName(data.listId);
     const snapshot = await listStub.getSnapshot(data.listId);
@@ -121,12 +124,12 @@ export const ensureRemoteListAlias = createServerFn({ method: "POST" })
 
     return {
       status: reservation.status,
-      snapshot: await resolveActorNames(listSnapshotSchema.parse(updated)),
+      snapshot: await resolveActorNames(Schema.decodeUnknownSync(listSnapshotSchema)(updated)),
     };
   });
 
 export const applyRemoteMutation = createServerFn({ method: "POST" })
-  .validator(remoteMutationInputSchema)
+  .validator(effectValidator(remoteMutationInputSchema))
   .handler(async ({ data }) => {
     const result = await env.KEWEKE_LISTS.getByName(data.listId).applyMutation(
       data.listId,
@@ -140,12 +143,14 @@ export const applyRemoteMutation = createServerFn({ method: "POST" })
     }
     return {
       status: result.status,
-      snapshot: await resolveActorNames(listSnapshotSchema.parse(result.snapshot)),
+      snapshot: await resolveActorNames(
+        Schema.decodeUnknownSync(listSnapshotSchema)(result.snapshot),
+      ),
     };
   });
 
 export const importRemoteList = createServerFn({ method: "POST" })
-  .validator(remoteImportInputSchema)
+  .validator(effectValidator(remoteImportInputSchema))
   .handler(async ({ data }) => {
     const payload = listPublishSigningPayload({
       listId: data.listId,
@@ -168,7 +173,7 @@ export const importRemoteList = createServerFn({ method: "POST" })
     if (current) {
       return {
         status: "conflict" as const,
-        snapshot: await resolveActorNames(listSnapshotSchema.parse(current)),
+        snapshot: await resolveActorNames(Schema.decodeUnknownSync(listSnapshotSchema)(current)),
       };
     }
 
@@ -194,6 +199,8 @@ export const importRemoteList = createServerFn({ method: "POST" })
     }
     return {
       status: result.status,
-      snapshot: await resolveActorNames(listSnapshotSchema.parse(result.snapshot)),
+      snapshot: await resolveActorNames(
+        Schema.decodeUnknownSync(listSnapshotSchema)(result.snapshot),
+      ),
     };
   });

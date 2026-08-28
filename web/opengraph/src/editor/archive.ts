@@ -1,3 +1,4 @@
+import * as Schema from "effect/Schema";
 import { strFromU8, strToU8, unzipSync, zipSync } from "fflate";
 
 import { projectSchema, type OgProject } from "@/editor/model";
@@ -44,7 +45,7 @@ export async function readProjectArchive(file: File): Promise<OgProject> {
     throw new Error("This project archive does not contain project.json.");
   }
 
-  const project = projectSchema.parse(JSON.parse(strFromU8(projectBytes)));
+  const project = Schema.decodeUnknownSync(projectSchema)(JSON.parse(strFromU8(projectBytes)));
   for (const asset of project.assets) {
     const bytes = archive[`assets/${asset.id}`];
     if (bytes !== undefined) {

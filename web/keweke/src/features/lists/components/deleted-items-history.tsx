@@ -17,7 +17,7 @@ export function DeletedItemsHistory({
 }: {
   busyArchiveId?: string;
   identity?: LocalIdentity;
-  items: DeletedListItem[];
+  items: readonly DeletedListItem[];
   onPurge: (archiveId: string) => void;
   onRestore: (archiveId: string) => void;
   onShowHistory?: (item: Pick<ListItem, "id" | "name">) => void;

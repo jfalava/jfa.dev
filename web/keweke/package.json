@@ -25,6 +25,7 @@
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/react-table": "catalog:tanstack",
     "blobatar": "2.5.0",
+    "effect": "catalog:iac",
     "fuse.js": "catalog:backend",
     "idb": "8.0.3",
     "lucide-react": "catalog:ui",
@@ -35,8 +36,7 @@
     "sonner": "catalog:ui",
     "tailwindcss": "catalog:styling",
     "tw-animate-css": "catalog:styling",
-    "uuidv7": "1.2.1",
-    "zod": "4.4.3"
+    "uuidv7": "1.2.1"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:cloudflare",

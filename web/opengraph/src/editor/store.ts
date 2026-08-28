@@ -1,3 +1,4 @@
+import * as Schema from "effect/Schema";
 import { create } from "zustand";
 
 import {
@@ -80,7 +81,7 @@ function replaceLayer(project: OgProject, id: string, patch: LayerPatch): OgProj
   const nextLayers = project.layers.map((layer) =>
     layer.id === id ? { ...layer, ...patch } : layer,
   );
-  return projectSchema.parse({
+  return Schema.decodeUnknownSync(projectSchema)({
     ...project,
     layers: nextLayers,
   });
@@ -339,7 +340,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       } as OgProject;
       const newTab: TabState = {
         id: clonedProject.id,
-        project: projectSchema.parse(clonedProject),
+        project: Schema.decodeUnknownSync(projectSchema)(clonedProject),
         selectedLayerId: source.selectedLayerId,
         past: [],
         future: [],
@@ -363,12 +364,14 @@ export const useEditorStore = create<EditorState>((set) => ({
     set((state) => {
       // Avoid duplicate tab ids — ensure unique
       const existing = state.tabs.find((t) => t.id === project.id);
-      const parsed = projectSchema.parse(project);
+      const parsed = Schema.decodeUnknownSync(projectSchema)(project);
       // SAFETY: duplicate id gets regenerated via createId to keep tab keys unique
       const projectToOpen = existing
         ? ({ ...parsed, id: createId("project") } as OgProject)
         : parsed;
-      const finalProject = existing ? projectSchema.parse(projectToOpen) : parsed;
+      const finalProject = existing
+        ? Schema.decodeUnknownSync(projectSchema)(projectToOpen)
+        : parsed;
       const newTab: TabState = {
         id: finalProject.id,
         project: cloneProject(finalProject),
@@ -400,7 +403,11 @@ export const useEditorStore = create<EditorState>((set) => ({
     set((state) =>
       withActiveTab(state, (tab) => {
         const nextProject = { ...tab.project, name: name || "Untitled canvas" };
-        return commitProject(tab, projectSchema.parse(nextProject), tab.selectedLayerId);
+        return commitProject(
+          tab,
+          Schema.decodeUnknownSync(projectSchema)(nextProject),
+          tab.selectedLayerId,
+        );
       }),
     ),
 
@@ -644,7 +651,7 @@ export const useEditorStore = create<EditorState>((set) => ({
         const fresh = createInitialProject({ name: tab.project.name });
         // Keep same tab id but refresh project with same id
         const nextProject = { ...fresh, id: tab.project.id, name: tab.project.name };
-        return commitProject(tab, projectSchema.parse(nextProject), "headline");
+        return commitProject(tab, Schema.decodeUnknownSync(projectSchema)(nextProject), "headline");
       }),
     ),
 
@@ -661,7 +668,7 @@ export const useEditorStore = create<EditorState>((set) => ({
             ? { ...layer, width: clampedWidth, height: clampedHeight, x: 0, y: 0 }
             : layer,
         );
-        const nextProject = projectSchema.parse({
+        const nextProject = Schema.decodeUnknownSync(projectSchema)({
           ...tab.project,
           width: clampedWidth,
           height: clampedHeight,
@@ -677,7 +684,10 @@ export const useEditorStore = create<EditorState>((set) => ({
         const nextLayers = tab.project.layers.map((layer) =>
           layer.id === "background" ? layer : { ...layer, visible },
         );
-        return commitProject(tab, projectSchema.parse({ ...tab.project, layers: nextLayers }));
+        return commitProject(
+          tab,
+          Schema.decodeUnknownSync(projectSchema)({ ...tab.project, layers: nextLayers }),
+        );
       }),
     ),
 
@@ -687,7 +697,10 @@ export const useEditorStore = create<EditorState>((set) => ({
         const nextLayers = tab.project.layers.map((layer) =>
           layer.id === "background" ? layer : { ...layer, locked },
         );
-        return commitProject(tab, projectSchema.parse({ ...tab.project, layers: nextLayers }));
+        return commitProject(
+          tab,
+          Schema.decodeUnknownSync(projectSchema)({ ...tab.project, layers: nextLayers }),
+        );
       }),
     ),
 
@@ -775,7 +788,10 @@ export const useEditorStore = create<EditorState>((set) => ({
         const nextLayers = tab.project.layers.map((l) =>
           l.id === state.editingLayerId ? { ...l, name: trimmed } : l,
         );
-        const nextProject = projectSchema.parse({ ...tab.project, layers: nextLayers });
+        const nextProject = Schema.decodeUnknownSync(projectSchema)({
+          ...tab.project,
+          layers: nextLayers,
+        });
         return commitProject(tab, nextProject);
       });
       return { ...patch, editingLayerId: null, editingLayerName: "" };

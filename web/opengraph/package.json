@@ -24,6 +24,7 @@
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "dexie": "4.4.5",
+    "effect": "catalog:iac",
     "fabric": "7.4.0",
     "fflate": "0.8.3",
     "lucide-react": "catalog:ui",
@@ -33,7 +34,6 @@
     "react-dom": "catalog:react",
     "tailwindcss": "catalog:styling",
     "tw-animate-css": "catalog:styling",
-    "zod": "4.4.3",
     "zustand": "5.0.15"
   },
   "devDependencies": {

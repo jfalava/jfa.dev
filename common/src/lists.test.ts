@@ -15,6 +15,9 @@ import {
   type ListSnapshot,
 } from "./lists";
 
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
+
 const LIST_ID = "019c5f7e-7b7b-7000-8000-000000000001";
 const NOW = "2026-08-14T10:00:00.000Z";
 
@@ -491,7 +494,7 @@ describe("list mutation diff", () => {
     const applied = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-tomatoes" });
 
     expect(applied.diff.deleteItemIds).toEqual(["starter-tomatoes"]);
-    expect(applied.diff.upsertDeletedItems).toEqual(applied.snapshot.deletedItems);
+    expect(applied.diff.upsertDeletedItems).toEqual([...applied.snapshot.deletedItems]);
     expect(applied.diff.deleteArchiveIds).toEqual([]);
     expect(applied.diff.upsertItems).toEqual([]);
     expect(applied.snapshot.items.map((item) => item.position)).toEqual([0, 2]);
@@ -504,7 +507,7 @@ describe("list mutation diff", () => {
     expect(applied.diff).toEqual({
       upsertItems: [],
       deleteItemIds: ["starter-bread"],
-      upsertDeletedItems: applied.snapshot.deletedItems,
+      upsertDeletedItems: [...applied.snapshot.deletedItems],
       deleteArchiveIds: [],
     });
     expect(applied.snapshot.items.map((item) => item.position)).toEqual([1, 2]);
@@ -578,16 +581,16 @@ describe("list mutation diff", () => {
 
 describe("listItemFieldsSchema", () => {
   test("accepts a complete item fields object with trimmed values", () => {
-    const result = listItemFieldsSchema.safeParse({
+    const result = Schema.decodeUnknownResult(listItemFieldsSchema)({
       name: "  Milk  ",
       quantity: 2,
       unit: " box ",
       amount: "",
       category: " DAIRY ",
     });
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data).toEqual({
+    expect(Result.isSuccess(result)).toBe(true);
+    if (Result.isSuccess(result)) {
+      expect(result.success).toEqual({
         name: "Milk",
         quantity: 2,
         unit: "box",
@@ -599,12 +602,12 @@ describe("listItemFieldsSchema", () => {
 
   test("rejects a missing unit just like the item command schema", () => {
     const input = { name: "Milk", quantity: 2, unit: "", amount: "", category: "DAIRY" };
-    expect(listItemFieldsSchema.safeParse(input).success).toBe(false);
+    expect(Schema.is(listItemFieldsSchema)(input)).toBe(false);
     expect(
-      listCommandSchema.safeParse({
+      Schema.is(listCommandSchema)({
         type: "add-item",
         item: { id: "milk", ...input },
-      }).success,
+      }),
     ).toBe(false);
   });
 });

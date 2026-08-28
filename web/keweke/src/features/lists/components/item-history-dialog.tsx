@@ -81,7 +81,7 @@ export function ItemHistoryDialog({
   listId,
   onOpenChange,
 }: ItemHistoryDialogProps) {
-  const [events, setEvents] = useState<ListItemHistoryEvent[]>([]);
+  const [events, setEvents] = useState<readonly ListItemHistoryEvent[]>([]);
   const [nextCursor, setNextCursor] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -224,7 +224,7 @@ export function ItemHistoryDialog({
   );
 }
 
-function HistoryTable({ events }: { events: ListItemHistoryEvent[] }) {
+function HistoryTable({ events }: { events: readonly ListItemHistoryEvent[] }) {
   const rows = useMemo(() => buildHistoryTableRows(events), [events]);
   const table = useTable({
     features: historyTableFeatures,

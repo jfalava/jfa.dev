@@ -8,8 +8,9 @@ import {
   toMountPath,
 } from "./sitemap-internal.ts";
 
+import * as Effect from "effect/Effect";
+import * as Schema from "effect/Schema";
 import type { Plugin } from "vite";
-import { z } from "zod";
 
 /**
  * Shared sitemap generator for mounted workers.
@@ -23,36 +24,43 @@ import { z } from "zod";
  * all generated files in dev/preview servers.
  */
 
-const sitemapOptionsSchema = z.object({
+/** Check that mirrors `z.url()`: the value must parse as an absolute URL. */
+const isHttpUrl = Schema.makeFilter((url: string) =>
+  url.startsWith("http://") || url.startsWith("https://") ? undefined : false,
+);
+
+const sitemapOptionsSchema = Schema.Struct({
   /** Public origin the sitemap URLs are built from. */
-  origin: z.string().url().default("https://jfa.dev"),
+  origin: Schema.String.check(isHttpUrl).pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed("https://jfa.dev")),
+  ),
   /**
    * Route path prefixes to exclude from the sitemap, e.g. ["/admin"].
    * Matches the path exactly or as a directory prefix.
    */
-  exclude: z.array(z.string()).default([]),
+  exclude: Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
   /** Extra explicit paths (mount-relative, with leading slash) to include. */
-  include: z.array(z.string()).default([]),
+  include: Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
   /**
    * Directory (relative to the app root) of MDX/MD pages whose files map to
    * additional paths, e.g. "content/docs" where `keweke/index.mdx` becomes
    * `/keweke` and `keweke/lists/create-a-list.mdx` becomes
    * `/keweke/lists/create-a-list`.
    */
-  contentDir: z.string().optional(),
+  contentDir: Schema.optional(Schema.String),
   /**
    * Sibling mount paths to reference from a `sitemap_index.xml`. When set,
    * the plugin also emits `sitemap_index.xml` and a `robots.txt` pointing at
    * it. Only meaningful for the app mounted at `/`.
    */
-  sitemapIndex: z.array(z.string()).optional(),
+  sitemapIndex: Schema.optional(Schema.Array(Schema.String)),
   /** Emits `robots.txt` alongside the sitemap. Defaults to true. */
-  robots: z.boolean().default(true),
+  robots: Schema.Boolean.pipe(Schema.withDecodingDefaultKey(Effect.succeed(true))),
   /** Paths to disallow in the generated `robots.txt`, e.g. ["/user"]. */
-  disallow: z.array(z.string()).default([]),
+  disallow: Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
 });
 
-export type SitemapOptions = z.input<typeof sitemapOptionsSchema>;
+export type SitemapOptions = Schema.Codec.Encoded<typeof sitemapOptionsSchema>;
 
 /** The generated sitemap artifacts for a single app. */
 type SitemapFiles = {
@@ -71,7 +79,7 @@ type SitemapFiles = {
  */
 export function sitemap(options: SitemapOptions = {}): Plugin {
   const { origin, exclude, include, contentDir, sitemapIndex, robots, disallow } =
-    sitemapOptionsSchema.parse(options);
+    Schema.decodeUnknownSync(sitemapOptionsSchema)(options);
 
   let mountPath = "/";
   let routesDir = "";

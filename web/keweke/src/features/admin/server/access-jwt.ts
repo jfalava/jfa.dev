@@ -1,36 +1,42 @@
-import { z } from "zod";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
 
-const accessJwkSchema = z.object({
-  kid: z.string().min(1),
-  kty: z.string().min(1),
-  alg: z.string().optional(),
-  crv: z.string().optional(),
-  x: z.string().optional(),
-  y: z.string().optional(),
-  n: z.string().optional(),
-  e: z.string().optional(),
+const accessJwkSchema = Schema.Struct({
+  kid: Schema.String.check(Schema.isMinLength(1)),
+  kty: Schema.String.check(Schema.isMinLength(1)),
+  alg: Schema.optional(Schema.String),
+  crv: Schema.optional(Schema.String),
+  x: Schema.optional(Schema.String),
+  y: Schema.optional(Schema.String),
+  n: Schema.optional(Schema.String),
+  e: Schema.optional(Schema.String),
 });
 
-export const accessCertsSchema = z.object({
-  keys: z.array(accessJwkSchema),
+export const accessCertsSchema = Schema.Struct({
+  keys: Schema.Array(accessJwkSchema),
 });
 
-const assertionHeaderSchema = z.object({
-  alg: z.string().min(1),
-  kid: z.string().min(1),
-  typ: z.string().optional(),
+const assertionHeaderSchema = Schema.Struct({
+  alg: Schema.String.check(Schema.isMinLength(1)),
+  kid: Schema.String.check(Schema.isMinLength(1)),
+  typ: Schema.optional(Schema.String),
 });
 
-const assertionPayloadSchema = z.object({
-  aud: z.union([z.string().min(1), z.array(z.string().min(1)).min(1)]),
-  iss: z.string().min(1),
-  exp: z.number().finite(),
-  nbf: z.number().finite().optional(),
+// Cloudflare Access assertion JWTs carry `aud` as an array (e.g. ["8827b6…"])
+// even for a single app, so accept both shapes and match with includes/equals.
+const assertionPayloadSchema = Schema.Struct({
+  aud: Schema.Union([
+    Schema.String.check(Schema.isMinLength(1)),
+    Schema.Array(Schema.String.check(Schema.isMinLength(1))).check(Schema.isMinLength(1)),
+  ]),
+  iss: Schema.String.check(Schema.isMinLength(1)),
+  exp: Schema.Finite,
+  nbf: Schema.optional(Schema.Finite),
 });
 
-type AccessJwk = z.infer<typeof accessJwkSchema>;
+type AccessJwk = Schema.Schema.Type<typeof accessJwkSchema>;
 
-export type AccessCerts = z.infer<typeof accessCertsSchema>;
+export type AccessCerts = Schema.Schema.Type<typeof accessCertsSchema>;
 
 const CERTS_CACHE_TTL_MS = 5 * 60 * 1000;
 const CLOCK_SKEW_TOLERANCE_MS = 60 * 1000;
@@ -48,10 +54,12 @@ function decodeBase64Url(value: string): Uint8Array<ArrayBuffer> {
   return bytes;
 }
 
-function decodeSegment<T>(value: string, schema: z.ZodType<T>): T | null {
+function decodeSegment<T>(value: string, schema: Schema.Codec<T, unknown>): T | null {
   try {
-    const parsed = schema.safeParse(JSON.parse(new TextDecoder().decode(decodeBase64Url(value))));
-    return parsed.success ? parsed.data : null;
+    const parsed = Schema.decodeUnknownResult(schema)(
+      JSON.parse(new TextDecoder().decode(decodeBase64Url(value))),
+    );
+    return Result.isSuccess(parsed) ? parsed.success : null;
   } catch {
     return null;
   }
@@ -62,11 +70,11 @@ async function fetchAccessCerts(teamDomain: string): Promise<AccessCerts> {
   if (!response.ok) {
     throw new Error(`Keweke Access certificate lookup failed with ${response.status}`);
   }
-  const parsed = accessCertsSchema.safeParse(await response.json());
-  if (!parsed.success) {
+  const parsed = Schema.decodeUnknownResult(accessCertsSchema)(await response.json());
+  if (Result.isFailure(parsed)) {
     throw new Error("Keweke Access certificate payload was malformed");
   }
-  return parsed.data;
+  return parsed.success;
 }
 
 async function loadAccessCerts(teamDomain: string, forceRefresh: boolean): Promise<AccessCerts> {

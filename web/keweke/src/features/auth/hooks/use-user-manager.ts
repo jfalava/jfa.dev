@@ -9,6 +9,8 @@ import {
 } from "@jfa.dev/common/crypto";
 import { type PasskeyProfile, type UserProfile, usernameSchema } from "@jfa.dev/common/identities";
 import { useNavigate } from "@tanstack/react-router";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 
 import { clearLocalData, clearLocalIdentityData, clearRemoteUserData } from "@/app/lib/local-data";
@@ -238,15 +240,15 @@ export function useUserManager({
     event?.preventDefault();
     resetFeedback();
     const username = value.trim();
-    const parsedUsername = usernameSchema.safeParse(username);
-    if (!parsedUsername.success) {
+    const parsedUsername = Schema.decodeUnknownResult(usernameSchema)(username);
+    if (Result.isFailure(parsedUsername)) {
       setError("username", "Use a username between 1 and 48 characters.");
       return;
     }
 
     setIsSaving(true);
     try {
-      const nextIdentity = await saveLocalIdentity(parsedUsername.data);
+      const nextIdentity = await saveLocalIdentity(parsedUsername.success);
       setIdentity(nextIdentity);
       if (nextIdentity.remoteUsername) {
         const auth = {
@@ -258,11 +260,11 @@ export function useUserManager({
           userRenameSigningPayload({
             userId: auth.userId,
             deviceId: auth.deviceId,
-            username: parsedUsername.data,
+            username: parsedUsername.success,
           }),
         );
         const result = await updateUserProfile({
-          data: { auth: { ...auth, signature }, username: parsedUsername.data },
+          data: { auth: { ...auth, signature }, username: parsedUsername.success },
         });
         if (result.status === "updated") {
           const confirmed = await confirmRemoteUsername(result.profile.username);
@@ -291,21 +293,21 @@ export function useUserManager({
 
     resetFeedback();
     const username = value.trim();
-    const parsedUsername = usernameSchema.safeParse(username);
-    if (!parsedUsername.success) {
+    const parsedUsername = Schema.decodeUnknownResult(usernameSchema)(username);
+    if (Result.isFailure(parsedUsername)) {
       setError("account", "Enter a username between 1 and 48 characters.");
       return;
     }
 
     setIsCreatingRemoteUser(true);
     try {
-      const nextIdentity = await saveLocalIdentity(parsedUsername.data);
+      const nextIdentity = await saveLocalIdentity(parsedUsername.success);
       const unsignedAuth = {
         userId: nextIdentity.userId,
         deviceId: nextIdentity.deviceId,
         userPublicKey: nextIdentity.userPublicKey,
         devicePublicKey: nextIdentity.devicePublicKey,
-        username: parsedUsername.data,
+        username: parsedUsername.success,
         signature: UNSIGNED_SIGNATURE,
       };
       const signature = await signLocalPayload(

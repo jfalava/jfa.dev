@@ -1,14 +1,19 @@
-import { z } from "zod";
+import * as Schema from "effect/Schema";
+import * as SchemaGetter from "effect/SchemaGetter";
 
 const ALIAS_SUFFIX_LENGTH = 5;
 const ALIAS_SUFFIX_ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 const ALIAS_BASE_MAX_LENGTH = 48;
 
-export const listAliasSchema = z
-  .string()
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*-[a-z]{5}$/, "Expected a generated list alias")
-  .max(64)
-  .transform((value) => value.toLowerCase());
+export const listAliasSchema = Schema.String.check(
+  Schema.isPattern(/^[a-z0-9]+(?:-[a-z0-9]+)*-[a-z]{5}$/),
+  Schema.isMaxLength(64),
+).pipe(
+  Schema.decode({
+    decode: SchemaGetter.transform((value: string) => value.toLowerCase()),
+    encode: SchemaGetter.transform((value: string) => value),
+  }),
+);
 
 export function normalizeListAliasBase(value: string): string {
   const normalized = value
@@ -37,15 +42,15 @@ export function createListAlias(value: string, randomBytes?: Uint8Array): string
     bytes.slice(0, ALIAS_SUFFIX_LENGTH),
     (byte) => ALIAS_SUFFIX_ALPHABET[byte % ALIAS_SUFFIX_ALPHABET.length],
   ).join("");
-  return listAliasSchema.parse(`${normalizeListAliasBase(value)}-${suffix}`);
+  return Schema.decodeUnknownSync(listAliasSchema)(`${normalizeListAliasBase(value)}-${suffix}`);
 }
 
 export function isListAlias(value: string): boolean {
-  return listAliasSchema.safeParse(value.trim().toLowerCase()).success;
+  return Schema.is(listAliasSchema)(value.trim().toLowerCase());
 }
 
 export function normalizeListAlias(value: string): string {
-  return listAliasSchema.parse(value.trim().toLowerCase());
+  return Schema.decodeUnknownSync(listAliasSchema)(value.trim().toLowerCase());
 }
 
 function createRandomBytes(): Uint8Array {

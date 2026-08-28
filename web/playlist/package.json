@@ -21,13 +21,13 @@
     "@tanstack/react-table": "catalog:tanstack",
     "class-variance-authority": "catalog:styling",
     "clsx": "catalog:styling",
+    "effect": "catalog:iac",
     "lucide-react": "catalog:ui",
     "react": "catalog:react",
     "react-dom": "catalog:react",
     "tailwind-merge": "catalog:styling",
     "tailwindcss": "catalog:styling",
-    "tw-animate-css": "catalog:styling",
-    "zod": "4.4.3"
+    "tw-animate-css": "catalog:styling"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:types",

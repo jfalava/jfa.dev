@@ -3,6 +3,8 @@ import {
   type ListSnapshot,
   type LiveListMutation,
 } from "@jfa.dev/common/lists";
+import * as Result from "effect/Result";
+import * as Schema from "effect/Schema";
 
 import { appPath } from "@/app/lib/site-paths";
 
@@ -40,15 +42,15 @@ export function openRemoteListLiveSession(
       return;
     }
 
-    const message = listLiveMessageSchema.safeParse(value);
-    if (!message.success) {
+    const message = Schema.decodeUnknownResult(listLiveMessageSchema)(value);
+    if (Result.isFailure(message)) {
       return;
     }
 
-    if (message.data.type === "snapshot") {
-      handlers.onSnapshot(message.data.snapshot);
-    } else if (message.data.type === "mutation") {
-      handlers.onMutation(message.data.mutation, message.data.appliedAt);
+    if (message.success.type === "snapshot") {
+      handlers.onSnapshot(message.success.snapshot);
+    } else if (message.success.type === "mutation") {
+      handlers.onMutation(message.success.mutation, message.success.appliedAt);
     } else {
       handlers.onDeleted();
     }
