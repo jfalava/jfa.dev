@@ -7,6 +7,7 @@ import { DialogSection } from "@/components/sections/dialog-section";
 import { DropdownMenuSection } from "@/components/sections/dropdown-menu-section";
 import { InputSection } from "@/components/sections/input-section";
 import { KbdSection } from "@/components/sections/kbd-section";
+import { LayoutSection } from "@/components/sections/layout-section";
 import { SiteHeaderSection } from "@/components/sections/site-header-section";
 import { SonnerSection } from "@/components/sections/sonner-section";
 import { TableSection } from "@/components/sections/table-section";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/")({ component: BrandingPage });
 const NAV = [
   { id: "colors", label: "Colors" },
   { id: "typography", label: "Typography" },
+  { id: "layout", label: "Layout" },
   { id: "button", label: "Button" },
   { id: "input", label: "Input" },
   { id: "checkbox", label: "Checkbox" },
@@ -37,13 +39,6 @@ function BrandingPage() {
             JFA design system
           </p>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Branding</h1>
-          <p className="max-w-prose text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Single-page reference for every component in{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
-              @jfa.dev/common/ui
-            </code>
-            .
-          </p>
         </div>
 
         <nav aria-label="Jump to section" className="flex flex-wrap gap-1.5">
@@ -62,6 +57,7 @@ function BrandingPage() {
       <div className="space-y-12 py-8">
         <ColorsSection />
         <TypographySection />
+        <LayoutSection />
         <ButtonSection />
         <InputSection />
         <CheckboxSection />

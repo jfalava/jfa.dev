@@ -1,7 +1,7 @@
 import { Button, Input } from "@jfa.dev/common/ui";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowUpRight, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Autocomplete,
@@ -105,8 +105,8 @@ export function OpenListCommand() {
         variant="ghost"
         className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
       >
-        <ArrowUpRight className="size-4" />
-        <span>Open list</span>
+       <Search className="size-4"/>
+        <span className="sm:block hidden">Open list</span>
         <HotkeyKbd className="hidden sm:inline-flex" hotkey={OPEN_LIST_HOTKEY} />
       </Button>
       <ModalOverlay
