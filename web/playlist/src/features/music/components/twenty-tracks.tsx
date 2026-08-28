@@ -3,8 +3,10 @@
 /* oxlint-disable typescript/no-unsafe-member-access */
 /* oxlint-disable typescript/no-unsafe-return */
 /* oxlint-disable react/no-unstable-nested-components */
+/* oxlint-disable react/set-state-in-effect -- scrobble progress resets on track change (derived state sync) */
 import { TableCell } from "@jfa.dev/common/ui";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 
 import { twentySnapshot, type TwentyTrack } from "@/data/20tracks";
 import { useNowPlaying } from "@/features/music/hooks/use-now-playing";
@@ -38,7 +40,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
           target="_blank"
           rel="noreferrer"
           aria-label={`${row.original.title} — ${row.original.artist} on Apple Music`}
-          className="block"
+          className="block size-11 shrink-0 overflow-hidden rounded-md bg-muted"
         >
           <img
             src={row.original.artwork}
@@ -47,7 +49,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
             height={44}
             loading="lazy"
             decoding="async"
-            className="size-11 rounded-md bg-muted object-cover"
+            className="size-full aspect-square object-cover"
           />
         </a>
       ),
@@ -67,9 +69,9 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
               {getValue()}
             </a>
             {isActive ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-green-500/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide text-green-700 dark:text-green-300">
-                <span className="size-1.5 animate-pulse rounded-full bg-green-500" aria-hidden />
-                listening
+              <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide text-success dark:text-success">
+                <span className="size-1.5 animate-pulse rounded-full bg-success" aria-hidden />
+                Now listening
               </span>
             ) : null}
           </span>
@@ -114,51 +116,177 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
   ]);
 }
 
+function NowPlayingWidget() {
+  const { data: nowPlaying, isLoading } = useNowPlaying();
+
+  // SAFETY: status narrows the discriminated union `NowPlayingResult`; cast is the idiomatic way to extract the branch.
+  const status = nowPlaying?.status;
+  const activeTrack =
+    // SAFETY: narrowed by `status === "playing"` discriminated union check
+    status === "playing" ? (nowPlaying as Extract<NonNullable<typeof nowPlaying>, { status: "playing" }>).track : null;
+  const recentTrack =
+    // SAFETY: narrowed by `status === "recent"` discriminated union check
+    status === "recent" ? (nowPlaying as Extract<NonNullable<typeof nowPlaying>, { status: "recent" }>).track : null;
+
+  const matched = activeTrack
+    ? (twentySnapshot.tracks.find((t) => isNowPlayingMatch(t, activeTrack)) ?? null)
+    : recentTrack
+      ? (twentySnapshot.tracks.find((t) => isNowPlayingMatch(t, recentTrack)) ?? null)
+      : null;
+
+  const displayTitle = activeTrack?.title ?? recentTrack?.title ?? null;
+  const displayArtist = activeTrack?.artist ?? recentTrack?.artist ?? null;
+  const displayAlbum = matched?.album ?? activeTrack?.album ?? recentTrack?.album ?? null;
+  const artwork = matched?.artwork ?? activeTrack?.image ?? recentTrack?.image ?? null;
+  const trackUrl = matched?.url ?? activeTrack?.url ?? recentTrack?.url ?? null;
+  const durationMs = matched?.durationMs ?? null;
+  const isPlaying = status === "playing" && activeTrack !== null;
+
+  const [elapsedMs, setElapsedMs] = useState<number>(() => (durationMs ? Math.floor(durationMs * 0.36) : 0));
+
+  useEffect(() => {
+    if (durationMs) {
+      setElapsedMs(Math.floor(durationMs * 0.36));
+    } else {
+      setElapsedMs(0);
+    }
+  }, [durationMs]);
+
+  useEffect(() => {
+    if (!isPlaying || !durationMs) {
+      return undefined;
+    }
+    const id = window.setInterval(() => {
+      setElapsedMs((prev) => Math.min(prev + 1000, durationMs));
+    }, 1000);
+    return (): void => window.clearInterval(id);
+  }, [isPlaying, durationMs]);
+
+  const progress = durationMs ? Math.min(100, (elapsedMs / durationMs) * 100) : 0;
+
+  if (isLoading && !nowPlaying) {
+    return (
+      <div className="flex items-center gap-4 rounded-lg border bg-card px-4 py-4">
+        <div className="size-14 animate-pulse rounded-md bg-muted sm:size-16" aria-hidden />
+        <div className="min-w-0 flex-1 space-y-2.5">
+          <div className="h-3 w-32 animate-pulse rounded bg-muted" />
+          <div className="h-3 w-44 animate-pulse rounded bg-muted" />
+          <div className="h-2 w-full animate-pulse rounded-full bg-muted" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!displayTitle) {
+    return (
+      <div className="flex items-center gap-2 rounded-lg border border-dashed bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+        <span className="size-2 shrink-0 rounded-full bg-muted-foreground/30" aria-hidden />
+        <span className="font-mono text-xs tracking-wide">Not scrobbling — play something</span>
+      </div>
+    );
+  }
+
+  const TitleLink = trackUrl ? "a" : "span";
+
+  return (
+    <div className="flex w-full items-center gap-4 rounded-lg border bg-card px-4 py-4 shadow-sm">
+      {artwork ? (
+        <TitleLink
+          {...(trackUrl ? { href: trackUrl, target: "_blank", rel: "noreferrer" } : {})}
+          className="block size-14 shrink-0 overflow-hidden rounded-md border bg-muted sm:size-16"
+          aria-label={displayTitle ? `${displayTitle} on Last.fm` : undefined}
+        >
+          <img
+            src={artwork}
+            alt=""
+            width={64}
+            height={64}
+            loading="lazy"
+            decoding="async"
+            className="size-full aspect-square object-cover"
+          />
+        </TitleLink>
+      ) : (
+        <div className="size-14 shrink-0 rounded-md border bg-muted sm:size-16" aria-hidden />
+      )}
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-1.5">
+          <span
+            className={cn(
+              "size-2 shrink-0 rounded-full",
+              isPlaying ? "animate-pulse bg-success" : "bg-muted-foreground/40",
+            )}
+            aria-hidden
+          />
+          <span className="font-mono text-xs tracking-[0.14em] text-muted-foreground uppercase">
+            {isPlaying ? "Now playing" : "Last played"}
+          </span>
+        </div>
+        <TitleLink
+          {...(trackUrl ? { href: trackUrl, target: "_blank", rel: "noreferrer" } : {})}
+          className="mt-1 block truncate font-sans text-base font-semibold leading-tight text-foreground hover:underline"
+        >
+          {displayTitle}
+        </TitleLink>
+        <div className="truncate font-sans text-sm text-muted-foreground">
+          {displayArtist}
+          {displayAlbum ? ` — ${displayAlbum}` : ""}
+        </div>
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+          <div
+            className={cn(
+              "h-full rounded-full transition-[width] duration-1000 ease-linear",
+              isPlaying ? "bg-success" : "bg-muted-foreground/30",
+            )}
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function PlaylistHeader() {
   const snapshot = twentySnapshot;
-  const { data: nowPlaying } = useNowPlaying();
-  const activeTrack = nowPlaying?.status === "playing" ? nowPlaying.track : null;
 
   return (
     <header className="shrink-0 border-b border-border bg-background px-4 py-6 sm:px-6 lg:px-8">
-      <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">playlist</p>
-      <h1 id="playlist-heading" className={`mt-2 ${DISPLAY_TITLE_CLASS_NAME}`}>
-        <a
-          href={snapshot.sourceUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="no-underline hover:underline"
-        >
-          {snapshot.title}
-        </a>
-      </h1>
-      <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <span>
-          {snapshot.subtitle} · {snapshot.trackCount} tracks
-        </span>
-        {activeTrack ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-0.5 font-mono text-[11px] tracking-wide">
-            <span className="size-2 animate-pulse rounded-full bg-green-500" aria-hidden />
-            Now playing: {activeTrack.title} — {activeTrack.artist}
-          </span>
-        ) : nowPlaying?.status === "recent" && nowPlaying.track ? (
-          <span className="font-mono text-xs tracking-wide">
-            Last: {nowPlaying.track.title} — {nowPlaying.track.artist}
-          </span>
-        ) : null}
-      </p>
-      <p className="mt-2 text-xs text-muted-foreground">
-        Source{" "}
-        <a
-          href={snapshot.sourceUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="underline underline-offset-4"
-        >
-          Apple Music
-        </a>{" "}
-        · updated {new Date(snapshot.fetchedAt).toLocaleDateString()}
-      </p>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
+        <div className="min-w-0 flex-1">
+          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">playlist</p>
+          <h1 id="playlist-heading" className={`mt-2 ${DISPLAY_TITLE_CLASS_NAME}`}>
+            <a
+              href={snapshot.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="no-underline hover:underline"
+            >
+              {snapshot.title}
+            </a>
+          </h1>
+          <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+            <span>
+              {snapshot.subtitle} · {snapshot.trackCount} tracks
+            </span>
+            <span className="text-xs">
+              Source{" "}
+              <a
+                href={snapshot.sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-4"
+              >
+                Apple Music
+              </a>{" "}
+              · updated {new Date(snapshot.fetchedAt).toLocaleDateString()}
+            </span>
+          </p>
+        </div>
+        <div className="w-full shrink-0 lg:w-[520px]">
+          <NowPlayingWidget />
+        </div>
+      </div>
     </header>
   );
 }
@@ -216,7 +344,7 @@ export function TwentyTracksTable() {
                 data-state={isActive ? "selected" : undefined}
                 className={cn(
                   "group border-b border-border/70 transition-colors hover:bg-muted/35",
-                  isActive && "bg-green-500/10 hover:bg-green-500/15",
+                  isActive && "bg-success/10 hover:bg-success/15",
                 )}
               >
                 {row.getAllCells().map((cell) => (

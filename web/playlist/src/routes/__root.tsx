@@ -46,7 +46,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           <QueryClientProvider client={queryClient}>
             <SiteHeader
               title="PLAYLIST"
-              subtitle="20 tracks // now playing"
+              subtitle="My music taste is SO much better than yours 🫪"
               titleHref={appPath("/")}
               packages={webPackages}
               activePackagePath="/playlist"

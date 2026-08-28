@@ -1,11 +1,13 @@
 /* oxlint-disable anti-slop/no-unknown-parameters -- resolveSecret is the I/O boundary parser for SecretsStoreSecret|string */
-/* oxlint-disable anti-slop/no-unsafe-dictionary-type -- env is `Record<string, unknown>` from cloudflare:workers */
+/* oxlint-disable anti-slop/no-unsafe-dictionary-type -- env is `Record<string, unknown>` from workerd or process.env */
 /* oxlint-disable anti-slop/no-runtime-typeof -- branching on SecretsStoreSecret vs string is the domain contract */
 /* oxlint-disable anti-slop/require-safety-comment-for-type-assertion -- SAFETY comments below cover each `as` */
+/* oxlint-disable anti-slop/no-chained-type-assertions -- workerd env + process.env narrow via `as unknown` */
 /* oxlint-disable typescript/no-base-to-string -- Redacted intentionally stringifies to "<redacted>" */
 /* oxlint-disable typescript/no-unnecessary-type-assertion -- narrow `unknown` env / record for `get` */
+/* oxlint-disable eslint/no-undef -- `process` is Node global available in workerd/Vite dev via `node` env */
+/* oxlint-disable eslint/curly -- minimal early-returns use single-line form for readability */
 import { createServerFn } from "@tanstack/react-start";
-import { env } from "cloudflare:workers";
 import { z } from "zod";
 
 const lastfmTrackSchema = z.object({
@@ -107,15 +109,38 @@ const lastfmEnvSchema = z
   })
   .passthrough();
 
+async function getServerEnv(): Promise<Record<string, unknown>> {
+  // Workerd (alchemy dev / prod): real `cloudflare:workers` env with SecretsStoreSecret
+  try {
+    // @vite-ignore – `cloudflare:workers` only exists in workerd, not in plain Vite dev (5173)
+    const cw = (await import("cloudflare:workers")) as unknown as {
+      env: Record<string, unknown>;
+    };
+    if (cw?.env) {
+      return cw.env;
+    }
+  } catch {
+    // fall through to process.env
+  }
+  // Vite dev (5173) or any Node fallback: `process.env` populated from
+  // `web/playlist/.dev.vars` via `iac/src/workers.ts:loadDevVarsForLocal` (alchemy dev)
+  // or from Vite's own `web/playlist/vite.config.ts` dev-vars loader.
+  if (typeof process !== "undefined" && process.env) {
+    return process.env as unknown as Record<string, unknown>;
+  }
+  return {};
+}
+
 /**
  * Reads server-only Last.fm bindings. Both values are secrets — nothing is
  * exposed to the client (`createServerFn` runs only on the server).
  * Supports Secrets Store (`env.*.get()`) in prod and plain strings from
- * `.dev.vars` in `alchemy dev`.
+ * `.dev.vars` in `alchemy dev` / Vite dev.
  */
 async function readLastfmBindings(): Promise<{ apiKey: string; user: string }> {
-  // SAFETY: `env` is untyped `unknown` from `cloudflare:workers`; safeParse validates it
-    const parsed = lastfmEnvSchema.safeParse(env as Record<string, unknown>);
+  const env = await getServerEnv();
+  // SAFETY: env is `Record<string, unknown>` from workerd or process.env; safeParse validates it
+  const parsed = lastfmEnvSchema.safeParse(env);
   if (!parsed.success) {
     return { apiKey: "", user: "" } as const;
   }

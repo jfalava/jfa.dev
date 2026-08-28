@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from "node:fs";
 import path from "path";
 
 import { siteMeta } from "@jfa.dev/common/vite/site-meta";
@@ -6,6 +7,37 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
+
+function loadDevVars(): void {
+  const file = path.resolve(import.meta.dirname, "./.dev.vars");
+  if (!existsSync(file)) {
+    return;
+  }
+  const raw = readFileSync(file, "utf8");
+  for (const line of raw.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) {
+      continue;
+    }
+    const key = trimmed.slice(0, eq).trim();
+    let value = trimmed.slice(eq + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    if (!(key in process.env) || !process.env[key]) {
+      process.env[key] = value;
+    }
+  }
+}
+
+loadDevVars();
 
 const MOUNT_PATH = "/playlist/";
 
@@ -74,14 +106,15 @@ export default defineConfig({
   },
   lint: {
     plugins: ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],
+    env: {
+      browser: true,
+      ESNext: true,
+      node: true,
+    },
     jsPlugins: [{ name: "anti-slop", specifier: "../../tools/oxlint/anti-slop/index.ts" }],
     categories: {
       correctness: "error",
       suspicious: "warn",
-    },
-    env: {
-      browser: true,
-      ESNext: true,
     },
     ignorePatterns: ["*.d.ts", "**/*.d.ts", "public/**", "dist/**"],
     rules: {

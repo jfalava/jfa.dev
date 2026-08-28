@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { adopt } from "alchemy/AdoptPolicy";
@@ -10,6 +11,38 @@ import * as Redacted from "effect/Redacted";
 import type { StageConfig, WorkerConfig } from "./config";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
+
+function loadDevVarsForLocal(): void {
+  // Alchemy's `effect/Config` reads from `process.env`, but `alchemy dev`
+  // doesn't auto-load `web/playlist/.dev.vars`. Load it here so editing
+  // that file is enough for local dev (matches your request).
+  const candidates = [
+    resolve(repositoryRoot, "web/playlist/.dev.vars"),
+    resolve(repositoryRoot, ".dev.vars"),
+  ];
+  for (const file of candidates) {
+    if (!existsSync(file)) continue;
+    const raw = readFileSync(file, "utf8");
+    for (const line of raw.split("\n")) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eq = trimmed.indexOf("=");
+      if (eq === -1) continue;
+      const key = trimmed.slice(0, eq).trim();
+      let value = trimmed.slice(eq + 1).trim();
+      // strip surrounding quotes if present
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1);
+      }
+      if (!(key in process.env) || process.env[key] === "") {
+        process.env[key] = value;
+      }
+    }
+  }
+}
 
 type HyperscalerEnvironment = {
   VITE_BASE_PATH: string;
@@ -40,6 +73,9 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   config: StageConfig,
 ) {
   const isLocal = config.stage === "local";
+  if (isLocal) {
+    loadDevVarsForLocal();
+  }
 
   const landingOptions = {
     ...workerDefaults(config.workers.landing),
@@ -253,13 +289,14 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     docsOptions,
   ).pipe(adopt(true));
 
-  // Playlist: 20tracks + Last.fm now-playing — both values are Secrets Store secrets,
-  // accessed at runtime via `env.LASTFM_* .get()`. Local `alchemy dev` seeds the
-  // store from Config (which reads `web/playlist/.dev.vars`), so dev still works
-  // by editing that file.
-  const playlistSecretsStore = yield* Cloudflare.SecretsStore.Store(
-    "PlaylistSecretsStore",
-  ).pipe(adopt(true));
+  // Playlist: 20tracks + Last.fm now-playing.
+  // Prod/sync: Secrets Store (env.LASTFM_*.get(), never exposed to client).
+  // Local: plain `secret_text` from `effect/Config` seeded by `web/playlist/.dev.vars`
+  // (via loadDevVarsForLocal above) — avoids LocalSecretsStore emulation flakiness
+  // that was causing `Invalid server function ID` in `alchemy dev`.
+  let playlistSecretsStore: ReturnType<typeof Cloudflare.SecretsStore.Store> | undefined;
+  let lastfmApiKeySecret: ReturnType<typeof Cloudflare.SecretsStore.Secret> | undefined;
+  let lastfmUserSecret: ReturnType<typeof Cloudflare.SecretsStore.Secret> | undefined;
 
   const lastfmApiKeyValue = yield* Config.redacted("LASTFM_API_KEY").pipe(
     Config.withDefault(Redacted.make("")),
@@ -268,32 +305,45 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     Config.withDefault(Redacted.make("")),
   );
 
-  const lastfmApiKeySecret = yield* Cloudflare.SecretsStore.Secret(
-    "PlaylistLastfmApiKey",
-    {
-      store: playlistSecretsStore,
-      value: lastfmApiKeyValue,
-    },
-  ).pipe(adopt(true));
-
-  const lastfmUserSecret = yield* Cloudflare.SecretsStore.Secret(
-    "PlaylistLastfmUser",
-    {
-      store: playlistSecretsStore,
-      value: lastfmUserValue,
-    },
-  ).pipe(adopt(true));
-
   type PlaylistEnvironment = {
-    LASTFM_API_KEY: typeof lastfmApiKeySecret;
-    LASTFM_USER: typeof lastfmUserSecret;
+    LASTFM_API_KEY: ReturnType<typeof Redacted.make> | typeof lastfmApiKeySecret;
+    LASTFM_USER: ReturnType<typeof Redacted.make> | typeof lastfmUserSecret;
     VITE_BASE_PATH?: string;
     VITE_ASSET_BASE_PATH?: string;
   };
-  const playlistEnv: PlaylistEnvironment = {
-    LASTFM_API_KEY: lastfmApiKeySecret,
-    LASTFM_USER: lastfmUserSecret,
-  };
+  let playlistEnv: PlaylistEnvironment;
+
+  if (isLocal) {
+    playlistEnv = {
+      LASTFM_API_KEY: lastfmApiKeyValue,
+      LASTFM_USER: lastfmUserValue,
+    };
+  } else {
+    playlistSecretsStore = yield* Cloudflare.SecretsStore.Store(
+      "PlaylistSecretsStore",
+    ).pipe(adopt(true));
+
+    lastfmApiKeySecret = yield* Cloudflare.SecretsStore.Secret(
+      "PlaylistLastfmApiKey",
+      {
+        store: playlistSecretsStore,
+        value: lastfmApiKeyValue,
+      },
+    ).pipe(adopt(true));
+
+    lastfmUserSecret = yield* Cloudflare.SecretsStore.Secret(
+      "PlaylistLastfmUser",
+      {
+        store: playlistSecretsStore,
+        value: lastfmUserValue,
+      },
+    ).pipe(adopt(true));
+
+    playlistEnv = {
+      LASTFM_API_KEY: lastfmApiKeySecret,
+      LASTFM_USER: lastfmUserSecret,
+    };
+  }
   if (config.workers.playlistMounted.basePath !== undefined) {
     playlistEnv.VITE_BASE_PATH = config.workers.playlistMounted.basePath;
     if (config.workers.playlistMounted.assetBasePath !== undefined) {

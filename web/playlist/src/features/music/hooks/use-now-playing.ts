@@ -13,7 +13,15 @@ export function useNowPlaying(options: UseNowPlayingOptions = {}) {
 
   return useQuery({
     queryKey: ["music", "now-playing"],
-    queryFn: () => getNowPlaying(),
+    queryFn: async (): Promise<import("../server/now-playing").NowPlayingResult> => {
+      const result = await getNowPlaying();
+      // TanStack Query forbids `undefined` – server function manifest mismatch (stale
+      // `.tanstack` cache) can briefly resolve to `undefined` on HMR.
+      if (!result) {
+        return { status: "unavailable", reason: "Last.fm not configured" };
+      }
+      return result;
+    },
     enabled,
     refetchInterval,
     staleTime: 20_000,
