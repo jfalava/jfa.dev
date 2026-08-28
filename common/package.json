@@ -46,6 +46,13 @@
       "import": "./src/vite/pwa-manifest.ts",
       "default": "./src/vite/pwa-manifest.ts"
     },
+    "./vite/sitemap": {
+      "workerd": "./src/vite/sitemap.ts",
+      "worker": "./src/vite/sitemap.ts",
+      "browser": "./src/vite/sitemap.ts",
+      "import": "./src/vite/sitemap.ts",
+      "default": "./src/vite/sitemap.ts"
+    },
     "./hooks/use-theme": {
       "workerd": "./src/hooks/use-theme.tsx",
       "worker": "./src/hooks/use-theme.tsx",

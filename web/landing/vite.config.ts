@@ -2,6 +2,7 @@ import path from "path";
 
 import tailwindcss from "@tailwindcss/vite";
 import { pwaManifest } from "@jfa.dev/common/vite/pwa-manifest";
+import { sitemap } from "@jfa.dev/common/vite/sitemap";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
@@ -22,6 +23,15 @@ export default defineConfig({
       name: "Jorge Fernando Álava",
       shortName: "JFA",
       description: "Jorge Fernando Álava's personal webpage",
+    }),
+    sitemap({
+      sitemapIndex: [
+        "/opengraph/",
+        "/hyperscaler-services/",
+        "/keweke/",
+        "/branding/",
+        "/docs/",
+      ],
     }),
   ],
   resolve: {

@@ -1,6 +1,7 @@
 import path from "path";
 
 import tailwindcss from "@tailwindcss/vite";
+import { sitemap } from "@jfa.dev/common/vite/sitemap";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { fumadocsMdx } from "fumadocs-mdx/vite";
@@ -17,7 +18,13 @@ const MOUNT_PATH = "/docs/";
 
 export default defineConfig({
   base: MOUNT_PATH,
-  plugins: [fumadocsMdx(), tailwindcss(), tanstackStart(), viteReact({ compiler: true })],
+  plugins: [
+    fumadocsMdx(),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact({ compiler: true }),
+    sitemap({ contentDir: "content/docs" }),
+  ],
   optimizeDeps: {
     exclude: ["cloudflare:workers"],
   },

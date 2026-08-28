@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { z } from "zod";
 import type { Plugin } from "vite";
+import { z } from "zod";
 
 /**
  * Shared PWA web app manifest and icon set generator for mounted workers.
@@ -49,9 +49,7 @@ const pwaManifestOptionsSchema = z.object({
   /** Theme and background color; both are set to the same value. */
   themeColor: z.string().default(DEFAULT_THEME_COLOR),
   /** Display mode. */
-  display: z
-    .enum(["fullscreen", "standalone", "minimal-ui", "browser"])
-    .default("standalone"),
+  display: z.enum(["fullscreen", "standalone", "minimal-ui", "browser"]).default("standalone"),
   /**
    * Directory containing the icon set to emit. Defaults to the canonical set
    * in `common/src/vite/pwa-assets`, resolved relative to the app root.
@@ -79,9 +77,7 @@ type WebAppManifest = {
  */
 function toMountPath(base: string): string {
   const withLeadingSlash = base.startsWith("/") ? base : `/${base}`;
-  return withLeadingSlash.endsWith("/")
-    ? withLeadingSlash
-    : `${withLeadingSlash}/`;
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
 }
 
 /**
@@ -93,10 +89,7 @@ function toMountPath(base: string): string {
  * @returns Absolute path to the icon set directory.
  */
 function resolveIconsDir(configRoot: string, iconsDir?: string): string {
-  const resolved = path.resolve(
-    configRoot,
-    iconsDir ?? path.join("..", "..", DEFAULT_ICONS_DIR),
-  );
+  const resolved = path.resolve(configRoot, iconsDir ?? path.join("..", "..", DEFAULT_ICONS_DIR));
   if (!existsSync(resolved)) {
     throw new Error(
       `pwaManifest: icon set not found at ${resolved}. Pass iconsDir to point at a directory containing ${ICON_FILES.map((icon) => icon.file).join(", ")}.`,
@@ -153,9 +146,7 @@ export function pwaManifest(options: PwaManifestOptions): Plugin {
       res.end(JSON.stringify(buildManifest(), null, 2));
       return;
     }
-    const icon = ICON_FILES.find(
-      (candidate) => pathname === `${mountPath}${candidate.file}`,
-    );
+    const icon = ICON_FILES.find((candidate) => pathname === `${mountPath}${candidate.file}`);
     if (icon) {
       res.setHeader("Content-Type", icon.mime);
       res.end(readFileSync(path.join(assetsDir, icon.file)));

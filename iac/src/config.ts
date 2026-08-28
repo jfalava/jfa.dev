@@ -76,6 +76,7 @@ const assetPrefixes = [
   "/assets/",
   "/icons/",
   "/manifest.json",
+  "/sitemap.xml",
   "/theme-init.js",
   "/android-chrome-192x192.png",
   "/android-chrome-512x512.png",

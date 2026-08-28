@@ -2,6 +2,7 @@ import path from "path";
 
 import tailwindcss from "@tailwindcss/vite";
 import { pwaManifest } from "@jfa.dev/common/vite/pwa-manifest";
+import { sitemap } from "@jfa.dev/common/vite/sitemap";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
@@ -19,6 +20,7 @@ export default defineConfig({
       shortName: "KEWEKE",
       description: "Yet another collaborative shopping list",
     }),
+    sitemap({ exclude: ["/admin"] }),
   ],
   optimizeDeps: {
     exclude: ["cloudflare:workers"],
