@@ -8,6 +8,8 @@ import viteReact from "@vitejs/plugin-react";
 import { fumadocsMdx } from "fumadocs-mdx/vite";
 import { defineConfig } from "vite-plus";
 
+import { landingGifs } from "./src/vite/landing-gifs.ts";
+
 /**
  * Vite configuration for the hyperscaler services application.
  * Configures plugins for Fumadocs MDX, Tailwind CSS, React, and TanStack Start.
@@ -20,6 +22,7 @@ const MOUNT_PATH = "/docs/";
 export default defineConfig({
   base: MOUNT_PATH,
   plugins: [
+    landingGifs(),
     fumadocsMdx(),
     tailwindcss(),
     tanstackStart(),
