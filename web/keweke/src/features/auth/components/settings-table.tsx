@@ -1,5 +1,10 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@jfa.dev/common/ui";
-import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
+import {
+  columnSizingFeature,
+  createColumnHelper,
+  tableFeatures,
+  useTable,
+} from "@tanstack/react-table";
 import { type ReactNode } from "react";
 
 export type SettingsSectionRow = {
@@ -12,8 +17,9 @@ export type SettingsSectionRow = {
   subheading: string;
 };
 
-const settingsTableFeatures = tableFeatures({});
+const settingsTableFeatures = tableFeatures({ columnSizingFeature });
 const settingsColumnHelper = createColumnHelper<typeof settingsTableFeatures, SettingsSectionRow>();
+const SETTINGS_ACTION_COLUMN_SIZE = 192;
 
 // Desktop shows Setting/Details/Action; mobile moves the action below the details content.
 const SETTINGS_COLUMN_CLASSNAMES = {
@@ -88,7 +94,11 @@ const settingsColumns = settingsColumnHelper.columns([
   settingsColumnHelper.display({
     id: "action",
     header: "",
-    cell: ({ row }) => row.original.action ?? null,
+    size: SETTINGS_ACTION_COLUMN_SIZE,
+    cell: ({ row }) =>
+      row.original.action ? (
+        <div className="w-full [&_button]:w-full">{row.original.action}</div>
+      ) : null,
   }),
 ]);
 
@@ -115,6 +125,9 @@ export function SettingsTable({ rows }: { rows: SettingsSectionRow[] }) {
                     settingsColumnGutterClassName(header.column.id),
                   )}
                   key={header.id}
+                  style={
+                    header.column.id === "action" ? { width: header.column.getSize() } : undefined
+                  }
                 >
                   {header.isPlaceholder ? null : <table.FlexRender header={header} />}
                 </TableHead>
@@ -133,6 +146,7 @@ export function SettingsTable({ rows }: { rows: SettingsSectionRow[] }) {
                     settingsColumnGutterClassName(cell.column.id),
                   )}
                   key={cell.id}
+                  style={cell.column.id === "action" ? { width: cell.column.getSize() } : undefined}
                 >
                   <table.FlexRender cell={cell} />
                 </TableCell>
