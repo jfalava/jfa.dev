@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { twentySnapshot, type TwentyTrack } from "@/data/20tracks";
 import { useNowPlaying } from "@/features/music/hooks/use-now-playing";
 import { isNowPlayingMatch } from "@/features/music/lib/match";
+import { appPath } from "@/lib/site-paths";
 import { cn } from "@/lib/utils";
 
 import type { NowPlayingTrack } from "../server/now-playing";
@@ -112,6 +113,81 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
         ) : (
           <span className="text-xs text-muted-foreground/50">—</span>
         ),
+    }),
+  ]);
+}
+
+function createMobilePlaylistColumns(activeTrack: NowPlayingTrack | null) {
+  return trackColumnHelper.columns([
+    trackColumnHelper.display({
+      id: "track",
+      header: () => <span className="sr-only">Track</span>,
+      cell: ({ row }) => {
+        const track = row.original;
+        const isActive = activeTrack ? isNowPlayingMatch(track, activeTrack) : false;
+        return (
+          <div className="flex min-w-0 max-w-full items-center gap-3">
+            <div className="block size-11 shrink-0 overflow-hidden rounded-md bg-muted">
+              <img
+                src={track.artwork}
+                alt=""
+                width={44}
+                height={44}
+                loading="lazy"
+                decoding="async"
+                className="aspect-square size-full object-cover"
+              />
+            </div>
+            {/* Fixed-size horizontally-scrollable area: no page overflow, all text reachable via swipe */}
+            <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex min-w-max flex-col gap-0.5">
+                <div className="flex items-center gap-1.5 whitespace-nowrap">
+                  <span className="leading-tight font-medium whitespace-nowrap text-foreground">
+                    {track.title}
+                  </span>
+                  {isActive ? (
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide whitespace-nowrap text-success dark:text-success">
+                      <span className="size-1.5 animate-pulse rounded-full bg-success" aria-hidden />
+                      Now listening
+                    </span>
+                  ) : null}
+                </div>
+                <div className="text-sm leading-tight whitespace-nowrap text-muted-foreground">
+                  {track.artist}
+                </div>
+                {track.album ? (
+                  <div className="text-xs leading-tight whitespace-nowrap text-muted-foreground/80">
+                    {track.album}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        );
+      },
+    }),
+    trackColumnHelper.display({
+      id: "appleMusic",
+      header: () => <span className="sr-only">Apple Music</span>,
+      cell: ({ row }) => (
+        <a
+          href={row.original.url}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`${row.original.title} — ${row.original.artist} on Apple Music`}
+          className="inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-xl shadow-sm transition-[filter,transform] hover:brightness-[0.98] hover:saturate-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FA243C]/35"
+        >
+          <img
+            src={appPath("/apple-music.avif")}
+            alt=""
+            width={36}
+            height={36}
+            loading="lazy"
+            decoding="async"
+            className="size-9 object-cover"
+          />
+        </a>
+      ),
     }),
   ]);
 }
@@ -296,75 +372,135 @@ export function TwentyTracksTable() {
   const { data: nowPlaying } = useNowPlaying();
   const activeTrack = nowPlaying?.status === "playing" ? nowPlaying.track : null;
 
-  const columns = createPlaylistColumns(activeTrack);
+  const desktopColumns = createPlaylistColumns(activeTrack);
+  const mobileColumns = createMobilePlaylistColumns(activeTrack);
 
-  const table = useTable({
+  const desktopTable = useTable({
     features: playlistTableFeatures,
     data: snapshot.tracks,
-    columns,
+    columns: desktopColumns,
+    getRowId: (row) => row.songId,
+  });
+
+  const mobileTable = useTable({
+    features: playlistTableFeatures,
+    data: snapshot.tracks,
+    columns: mobileColumns,
     getRowId: (row) => row.songId,
   });
 
   return (
-    <div className="catalog-scroll">
-      <table className="w-full min-w-4xl border-collapse">
-        <colgroup>
-          <col className="w-14" />
-          <col className="w-[26%]" />
-          <col className="w-[20%]" />
-          <col className="w-[26%]" />
-          <col className="w-20" />
-          <col className="w-32" />
-        </colgroup>
-        <thead className="bg-background">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className={cn(
-                    "relative sticky top-0 z-10 h-10 bg-background px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border sm:px-4",
-                    header.index === 0 && "pl-4 sm:pl-6 lg:pl-8",
-                    header.index === headerGroup.headers.length - 1 && "pr-4 sm:pr-6 lg:pr-8",
-                    header.column.id === "duration" && "text-right",
-                  )}
-                >
-                  {header.isPlaceholder ? null : <table.FlexRender header={header} />}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            const isActive = activeTrack ? isNowPlayingMatch(row.original, activeTrack) : false;
-            return (
-              <tr
-                key={row.id}
-                data-state={isActive ? "selected" : undefined}
-                className={cn(
-                  "group border-b border-border/70 transition-colors hover:bg-muted/35",
-                  isActive && "bg-success/10 hover:bg-success/15",
-                )}
-              >
-                {row.getAllCells().map((cell) => (
-                  <TableCell
-                    key={cell.id}
+    <>
+      {/* Desktop: full 6-column table (cover, title, artist, album, length, preview) */}
+      <div className="hidden catalog-scroll md:block">
+        <table className="w-full min-w-4xl border-collapse">
+          <colgroup>
+            <col className="w-14" />
+            <col className="w-[26%]" />
+            <col className="w-[20%]" />
+            <col className="w-[26%]" />
+            <col className="w-20" />
+            <col className="w-32" />
+          </colgroup>
+          <thead className="bg-background">
+            {desktopTable.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
                     className={cn(
-                      "max-w-65 px-3 py-2.5 align-top text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
-                      cell.column.id === "cover" && "w-14 pl-4 sm:pl-6 lg:pl-8",
-                      cell.column.id === "preview" && "pr-4 sm:pr-6 lg:pr-8",
+                      "relative sticky top-0 z-10 h-10 bg-background px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border sm:px-4",
+                      header.index === 0 && "pl-4 sm:pl-6 lg:pl-8",
+                      header.index === headerGroup.headers.length - 1 && "pr-4 sm:pr-6 lg:pr-8",
+                      header.column.id === "duration" && "text-right",
                     )}
                   >
-                    <table.FlexRender cell={cell} />
-                  </TableCell>
+                    {header.isPlaceholder ? null : <desktopTable.FlexRender header={header} />}
+                  </th>
                 ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+            ))}
+          </thead>
+          <tbody>
+            {desktopTable.getRowModel().rows.map((row) => {
+              const isActive = activeTrack ? isNowPlayingMatch(row.original, activeTrack) : false;
+              return (
+                <tr
+                  key={row.id}
+                  data-state={isActive ? "selected" : undefined}
+                  className={cn(
+                    "group border-b border-border/70 transition-colors hover:bg-muted/35",
+                    isActive && "bg-success/10 hover:bg-success/15",
+                  )}
+                >
+                  {row.getAllCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={cn(
+                        "max-w-65 px-3 py-2.5 align-top text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
+                        cell.column.id === "cover" && "w-14 pl-4 sm:pl-6 lg:pl-8",
+                        cell.column.id === "preview" && "pr-4 sm:pr-6 lg:pr-8",
+                      )}
+                    >
+                      <desktopTable.FlexRender cell={cell} />
+                    </TableCell>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile: 2-column compact view — track info (cover+title+artist+album) + Apple Music link */}
+      <div className="catalog-scroll overflow-x-hidden md:hidden">
+        <table className="w-full table-fixed border-collapse">
+          <colgroup>
+            <col className="w-[80%]" />
+            <col className="w-[20%]" />
+          </colgroup>
+          <thead className="sr-only">
+            {mobileTable.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className="px-0 py-0 text-left">
+                    {header.isPlaceholder ? null : <mobileTable.FlexRender header={header} />}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {mobileTable.getRowModel().rows.map((row) => {
+              const isActive = activeTrack ? isNowPlayingMatch(row.original, activeTrack) : false;
+              return (
+                <tr
+                  key={row.id}
+                  data-state={isActive ? "selected" : undefined}
+                  className={cn(
+                    "group border-b border-border/70 transition-colors hover:bg-muted/35",
+                    isActive && "bg-success/10 hover:bg-success/15",
+                  )}
+                >
+                  {row.getAllCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={cn(
+                        "px-3 py-3 align-middle text-[15px] leading-5 whitespace-normal text-foreground",
+                        cell.column.id === "track" && "max-w-0 overflow-hidden pl-4 pr-2",
+                        cell.column.id === "appleMusic" && "w-[20%] px-2 text-center",
+                      )}
+                    >
+                      <mobileTable.FlexRender cell={cell} />
+                    </TableCell>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 

@@ -1,15 +1,5 @@
 #!/usr/bin/env bun
 /**
- * Fetch the Apple Music playlist `pl.u-9N9LL2eI2K5oXV` and write a static
- * JSON snapshot for `web/playlist`.
- *
- * - CI-safe: runs from GitHub Actions (non-CF IP) so Apple does not see a
- *   Worker egress IP.
- * - Fail-open: if Apple/is not reachable the last committed JSON is kept
- *   and the build continues.
- * - Enriches each track with iTunes `previewUrl` via a batched lookup
- *   (`country=ES` is required — the `pl.u-*` storefront is `es`).
- *
  * Usage:
  *   bun run scripts/fetch-apple-playlist.ts                # writes JSON
  *   bun run scripts/fetch-apple-playlist.ts --check        # exits 1 if stale
@@ -69,7 +59,8 @@ async function fetchHtml(): Promise<string> {
 }
 
 function extractSerializedServerData(html: string): unknown {
-  const re = /<script[^>]*id="serialized-server-data"[^>]*>([\s\S]*?)<\/script>/;
+  const re =
+    /<script[^>]*id="serialized-server-data"[^>]*>([\s\S]*?)<\/script>/;
   const m = re.exec(html);
   if (!m) {
     throw new Error("serialized-server-data script tag not found");
@@ -95,7 +86,10 @@ type SerializedRoot = {
             };
           }>;
           duration: number;
-          contentDescriptor: { identifiers: { storeAdamID: string }; url: string };
+          contentDescriptor: {
+            identifiers: { storeAdamID: string };
+            url: string;
+          };
           artwork: { dictionary: { url: string } };
           subtitleLinks: Array<{
             title: string;
@@ -115,19 +109,30 @@ type SerializedRoot = {
 function parseTracks(root: SerializedRoot): {
   title: string;
   subtitle: string | null;
-  tracks: Omit<EnrichedTrack, "previewUrl" | "artworkUrl100" | "primaryGenreName" | "releaseDate">[];
+  tracks: Omit<
+    EnrichedTrack,
+    "previewUrl" | "artworkUrl100" | "primaryGenreName" | "releaseDate"
+  >[];
 } {
   const page = root.data[0]?.data;
   if (!page) {
-    throw new Error("unexpected serialized-server-data shape: missing data[0].data");
+    throw new Error(
+      "unexpected serialized-server-data shape: missing data[0].data",
+    );
   }
-  const trackSection = page.sections.find((s) => s.itemKind === "trackLockup" || s.id.startsWith("track-list"));
+  const trackSection = page.sections.find(
+    (s) => s.itemKind === "trackLockup" || s.id.startsWith("track-list"),
+  );
   if (!trackSection) {
     throw new Error("track-list section not found");
   }
   // header section holds the playlist title/subtitle
-  const headerSection = page.sections.find((s) => s.id.startsWith("playlist-detail-header"));
-  const headerItem = (headerSection?.items[0] as unknown as { title?: string; subtitleLinks?: Array<{ title: string }> } | undefined);
+  const headerSection = page.sections.find((s) =>
+    s.id.startsWith("playlist-detail-header"),
+  );
+  const headerItem = headerSection?.items[0] as unknown as
+    | { title?: string; subtitleLinks?: Array<{ title: string }> }
+    | undefined;
   const title = headerItem?.title ?? "#20tracks";
   const subtitle = headerItem?.subtitleLinks?.[0]?.title ?? null;
 
@@ -137,9 +142,13 @@ function parseTracks(root: SerializedRoot): {
     return {
       title: t.title,
       artist: t.subtitleLinks[0]?.title ?? "Unknown",
-      artistId: t.subtitleLinks[0]?.segue.destination.contentDescriptor.identifiers.storeAdamID ?? null,
+      artistId:
+        t.subtitleLinks[0]?.segue.destination.contentDescriptor.identifiers
+          .storeAdamID ?? null,
       album: t.tertiaryLinks[0]?.title ?? null,
-      albumId: t.tertiaryLinks[0]?.segue.destination.contentDescriptor.identifiers.storeAdamID ?? null,
+      albumId:
+        t.tertiaryLinks[0]?.segue.destination.contentDescriptor.identifiers
+          .storeAdamID ?? null,
       songId: t.contentDescriptor.identifiers.storeAdamID,
       url: t.contentDescriptor.url,
       artwork,
@@ -154,11 +163,24 @@ function parseTracks(root: SerializedRoot): {
 
 async function enrichWithItunes(
   tracks: Array<{ songId: string }>,
-): Promise<Map<string, { previewUrl: string | null; artworkUrl100: string | null; primaryGenreName: string | null; releaseDate: string | null }>> {
+): Promise<
+  Map<
+    string,
+    {
+      previewUrl: string | null;
+      artworkUrl100: string | null;
+      primaryGenreName: string | null;
+      releaseDate: string | null;
+    }
+  >
+> {
   const ids = tracks.map((t) => t.songId).join(",");
   const url = `https://itunes.apple.com/lookup?id=${ids}&country=${ITUNES_LOOKUP_COUNTRY}`;
   const res = await fetch(url, {
-    headers: { "User-Agent": "jfa.dev playlist fetcher", Accept: "application/json" },
+    headers: {
+      "User-Agent": "jfa.dev playlist fetcher",
+      Accept: "application/json",
+    },
   });
   if (!res.ok) {
     throw new Error(`iTunes lookup failed: ${res.status}`);
@@ -173,7 +195,15 @@ async function enrichWithItunes(
       releaseDate?: string;
     }>;
   };
-  const map = new Map<string, { previewUrl: string | null; artworkUrl100: string | null; primaryGenreName: string | null; releaseDate: string | null }>();
+  const map = new Map<
+    string,
+    {
+      previewUrl: string | null;
+      artworkUrl100: string | null;
+      primaryGenreName: string | null;
+      releaseDate: string | null;
+    }
+  >();
   for (const r of json.results) {
     map.set(String(r.trackId), {
       previewUrl: r.previewUrl ?? null,
@@ -200,12 +230,23 @@ async function main(): Promise<void> {
     const html = await fetchHtml();
     const raw = extractSerializedServerData(html) as SerializedRoot;
     const { title, subtitle, tracks: base } = parseTracks(raw);
-    let itunesMap: Map<string, { previewUrl: string | null; artworkUrl100: string | null; primaryGenreName: string | null; releaseDate: string | null } > | null = null;
+    let itunesMap: Map<
+      string,
+      {
+        previewUrl: string | null;
+        artworkUrl100: string | null;
+        primaryGenreName: string | null;
+        releaseDate: string | null;
+      }
+    > | null = null;
     try {
       itunesMap = await enrichWithItunes(base);
       console.log(`✅ iTunes enrichment: ${itunesMap.size}/${base.length}`);
     } catch (error) {
-      console.warn("⚠️  iTunes enrichment failed, continuing without previewUrl", error);
+      console.warn(
+        "⚠️  iTunes enrichment failed, continuing without previewUrl",
+        error,
+      );
     }
     const tracks: EnrichedTrack[] = base.map((t) => {
       const e = itunesMap?.get(t.songId);
@@ -230,12 +271,16 @@ async function main(): Promise<void> {
       // compare with existing file if present
       const primary = OUT_PATHS[0];
       if (existsSync(primary)) {
-        const cur = JSON.parse(readFileSync(primary, "utf8") as string) as Snapshot;
+        const cur = JSON.parse(
+          readFileSync(primary, "utf8") as string,
+        ) as Snapshot;
         if (JSON.stringify(cur.tracks) === JSON.stringify(tracks)) {
           console.log("✅ --check: up to date");
           return;
         }
-        console.error("❌ --check: local snapshot is stale (track data differs)");
+        console.error(
+          "❌ --check: local snapshot is stale (track data differs)",
+        );
         process.exitCode = 1;
         return;
       }
