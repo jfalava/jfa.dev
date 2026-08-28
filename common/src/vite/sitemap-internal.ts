@@ -80,7 +80,7 @@ export function collectRoutePaths(routesDir: string): string[] {
       }
     }
   }
-  return [...paths];
+  return [...paths].toSorted();
 }
 
 /**
