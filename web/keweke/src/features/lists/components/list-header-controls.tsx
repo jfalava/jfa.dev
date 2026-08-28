@@ -19,7 +19,7 @@ export function ListTitleEditor({
   if (!isEditing) {
     return (
       <div className="mt-1 flex items-center gap-1">
-        <h1 className="font-serif text-xl leading-none font-semibold tracking-tight sm:text-2xl">
+        <h1 className="font-serif text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
           {title}
         </h1>
         <Button
@@ -39,7 +39,7 @@ export function ListTitleEditor({
 
   return (
     <form
-      className="mt-1 flex max-w-md items-center gap-1.5"
+      className="mt-1 flex w-full max-w-none items-end gap-1.5"
       onSubmit={(event) => {
         event.preventDefault();
         const nextTitle = value.trim();
@@ -61,21 +61,21 @@ export function ListTitleEditor({
       <Input
         id="list-title"
         aria-label="List title"
-        className="min-w-44 flex-1 font-serif text-lg font-semibold"
+        className="h-14 min-w-0 flex-1 py-1 font-serif text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:h-20 sm:min-w-64 sm:text-6xl md:text-6xl"
         disabled={isSaving}
         maxLength={160}
         onChange={(event) => setValue(event.target.value)}
         value={value}
       />
-      <Button isDisabled={isSaving} size="sm" type="submit">
+      <Button isDisabled={isSaving} size="lg" type="submit">
         {isSaving ? "Saving" : "Save"}
       </Button>
       <Button
         isDisabled={isSaving}
         onPress={() => setIsEditing(false)}
-        size="sm"
+        size="lg"
         type="button"
-        variant="ghost"
+        variant="outline"
       >
         Cancel
       </Button>

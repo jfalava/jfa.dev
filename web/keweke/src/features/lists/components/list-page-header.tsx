@@ -54,7 +54,7 @@ export function ListPageHeader({
   return (
     <>
       <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
-        <div>
+        <div className="min-w-0 flex-1">
           <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
             {backend} list
           </p>

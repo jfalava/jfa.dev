@@ -26,7 +26,7 @@ export function TypographySection() {
               </p>
               <p className="font-serif text-lg font-semibold">The quick fox — 500</p>
               <p className="font-serif text-sm text-muted-foreground">
-                Used for display and emphasis.
+                Used for user-editable text.
               </p>
             </div>
             <div className="space-y-1">

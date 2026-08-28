@@ -17,8 +17,8 @@ export function UserSettingsPage() {
       <KewekeHeader />
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
         <div className="invoice-rule flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
-          <div>
-            <h1 className="mt-1 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
+          <div className="min-w-0 flex-1">
+            <h1 className="mt-1 font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
               User settings
             </h1>
           </div>

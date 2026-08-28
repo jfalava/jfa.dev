@@ -11,6 +11,7 @@ import { LayoutSection } from "@/components/sections/layout-section";
 import { SiteHeaderSection } from "@/components/sections/site-header-section";
 import { SonnerSection } from "@/components/sections/sonner-section";
 import { TableSection } from "@/components/sections/table-section";
+import { TitlesSection } from "@/components/sections/titles-section";
 import { TypographySection } from "@/components/sections/typography-section";
 
 export const Route = createFileRoute("/")({ component: BrandingPage });
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/")({ component: BrandingPage });
 const NAV = [
   { id: "colors", label: "Colors" },
   { id: "typography", label: "Typography" },
+  { id: "titles", label: "Titles" },
   { id: "layout", label: "Layout" },
   { id: "button", label: "Button" },
   { id: "input", label: "Input" },
@@ -38,7 +40,9 @@ function BrandingPage() {
           <p className="font-mono text-xs tracking-[0.12em] text-primary uppercase">
             JFA design system
           </p>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Branding</h1>
+          <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
+            Branding
+          </h1>
         </div>
 
         <nav aria-label="Jump to section" className="flex flex-wrap gap-1.5">
@@ -57,6 +61,7 @@ function BrandingPage() {
       <div className="space-y-12 py-8">
         <ColorsSection />
         <TypographySection />
+        <TitlesSection />
         <LayoutSection />
         <ButtonSection />
         <InputSection />
