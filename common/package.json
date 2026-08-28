@@ -39,6 +39,13 @@
       "default": "./src/preferences.ts"
     },
     "./styles.css": "./src/styles.css",
+    "./vite/pwa-manifest": {
+      "workerd": "./src/vite/pwa-manifest.ts",
+      "worker": "./src/vite/pwa-manifest.ts",
+      "browser": "./src/vite/pwa-manifest.ts",
+      "import": "./src/vite/pwa-manifest.ts",
+      "default": "./src/vite/pwa-manifest.ts"
+    },
     "./hooks/use-theme": {
       "workerd": "./src/hooks/use-theme.tsx",
       "worker": "./src/hooks/use-theme.tsx",
@@ -100,6 +107,7 @@
     "oxlint": "catalog:build",
     "oxlint-tsgolint": "catalog:build",
     "typescript": "catalog:build",
+    "vite": "catalog:build",
     "vite-plus": "catalog:build"
   }
 }

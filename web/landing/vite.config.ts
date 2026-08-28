@@ -1,19 +1,29 @@
 import path from "path";
 
 import tailwindcss from "@tailwindcss/vite";
+import { pwaManifest } from "@jfa.dev/common/vite/pwa-manifest";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
 
 /**
- * Vite configuration for the hyperscaler services application.
+ * Vite configuration for the landing application.
  * Configures plugins for React, TypeScript paths, Tailwind CSS, TanStack Start, and Cloudflare.
  *
  * @returns Vite configuration object
  */
 
 export default defineConfig({
-  plugins: [tailwindcss(), tanstackStart(), viteReact({ compiler: true })],
+  plugins: [
+    tailwindcss(),
+    tanstackStart(),
+    viteReact({ compiler: true }),
+    pwaManifest({
+      name: "Jorge Fernando Álava",
+      shortName: "JFA",
+      description: "Jorge Fernando Álava's personal webpage",
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

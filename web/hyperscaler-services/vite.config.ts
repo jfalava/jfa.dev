@@ -1,6 +1,7 @@
 import path from "path";
 
 import tailwindcss from "@tailwindcss/vite";
+import { pwaManifest } from "@jfa.dev/common/vite/pwa-manifest";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
@@ -16,7 +17,16 @@ const MOUNT_PATH = "/hyperscaler-services/";
 
 export default defineConfig({
   base: MOUNT_PATH,
-  plugins: [tailwindcss(), tanstackStart(), viteReact({ compiler: true })],
+  plugins: [
+    tailwindcss(),
+    tanstackStart(),
+    viteReact({ compiler: true }),
+    pwaManifest({
+      name: "Hyperscaler Services by JFA",
+      shortName: "Hyperscaler Services",
+      description: "Browse similar services between cloud hyperscalers",
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
