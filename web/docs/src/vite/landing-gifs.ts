@@ -50,16 +50,6 @@ export function landingGifs(): Plugin {
 
       const gifs = getGifs();
 
-      // Ensure Vite watches the directory / files so dev HMR invalidates.
-      if (gifs.length > 0) {
-        for (const gif of gifs) {
-          this.addWatchFile(path.resolve(gifsDir, path.basename(gif)));
-        }
-      }
-      if (fs.existsSync(gifsDir)) {
-        this.addWatchFile(gifsDir);
-      }
-
       return `export const gifs = ${JSON.stringify(gifs)};\nexport const count = ${String(gifs.length)};\n`;
     },
     configureServer(server) {
