@@ -195,6 +195,7 @@
         "@tanstack/react-start": "catalog:tanstack",
         "@tanstack/react-table": "catalog:tanstack",
         "blobatar": "2.5.0",
+        "class-variance-authority": "catalog:styling",
         "effect": "catalog:iac",
         "fuse.js": "catalog:backend",
         "idb": "8.0.3",
