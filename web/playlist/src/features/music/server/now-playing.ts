@@ -67,17 +67,28 @@ const trimmedString = Schema.String.pipe(
   }),
 );
 
-/** Secrets Store binding (`env.*.get()`), resolved to a trimmed string. */
-const secretBindingSchema = Schema.Struct({ get: Schema.Any });
+/**
+ * Secrets Store binding (`env.*.get()`), resolved to a trimmed string.
+ * workerd exposes `.get` on the `SecretsStoreSecret` class prototype, so an
+ * own-key `Schema.Struct` rejects a valid binding (`Missing key ... get`);
+ * `in` sees prototype members, which is why the guard only checks membership
+ * and the transform's try/catch tolerates a non-callable `get`.
+ */
+const secretBinding = Schema.ObjectKeyword.pipe(
+  Schema.refine(
+    (value): value is { readonly get: () => Promise<string> } => "get" in value,
+  ),
+);
 
-const secretFromBinding = Schema.decodeTo<typeof Schema.String, typeof secretBindingSchema>(
+const secretFromBinding = Schema.decodeTo<typeof Schema.String, typeof secretBinding>(
   Schema.String,
   {
-    decode: SchemaGetter.transformOrFail((binding: { readonly get: unknown }) =>
+    decode: SchemaGetter.transformOrFail((binding) =>
       Effect.promise(async () => {
         try {
-          // SAFETY: Secrets Store bindings are exactly `{ get(): Promise<string> }`
-          return (await (binding.get as () => Promise<string>)()).trim();
+          // SAFETY: Secrets Store bindings are exactly `{ get(): Promise<string> }`;
+          // a malformed binding throws and is treated as unavailable.
+          return (await binding.get()).trim();
         } catch {
           return "";
         }
@@ -87,7 +98,7 @@ const secretFromBinding = Schema.decodeTo<typeof Schema.String, typeof secretBin
       get: () => Promise.resolve(value),
     })),
   },
-)(secretBindingSchema);
+)(secretBinding);
 
 /**
  * Secrets are injected via Alchemy Secrets Store. At runtime Cloudflare
@@ -134,9 +145,15 @@ async function readLastfmBindings(): Promise<{ apiKey: string; user: string }> {
   }
   // The bindings are untyped on `Env` (Secrets Store keys are not declared);
   // `lastfmEnvSchema` is the narrowing boundary and strips every other key
-  // before the values reach the handler.
-  const { LASTFM_API_KEY, LASTFM_USER } = await Schema.decodeUnknownPromise(lastfmEnvSchema)(env);
-  return { apiKey: LASTFM_API_KEY ?? "", user: LASTFM_USER ?? "" };
+  // before the values reach the handler. A failed decode means the values
+  // are unavailable (e.g. an unmaterialized Effect `Redacted`) — report
+  // that instead of throwing a 500 from the server function.
+  try {
+    const { LASTFM_API_KEY, LASTFM_USER } = await Schema.decodeUnknownPromise(lastfmEnvSchema)(env);
+    return { apiKey: LASTFM_API_KEY ?? "", user: LASTFM_USER ?? "" };
+  } catch {
+    return { apiKey: "", user: "" };
+  }
 }
 
 export const getNowPlaying = createServerFn({ method: "GET" }).handler(
