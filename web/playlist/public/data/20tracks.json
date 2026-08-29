@@ -1,10 +1,10 @@
 {
-  "fetchedAt": "2026-08-28T18:26:31.136Z",
+  "fetchedAt": "2026-08-29T00:03:31.308Z",
   "sourceUrl": "https://music.apple.com/es/playlist/20tracks/pl.u-9N9LL2eI2K5oXV",
   "playlistId": "pl.u-9N9LL2eI2K5oXV",
   "title": "#20tracks",
-  "subtitle": "20 tracks. 20 different artists",
-  "trackCount": 18,
+  "subtitle": "20 different artists",
+  "trackCount": 20,
   "tracks": [
     {
       "title": "We Lost (feat. Slow Shiver)",
@@ -21,7 +21,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d2/73/a1/d273a1dd-9c8a-4cd4-99f0-b6de4926da17/mzaf_1823282499872345054.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/5c/61/47/5c61475e-6ab7-8166-0cf6-f755e02a1339/3663729031068_cover.jpg/100x100bb.jpg",
       "primaryGenreName": "Electrónica",
-      "releaseDate": "2016-06-17T12:00:00Z"
+      "releaseDate": "2016-06-17T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/5Y4qIhuee2NKR7AqN1srFb",
+      "spotifyId": "5Y4qIhuee2NKR7AqN1srFb"
     },
     {
       "title": "How Soon Is Now (Dirty South)",
@@ -38,7 +40,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/aa/7c/fd/aa7cfda9-697e-7127-f405-c70e06edabbb/mzaf_15546088315479079371.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8d/b5/8c/8db58c39-5f2f-cb85-b905-a566d492af1c/5099967883356.jpg/100x100bb.jpg",
       "primaryGenreName": "Pop",
-      "releaseDate": "2009-08-24T12:00:00Z"
+      "releaseDate": "2009-08-24T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/5NThOInQkmb3j4CiOuFqdJ",
+      "spotifyId": "5NThOInQkmb3j4CiOuFqdJ"
     },
     {
       "title": "Seven Devils",
@@ -55,7 +59,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d9/90/1d/d9901d51-995a-a3e3-cbbc-f2c9a43f5933/mzaf_18082206043191045333.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/c2/8a/d2/c28ad273-0497-8175-0dbb-ae2e18d06a17/11UMGIM28251.rgb.jpg/100x100bb.jpg",
       "primaryGenreName": "Alternativa",
-      "releaseDate": "2011-10-28T12:00:00Z"
+      "releaseDate": "2011-10-28T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/6NmEbJz0hXsoe5mogu23it",
+      "spotifyId": "6NmEbJz0hXsoe5mogu23it"
     },
     {
       "title": "Call It Love (if You Want To) [feat. Lawrence Hart]",
@@ -72,7 +78,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/40/7e/83/407e836c-bad3-d4d6-b86e-4434e0df11d1/mzaf_236155395093153890.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music5/v4/de/9b/8b/de9b8ba5-30bf-7f15-eae6-c51d077b1bca/887832008660.png/100x100bb.jpg",
       "primaryGenreName": "Electrónica",
-      "releaseDate": "2015-04-24T12:00:00Z"
+      "releaseDate": "2015-04-24T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/0Dbp2nqMHeSLHuuSWLAPDb",
+      "spotifyId": "0Dbp2nqMHeSLHuuSWLAPDb"
     },
     {
       "title": "When They Come for Me",
@@ -89,7 +97,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d5/e0/21/d5e02198-48f6-9e1f-ef9a-cb8234e970db/mzaf_13681305338275976387.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/c8/48/6b/c8486bda-1628-6fd9-68f4-27a256a4bf3b/093624948940.jpg/100x100bb.jpg",
       "primaryGenreName": "Hard rock",
-      "releaseDate": "2010-09-10T07:00:00Z"
+      "releaseDate": "2010-09-10T07:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/1uaIJkuGvwSu7qWHOwCYbV",
+      "spotifyId": "1uaIJkuGvwSu7qWHOwCYbV"
     },
     {
       "title": "Goliath",
@@ -106,7 +116,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/b6/e5/4b/b6e54b81-7275-cd62-11f4-c392b646d5a7/mzaf_13409048335867717533.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/16/b2/b3/16b2b33c-1c77-b74a-58fd-a3ac940b1818/00602517582811.rgb.jpg/100x100bb.jpg",
       "primaryGenreName": "Alternativa",
-      "releaseDate": "2008-01-29T12:00:00Z"
+      "releaseDate": "2008-01-29T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/2OIca10vMnqiJyDELHiPJb",
+      "spotifyId": "2OIca10vMnqiJyDELHiPJb"
     },
     {
       "title": "Reminder",
@@ -123,7 +135,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/d1/9d/88/d19d8875-bf13-68f9-b0da-ba51afd97767/mzaf_16863475951061547931.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/ae/41/c1ae419f-4876-6de5-8f28-af007a6c54c1/cover.jpg/100x100bb.jpg",
       "primaryGenreName": "Electrónica",
-      "releaseDate": "2016-02-19T08:00:00Z"
+      "releaseDate": "2016-02-19T08:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/2DP2UCTKZpI2YTgUTm2ESs",
+      "spotifyId": "2DP2UCTKZpI2YTgUTm2ESs"
     },
     {
       "title": "Never Say Die",
@@ -140,7 +154,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/7c/67/1f/7c671ffa-3625-d750-5977-741cba0488f9/mzaf_2768465677653589330.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/ea/bc/14/eabc1489-5475-9794-0036-45d64b566a6d/00602567415633.rgb.jpg/100x100bb.jpg",
       "primaryGenreName": "Alternativa",
-      "releaseDate": "2018-03-29T12:00:00Z"
+      "releaseDate": "2018-03-29T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/1tGmXu0s8ob0VFjNoQlyKc",
+      "spotifyId": "1tGmXu0s8ob0VFjNoQlyKc"
     },
     {
       "title": "Planisphere",
@@ -157,7 +173,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/c2/39/19/c23919b2-d3b7-6448-055a-c2fb3f04f3ae/mzaf_17213796972937830759.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/45/a7/26/45a72600-3b23-1586-37d1-12868837bf70/mzi.mhmawwpw.jpg/100x100bb.jpg",
       "primaryGenreName": "Electrónica",
-      "releaseDate": "2011-10-24T07:00:00Z"
+      "releaseDate": "2011-10-24T07:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/18IARgL5t0TkfCvARd8Ndn",
+      "spotifyId": "18IARgL5t0TkfCvARd8Ndn"
     },
     {
       "title": "Maniac (feat. Yann Ligner)",
@@ -174,7 +192,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/c6/a4/be/c6a4bea4-4eb1-6881-b297-47547924ad5f/mzaf_5426802104468346856.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/14/a8/77/14a87761-3ca4-6549-cc38-e011c5d5f76b/20UMGIM35677.rgb.jpg/100x100bb.jpg",
       "primaryGenreName": "Electrónica",
-      "releaseDate": "2020-05-15T12:00:00Z"
+      "releaseDate": "2020-05-15T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/2IxhiriDpu4iBnXZb3ytXN",
+      "spotifyId": "2IxhiriDpu4iBnXZb3ytXN"
     },
     {
       "title": "New Person, Same Old Mistakes",
@@ -191,7 +211,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/97/09/a4/9709a4b8-e341-a702-0623-e71744f9b1d9/mzaf_8872976146459825084.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a8/2e/b4/a82eb490-f30a-a321-461a-0383c88fec95/15UMGIM23316.rgb.jpg/100x100bb.jpg",
       "primaryGenreName": "Alternativa",
-      "releaseDate": "2015-07-17T12:00:00Z"
+      "releaseDate": "2015-07-17T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/52ojopYMUzeNcudsoz7O9D",
+      "spotifyId": "52ojopYMUzeNcudsoz7O9D"
     },
     {
       "title": "The Crimson Path",
@@ -208,7 +230,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/2c/13/b7/2c13b767-02e5-d6ad-abb9-ee32e35efcf1/mzaf_15109890591625586211.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/d3/9d/d5/d39dd5be-f204-3211-5c75-7f1d9cf03225/5024545783513.jpg/100x100bb.jpg",
       "primaryGenreName": "Rock",
-      "releaseDate": "2017-07-28T12:00:00Z"
+      "releaseDate": "2017-07-28T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/54ZKhiJiC1dmfVNyCGZZWf",
+      "spotifyId": "54ZKhiJiC1dmfVNyCGZZWf"
     },
     {
       "title": "The Stormchaser",
@@ -225,7 +249,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/6e/0f/90/6e0f9054-2a8a-70de-8d46-4abb2849f832/mzaf_3865210263311431456.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c0/47/7f/c0477fb2-f17a-1d3d-f9dd-88f48afce35e/196872156812.jpg/100x100bb.jpg",
       "primaryGenreName": "Rock",
-      "releaseDate": "2024-01-11T12:00:00Z"
+      "releaseDate": "2024-01-11T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/3PamlDNPvwoP9sz6DiXOo5",
+      "spotifyId": "3PamlDNPvwoP9sz6DiXOo5"
     },
     {
       "title": "Emergence",
@@ -242,7 +268,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/93/5f/e5/935fe55e-8a99-6e57-73af-28a70c85a8f7/mzaf_3764739277286690981.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/45/76/46/457646e0-7bba-770b-f18c-12f7b479dca6/196872847215.jpg/100x100bb.jpg",
       "primaryGenreName": "Metal",
-      "releaseDate": "2025-03-13T12:00:00Z"
+      "releaseDate": "2025-03-13T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/2OMjHcniFxzijWX7EaBrXE",
+      "spotifyId": "2OMjHcniFxzijWX7EaBrXE"
     },
     {
       "title": "Remember Tomorrow",
@@ -259,7 +287,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/79/62/43/7962432e-def5-9add-18cb-8934be510fa5/mzaf_6354370729660948031.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/97/b5/48/97b54840-8d4a-c010-4f83-43f378bb86e5/5400863117627_cover.jpg/100x100bb.jpg",
       "primaryGenreName": "Rock",
-      "releaseDate": "1998-05-05T12:00:00Z"
+      "releaseDate": "1998-05-05T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/7DNA7EP45gtEpDERHT2ZSS",
+      "spotifyId": "7DNA7EP45gtEpDERHT2ZSS"
     },
     {
       "title": "Wheel of Time",
@@ -276,7 +306,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/91/9b/08/919b0833-9d80-1bee-6a65-0062b4a0c9b3/mzaf_7496917100604587463.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/c8/85/b2/c885b2dd-de5b-b697-e971-cc492b12288c/cover.jpg/100x100bb.jpg",
       "primaryGenreName": "Metal",
-      "releaseDate": "2010-07-29T12:00:00Z"
+      "releaseDate": "2010-07-29T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/16Z7RW76CpuaewB1U8H4cn",
+      "spotifyId": "16Z7RW76CpuaewB1U8H4cn"
     },
     {
       "title": "Oh Qué Será?",
@@ -293,7 +325,9 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/41/85/df/4185df01-db90-05b5-6c9f-b3c53324f758/mzaf_2275648322153360436.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/e6/d2/bc/e6d2bc9c-cfa5-98f2-23b5-d96320478178/18CRGIM08518.rgb.jpg/100x100bb.jpg",
       "primaryGenreName": "Salsa y Tropical",
-      "releaseDate": "1981-01-01T12:00:00Z"
+      "releaseDate": "1981-01-01T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/2n1MTLCis6qPSDKdr5XSDI",
+      "spotifyId": "2n1MTLCis6qPSDKdr5XSDI"
     },
     {
       "title": "24 Light - Years",
@@ -310,7 +344,47 @@
       "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/1b/60/d1/1b60d194-b23d-0ddd-6e67-d567ff93f586/mzaf_4192386084900460911.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/de/5f/a4/de5fa4e6-1667-1a8b-1dcc-c14657b6de2e/810020503562.png/100x100bb.jpg",
       "primaryGenreName": "Rock",
-      "releaseDate": "2021-03-31T12:00:00Z"
+      "releaseDate": "2021-03-31T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/4OFF1YlbaIHc2JbMhW9fdv",
+      "spotifyId": "4OFF1YlbaIHc2JbMhW9fdv"
+    },
+    {
+      "title": "空より現れし者 (Orchestral Version) 〜次元の狭間オメガ:アルファ編〜",
+      "artist": "Masayoshi Soken",
+      "artistId": "205701111",
+      "album": "GROWING LIGHT: FINAL FANTASY XIV Original Soundtrack",
+      "albumId": "1735934854",
+      "songId": "1735935375",
+      "url": "https://music.apple.com/es/album/%E7%A9%BA%E3%82%88%E3%82%8A%E7%8F%BE%E3%82%8C%E3%81%97%E8%80%85-orchestral-version-%E6%AC%A1%E5%85%83%E3%81%AE%E7%8B%AD%E9%96%93%E3%82%AA%E3%83%A1%E3%82%AC-%E3%82%A2%E3%83%AB%E3%83%95%E3%82%A1%E7%B7%A8/1735934854?i=1735935375",
+      "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a0/7b/18/a07b182b-d8db-822f-183b-976ff7173b37/SQEX-20096-1_3000x3000.jpg/500x500bb.jpg",
+      "artworkRaw": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a0/7b/18/a07b182b-d8db-822f-183b-976ff7173b37/SQEX-20096-1_3000x3000.jpg/{w}x{h}bb.{f}",
+      "durationMs": 276529,
+      "composer": "Masayoshi Soken",
+      "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/60/f2/9d/60f29d85-603e-f2d8-7e93-47de84e0bf26/mzaf_11374620631057260461.plus.aac.p.m4a",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a0/7b/18/a07b182b-d8db-822f-183b-976ff7173b37/SQEX-20096-1_3000x3000.jpg/100x100bb.jpg",
+      "primaryGenreName": "Banda sonora",
+      "releaseDate": "2019-12-11T12:00:00Z",
+      "spotifyUrl": null,
+      "spotifyId": null
+    },
+    {
+      "title": "Idol Hands",
+      "artist": "Kmac2021",
+      "artistId": "1394698107",
+      "album": "Idol Hands - Single",
+      "albumId": "1623361802",
+      "songId": "1623361803",
+      "url": "https://music.apple.com/es/album/idol-hands/1623361802?i=1623361803",
+      "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/e2/a4/1b/e2a41ba6-06a7-7b50-d68d-1a4bec750a5f/96543.jpg/500x500bb.jpg",
+      "artworkRaw": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/e2/a4/1b/e2a41ba6-06a7-7b50-d68d-1a4bec750a5f/96543.jpg/{w}x{h}bb.{f}",
+      "durationMs": 315429,
+      "composer": "Kieran McLaughlin",
+      "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/ce/9d/9d/ce9d9dc9-7c4b-54ee-bc43-209b1b79e28f/mzaf_13730933816889178650.plus.aac.p.m4a",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/e2/a4/1b/e2a41ba6-06a7-7b50-d68d-1a4bec750a5f/96543.jpg/100x100bb.jpg",
+      "primaryGenreName": "Metal",
+      "releaseDate": "2022-04-25T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/4JcEaqyMGOaTxLOM6E44Io",
+      "spotifyId": "4JcEaqyMGOaTxLOM6E44Io"
     }
   ]
 }

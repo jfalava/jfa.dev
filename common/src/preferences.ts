@@ -4,6 +4,7 @@ export const preferenceCookies = {
   language: "jfa-language",
   theme: "jfa-theme",
   wrapText: "jfa-wrap-text",
+  musicProvider: "jfa-music-provider",
 } as const;
 
 export type PreferenceCookieName = (typeof preferenceCookies)[keyof typeof preferenceCookies];

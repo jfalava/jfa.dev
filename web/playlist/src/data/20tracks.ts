@@ -26,6 +26,8 @@ const twentyTrackSchema = Schema.Struct({
   artworkUrl100: Schema.NullOr(Schema.String),
   primaryGenreName: Schema.NullOr(Schema.String),
   releaseDate: Schema.NullOr(Schema.String),
+  spotifyUrl: Schema.NullOr(Schema.String),
+  spotifyId: Schema.NullOr(Schema.String),
 });
 
 const twentySnapshotSchema = Schema.Struct({

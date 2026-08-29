@@ -5,6 +5,7 @@
  *   bun run scripts/fetch-apple-playlist.ts --check        # exits 1 if stale
  */
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { createHmac, randomUUID } from "node:crypto";
 import { dirname, resolve } from "node:path";
 
 const PLAYLIST_ID = "pl.u-9N9LL2eI2K5oXV";
@@ -14,6 +15,8 @@ const OUT_PATHS = [
   resolve(import.meta.dirname, "../web/playlist/src/data/20tracks.json"),
   resolve(import.meta.dirname, "../web/playlist/public/data/20tracks.json"),
 ] as const;
+
+type SpotifyMatch = { spotifyUrl: string | null; spotifyId: string | null };
 
 type EnrichedTrack = {
   title: string;
@@ -31,6 +34,8 @@ type EnrichedTrack = {
   artworkUrl100: string | null;
   primaryGenreName: string | null;
   releaseDate: string | null;
+  spotifyUrl: string | null;
+  spotifyId: string | null;
 };
 
 type Snapshot = {
@@ -111,7 +116,12 @@ function parseTracks(root: SerializedRoot): {
   subtitle: string | null;
   tracks: Omit<
     EnrichedTrack,
-    "previewUrl" | "artworkUrl100" | "primaryGenreName" | "releaseDate"
+    | "previewUrl"
+    | "artworkUrl100"
+    | "primaryGenreName"
+    | "releaseDate"
+    | "spotifyUrl"
+    | "spotifyId"
   >[];
 } {
   const page = root.data[0]?.data;
@@ -159,6 +169,306 @@ function parseTracks(root: SerializedRoot): {
   });
 
   return { title, subtitle, tracks };
+}
+
+function spotifyNorm(value: string): string {
+  const withoutParens = value.replace(/\s*\([^)]*\)/g, "");
+  const withoutBrackets = withoutParens.replace(/\s*\[[^\]]*\]/g, "");
+  return withoutBrackets
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[\-‐‑‒–—―]+/gu, " ")
+    .trim()
+    .replace(/\s+/gu, " ");
+}
+
+// --- Anonymous Web-Player flow (no app creds, works greyed-out like open.spotify.com) ---
+// Based on https://code.rifkyshre.biz.id/snippets/spotify-search — uses TOTP + clienttoken
+// which is how the web player gets a token without user login or premium app.
+const SPOTIFY_TOTP_SECRET =
+  "376136387538459893883312310911992847112448894410210511297108";
+const SPOTIFY_TOTP_VERSION = 61;
+const SPOTIFY_APP_VERSION = "1.2.92.50.g97692e81";
+const SPOTIFY_PARTNER_HASHES = [
+  "eff59fa0a3d026b88b56fddbcf4bdfa16a186b8175a5c1a358c072e053c2e5b0",
+  "21b3fe49546912ba782db5c47e9ef5a7dbd20329520ba0c7d0fcfadee671d24e",
+] as const;
+const SPOTIFY_UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36";
+
+function totp(tsMs: number): string {
+  const counter = Math.floor(tsMs / 1000 / 30);
+  const buf = Buffer.alloc(8);
+  buf.writeBigInt64BE(BigInt(counter));
+  const digest = createHmac("sha1", Buffer.from(SPOTIFY_TOTP_SECRET, "utf8"))
+    .update(buf)
+    .digest();
+  const offset = digest[digest.length - 1] & 0x0f;
+  const code = (digest.readUInt32BE(offset) & 0x7fffffff) % 1_000_000;
+  return String(code).padStart(6, "0");
+}
+
+type SpotifyWebAuth = {
+  accessToken: string;
+  clientToken: string;
+  expiresAtMs: number;
+};
+
+async function getSpotifyWebAuth(): Promise<SpotifyWebAuth> {
+  const baseHeaders = {
+    referer: "https://open.spotify.com/",
+    origin: "https://open.spotify.com",
+    "user-agent": SPOTIFY_UA,
+    "accept-language": "en",
+  };
+  const now = Date.now();
+  const params = new URLSearchParams({
+    reason: "init",
+    productType: "web-player",
+    totp: totp(now),
+    totpServer: totp(now),
+    totpVer: String(SPOTIFY_TOTP_VERSION),
+  });
+  const tokenRes = await fetch(
+    `https://open.spotify.com/api/token?${params.toString()}`,
+    { headers: baseHeaders },
+  );
+  if (!tokenRes.ok) {
+    const body = await tokenRes.text().catch(() => "");
+    throw new Error(`Spotify web token failed: ${tokenRes.status} ${body.slice(0, 400)}`);
+  }
+  const tokenJson = (await tokenRes.json()) as {
+    accessToken: string;
+    clientId: string;
+    accessTokenExpirationTimestampMs?: number;
+  };
+  if (!tokenJson.accessToken || !tokenJson.clientId) {
+    throw new Error("Spotify web token missing accessToken/clientId");
+  }
+  const clientRes = await fetch("https://clienttoken.spotify.com/v1/clienttoken", {
+    method: "POST",
+    headers: {
+      ...baseHeaders,
+      "content-type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify({
+      client_data: {
+        client_version: SPOTIFY_APP_VERSION,
+        client_id: tokenJson.clientId,
+        js_sdk_data: {
+          device_brand: "unknown",
+          device_model: "unknown",
+          os: "windows",
+          os_version: "NT 10.0",
+          device_id: randomUUID(),
+          device_type: "computer",
+        },
+      },
+    }),
+  });
+  if (!clientRes.ok) {
+    const body = await clientRes.text().catch(() => "");
+    throw new Error(`Spotify clienttoken failed: ${clientRes.status} ${body.slice(0, 400)}`);
+  }
+  const clientJson = (await clientRes.json()) as {
+    granted_token?: { token: string };
+  };
+  const clientToken = clientJson.granted_token?.token;
+  if (!clientToken) {
+    throw new Error("Spotify clienttoken missing granted_token.token");
+  }
+  return {
+    accessToken: tokenJson.accessToken,
+    clientToken,
+    expiresAtMs:
+      tokenJson.accessTokenExpirationTimestampMs ?? now + 3_000_000,
+  };
+}
+
+type PartnerSearchResult = {
+  data?: {
+    searchV2?: {
+      tracksV2?: {
+        items: Array<{
+          item?: {
+            data?: {
+              uri: string;
+              name: string;
+              artists?: { items: Array<{ profile?: { name?: string } }> };
+            };
+          };
+        }>;
+      };
+    };
+  };
+} | null;
+
+function spotifyBaseTitle(value: string): string {
+  // "How Soon Is Now - Dirty South Remix" -> "How Soon Is Now"
+  const dash = value.split(/\s-\s/)[0] ?? value;
+  return dash.trim();
+}
+
+function scoreSpotifyMatch(
+  wantTitle: string,
+  wantStripped: string,
+  gotName: string,
+): number {
+  const got = spotifyNorm(gotName);
+  const gotBase = spotifyNorm(spotifyBaseTitle(gotName));
+  if (got === wantTitle || got === wantStripped) {
+    return 2;
+  }
+  if (gotBase === wantTitle || gotBase === wantStripped) {
+    return 1;
+  }
+  if (got.includes(wantTitle) || wantTitle.includes(got)) {
+    return 0;
+  }
+  if (gotBase.includes(wantTitle) || wantTitle.includes(gotBase)) {
+    return 0;
+  }
+  return -1;
+}
+
+async function enrichWithSpotify(
+  tracks: Array<{ songId: string; title: string; artist: string }>,
+  initialAuth: SpotifyWebAuth,
+): Promise<Map<string, SpotifyMatch>> {
+  let auth = initialAuth;
+  const baseHeaders = {
+    referer: "https://open.spotify.com/",
+    origin: "https://open.spotify.com",
+    "user-agent": SPOTIFY_UA,
+    "accept-language": "en",
+  };
+
+  async function partnerSearch(
+    searchTerm: string,
+    hash: string,
+  ): Promise<PartnerSearchResult> {
+    const params = new URLSearchParams({
+      operationName: "searchDesktop",
+      variables: JSON.stringify({
+        searchTerm,
+        offset: 0,
+        limit: 5,
+        numberOfTopResults: 5,
+        includeAudiobooks: false,
+      }),
+      extensions: JSON.stringify({
+        persistedQuery: { version: 1, sha256Hash: hash },
+      }),
+    });
+    const url = `https://api-partner.spotify.com/pathfinder/v1/query?${params.toString()}`;
+    const doFetch = async (): Promise<Response> =>
+      fetch(url, {
+        headers: {
+          ...baseHeaders,
+          accept: "application/json",
+          "app-platform": "WebPlayer",
+          authorization: `Bearer ${auth.accessToken}`,
+          "client-token": auth.clientToken,
+          "spotify-app-version": SPOTIFY_APP_VERSION,
+        },
+      });
+    let res = await doFetch();
+    if (res.status === 401) {
+      // Token expired — refresh once via TOTP.
+      auth = await getSpotifyWebAuth();
+      res = await doFetch();
+    }
+    if (res.status === 429) {
+      await new Promise<void>((r) => setTimeout(r, 1800));
+      res = await doFetch();
+    }
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      throw new Error(`Spotify partner search ${res.status} for "${searchTerm}": ${body.slice(0, 300)}`);
+    }
+    const json = (await res.json()) as PartnerSearchResult & { errors?: unknown };
+    // PersistedQueryNotFound is returned as 200 with errors array — bubble as throw to try next hash.
+    if ((json as { errors?: Array<{ message?: string }> })?.errors?.length) {
+      const msg = JSON.stringify((json as { errors?: unknown }).errors).slice(0, 300);
+      throw new Error(`Spotify partner errors for "${searchTerm}": ${msg}`);
+    }
+    return json;
+  }
+
+  const map = new Map<string, SpotifyMatch>();
+  for (const t of tracks) {
+    const strippedTitle = t.title.replace(/\s*\([^)]*\)/g, "").trim();
+    const wantTitle = spotifyNorm(t.title);
+    const wantStripped = spotifyNorm(strippedTitle);
+    const candidates = Array.from(
+      new Set(
+        [
+          `${t.title} ${t.artist}`,
+          `${strippedTitle} ${t.artist}`,
+          t.title,
+          strippedTitle,
+        ].map((s) => s.trim()).filter(Boolean),
+      ),
+    );
+
+    let bestMatch: SpotifyMatch | null = null;
+    let bestScore = -1;
+    let foundExact = false;
+
+    for (const term of candidates) {
+      if (foundExact) {
+        break;
+      }
+      for (const hash of SPOTIFY_PARTNER_HASHES) {
+        let json: PartnerSearchResult | null = null;
+        try {
+          json = await partnerSearch(term, hash);
+        } catch {
+          continue;
+        }
+        const items = json?.data?.searchV2?.tracksV2?.items ?? [];
+        for (const it of items) {
+          const data = it.item?.data;
+          if (!data?.uri || !data?.name) {
+            continue;
+          }
+          const score = scoreSpotifyMatch(wantTitle, wantStripped, data.name);
+          if (score < 0) {
+            continue;
+          }
+          if (score > bestScore) {
+            const id = data.uri.split(":")[2] ?? null;
+            bestScore = score;
+            bestMatch = {
+              spotifyUrl: id ? `https://open.spotify.com/track/${id}` : null,
+              spotifyId: id,
+            };
+            if (score === 2) {
+              foundExact = true;
+              break;
+            }
+          }
+        }
+        if (foundExact) {
+          break;
+        }
+        // Small pause between hashes for same term.
+        await new Promise<void>((r) => setTimeout(r, 90));
+      }
+      // Between candidate terms.
+      await new Promise<void>((r) => setTimeout(r, 180));
+      if (foundExact) {
+        break;
+      }
+    }
+
+    map.set(t.songId, bestMatch ?? { spotifyUrl: null, spotifyId: null });
+    // Be nice to Spotify — 20 tracks overall stays well under partner limits.
+    await new Promise<void>((r) => setTimeout(r, 220));
+  }
+  return map;
 }
 
 async function enrichWithItunes(
@@ -248,14 +558,28 @@ async function main(): Promise<void> {
         error,
       );
     }
+    // Spotify enrichment — anonymous web-player flow, no app/SECRET needed (same as open.spotify.com / Android).
+    // Fail-open: if Spotify is unreachable we keep Apple-only snapshot.
+    let spotifyMap: Map<string, SpotifyMatch> | null = null;
+    try {
+      const webAuth = await getSpotifyWebAuth();
+      spotifyMap = await enrichWithSpotify(base, webAuth);
+      const hits = [...spotifyMap.values()].filter((v) => v.spotifyUrl).length;
+      console.log(`✅ Spotify enrichment (web-player): ${hits}/${base.length}`);
+    } catch (error) {
+      console.warn("⚠️  Spotify enrichment failed, continuing without spotifyUrl", error);
+    }
     const tracks: EnrichedTrack[] = base.map((t) => {
       const e = itunesMap?.get(t.songId);
+      const s = spotifyMap?.get(t.songId);
       return {
         ...t,
         previewUrl: e?.previewUrl ?? null,
         artworkUrl100: e?.artworkUrl100 ?? null,
         primaryGenreName: e?.primaryGenreName ?? null,
         releaseDate: e?.releaseDate ?? null,
+        spotifyUrl: s?.spotifyUrl ?? null,
+        spotifyId: s?.spotifyId ?? null,
       };
     });
     const snapshot: Snapshot = {
