@@ -84,7 +84,7 @@ export function ListPageHeader({
               placeholder="Search items"
               value={filter}
             />
-            <span className="pointer-events-none absolute top-1/2 right-2 hidden -translate-y-1/2 sm:inline-flex">
+            <span className="pointer-events-none absolute top-1/2 right-2 hidden -translate-y-1/2 sm:inline-flex group/button">
               <HotkeyKbd hotkey={FOCUS_SEARCH_HOTKEY} />
             </span>
           </div>

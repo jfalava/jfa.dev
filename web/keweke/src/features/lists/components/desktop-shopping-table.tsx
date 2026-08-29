@@ -28,7 +28,7 @@ export function DesktopNewItemRow({
       </TableCell>
       <TableCell className="px-3 py-3">
         <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-          new <HotkeyKbd hotkey="N" />
+          new <HotkeyKbd className="hidden sm:inline-flex" hotkey="N" />
         </span>
       </TableCell>
       <TableCell className="px-3 py-3">

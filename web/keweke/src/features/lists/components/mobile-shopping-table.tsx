@@ -303,7 +303,7 @@ function MobileNewItemRow({
       <TableCell className="px-2 py-3" colSpan={3}>
         <div className="flex flex-col gap-2">
           <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-[0.08em] text-primary uppercase">
-            new <HotkeyKbd hotkey="N" />
+            new <HotkeyKbd className="hidden sm:inline-flex" hotkey="N" />
           </span>
           <label className="flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
