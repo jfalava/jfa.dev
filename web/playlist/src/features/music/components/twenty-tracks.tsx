@@ -67,13 +67,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
       id: "cover",
       header: () => <span className="sr-only">Cover</span>,
       cell: ({ row }) => (
-        <a
-          href={row.original.url}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={`${row.original.title} — ${row.original.artist} on Apple Music`}
-          className="block size-11 shrink-0 overflow-hidden rounded-md bg-muted"
-        >
+        <span className="block size-11 shrink-0 overflow-hidden rounded-md bg-muted">
           <img
             src={row.original.artwork}
             alt=""
@@ -83,7 +77,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
             decoding="async"
             className="aspect-square size-full object-cover"
           />
-        </a>
+        </span>
       ),
     }),
     trackColumnHelper.accessor("title", {
@@ -92,14 +86,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
         const isActive = activeTrack ? isNowPlayingMatch(row.original, activeTrack) : false;
         return (
           <span className="inline-flex items-center gap-2">
-            <a
-              href={row.original.url}
-              target="_blank"
-              rel="noreferrer"
-              className="leading-tight font-medium underline-offset-4 hover:underline"
-            >
-              {getValue()}
-            </a>
+            <span className="leading-tight font-medium">{getValue()}</span>
             {isActive ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide text-success dark:text-success">
                 <span className="size-1.5 animate-pulse rounded-full bg-success" aria-hidden />
@@ -135,15 +122,41 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
       ),
     }),
     trackColumnHelper.display({
-      id: "preview",
-      header: "Preview",
-      cell: ({ row }) =>
-        row.original.previewUrl ? (
-          // oxlint-disable-next-line jsx-a11y/media-has-caption -- 30s preview has no captions track
-          <audio controls preload="none" src={row.original.previewUrl} className="h-8 w-28" />
-        ) : (
-          <span className="text-xs text-muted-foreground/50">—</span>
-        ),
+      id: "links",
+      header: () => <span className="sr-only">Links</span>,
+      cell: ({ row }) => {
+        const track = row.original;
+        return (
+          <span className="inline-flex items-center justify-end gap-2">
+            <a
+              href={track.url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`${track.title} — ${track.artist} on Apple Music`}
+              className={cn(
+                buttonVariants({ variant: "default", size: "icon" }),
+                "size-8 shrink-0 rounded-xl [&_svg]:size-5",
+              )}
+            >
+              <AppleMusicIcon className="size-5" />
+            </a>
+            {track.spotifyUrl ? (
+              <a
+                href={track.spotifyUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${track.title} — ${track.artist} on Spotify`}
+                className={cn(
+                  buttonVariants({ variant: "default", size: "icon" }),
+                  "size-8 shrink-0 rounded-xl [&_svg]:size-5",
+                )}
+              >
+                <SpotifyIcon className="size-5" />
+              </a>
+            ) : null}
+          </span>
+        );
+      },
     }),
   ]);
 }
@@ -439,16 +452,16 @@ export function TwentyTracksTable() {
 
   return (
     <>
-      {/* Desktop: full 6-column table (cover, title, artist, album, length, preview) */}
+      {/* Desktop: full table — cover, title (plain), artist, album, length, links */}
       <div className="catalog-scroll hidden md:block">
         <table className="w-full min-w-4xl border-collapse">
           <colgroup>
             <col className="w-14" />
-            <col className="w-[26%]" />
-            <col className="w-[20%]" />
-            <col className="w-[26%]" />
+            <col className="w-[24%]" />
+            <col className="w-[18%]" />
+            <col className="w-[24%]" />
             <col className="w-20" />
-            <col className="w-32" />
+            <col className="w-28" />
           </colgroup>
           <thead className="bg-background">
             {desktopTable.getHeaderGroups().map((headerGroup) => (
@@ -485,9 +498,9 @@ export function TwentyTracksTable() {
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        "max-w-65 px-3 py-2.5 align-top text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
+                        "max-w-65 px-3 py-2.5 align-middle text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
                         cell.column.id === "cover" && "w-14 pl-4 sm:pl-6 lg:pl-8",
-                        cell.column.id === "preview" && "pr-4 sm:pr-6 lg:pr-8",
+                        cell.column.id === "links" && "pr-4 text-right sm:pr-6 lg:pr-8",
                       )}
                     >
                       <desktopTable.FlexRender cell={cell} />
@@ -500,7 +513,7 @@ export function TwentyTracksTable() {
         </table>
       </div>
 
-      {/* Mobile: 2-column compact view — track info (cover+title+artist+album) + Apple Music link */}
+      {/* Mobile: 2-column compact view — track info (cover+title+artist+album) + stacked links */}
       <div className="catalog-scroll overflow-x-hidden md:hidden">
         <table className="w-full table-fixed border-collapse">
           <colgroup>
