@@ -1,7 +1,7 @@
 import { Kbd, KbdGroup, kbdVariants } from "@jfa.dev/common/ui";
 import { detectPlatform, formatForDisplay } from "@tanstack/react-hotkeys";
-import { useSyncExternalStore } from "react";
 import type { VariantProps } from "class-variance-authority";
+import { useSyncExternalStore } from "react";
 
 const subscribe = () => () => {};
 
