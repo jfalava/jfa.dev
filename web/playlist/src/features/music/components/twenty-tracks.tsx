@@ -171,7 +171,7 @@ function createMobilePlaylistColumns(activeTrack: NowPlayingTrack | null) {
               />
             </div>
             {/* Fixed-size horizontally-scrollable area: no page overflow, all text reachable via swipe */}
-            <div className="min-w-0 flex-1 [scrollbar-width:none] overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:hidden">
+            <div className="min-w-0 flex-1 scrollbar-none overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:hidden">
               <div className="flex min-w-max flex-col gap-0.5">
                 <div className="flex items-center gap-1.5 whitespace-nowrap">
                   <span className="leading-tight font-medium whitespace-nowrap text-foreground">
