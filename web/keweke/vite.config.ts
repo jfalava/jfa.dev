@@ -109,6 +109,7 @@ export default defineConfig({
           caughtErrorsIgnorePattern: "^_",
         },
       ],
+      "eslint/no-underscore-dangle": ["warn", { allow: ["_tag"] }],
       "no-undef": "error",
       "no-unreachable": "error",
       "no-dupe-keys": "error",
