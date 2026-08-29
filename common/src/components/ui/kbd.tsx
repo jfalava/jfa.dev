@@ -29,16 +29,29 @@ const kbdVariants = cva(
 type KbdProps = React.ComponentProps<"kbd"> & VariantProps<typeof kbdVariants>;
 
 function Kbd({ className, variant, size, ...props }: KbdProps) {
+  // Compact sizing is shared; shadow inside Button must preserve variant behavior:
+  // default keeps brand shadow in both light + dark (previously light hid via shadow-none without dark: counterpart),
+  // embedded stays shadow-none. Keep hover shadow constant (no lift) inside buttons.
+  const isEmbedded = variant === "embedded";
+  const buttonShadow = isEmbedded
+    ? "in-data-[slot=button]:shadow-none dark:in-data-[slot=button]:shadow-none in-data-[slot=button]:hover:shadow-none dark:in-data-[slot=button]:hover:shadow-none"
+    : "in-data-[slot=button]:shadow-[0_3px_0_0_var(--primary)] dark:in-data-[slot=button]:shadow-[0_3px_0_0_var(--primary)] in-data-[slot=button]:hover:shadow-[0_3px_0_0_var(--primary)] dark:in-data-[slot=button]:hover:shadow-[0_3px_0_0_var(--primary)]";
+  const groupShadow = isEmbedded
+    ? "in-[.group\\/button]:shadow-none dark:in-[.group\\/button]:shadow-none in-[.group\\/button]:hover:shadow-none dark:in-[.group\\/button]:hover:shadow-none"
+    : "in-[.group\\/button]:shadow-[0_3px_0_0_var(--primary)] dark:in-[.group\\/button]:shadow-[0_3px_0_0_var(--primary)] in-[.group\\/button]:hover:shadow-[0_3px_0_0_var(--primary)] dark:in-[.group\\/button]:hover:shadow-[0_3px_0_0_var(--primary)]";
+  const buttonCompact =
+    "in-data-[slot=button]:h-4 in-data-[slot=button]:min-w-4 in-data-[slot=button]:px-1 in-data-[slot=button]:text-[10px] in-data-[slot=button]:leading-none in-data-[slot=button]:hover:translate-y-0 in-data-[slot=button]:border-zinc-300 dark:in-data-[slot=button]:border-zinc-600";
+  const groupCompact =
+    "in-[.group\\/button]:h-4 in-[.group\\/button]:min-w-4 in-[.group\\/button]:px-1 in-[.group\\/button]:text-[10px] in-[.group\\/button]:leading-none in-[.group\\/button]:hover:translate-y-0 in-[.group\\/button]:border-zinc-300 dark:in-[.group\\/button]:border-zinc-600";
   return (
     <KbdPrimitive
       data-slot="kbd"
       className={cn(
         kbdVariants({ variant, size }),
         // Auto-compact when nested inside a Button / .group/button (covers Button and <a> with buttonVariants)
-        // Base already nudged -top-px for optical alignment (standalone + button); button overrides size/shadow
-        // For primary buttons shadow is invisible (same as bg), so add a visible border
-        "in-data-[slot=button]:h-4 in-data-[slot=button]:min-w-4 in-data-[slot=button]:px-1 in-data-[slot=button]:text-[10px] in-data-[slot=button]:leading-none in-data-[slot=button]:shadow-none in-data-[slot=button]:hover:translate-y-0 in-data-[slot=button]:hover:shadow-none in-data-[slot=button]:border-zinc-300 dark:in-data-[slot=button]:border-zinc-600",
-        "in-[.group\\/button]:h-4 in-[.group\\/button]:min-w-4 in-[.group\\/button]:px-1 in-[.group\\/button]:text-[10px] in-[.group\\/button]:leading-none in-[.group\\/button]:shadow-none in-[.group\\/button]:hover:translate-y-0 in-[.group\\/button]:hover:shadow-none in-[.group\\/button]:border-zinc-300 dark:in-[.group\\/button]:border-zinc-600",
+        // Base already nudged -top-px for optical alignment (standalone + button)
+        `${buttonCompact} ${buttonShadow}`,
+        `${groupCompact} ${groupShadow}`,
         // Preserve tooltip override (reset nudge inside tooltip)
         "in-data-[slot=tooltip-content]:top-0 in-data-[slot=tooltip-content]:h-auto in-data-[slot=tooltip-content]:min-w-0 in-data-[slot=tooltip-content]:border-white/15 in-data-[slot=tooltip-content]:bg-white/10 in-data-[slot=tooltip-content]:from-transparent in-data-[slot=tooltip-content]:to-transparent in-data-[slot=tooltip-content]:px-1 in-data-[slot=tooltip-content]:text-white in-data-[slot=tooltip-content]:shadow-none hover:in-data-[slot=tooltip-content]:translate-y-0 hover:in-data-[slot=tooltip-content]:shadow-none",
         className,
