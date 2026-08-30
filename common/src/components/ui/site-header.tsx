@@ -6,10 +6,21 @@ import { DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 import { Kbd, KbdGroup } from "./kbd";
 
 import { ArrowUpRight, ChevronDown, CodeXml, Home } from "lucide-react";
-import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
-import { Menu as MenuPrimitive, Popover as PopoverPrimitive } from "react-aria-components";
+import {
+  useEffect,
+  useState,
+  type ComponentProps,
+  type ReactNode,
+} from "react";
+import {
+  Menu as MenuPrimitive,
+  Popover as PopoverPrimitive,
+} from "react-aria-components";
 
-export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title"> {
+export interface SiteHeaderProps extends Omit<
+  ComponentProps<"header">,
+  "title"
+> {
   /** The full title displayed on larger screens. */
   title: string;
   /** The shorter title displayed on small screens. Defaults to `title`. */
@@ -61,10 +72,14 @@ export function SiteHeader({
       <span className="shrink-0 text-sm font-bold tracking-tight text-primary">
         <span className="hidden sm:inline">/{title}</span>
         <span className="inline sm:hidden">/{titleSmol}</span>
-        <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
+        <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">
+          by JFA
+        </span>
       </span>
       {subtitle ? (
-        <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
+        <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">
+          /
+        </span>
       ) : null}
       {subtitle ? (
         <span className="hidden truncate text-[11px] text-muted-foreground sm:inline">
@@ -99,7 +114,10 @@ export function SiteHeader({
     );
     if (titleHref) {
       brand = (
-        <a href={titleHref} className="min-w-0 cursor-pointer text-sm text-foreground">
+        <a
+          href={titleHref}
+          className="min-w-0 cursor-pointer text-sm text-foreground"
+        >
           {brand}
         </a>
       );
@@ -139,14 +157,18 @@ export function SiteHeader({
               rel="noopener noreferrer"
               aria-label="View source on GitHub"
               className={buttonVariants({
-                className: "gap-1.5 px-2 text-muted-foreground hover:text-foreground",
+                className:
+                  "gap-1.5 px-2 text-muted-foreground hover:text-foreground",
                 size: "lg",
                 variant: "ghost",
               })}
             >
               <CodeXml aria-hidden="true" className="size-4" />
               <span className="hidden sm:inline">Source</span>
-              <ArrowUpRight aria-hidden="true" className="hidden size-4 lg:inline" />
+              <ArrowUpRight
+                aria-hidden="true"
+                className="hidden size-4 lg:inline"
+              />
             </a>
           ) : null}
         </nav>
@@ -164,23 +186,53 @@ interface PackageSwitcherProps {
 }
 
 /**
- * Brand typography shared verbatim by the switcher trigger and its menu items
- * so both always render at the same size, kerning, and weight.
+ * Brand typography shared by the switcher trigger and its menu items so both
+ * render at the same size, kerning, and weight. "by JFA" stays on the trigger
+ * only; dropdown rows show the package title and route subtitle alone.
+ *
+ * When `viewportAware`, the trigger drops the slash and subtitle below `lg` so
+ * a fixed-width trigger never ellipsizes those extras. "by JFA" stays visible.
  */
-function PackageBrand({ subtitle, title }: { subtitle?: ReactNode; title: string }) {
+function PackageBrand({
+  showByJfa = false,
+  subtitle,
+  title,
+  viewportAware = false,
+}: {
+  showByJfa?: boolean;
+  subtitle?: ReactNode;
+  title: string;
+  viewportAware?: boolean;
+}) {
+  const subtitleClass = viewportAware ? "hidden lg:inline" : undefined;
+
   return (
     <span className="flex min-w-0 items-baseline gap-3 truncate font-sans">
       <span className="shrink-0 whitespace-nowrap text-sm font-bold tracking-tight text-primary">
         /{title}
-        <span className="pl-0.5 text-xs font-bold tracking-tight">by JFA</span>
+        {showByJfa ? (
+          <span className="pl-0.5 text-xs font-bold tracking-tight">
+            by JFA
+          </span>
+        ) : null}
       </span>
       {subtitle ? (
-        <span className="shrink-0 text-[11px] font-normal tracking-normal text-muted-foreground/75">
+        <span
+          className={cn(
+            "shrink-0 text-[11px] font-normal tracking-normal text-muted-foreground/75",
+            subtitleClass,
+          )}
+        >
           /
         </span>
       ) : null}
       {subtitle ? (
-        <span className="truncate text-[11px] font-normal tracking-normal text-muted-foreground">
+        <span
+          className={cn(
+            "truncate text-[11px] font-normal tracking-normal text-muted-foreground",
+            subtitleClass,
+          )}
+        >
           {subtitle}
         </span>
       ) : null}
@@ -224,10 +276,15 @@ function PackageSwitcher({
       >
         <span className="flex min-w-0 flex-1 truncate lg:pr-2">
           <span className="hidden min-w-0 sm:inline">
-            <PackageBrand subtitle={subtitle} title={title} />
+            <PackageBrand
+              showByJfa
+              viewportAware
+              subtitle={subtitle}
+              title={title}
+            />
           </span>
           <span className="inline min-w-0 sm:hidden">
-            <PackageBrand title={titleSmol} />
+            <PackageBrand showByJfa viewportAware title={titleSmol} />
           </span>
         </span>
         <ChevronDown aria-hidden="true" className="shrink-0 opacity-70" />
@@ -235,8 +292,12 @@ function PackageSwitcher({
           <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">
             {isMac ? "⌘" : "Ctrl"}
           </Kbd>
-          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">⇧</Kbd>
-          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">U</Kbd>
+          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">
+            ⇧
+          </Kbd>
+          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">
+            U
+          </Kbd>
         </KbdGroup>
       </Button>
       <PopoverPrimitive
@@ -251,7 +312,8 @@ function PackageSwitcher({
         <MenuPrimitive className="max-h-[inherit] overflow-x-hidden overflow-y-auto outline-hidden">
           {packages.map((pkg) => {
             const routeSubtitle =
-              pkg.routes.find((route) => route.path === "/")?.title ?? pkg.routes[0]?.title;
+              pkg.routes.find((route) => route.path === "/")?.title ??
+              pkg.routes[0]?.title;
             return (
               <DropdownMenuItem
                 key={pkg.path}
