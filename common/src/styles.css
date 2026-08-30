@@ -158,6 +158,10 @@
     @apply m-0 min-w-[320px] bg-background font-sans text-foreground antialiased;
   }
 
+  a {
+    @apply underline decoration-dotted underline-offset-4 transition-colors hover:decoration-solid;
+  }
+
   button,
   input,
   textarea,

@@ -1,6 +1,7 @@
 import { cn } from "../../lib/utils";
 
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import {
   Button as AccordionTriggerPrimitive,
   Disclosure as AccordionItemPrimitive,
@@ -13,7 +14,6 @@ import {
   type DisclosureProps,
   type HeadingProps,
 } from "react-aria-components";
-import type { ReactNode } from "react";
 
 function Accordion({ className, ...props }: DisclosureGroupProps) {
   return (
@@ -79,11 +79,7 @@ function AccordionTrigger({
   );
 }
 
-function AccordionContent({
-  className,
-  children,
-  ...props
-}: DisclosurePanelProps) {
+function AccordionContent({ className, children, ...props }: DisclosurePanelProps) {
   return (
     <AccordionContentPrimitive
       data-slot="accordion-content"
@@ -92,7 +88,7 @@ function AccordionContent({
     >
       <div
         className={cn(
-          "pt-0 pb-2.5 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+          "pt-0 pb-2.5 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
           className,
         )}
       >
@@ -102,10 +98,4 @@ function AccordionContent({
   );
 }
 
-export {
-  Accordion,
-  AccordionContent,
-  AccordionHeader,
-  AccordionItem,
-  AccordionTrigger,
-};
+export { Accordion, AccordionContent, AccordionHeader, AccordionItem, AccordionTrigger };

@@ -15,7 +15,7 @@ export function Section({
     <section className="scroll-mt-20 space-y-4" id={id}>
       <div>
         <h2 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-          <a className="no-underline hover:underline" href={`#${id}`}>
+          <a className="hover:text-foreground" href={`#${id}`}>
             {title}
           </a>
         </h2>

@@ -126,7 +126,7 @@ function SearchResultService({ label, name, url }: { label: string; name: string
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="truncate underline decoration-dotted underline-offset-3 transition-colors hover:text-foreground hover:decoration-solid"
+          className="truncate hover:text-foreground"
         >
           {name}
         </a>

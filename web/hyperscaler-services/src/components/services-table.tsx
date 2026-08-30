@@ -87,12 +87,7 @@ function ServiceLink({ name, url }: { name: string; url?: string }) {
 
   if (url) {
     return (
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="underline decoration-dotted underline-offset-4 transition-colors hover:text-foreground hover:decoration-solid"
-      >
+      <a href={url} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
         {name}
       </a>
     );

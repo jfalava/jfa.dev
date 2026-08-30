@@ -230,9 +230,7 @@ describe("router configuration", () => {
     );
 
     expect(redirect?.status).toBe(301);
-    expect(redirect?.headers.get("location")).toBe(
-      "https://jfa.dev/playlists/assets/app.js?v=1",
-    );
+    expect(redirect?.headers.get("location")).toBe("https://jfa.dev/playlists/assets/app.js?v=1");
     expect(redirectLegacyPlaylistPath(new URL("https://jfa.dev/playlists"))).toBeNull();
   });
 
