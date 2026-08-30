@@ -13,7 +13,7 @@ export type Bindings = {
   KEWEKE: WorkerFetcher;
   BRANDING: WorkerFetcher;
   DOCS: WorkerFetcher;
-  PLAYLIST: WorkerFetcher;
+  PLAYLISTS: WorkerFetcher;
   ROUTES: string;
   ASSET_PREFIXES?: string;
   COUNTRY_BLOCKLIST?: CountryBlocklistBinding;
@@ -175,6 +175,17 @@ function getPreloadMounts(routeDefs: RouteConfig[], currentMount: string): strin
     .map((r) => r.path);
 }
 
+export function redirectLegacyPlaylistPath(url: URL): Response | null {
+  const { pathname } = url;
+  if (pathname !== "/playlist" && !pathname.startsWith("/playlist/")) {
+    return null;
+  }
+
+  const redirected = new URL(url);
+  redirected.pathname = `/playlists${pathname.slice("/playlist".length)}`;
+  return Response.redirect(redirected.toString(), 301);
+}
+
 function isRecord(value: JsonValue): value is JsonObject {
   return Object.prototype.toString.call(value) === "[object Object]";
 }
@@ -306,7 +317,13 @@ app.all("*", async (c) => {
 
   const routeDefs: RouteConfig[] = Array.isArray(config) ? config : config.routes;
 
-  const pathname = new URL(c.req.url).pathname;
+  const requestUrl = new URL(c.req.url);
+  const playlistRedirect = redirectLegacyPlaylistPath(requestUrl);
+  if (playlistRedirect) {
+    return playlistRedirect;
+  }
+
+  const pathname = requestUrl.pathname;
   const assetPrefixes = buildAssetPrefixes(c.env.ASSET_PREFIXES);
   const matched = findMatchingRoute(pathname, routeDefs, assetPrefixes);
 

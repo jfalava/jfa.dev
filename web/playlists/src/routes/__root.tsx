@@ -47,13 +47,13 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <ThemeProvider>
           <QueryClientProvider client={queryClient}>
             <SiteHeader
-              title="PLAYLIST"
+              title="PLAYLISTS"
               subtitle="My music taste is SO much better than yours 🫪"
               titleHref={appPath("/")}
               packages={webPackages}
-              activePackagePath="/playlist"
-              navLabel="Playlist navigation"
-              githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/playlist"
+              activePackagePath="/playlists"
+              navLabel="Playlists navigation"
+              githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/playlists"
             >
               <PlaylistSearchPalette />
               <ThemeToggle />

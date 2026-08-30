@@ -13,6 +13,7 @@ export const infrastructureInventory = {
       "/keweke/*",
       "/branding/*",
       "/docs/*",
+      "/playlists/*",
     ],
     bindings: [
       "LANDING",
@@ -21,6 +22,7 @@ export const infrastructureInventory = {
       "KEWEKE",
       "BRANDING",
       "DOCS",
+      "PLAYLISTS",
       "COUNTRY_BLOCKLIST",
     ],
   },
@@ -57,6 +59,12 @@ export const infrastructureInventory = {
     domains: [],
     publicRoutes: ["/docs/*"],
     basePath: "/docs",
+  },
+  playlistsMounted: {
+    worker: "jfa-dev-playlists",
+    domains: [],
+    publicRoutes: ["/playlists/*"],
+    basePath: "/playlists",
   },
   kewekeAdminAccess: {
     application: "Keweke Admin",

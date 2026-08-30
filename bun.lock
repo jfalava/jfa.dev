@@ -295,8 +295,8 @@
         "vitest": "catalog:build",
       },
     },
-    "web/playlist": {
-      "name": "@jfa.dev/playlist",
+    "web/playlists": {
+      "name": "@jfa.dev/playlists",
       "dependencies": {
         "@jfa.dev/common": "workspace:*",
         "@tailwindcss/vite": "catalog:styling",
@@ -758,7 +758,7 @@
 
     "@jfa.dev/opengraph": ["@jfa.dev/opengraph@workspace:web/opengraph"],
 
-    "@jfa.dev/playlist": ["@jfa.dev/playlist@workspace:web/playlist"],
+    "@jfa.dev/playlists": ["@jfa.dev/playlists@workspace:web/playlists"],
 
     "@jfa.dev/redirects": ["@jfa.dev/redirects@workspace:function/redirects"],
 
@@ -2828,7 +2828,7 @@
 
     "@jfa.dev/opengraph/@types/node": ["@types/node@26.4.0", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ=="],
 
-    "@jfa.dev/playlist/@types/node": ["@types/node@26.4.0", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ=="],
+    "@jfa.dev/playlists/@types/node": ["@types/node@26.4.0", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ=="],
 
     "@jfa.dev/redirects/@types/node": ["@types/node@26.4.0", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ=="],
 
@@ -3064,7 +3064,7 @@
 
     "@jfa.dev/opengraph/@types/node/undici-types": ["undici-types@8.3.0", "", {}, "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="],
 
-    "@jfa.dev/playlist/@types/node/undici-types": ["undici-types@8.3.0", "", {}, "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="],
+    "@jfa.dev/playlists/@types/node/undici-types": ["undici-types@8.3.0", "", {}, "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="],
 
     "@jfa.dev/redirects/@types/node/undici-types": ["undici-types@8.3.0", "", {}, "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="],
 

@@ -101,7 +101,7 @@ const secretFromBinding = Schema.decodeTo<typeof Schema.String, typeof secretBin
 /**
  * Secrets are injected via Alchemy Secrets Store. At runtime Cloudflare
  * exposes them as `SecretsStoreSecret` with an async `.get()` — but for
- * `alchemy dev` the values are seeded from `web/playlist/.dev.vars` via
+ * `alchemy dev` the values are seeded from `web/playlists/.dev.vars` via
  * `effect/Config`, and may appear as plain strings. The environment record
  * is the I/O boundary: `secretValueSchema` below decodes both shapes into
  * plain trimmed strings, and anything else (e.g. an unmaterialized Effect
@@ -123,8 +123,8 @@ async function loadServerEnv() {
     return (await import("cloudflare:workers")).env;
   } catch {
     // Vite dev (5173) or any Node fallback: `process.env`, populated from
-    // `web/playlist/.dev.vars` via `iac/src/workers.ts:loadDevVarsForLocal`
-    // (alchemy dev) or from Vite's own `web/playlist/vite.config.ts` dev-vars loader.
+    // `web/playlists/.dev.vars` via `iac/src/workers.ts:loadDevVarsForLocal`
+    // (alchemy dev) or from Vite's own `web/playlists/vite.config.ts` dev-vars loader.
     return globalThis.process?.env ?? null;
   }
 }
@@ -171,7 +171,7 @@ export const getNowPlaying = createServerFn({ method: "GET" }).handler(
     url.searchParams.set("extended", "0");
 
     const response = await fetch(url, {
-      headers: { "User-Agent": "jfa.dev/playlist now-playing" },
+      headers: { "User-Agent": "jfa.dev/playlists now-playing" },
     });
 
     if (!response.ok) {

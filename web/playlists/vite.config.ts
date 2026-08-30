@@ -39,7 +39,7 @@ function loadDevVars(): void {
 
 loadDevVars();
 
-const MOUNT_PATH = "/playlist/";
+const MOUNT_PATH = "/playlists/";
 
 export default defineConfig({
   base: MOUNT_PATH,
@@ -57,7 +57,7 @@ export default defineConfig({
     viteReact({ compiler: true }),
     sitemap(),
     siteMeta({
-      title: "Playlist by JFA",
+      title: "Playlists by JFA",
       description: "My music taste is better than yours",
       viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
     }),

@@ -1,6 +1,11 @@
 import { describe, expect, test } from "bun:test";
 
-import router, { buildAssetPrefixes, findMatchingRoute, parseRoutesConfig } from "./router";
+import router, {
+  buildAssetPrefixes,
+  findMatchingRoute,
+  parseRoutesConfig,
+  redirectLegacyPlaylistPath,
+} from "./router";
 
 const COUNTRY_BLOCKLIST_KEY = "blocked-countries";
 
@@ -217,5 +222,33 @@ describe("router configuration", () => {
       "/icons/",
       "/manifest.json",
     ]);
+  });
+
+  test("redirects legacy /playlist mounts to /playlists", () => {
+    const redirect = redirectLegacyPlaylistPath(
+      new URL("https://jfa.dev/playlist/assets/app.js?v=1"),
+    );
+
+    expect(redirect?.status).toBe(301);
+    expect(redirect?.headers.get("location")).toBe(
+      "https://jfa.dev/playlists/assets/app.js?v=1",
+    );
+    expect(redirectLegacyPlaylistPath(new URL("https://jfa.dev/playlists"))).toBeNull();
+  });
+
+  test("returns a 301 for /playlist before route matching", async () => {
+    const response = await router.fetch(new Request("https://jfa.dev/playlist/?q=now"), {
+      ROUTES: JSON.stringify({
+        routes: [
+          { binding: "LANDING", path: "/" },
+          { binding: "PLAYLISTS", path: "/playlists", preserveMount: true },
+        ],
+      }),
+      LANDING: { fetch: async () => new Response("landing") },
+      PLAYLISTS: { fetch: async () => new Response("playlists") },
+    });
+
+    expect(response.status).toBe(301);
+    expect(response.headers.get("location")).toBe("https://jfa.dev/playlists/?q=now");
   });
 });

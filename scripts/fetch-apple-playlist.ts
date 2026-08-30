@@ -6,7 +6,7 @@
  *   bun run scripts/fetch-apple-playlist.ts --only 20tracks
  *
  * Add a playlist: append to `playlistSources`, run this script, then register the
- * generated JSON in `web/playlist/src/data/playlists.ts`.
+ * generated JSON in `web/playlists/src/data/playlists.ts`.
  */
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { createHmac, randomUUID } from "node:crypto";
@@ -64,8 +64,8 @@ const ITUNES_LOOKUP_COUNTRY = "ES";
 
 function outPathsFor(id: string): readonly [string, string] {
   return [
-    resolve(import.meta.dirname, `../web/playlist/src/data/${id}.json`),
-    resolve(import.meta.dirname, `../web/playlist/public/data/${id}.json`),
+    resolve(import.meta.dirname, `../web/playlists/src/data/${id}.json`),
+    resolve(import.meta.dirname, `../web/playlists/public/data/${id}.json`),
   ] as const;
 }
 

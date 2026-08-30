@@ -14,10 +14,10 @@ const repositoryRoot = resolve(import.meta.dirname, "../..");
 
 function loadDevVarsForLocal(): void {
   // Alchemy's `effect/Config` reads from `process.env`, but `alchemy dev`
-  // doesn't auto-load `web/playlist/.dev.vars`. Load it here so editing
+  // doesn't auto-load `web/playlists/.dev.vars`. Load it here so editing
   // that file is enough for local dev (matches your request).
   const candidates = [
-    resolve(repositoryRoot, "web/playlist/.dev.vars"),
+    resolve(repositoryRoot, "web/playlists/.dev.vars"),
     resolve(repositoryRoot, ".dev.vars"),
   ];
   for (const file of candidates) {
@@ -289,12 +289,12 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     docsOptions,
   ).pipe(adopt(true));
 
-  // Playlist: 20tracks + Last.fm now-playing.
+  // Playlists: 20tracks + Last.fm now-playing.
   // Prod/sync: Secrets Store (env.LASTFM_*.get(), never exposed to client).
-  // Local: plain `secret_text` from `effect/Config` seeded by `web/playlist/.dev.vars`
+  // Local: plain `secret_text` from `effect/Config` seeded by `web/playlists/.dev.vars`
   // (via loadDevVarsForLocal above) — avoids LocalSecretsStore emulation flakiness
   // that was causing `Invalid server function ID` in `alchemy dev`.
-  let playlistSecretsStore: ReturnType<typeof Cloudflare.SecretsStore.Store> | undefined;
+  let playlistsSecretsStore: ReturnType<typeof Cloudflare.SecretsStore.Store> | undefined;
   let lastfmApiKeySecret: ReturnType<typeof Cloudflare.SecretsStore.Secret> | undefined;
   let lastfmUserSecret: ReturnType<typeof Cloudflare.SecretsStore.Secret> | undefined;
 
@@ -305,72 +305,72 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     Config.withDefault(Redacted.make("")),
   );
 
-  type PlaylistEnvironment = {
+  type PlaylistsEnvironment = {
     LASTFM_API_KEY: ReturnType<typeof Redacted.make> | typeof lastfmApiKeySecret;
     LASTFM_USER: ReturnType<typeof Redacted.make> | typeof lastfmUserSecret;
     VITE_BASE_PATH?: string;
     VITE_ASSET_BASE_PATH?: string;
   };
-  let playlistEnv: PlaylistEnvironment;
+  let playlistsEnv: PlaylistsEnvironment;
 
   if (isLocal) {
-    playlistEnv = {
+    playlistsEnv = {
       LASTFM_API_KEY: lastfmApiKeyValue,
       LASTFM_USER: lastfmUserValue,
     };
   } else {
-    playlistSecretsStore = yield* Cloudflare.SecretsStore.Store(
-      "PlaylistSecretsStore",
+    playlistsSecretsStore = yield* Cloudflare.SecretsStore.Store(
+      "PlaylistsSecretsStore",
     ).pipe(adopt(true));
 
     lastfmApiKeySecret = yield* Cloudflare.SecretsStore.Secret(
-      "PlaylistLastfmApiKey",
+      "PlaylistsLastfmApiKey",
       {
-        store: playlistSecretsStore,
+        store: playlistsSecretsStore,
         value: lastfmApiKeyValue,
       },
     ).pipe(adopt(true));
 
     lastfmUserSecret = yield* Cloudflare.SecretsStore.Secret(
-      "PlaylistLastfmUser",
+      "PlaylistsLastfmUser",
       {
-        store: playlistSecretsStore,
+        store: playlistsSecretsStore,
         value: lastfmUserValue,
       },
     ).pipe(adopt(true));
 
-    playlistEnv = {
+    playlistsEnv = {
       LASTFM_API_KEY: lastfmApiKeySecret,
       LASTFM_USER: lastfmUserSecret,
     };
   }
-  if (config.workers.playlistMounted.basePath !== undefined) {
-    playlistEnv.VITE_BASE_PATH = config.workers.playlistMounted.basePath;
-    if (config.workers.playlistMounted.assetBasePath !== undefined) {
-      playlistEnv.VITE_ASSET_BASE_PATH =
-        config.workers.playlistMounted.assetBasePath;
+  if (config.workers.playlistsMounted.basePath !== undefined) {
+    playlistsEnv.VITE_BASE_PATH = config.workers.playlistsMounted.basePath;
+    if (config.workers.playlistsMounted.assetBasePath !== undefined) {
+      playlistsEnv.VITE_ASSET_BASE_PATH =
+        config.workers.playlistsMounted.assetBasePath;
     }
   }
-  const playlistOptions = {
-    ...workerDefaults(config.workers.playlistMounted),
-    name: config.workers.playlistMounted.name,
-    rootDir: resolve(repositoryRoot, "web/playlist"),
+  const playlistsOptions = {
+    ...workerDefaults(config.workers.playlistsMounted),
+    name: config.workers.playlistsMounted.name,
+    rootDir: resolve(repositoryRoot, "web/playlists"),
     assets: {
       runWorkerFirst: false,
     },
-    env: playlistEnv,
+    env: playlistsEnv,
   };
-  if (config.workers.playlistMounted.domain !== undefined) {
-    Object.assign(playlistOptions, {
-      domain: config.workers.playlistMounted.domain,
+  if (config.workers.playlistsMounted.domain !== undefined) {
+    Object.assign(playlistsOptions, {
+      domain: config.workers.playlistsMounted.domain,
     });
   }
   if (isLocal) {
-    Object.assign(playlistOptions, { dev: localDev(3106) });
+    Object.assign(playlistsOptions, { dev: localDev(3106) });
   }
-  const playlistMounted = yield* Cloudflare.Website.Vite(
-    "PlaylistMountedWorker",
-    playlistOptions,
+  const playlistsMounted = yield* Cloudflare.Website.Vite(
+    "PlaylistsMountedWorker",
+    playlistsOptions,
   ).pipe(adopt(true));
 
   const countryBlocklist =
@@ -389,7 +389,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     KEWEKE: typeof kewekeMounted;
     BRANDING: typeof brandingMounted;
     DOCS: typeof docsMounted;
-    PLAYLIST: typeof playlistMounted;
+    PLAYLISTS: typeof playlistsMounted;
     COUNTRY_BLOCKLIST?: typeof countryBlocklist;
   };
   const routerEnv: RouterEnvironment = {
@@ -401,7 +401,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     KEWEKE: kewekeMounted,
     BRANDING: brandingMounted,
     DOCS: docsMounted,
-    PLAYLIST: playlistMounted,
+    PLAYLISTS: playlistsMounted,
   };
   if (countryBlocklist !== undefined) {
     routerEnv.COUNTRY_BLOCKLIST = countryBlocklist;
@@ -447,7 +447,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     kewekeMounted,
     brandingMounted,
     docsMounted,
-    playlistMounted,
+    playlistsMounted,
     router,
     redirects,
   };
