@@ -21,6 +21,12 @@
   select {
     font: inherit;
   }
+
+  input,
+  textarea,
+  [contenteditable="true"] {
+    @apply font-serif;
+  }
 }
 
 .editor-canvas-frame .canvas-container,

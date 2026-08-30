@@ -169,4 +169,10 @@
   select {
     font: inherit;
   }
+
+  input,
+  textarea,
+  [contenteditable="true"] {
+    @apply font-serif;
+  }
 }
