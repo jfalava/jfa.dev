@@ -49,7 +49,7 @@ function PlaylistMeta({
           href={snapshot.sourceUrl}
           target="_blank"
           rel="noreferrer"
-          className="no-underline hover:underline"
+          className="hover:text-foreground"
         >
           {snapshot.title}
         </a>

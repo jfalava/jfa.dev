@@ -73,11 +73,11 @@ export function NowPlayingBar() {
     >
       {/* Borders stay on the playlist column only — no full-bleed line past the sides. */}
       <div className="mx-auto h-11 w-full max-w-screen-2xl border-x border-b border-border bg-background">
-        <div className="flex h-full items-center justify-between gap-4 overflow-hidden px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
-          {/* Left cluster mirrors SiteHeader: icon-lg gutter + brand trigger widths. */}
-          <div className="flex min-w-0 items-center gap-1">
-            <span className="inline-flex size-8 shrink-0" aria-hidden />
-            <div className="flex w-48 min-w-0 items-center gap-2 sm:w-84 md:w-120 lg:w-xl">
+        <div className="flex h-full items-center justify-between gap-3 overflow-hidden px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
+          {/* Mobile: badge left, track right. sm+: mirror SiteHeader icon gutter + brand widths. */}
+          <div className="flex min-w-0 shrink-0 items-center gap-1">
+            <span className="hidden size-8 shrink-0 sm:inline-flex" aria-hidden />
+            <div className="flex min-w-0 items-center gap-2 sm:w-84 md:w-120 lg:w-xl">
               <span
                 className={cn(
                   "size-2 shrink-0 rounded-full",
@@ -101,25 +101,28 @@ export function NowPlayingBar() {
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center justify-end sm:justify-start">
             {isLoading && !nowPlaying ? (
-              <>
+              <div className="flex max-w-full min-w-0 items-center gap-2 sm:w-full sm:gap-3">
                 <div className="size-7 shrink-0 animate-pulse rounded-md bg-muted" aria-hidden />
-                <div className="min-w-0 flex-1 space-y-1">
-                  <div className="h-2.5 w-40 animate-pulse rounded bg-muted" />
-                  <div className="h-2 w-28 animate-pulse rounded bg-muted" />
+                <div className="min-w-0 sm:flex-1">
+                  <div className="h-2.5 w-40 max-w-full animate-pulse rounded bg-muted sm:hidden" />
+                  <div className="hidden space-y-1 sm:block">
+                    <div className="h-2.5 w-40 animate-pulse rounded bg-muted" />
+                    <div className="h-2 w-28 animate-pulse rounded bg-muted" />
+                  </div>
                 </div>
-              </>
+              </div>
             ) : !displayTitle ? (
               <span className="truncate font-mono text-xs tracking-wide text-muted-foreground">
                 Not scrobbling anything atm
               </span>
             ) : (
-              <>
+              <div className="flex max-w-full min-w-0 items-center gap-2 sm:w-full sm:gap-3">
                 {artwork ? (
                   <TitleLink
                     {...(trackUrl ? { href: trackUrl, target: "_blank", rel: "noreferrer" } : {})}
-                    className="block size-7 shrink-0 overflow-hidden rounded-md border bg-muted"
+                    className="block size-7 shrink-0 overflow-hidden rounded-md border bg-muted no-underline"
                     aria-label={displayTitle ? `${displayTitle} on Last.fm` : undefined}
                   >
                     <img
@@ -136,14 +139,18 @@ export function NowPlayingBar() {
                   <div className="size-7 shrink-0 rounded-md border bg-muted" aria-hidden />
                 )}
 
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 sm:flex-1">
                   <TitleLink
                     {...(trackUrl ? { href: trackUrl, target: "_blank", rel: "noreferrer" } : {})}
-                    className="block truncate text-sm leading-none font-semibold text-foreground hover:underline"
+                    className="block truncate text-sm leading-none font-semibold text-foreground"
                   >
                     {displayTitle}
+                    <span className="font-normal text-muted-foreground sm:hidden">
+                      {displayArtist ? ` · ${displayArtist}` : ""}
+                      {displayAlbum ? ` — ${displayAlbum}` : ""}
+                    </span>
                   </TitleLink>
-                  <div className="mt-0.5 truncate text-[11px] leading-none text-muted-foreground">
+                  <div className="mt-0.5 hidden truncate text-[11px] leading-none text-muted-foreground sm:block">
                     {displayArtist}
                     {displayAlbum ? ` — ${displayAlbum}` : ""}
                   </div>
@@ -160,7 +167,7 @@ export function NowPlayingBar() {
                     />
                   </div>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
