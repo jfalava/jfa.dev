@@ -1,17 +1,16 @@
 import * as Schema from "effect/Schema";
 
 import twentyTracksJson from "./20tracks.json" with { type: "json" };
-import replay2021Json from "./replay-2021.json" with { type: "json" };
-import replay2022Json from "./replay-2022.json" with { type: "json" };
-import replay2023Json from "./replay-2023.json" with { type: "json" };
-import replay2024Json from "./replay-2024.json" with { type: "json" };
-import replay2025Json from "./replay-2025.json" with { type: "json" };
-
 import {
   playlistSnapshotSchema,
   type PlaylistSnapshot,
   type PlaylistTrack,
 } from "./playlist-schema";
+import replay2021Json from "./replay-2021.json" with { type: "json" };
+import replay2022Json from "./replay-2022.json" with { type: "json" };
+import replay2023Json from "./replay-2023.json" with { type: "json" };
+import replay2024Json from "./replay-2024.json" with { type: "json" };
+import replay2025Json from "./replay-2025.json" with { type: "json" };
 
 /**
  * Build-time playlist registry.
@@ -75,8 +74,7 @@ const playlistDefinitions: readonly PlaylistDefinition[] = [
 
 export const playlists: readonly PlaylistDefinition[] = playlistDefinitions;
 
-export const defaultPlaylist =
-  playlists.find((playlist) => playlist.isDefault) ?? playlists[0];
+export const defaultPlaylist = playlists.find((playlist) => playlist.isDefault) ?? playlists[0];
 
 if (!defaultPlaylist) {
   throw new Error("playlist registry is empty");

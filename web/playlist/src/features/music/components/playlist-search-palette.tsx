@@ -12,11 +12,7 @@ import { detectPlatform, formatForDisplay, useHotkey } from "@tanstack/react-hot
 import { CornerDownLeft, ListMusic, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
-import {
-  playlistAnchorId,
-  playlists,
-  type PlaylistDefinition,
-} from "@/data/playlists";
+import { playlistAnchorId, playlists, type PlaylistDefinition } from "@/data/playlists";
 import { cn } from "@/lib/utils";
 
 // oxlint-disable-next-line eslint/no-empty-function
@@ -87,8 +83,7 @@ export function PlaylistSearchPalette() {
     () => playlists.filter((playlist) => matchesQuery(playlist, draftQuery)),
     [draftQuery],
   );
-  const clampedActiveIndex =
-    results.length === 0 ? 0 : Math.min(activeIndex, results.length - 1);
+  const clampedActiveIndex = results.length === 0 ? 0 : Math.min(activeIndex, results.length - 1);
 
   useEffect(() => {
     if (open) {

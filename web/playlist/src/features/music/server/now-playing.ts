@@ -75,9 +75,7 @@ const trimmedString = Schema.String.pipe(
  * and the transform's try/catch tolerates a non-callable `get`.
  */
 const secretBinding = Schema.ObjectKeyword.pipe(
-  Schema.refine(
-    (value): value is { readonly get: () => Promise<string> } => "get" in value,
-  ),
+  Schema.refine((value): value is { readonly get: () => Promise<string> } => "get" in value),
 );
 
 const secretFromBinding = Schema.decodeTo<typeof Schema.String, typeof secretBinding>(

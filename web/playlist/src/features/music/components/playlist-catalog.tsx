@@ -57,7 +57,8 @@ function PlaylistMeta({
       <Meta className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-normal text-muted-foreground">
         <span>{snapshot.trackCount} tracks</span>
         <span>
-          Updated <span className="font-mono">{new Date(snapshot.fetchedAt).toLocaleDateString()}</span>
+          Updated{" "}
+          <span className="font-mono">{new Date(snapshot.fetchedAt).toLocaleDateString()}</span>
         </span>
       </Meta>
     </Root>
@@ -103,7 +104,7 @@ function AccordionPlaylistItem({ playlist }: { playlist: PlaylistDefinition }) {
           <PlaylistMeta playlist={playlist} headingLevel="span" />
           <AccordionTrigger
             aria-label={`Toggle ${playlist.snapshot.title}`}
-            className="mt-1 size-9 shrink-0 flex-none items-center justify-center self-start rounded-md p-0 hover:bg-muted hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-0"
+            className="mt-1 size-9 flex-none shrink-0 items-center justify-center self-start rounded-md p-0 hover:bg-muted hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-0"
           />
         </AccordionHeader>
         <AccordionContent className="pb-0">

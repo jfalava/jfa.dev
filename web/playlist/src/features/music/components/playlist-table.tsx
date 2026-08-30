@@ -159,7 +159,10 @@ function createMobilePlaylistColumns(activeTrack: NowPlayingTrack | null) {
                   </span>
                   {isActive ? (
                     <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide whitespace-nowrap text-success dark:text-success">
-                      <span className="size-1.5 animate-pulse rounded-full bg-success" aria-hidden />
+                      <span
+                        className="size-1.5 animate-pulse rounded-full bg-success"
+                        aria-hidden
+                      />
                       Now listening
                     </span>
                   ) : null}
@@ -237,10 +240,7 @@ export function PlaylistTable({
   const desktopScrollRef = useRef<HTMLDivElement>(null);
   const mobileScrollRef = useRef<HTMLDivElement>(null);
 
-  const visibleTracks = useMemo(
-    () => tracks.slice(0, visibleCount),
-    [tracks, visibleCount],
-  );
+  const visibleTracks = useMemo(() => tracks.slice(0, visibleCount), [tracks, visibleCount]);
 
   const loadMore = useCallback(() => {
     setVisibleCount((current) => Math.min(current + PLAYLIST_PAGE_SIZE, tracks.length));
