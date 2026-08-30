@@ -54,15 +54,17 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
       cell: ({ getValue, row }) => {
         const isActive = activeTrack ? isNowPlayingMatch(row.original, activeTrack) : false;
         return (
-          <span className="inline-flex items-center gap-2">
-            <span className="leading-tight font-medium">{getValue()}</span>
-            {isActive ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide text-success dark:text-success">
-                <span className="size-1.5 animate-pulse rounded-full bg-success" aria-hidden />
-                Now listening
-              </span>
-            ) : null}
-          </span>
+          <div className="min-w-0 max-w-full scrollbar-none overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:hidden">
+            <div className="inline-flex min-w-max items-center gap-2 whitespace-nowrap">
+              <span className="leading-tight font-medium whitespace-nowrap">{getValue()}</span>
+              {isActive ? (
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide whitespace-nowrap text-success dark:text-success">
+                  <span className="size-1.5 animate-pulse rounded-full bg-success" aria-hidden />
+                  Now listening
+                </span>
+              ) : null}
+            </div>
+          </div>
         );
       },
     }),
@@ -287,7 +289,7 @@ export function PlaylistTable({
         onScroll={onScroll}
         style={lazy ? { maxHeight: PLAYLIST_MAX_HEIGHT_PX } : undefined}
       >
-        <table className="w-full min-w-4xl border-collapse">
+        <table className="w-full min-w-4xl table-fixed border-collapse">
           <colgroup>
             <col className="w-14" />
             <col className="w-[24%]" />
@@ -333,6 +335,8 @@ export function PlaylistTable({
                       className={cn(
                         "max-w-65 px-3 py-2.5 align-middle text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
                         cell.column.id === "cover" && "w-14 pl-4 sm:pl-6 lg:pl-8",
+                        // Same title-cell scroll pattern as mobile: bound width, scroll the pill+title.
+                        cell.column.id === "title" && "max-w-0 overflow-hidden whitespace-nowrap",
                         cell.column.id === "links" && "pr-4 text-right sm:pr-6 lg:pr-8",
                       )}
                     >

@@ -2,7 +2,10 @@
 import { useEffect, useState } from "react";
 
 import { allPlaylistTracks } from "@/data/playlists";
-import { useNowPlaying } from "@/features/music/hooks/use-now-playing";
+import {
+  NOW_PLAYING_REFETCH_INTERVAL_MS,
+  useNowPlaying,
+} from "@/features/music/hooks/use-now-playing";
 import { isNowPlayingMatch } from "@/features/music/lib/match";
 import { cn } from "@/lib/utils";
 
@@ -40,18 +43,23 @@ export function NowPlayingBar() {
   const trackUrl = matched?.url ?? activeTrack?.url ?? recentTrack?.url ?? null;
   const durationMs = matched?.durationMs ?? null;
   const isPlaying = status === "playing" && activeTrack !== null;
+  // Last.fm has no seek position; seed a small lag so the bar doesn't look mid-song.
+  const trackKey = activeTrack
+    ? `${activeTrack.title}\0${activeTrack.artist}`
+    : recentTrack
+      ? `${recentTrack.title}\0${recentTrack.artist}`
+      : null;
 
-  const [elapsedMs, setElapsedMs] = useState<number>(() =>
-    durationMs ? Math.floor(durationMs * 0.36) : 0,
-  );
+  const [elapsedMs, setElapsedMs] = useState(0);
 
   useEffect(() => {
-    if (durationMs) {
-      setElapsedMs(Math.floor(durationMs * 0.36));
-    } else {
+    if (!trackKey || !durationMs) {
       setElapsedMs(0);
+      return;
     }
-  }, [durationMs]);
+    // Seed at one poll interval — worst-case lag before we notice the track.
+    setElapsedMs(Math.min(NOW_PLAYING_REFETCH_INTERVAL_MS, durationMs));
+  }, [trackKey, durationMs]);
 
   useEffect(() => {
     if (!isPlaying || !durationMs) {
@@ -61,7 +69,7 @@ export function NowPlayingBar() {
       setElapsedMs((prev) => Math.min(prev + 1000, durationMs));
     }, 1000);
     return (): void => window.clearInterval(id);
-  }, [isPlaying, durationMs]);
+  }, [isPlaying, durationMs, trackKey]);
 
   const progress = durationMs ? Math.min(100, (elapsedMs / durationMs) * 100) : 0;
   const TitleLink = trackUrl ? "a" : "span";

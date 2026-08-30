@@ -2,6 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getNowPlaying } from "../server/now-playing";
 
+/** How often we ping Last.fm `user.getrecenttracks`. Also seeds fake bar progress. */
+export const NOW_PLAYING_REFETCH_INTERVAL_MS = 15_000;
+
 type UseNowPlayingOptions = {
   enabled?: boolean;
   refetchIntervalMs?: number;
@@ -9,7 +12,7 @@ type UseNowPlayingOptions = {
 
 export function useNowPlaying(options: UseNowPlayingOptions = {}) {
   const enabled = options.enabled ?? true;
-  const refetchInterval = options.refetchIntervalMs ?? 30_000;
+  const refetchInterval = options.refetchIntervalMs ?? NOW_PLAYING_REFETCH_INTERVAL_MS;
 
   return useQuery({
     queryKey: ["music", "now-playing"],
@@ -24,7 +27,7 @@ export function useNowPlaying(options: UseNowPlayingOptions = {}) {
     },
     enabled,
     refetchInterval,
-    staleTime: 20_000,
+    staleTime: Math.floor(refetchInterval * (2 / 3)),
     retry: 1,
   });
 }
