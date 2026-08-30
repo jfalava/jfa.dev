@@ -57,8 +57,8 @@ export default defineConfig({
     viteReact({ compiler: true }),
     sitemap(),
     siteMeta({
-      title: "Playlists by JFA",
-      description: "My music taste is better than yours",
+      title: "PLAYLISTS by JFA",
+      description: "My music taste is SO much better than yours",
       viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
     }),
   ],

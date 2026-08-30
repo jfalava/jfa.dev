@@ -22,7 +22,7 @@ export default defineConfig({
     sitemap(),
     siteMeta({
       title: "Branding by JFA",
-      description: "Single-page showcase of every component in the JFA design system",
+      description: "Web Design Showcase",
       viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
     }),
   ],

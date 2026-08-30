@@ -30,7 +30,7 @@ export default defineConfig({
     sitemap({ contentDir: "content/docs" }),
     siteMeta({
       title: "DOCS by JFA",
-      description: "Documentation, notes, and guides by JFA.",
+      description: "The Knowledge Base for the JFA's apps",
     }),
   ],
   optimizeDeps: {
