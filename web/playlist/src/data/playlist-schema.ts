@@ -1,0 +1,39 @@
+import * as Schema from "effect/Schema";
+
+/** Check that mirrors `z.url()`: the value must parse as an absolute URL. */
+const isHttpUrl = Schema.makeFilter((url: string) =>
+  url.startsWith("http://") || url.startsWith("https://") ? undefined : false,
+);
+
+export const playlistTrackSchema = Schema.Struct({
+  title: Schema.String,
+  artist: Schema.String,
+  artistId: Schema.NullOr(Schema.String),
+  album: Schema.NullOr(Schema.String),
+  albumId: Schema.NullOr(Schema.String),
+  songId: Schema.String,
+  url: Schema.String.check(isHttpUrl),
+  artwork: Schema.String.check(isHttpUrl),
+  artworkRaw: Schema.String,
+  durationMs: Schema.Number,
+  composer: Schema.NullOr(Schema.String),
+  previewUrl: Schema.NullOr(Schema.String),
+  artworkUrl100: Schema.NullOr(Schema.String),
+  primaryGenreName: Schema.NullOr(Schema.String),
+  releaseDate: Schema.NullOr(Schema.String),
+  spotifyUrl: Schema.NullOr(Schema.String),
+  spotifyId: Schema.NullOr(Schema.String),
+});
+
+export const playlistSnapshotSchema = Schema.Struct({
+  fetchedAt: Schema.String,
+  sourceUrl: Schema.String.check(isHttpUrl),
+  playlistId: Schema.String,
+  title: Schema.String,
+  subtitle: Schema.NullOr(Schema.String),
+  trackCount: Schema.Number,
+  tracks: Schema.Array(playlistTrackSchema),
+});
+
+export type PlaylistTrack = Schema.Schema.Type<typeof playlistTrackSchema>;
+export type PlaylistSnapshot = Schema.Schema.Type<typeof playlistSnapshotSchema>;

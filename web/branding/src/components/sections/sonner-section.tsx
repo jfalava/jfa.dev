@@ -9,7 +9,7 @@ export function SonnerSection() {
     <Section
       description="Sonner toaster (common/ui/Toaster). Theme-aware via the header toggle. Try each toast variant."
       id="sonner"
-      title="Sonner · Toaster"
+      title="Toaster"
     >
       <Card>
         <Preview label="toast variants">

@@ -1,20 +1,73 @@
 #!/usr/bin/env bun
 /**
  * Usage:
- *   bun run scripts/fetch-apple-playlist.ts                # writes JSON
- *   bun run scripts/fetch-apple-playlist.ts --check        # exits 1 if stale
+ *   bun run scripts/fetch-apple-playlist.ts                # writes JSON for every source
+ *   bun run scripts/fetch-apple-playlist.ts --check        # exits 1 if any source is stale
+ *   bun run scripts/fetch-apple-playlist.ts --only 20tracks
+ *
+ * Add a playlist: append to `playlistSources`, run this script, then register the
+ * generated JSON in `web/playlist/src/data/playlists.ts`.
  */
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { createHmac, randomUUID } from "node:crypto";
 import { dirname, resolve } from "node:path";
 
-const PLAYLIST_ID = "pl.u-9N9LL2eI2K5oXV";
-const PLAYLIST_URL = `https://music.apple.com/es/playlist/20tracks/${PLAYLIST_ID}`;
+type PlaylistSource = {
+  /** File stem written to `src/data/<id>.json` and `public/data/<id>.json`. */
+  id: string;
+  /** Apple Music store playlist id (`pl.u-...`). */
+  playlistId: string;
+  /** Canonical Apple Music URL used for HTML scrape + snapshot.sourceUrl. */
+  sourceUrl: string;
+};
+
+const playlistSources: readonly PlaylistSource[] = [
+  {
+    id: "20tracks",
+    playlistId: "pl.u-9N9LL2eI2K5oXV",
+    sourceUrl:
+      "https://music.apple.com/es/playlist/20tracks/pl.u-9N9LL2eI2K5oXV",
+  },
+  {
+    id: "replay-2025",
+    playlistId: "pl.rp-dwRwS2ZlAVz",
+    sourceUrl:
+      "https://music.apple.com/es/playlist/replay-2025/pl.rp-dwRwS2ZlAVz",
+  },
+  {
+    id: "replay-2024",
+    playlistId: "pl.rp-Jxy4cLk5ZJ1",
+    sourceUrl:
+      "https://music.apple.com/es/playlist/replay-2024/pl.rp-Jxy4cLk5ZJ1",
+  },
+  {
+    id: "replay-2023",
+    playlistId: "pl.rp-M88vUndxbZY",
+    sourceUrl:
+      "https://music.apple.com/es/playlist/replay-2023/pl.rp-M88vUndxbZY",
+  },
+  {
+    id: "replay-2022",
+    playlistId: "pl.rp-2ZZ3CW4oQX1",
+    sourceUrl:
+      "https://music.apple.com/es/playlist/replay-2022/pl.rp-2ZZ3CW4oQX1",
+  },
+  {
+    id: "replay-2021",
+    playlistId: "pl.rp-4kkVtAOGN0L",
+    sourceUrl:
+      "https://music.apple.com/es/playlist/replay-2021/pl.rp-4kkVtAOGN0L",
+  },
+];
+
 const ITUNES_LOOKUP_COUNTRY = "ES";
-const OUT_PATHS = [
-  resolve(import.meta.dirname, "../web/playlist/src/data/20tracks.json"),
-  resolve(import.meta.dirname, "../web/playlist/public/data/20tracks.json"),
-] as const;
+
+function outPathsFor(id: string): readonly [string, string] {
+  return [
+    resolve(import.meta.dirname, `../web/playlist/src/data/${id}.json`),
+    resolve(import.meta.dirname, `../web/playlist/public/data/${id}.json`),
+  ] as const;
+}
 
 type SpotifyMatch = { spotifyUrl: string | null; spotifyId: string | null };
 
@@ -48,8 +101,8 @@ type Snapshot = {
   tracks: EnrichedTrack[];
 };
 
-async function fetchHtml(): Promise<string> {
-  const res = await fetch(PLAYLIST_URL, {
+async function fetchHtml(sourceUrl: string): Promise<string> {
+  const res = await fetch(sourceUrl, {
     headers: {
       "User-Agent":
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
@@ -164,7 +217,8 @@ function parseTracks(root: SerializedRoot): {
       artwork,
       artworkRaw: rawUrl,
       durationMs: t.duration,
-      composer: t.composer,
+      // Apple omits composer on some Replay playlists; keep the key so Schema.NullOr accepts it.
+      composer: t.composer ?? null,
     };
   });
 
@@ -236,7 +290,9 @@ async function getSpotifyWebAuth(): Promise<SpotifyWebAuth> {
   );
   if (!tokenRes.ok) {
     const body = await tokenRes.text().catch(() => "");
-    throw new Error(`Spotify web token failed: ${tokenRes.status} ${body.slice(0, 400)}`);
+    throw new Error(
+      `Spotify web token failed: ${tokenRes.status} ${body.slice(0, 400)}`,
+    );
   }
   const tokenJson = (await tokenRes.json()) as {
     accessToken: string;
@@ -246,31 +302,36 @@ async function getSpotifyWebAuth(): Promise<SpotifyWebAuth> {
   if (!tokenJson.accessToken || !tokenJson.clientId) {
     throw new Error("Spotify web token missing accessToken/clientId");
   }
-  const clientRes = await fetch("https://clienttoken.spotify.com/v1/clienttoken", {
-    method: "POST",
-    headers: {
-      ...baseHeaders,
-      "content-type": "application/json",
-      accept: "application/json",
-    },
-    body: JSON.stringify({
-      client_data: {
-        client_version: SPOTIFY_APP_VERSION,
-        client_id: tokenJson.clientId,
-        js_sdk_data: {
-          device_brand: "unknown",
-          device_model: "unknown",
-          os: "windows",
-          os_version: "NT 10.0",
-          device_id: randomUUID(),
-          device_type: "computer",
-        },
+  const clientRes = await fetch(
+    "https://clienttoken.spotify.com/v1/clienttoken",
+    {
+      method: "POST",
+      headers: {
+        ...baseHeaders,
+        "content-type": "application/json",
+        accept: "application/json",
       },
-    }),
-  });
+      body: JSON.stringify({
+        client_data: {
+          client_version: SPOTIFY_APP_VERSION,
+          client_id: tokenJson.clientId,
+          js_sdk_data: {
+            device_brand: "unknown",
+            device_model: "unknown",
+            os: "windows",
+            os_version: "NT 10.0",
+            device_id: randomUUID(),
+            device_type: "computer",
+          },
+        },
+      }),
+    },
+  );
   if (!clientRes.ok) {
     const body = await clientRes.text().catch(() => "");
-    throw new Error(`Spotify clienttoken failed: ${clientRes.status} ${body.slice(0, 400)}`);
+    throw new Error(
+      `Spotify clienttoken failed: ${clientRes.status} ${body.slice(0, 400)}`,
+    );
   }
   const clientJson = (await clientRes.json()) as {
     granted_token?: { token: string };
@@ -282,8 +343,7 @@ async function getSpotifyWebAuth(): Promise<SpotifyWebAuth> {
   return {
     accessToken: tokenJson.accessToken,
     clientToken,
-    expiresAtMs:
-      tokenJson.accessTokenExpirationTimestampMs ?? now + 3_000_000,
+    expiresAtMs: tokenJson.accessTokenExpirationTimestampMs ?? now + 3_000_000,
   };
 }
 
@@ -386,12 +446,19 @@ async function enrichWithSpotify(
     }
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      throw new Error(`Spotify partner search ${res.status} for "${searchTerm}": ${body.slice(0, 300)}`);
+      throw new Error(
+        `Spotify partner search ${res.status} for "${searchTerm}": ${body.slice(0, 300)}`,
+      );
     }
-    const json = (await res.json()) as PartnerSearchResult & { errors?: unknown };
+    const json = (await res.json()) as PartnerSearchResult & {
+      errors?: unknown;
+    };
     // PersistedQueryNotFound is returned as 200 with errors array — bubble as throw to try next hash.
     if ((json as { errors?: Array<{ message?: string }> })?.errors?.length) {
-      const msg = JSON.stringify((json as { errors?: unknown }).errors).slice(0, 300);
+      const msg = JSON.stringify((json as { errors?: unknown }).errors).slice(
+        0,
+        300,
+      );
       throw new Error(`Spotify partner errors for "${searchTerm}": ${msg}`);
     }
     return json;
@@ -409,7 +476,9 @@ async function enrichWithSpotify(
           `${strippedTitle} ${t.artist}`,
           t.title,
           strippedTitle,
-        ].map((s) => s.trim()).filter(Boolean),
+        ]
+          .map((s) => s.trim())
+          .filter(Boolean),
       ),
     );
 
@@ -471,9 +540,7 @@ async function enrichWithSpotify(
   return map;
 }
 
-async function enrichWithItunes(
-  tracks: Array<{ songId: string }>,
-): Promise<
+async function enrichWithItunes(tracks: Array<{ songId: string }>): Promise<
   Map<
     string,
     {
@@ -525,19 +592,35 @@ async function enrichWithItunes(
   return map;
 }
 
-function writeSnapshot(snapshot: Snapshot): void {
+function writeSnapshot(snapshot: Snapshot, outPaths: readonly string[]): void {
   const text = `${JSON.stringify(snapshot, null, 2)}\n`;
-  for (const p of OUT_PATHS) {
+  for (const p of outPaths) {
     mkdirSync(dirname(p), { recursive: true });
     writeFileSync(p, text, "utf8");
     console.log(`✅ wrote ${p} (${snapshot.tracks.length} tracks)`);
   }
 }
 
-async function main(): Promise<void> {
-  const checkOnly = process.argv.includes("--check");
+function parseOnlyFilter(argv: string[]): string | null {
+  const idx = argv.indexOf("--only");
+  if (idx === -1) {
+    return null;
+  }
+  const value = argv[idx + 1];
+  if (!value || value.startsWith("--")) {
+    throw new Error("--only requires a playlist id (e.g. --only 20tracks)");
+  }
+  return value;
+}
+
+async function fetchOnePlaylist(
+  source: PlaylistSource,
+  options: { checkOnly: boolean; spotifyAuth: SpotifyWebAuth | null },
+): Promise<void> {
+  const outPaths = outPathsFor(source.id);
+  const primary = outPaths[0];
   try {
-    const html = await fetchHtml();
+    const html = await fetchHtml(source.sourceUrl);
     const raw = extractSerializedServerData(html) as SerializedRoot;
     const { title, subtitle, tracks: base } = parseTracks(raw);
     let itunesMap: Map<
@@ -551,23 +634,33 @@ async function main(): Promise<void> {
     > | null = null;
     try {
       itunesMap = await enrichWithItunes(base);
-      console.log(`✅ iTunes enrichment: ${itunesMap.size}/${base.length}`);
+      console.log(
+        `✅ [${source.id}] iTunes enrichment: ${itunesMap.size}/${base.length}`,
+      );
     } catch (error) {
       console.warn(
-        "⚠️  iTunes enrichment failed, continuing without previewUrl",
+        `⚠️  [${source.id}] iTunes enrichment failed, continuing without previewUrl`,
         error,
       );
     }
-    // Spotify enrichment — anonymous web-player flow, no app/SECRET needed (same as open.spotify.com / Android).
+    // Spotify enrichment — anonymous web-player flow, no app/SECRET needed.
     // Fail-open: if Spotify is unreachable we keep Apple-only snapshot.
     let spotifyMap: Map<string, SpotifyMatch> | null = null;
-    try {
-      const webAuth = await getSpotifyWebAuth();
-      spotifyMap = await enrichWithSpotify(base, webAuth);
-      const hits = [...spotifyMap.values()].filter((v) => v.spotifyUrl).length;
-      console.log(`✅ Spotify enrichment (web-player): ${hits}/${base.length}`);
-    } catch (error) {
-      console.warn("⚠️  Spotify enrichment failed, continuing without spotifyUrl", error);
+    if (options.spotifyAuth) {
+      try {
+        spotifyMap = await enrichWithSpotify(base, options.spotifyAuth);
+        const hits = [...spotifyMap.values()].filter(
+          (v) => v.spotifyUrl,
+        ).length;
+        console.log(
+          `✅ [${source.id}] Spotify enrichment (web-player): ${hits}/${base.length}`,
+        );
+      } catch (error) {
+        console.warn(
+          `⚠️  [${source.id}] Spotify enrichment failed, continuing without spotifyUrl`,
+          error,
+        );
+      }
     }
     const tracks: EnrichedTrack[] = base.map((t) => {
       const e = itunesMap?.get(t.songId);
@@ -584,48 +677,79 @@ async function main(): Promise<void> {
     });
     const snapshot: Snapshot = {
       fetchedAt: new Date().toISOString(),
-      sourceUrl: PLAYLIST_URL,
-      playlistId: PLAYLIST_ID,
+      sourceUrl: source.sourceUrl,
+      playlistId: source.playlistId,
       title,
       subtitle,
       trackCount: tracks.length,
       tracks,
     };
-    if (checkOnly) {
-      // compare with existing file if present
-      const primary = OUT_PATHS[0];
+    if (options.checkOnly) {
       if (existsSync(primary)) {
         const cur = JSON.parse(
           readFileSync(primary, "utf8") as string,
         ) as Snapshot;
         if (JSON.stringify(cur.tracks) === JSON.stringify(tracks)) {
-          console.log("✅ --check: up to date");
+          console.log(`✅ [${source.id}] --check: up to date`);
           return;
         }
         console.error(
-          "❌ --check: local snapshot is stale (track data differs)",
+          `❌ [${source.id}] --check: local snapshot is stale (track data differs)`,
         );
         process.exitCode = 1;
         return;
       }
-      console.error("❌ --check: no snapshot found");
+      console.error(`❌ [${source.id}] --check: no snapshot found`);
       process.exitCode = 1;
       return;
     }
-    writeSnapshot(snapshot);
+    writeSnapshot(snapshot, outPaths);
   } catch (error) {
-    const primary = OUT_PATHS[0];
     if (existsSync(primary)) {
-      console.warn("⚠️  fetch failed, keeping last committed snapshot:", error);
-      if (checkOnly) {
+      console.warn(
+        `⚠️  [${source.id}] fetch failed, keeping last committed snapshot:`,
+        error,
+      );
+      if (options.checkOnly) {
         process.exitCode = 1;
-        return;
       }
-      // do not overwrite, exit 0 so CI build keeps going
       return;
     }
-    console.error("❌ fetch failed and no snapshot exists:", error);
+    console.error(
+      `❌ [${source.id}] fetch failed and no snapshot exists:`,
+      error,
+    );
     throw error;
+  }
+}
+
+async function main(): Promise<void> {
+  const checkOnly = process.argv.includes("--check");
+  const onlyId = parseOnlyFilter(process.argv);
+  const sources = onlyId
+    ? playlistSources.filter((source) => source.id === onlyId)
+    : [...playlistSources];
+
+  if (onlyId && sources.length === 0) {
+    const known = playlistSources.map((source) => source.id).join(", ");
+    throw new Error(
+      `Unknown playlist id "${onlyId}". Known: ${known || "(none)"}`,
+    );
+  }
+
+  let spotifyAuth: SpotifyWebAuth | null = null;
+  try {
+    spotifyAuth = await getSpotifyWebAuth();
+  } catch (error) {
+    console.warn(
+      "⚠️  Spotify auth failed; continuing without Spotify enrichment",
+      error,
+    );
+  }
+
+  for (const source of sources) {
+    console.log(`→ fetching ${source.id}`);
+    await fetchOnePlaylist(source, { checkOnly, spotifyAuth });
   }
 }
 

@@ -1,4 +1,4 @@
-import type { TwentyTrack } from "@/data/20tracks";
+import type { PlaylistTrack } from "@/data/playlist-schema";
 
 import type { NowPlayingTrack } from "../server/now-playing";
 
@@ -22,7 +22,7 @@ function norm(value: string): string {
  * Title must match; artist is a substring check to tolerate
  * "David Guetta, Dirty South" vs "David Guetta".
  */
-export function isNowPlayingMatch(playlistTrack: TwentyTrack, now: NowPlayingTrack): boolean {
+export function isNowPlayingMatch(playlistTrack: PlaylistTrack, now: NowPlayingTrack): boolean {
   const aTitle = norm(playlistTrack.title);
   const bTitle = norm(now.title);
   if (aTitle !== bTitle) {
@@ -35,9 +35,9 @@ export function isNowPlayingMatch(playlistTrack: TwentyTrack, now: NowPlayingTra
 
 /** Convenience: find the matched track in a list, if any. */
 export function findNowPlayingInList(
-  tracks: TwentyTrack[],
+  tracks: PlaylistTrack[],
   now: NowPlayingTrack | null | undefined,
-): TwentyTrack | null {
+): PlaylistTrack | null {
   if (!now) {
     return null;
   }

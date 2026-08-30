@@ -6,6 +6,8 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-r
 import type { ReactNode } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
+import { NowPlayingBar } from "@/features/music/components/now-playing-bar";
+import { PlaylistSearchPalette } from "@/features/music/components/playlist-search-palette";
 import { ThemeProvider, useTheme } from "@/hooks/use-theme";
 import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
@@ -53,8 +55,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               navLabel="Playlist navigation"
               githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/playlist"
             >
+              <PlaylistSearchPalette />
               <ThemeToggle />
             </SiteHeader>
+            <NowPlayingBar />
             <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col overflow-hidden border-x border-border bg-background">
               {children}
             </div>

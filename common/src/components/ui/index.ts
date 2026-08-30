@@ -1,3 +1,10 @@
+export {
+  Accordion,
+  AccordionContent,
+  AccordionHeader,
+  AccordionItem,
+  AccordionTrigger,
+} from "./accordion";
 export { Button, buttonVariants } from "./button";
 export { Checkbox } from "./checkbox";
 export {

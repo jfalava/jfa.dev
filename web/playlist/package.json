@@ -16,6 +16,7 @@
   "dependencies": {
     "@jfa.dev/common": "workspace:*",
     "@tailwindcss/vite": "catalog:styling",
+    "@tanstack/react-hotkeys": "catalog:tanstack",
     "@tanstack/react-query": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",

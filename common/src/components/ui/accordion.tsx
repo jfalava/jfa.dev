@@ -1,0 +1,111 @@
+import { cn } from "../../lib/utils";
+
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import {
+  Button as AccordionTriggerPrimitive,
+  Disclosure as AccordionItemPrimitive,
+  DisclosureGroup as AccordionPrimitive,
+  DisclosurePanel as AccordionContentPrimitive,
+  Heading as AccordionHeaderPrimitive,
+  type ButtonProps,
+  type DisclosureGroupProps,
+  type DisclosurePanelProps,
+  type DisclosureProps,
+  type HeadingProps,
+} from "react-aria-components";
+import type { ReactNode } from "react";
+
+function Accordion({ className, ...props }: DisclosureGroupProps) {
+  return (
+    <AccordionPrimitive
+      data-slot="accordion"
+      className={cn("flex w-full flex-col", className)}
+      {...props}
+    />
+  );
+}
+
+function AccordionItem({ className, ...props }: DisclosureProps) {
+  return (
+    <AccordionItemPrimitive
+      data-slot="accordion-item"
+      className={cn("not-last:border-b", className)}
+      {...props}
+    />
+  );
+}
+
+/**
+ * Disclosure heading. Put interactive siblings (links) next to `AccordionTrigger`
+ * here — never nest them inside the trigger button.
+ */
+function AccordionHeader({ className, ...props }: HeadingProps) {
+  return (
+    <AccordionHeaderPrimitive
+      data-slot="accordion-header"
+      className={cn("flex", className)}
+      {...props}
+    />
+  );
+}
+
+function AccordionTrigger({
+  className,
+  children,
+  ...props
+}: Omit<ButtonProps, "children"> & { children?: ReactNode }) {
+  return (
+    <AccordionTriggerPrimitive
+      slot="trigger"
+      data-slot="accordion-trigger"
+      className={cn(
+        "group/accordion-trigger relative flex flex-1 items-start justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 **:data-[slot=accordion-trigger-icon]:text-muted-foreground",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      <ChevronDownIcon
+        data-slot="accordion-trigger-icon"
+        aria-hidden="true"
+        className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+      />
+      <ChevronUpIcon
+        data-slot="accordion-trigger-icon"
+        aria-hidden="true"
+        className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+      />
+    </AccordionTriggerPrimitive>
+  );
+}
+
+function AccordionContent({
+  className,
+  children,
+  ...props
+}: DisclosurePanelProps) {
+  return (
+    <AccordionContentPrimitive
+      data-slot="accordion-content"
+      className="h-(--disclosure-panel-height) overflow-clip text-sm transition-[height] data-closed:animate-accordion-up data-open:animate-accordion-down"
+      {...props}
+    >
+      <div
+        className={cn(
+          "pt-0 pb-2.5 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </AccordionContentPrimitive>
+  );
+}
+
+export {
+  Accordion,
+  AccordionContent,
+  AccordionHeader,
+  AccordionItem,
+  AccordionTrigger,
+};
