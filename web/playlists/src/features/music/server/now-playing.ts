@@ -4,6 +4,8 @@ import * as Result from "effect/Result";
 import * as Schema from "effect/Schema";
 import * as SchemaGetter from "effect/SchemaGetter";
 
+import { NOW_PLAYING_FRESH_GRACE_MS } from "../lib/now-playing-timing";
+
 const lastfmTrackSchema = Schema.Struct({
   name: Schema.String,
   artist: Schema.Struct({ "#text": Schema.String, mbid: Schema.String }),
@@ -198,10 +200,20 @@ export const getNowPlaying = createServerFn({ method: "GET" }).handler(
       return { status: "playing", track: toTrack(track) };
     }
 
+    const playedAtMs = track.date?.uts ? Number(track.date.uts) * 1000 : null;
+    const playedAt =
+      playedAtMs !== null && !Number.isNaN(playedAtMs) ? new Date(playedAtMs).toISOString() : null;
+
+    // Prefer false positives: a just-scrobbled track often lost the nowplaying
+    // flag already — still report it as playing within the grace window.
+    if (playedAtMs !== null && Date.now() - playedAtMs <= NOW_PLAYING_FRESH_GRACE_MS) {
+      return { status: "playing", track: toTrack(track) };
+    }
+
     return {
       status: "recent",
       track: toTrack(track),
-      playedAt: track.date?.uts ? new Date(Number(track.date.uts) * 1000).toISOString() : null,
+      playedAt,
     };
   },
 );

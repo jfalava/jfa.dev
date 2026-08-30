@@ -1,17 +1,11 @@
-/* oxlint-disable react/set-state-in-effect -- scrobble progress resets on track change (derived state sync) */
-import { useEffect, useState } from "react";
-
 import { allPlaylistTracks } from "@/data/playlists";
-import {
-  NOW_PLAYING_REFETCH_INTERVAL_MS,
-  useNowPlaying,
-} from "@/features/music/hooks/use-now-playing";
+import { useNowPlaying } from "@/features/music/hooks/use-now-playing";
 import { isNowPlayingMatch } from "@/features/music/lib/match";
 import { cn } from "@/lib/utils";
 
 /**
  * Sticky Last.fm strip that mirrors `SiteHeader` gutters and branding width.
- * Sits directly under the global header and stays visible while the catalog scrolls.
+ * Status comes from the Last.fm ping with sticky "playing" grace — no fake progress bar.
  */
 export function NowPlayingBar() {
   const { data: nowPlaying, isLoading } = useNowPlaying();
@@ -41,46 +35,27 @@ export function NowPlayingBar() {
   const displayAlbum = matched?.album ?? activeTrack?.album ?? recentTrack?.album ?? null;
   const artwork = matched?.artwork ?? activeTrack?.image ?? recentTrack?.image ?? null;
   const trackUrl = matched?.url ?? activeTrack?.url ?? recentTrack?.url ?? null;
-  const durationMs = matched?.durationMs ?? null;
   const isPlaying = status === "playing" && activeTrack !== null;
-  // Last.fm has no seek position; seed a small lag so the bar doesn't look mid-song.
-  const trackKey = activeTrack
-    ? `${activeTrack.title}\0${activeTrack.artist}`
-    : recentTrack
-      ? `${recentTrack.title}\0${recentTrack.artist}`
-      : null;
-
-  const [elapsedMs, setElapsedMs] = useState(0);
-
-  useEffect(() => {
-    if (!trackKey || !durationMs) {
-      setElapsedMs(0);
-      return;
-    }
-    // Seed at one poll interval — worst-case lag before we notice the track.
-    setElapsedMs(Math.min(NOW_PLAYING_REFETCH_INTERVAL_MS, durationMs));
-  }, [trackKey, durationMs]);
-
-  useEffect(() => {
-    if (!isPlaying || !durationMs) {
-      return undefined;
-    }
-    const id = window.setInterval(() => {
-      setElapsedMs((prev) => Math.min(prev + 1000, durationMs));
-    }, 1000);
-    return (): void => window.clearInterval(id);
-  }, [isPlaying, durationMs, trackKey]);
-
-  const progress = durationMs ? Math.min(100, (elapsedMs / durationMs) * 100) : 0;
   const TitleLink = trackUrl ? "a" : "span";
+
+  // Opaque tint (mix with background, not transparent) so sticky scroll never shows through.
+  // Scoped to the central column only — gutters stay plain `bg-background` on the aside.
+  const playingColumn =
+    isPlaying && "bg-[color-mix(in_oklab,var(--success)_12%,var(--background))]";
 
   return (
     <aside
       aria-label="Now playing"
+      data-state={isPlaying ? "selected" : undefined}
       className="now-playing-bar sticky top-11 z-20 shrink-0 bg-background"
     >
-      {/* Borders stay on the playlist column only — no full-bleed line past the sides. */}
-      <div className="mx-auto h-11 w-full max-w-screen-2xl border-x border-b border-border bg-background">
+      {/* Borders + paint stay on the playlist column only — no full-bleed wash past the sides. */}
+      <div
+        className={cn(
+          "mx-auto h-11 w-full max-w-screen-2xl border-x border-b border-border bg-background",
+          playingColumn,
+        )}
+      >
         <div className="flex h-full items-center justify-between gap-3 overflow-hidden px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
           {/* Mobile: badge left, track right. sm+: mirror SiteHeader icon gutter + brand widths. */}
           <div className="flex min-w-0 shrink-0 items-center gap-1">
@@ -97,7 +72,12 @@ export function NowPlayingBar() {
                 )}
                 aria-hidden
               />
-              <span className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
+              <span
+                className={cn(
+                  "font-mono text-[10px] tracking-[0.14em] uppercase",
+                  isPlaying ? "text-success" : "text-muted-foreground",
+                )}
+              >
                 {isLoading && !nowPlaying
                   ? "Listening…"
                   : isPlaying
@@ -113,11 +93,11 @@ export function NowPlayingBar() {
             {isLoading && !nowPlaying ? (
               <div className="flex max-w-full min-w-0 items-center gap-2 sm:w-full sm:gap-3">
                 <div className="size-7 shrink-0 animate-pulse rounded-md bg-muted" aria-hidden />
-                <div className="min-w-0 sm:flex-1">
-                  <div className="h-2.5 w-40 max-w-full animate-pulse rounded bg-muted sm:hidden" />
+                <div className="min-w-0 flex-1">
+                  <div className="h-2.5 w-48 max-w-full animate-pulse rounded bg-muted sm:hidden" />
                   <div className="hidden space-y-1 sm:block">
-                    <div className="h-2.5 w-40 animate-pulse rounded bg-muted" />
-                    <div className="h-2 w-28 animate-pulse rounded bg-muted" />
+                    <div className="h-2.5 w-56 max-w-full animate-pulse rounded bg-muted" />
+                    <div className="h-2 w-40 max-w-[70%] animate-pulse rounded bg-muted" />
                   </div>
                 </div>
               </div>
@@ -126,7 +106,7 @@ export function NowPlayingBar() {
                 Not scrobbling anything atm
               </span>
             ) : (
-              <div className="flex max-w-full min-w-0 items-center gap-2 sm:w-full sm:gap-3">
+              <div className="flex max-w-full min-w-0 flex-1 items-center gap-2 sm:gap-3">
                 {artwork ? (
                   <TitleLink
                     {...(trackUrl ? { href: trackUrl, target: "_blank", rel: "noreferrer" } : {})}
@@ -147,7 +127,7 @@ export function NowPlayingBar() {
                   <div className="size-7 shrink-0 rounded-md border bg-muted" aria-hidden />
                 )}
 
-                <div className="min-w-0 sm:flex-1">
+                <div className="min-w-0 flex-1">
                   <TitleLink
                     {...(trackUrl ? { href: trackUrl, target: "_blank", rel: "noreferrer" } : {})}
                     className="block truncate text-sm leading-none font-semibold text-foreground"
@@ -161,18 +141,6 @@ export function NowPlayingBar() {
                   <div className="mt-0.5 hidden truncate text-[11px] leading-none text-muted-foreground sm:block">
                     {displayArtist}
                     {displayAlbum ? ` — ${displayAlbum}` : ""}
-                  </div>
-                </div>
-
-                <div className="hidden w-28 shrink-0 sm:block lg:w-40">
-                  <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className={cn(
-                        "h-full rounded-full transition-[width] duration-1000 ease-linear",
-                        isPlaying ? "bg-success" : "bg-muted-foreground/30",
-                      )}
-                      style={{ width: `${progress}%` }}
-                    />
                   </div>
                 </div>
               </div>
