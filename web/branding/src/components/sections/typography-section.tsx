@@ -4,7 +4,7 @@ import { Section } from "@/components/section";
 export function TypographySection() {
   return (
     <Section
-      description="Pretendard (sans), Zilla Slab (serif), Google Sans Code (mono) — all from @fontsource via common."
+      description="IBM Plex Sans (sans), Zilla Slab (serif), Google Sans Code (mono) — all from @fontsource via common."
       id="typography"
       title="Typography"
     >
@@ -13,7 +13,7 @@ export function TypographySection() {
           <div className="grid w-full gap-6 text-left sm:grid-cols-3">
             <div className="space-y-1">
               <p className="font-mono text-xs tracking-wide text-muted-foreground uppercase">
-                sans — Pretendard
+                sans — IBM Plex Sans
               </p>
               <p className="font-sans text-lg font-semibold">The quick fox — 500</p>
               <p className="font-sans text-sm text-muted-foreground">

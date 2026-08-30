@@ -23,7 +23,7 @@
       "dependencies": {
         "@base-ui/react": "catalog:react",
         "@fontsource/google-sans-code": "catalog:fonts",
-        "@fontsource/pretendard": "catalog:fonts",
+        "@fontsource/ibm-plex-sans": "catalog:fonts",
         "@fontsource/zilla-slab": "catalog:fonts",
         "class-variance-authority": "catalog:styling",
         "clsx": "catalog:styling",
@@ -353,7 +353,7 @@
     },
     "fonts": {
       "@fontsource/google-sans-code": "5.3.0",
-      "@fontsource/pretendard": "5.3.0",
+      "@fontsource/ibm-plex-sans": "5.3.0",
       "@fontsource/zilla-slab": "5.3.0",
     },
     "iac": {
@@ -670,7 +670,7 @@
 
     "@fontsource/google-sans-code": ["@fontsource/google-sans-code@5.3.0", "", {}, "sha512-z1IDzMNX66oWak+RSEwk84DxsglnEuLDERpMnzzuatLTewbFeB/HM/aKXOkpXMKGDT3tm+TQZaX59q8g6+BqQw=="],
 
-    "@fontsource/pretendard": ["@fontsource/pretendard@5.3.0", "", {}, "sha512-IDvI+QlHSFW9AkBX8cKXFi9nRJXdj7IQSGSqgemwFqII6EptpWQmWKcs3OfTZBT2yftzqt6VF6abQpUeAmHxMA=="],
+    "@fontsource/ibm-plex-sans": ["@fontsource/ibm-plex-sans@5.3.0", "", {}, "sha512-CbE4CbbEEZJX860XyUiRpsksXIQR8Rp2XDva2VO53NJox9tVNtusrysd2x5YkUEY3ErQ66W1IiiQL8/wihhw5w=="],
 
     "@fontsource/zilla-slab": ["@fontsource/zilla-slab@5.3.0", "", {}, "sha512-xbdDx5OESJDQqp3GIp4pjBgI+qpcg4AxnHLN15ekfJbG+ZYaOXg3uBjDpYlkuPQpey91afxHBNaqZgzluJ2FWA=="],
 

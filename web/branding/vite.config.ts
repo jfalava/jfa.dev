@@ -11,6 +11,10 @@ const MOUNT_PATH = "/branding/";
 
 export default defineConfig({
   base: MOUNT_PATH,
+  server: {
+    // Amp portals + custom orb/preview hostnames
+    allowedHosts: [".onamp.dev", ".amp.jfa.dev"],
+  },
   plugins: [
     tailwindcss(),
     tanstackStart(),

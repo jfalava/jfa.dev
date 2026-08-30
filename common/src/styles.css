@@ -3,10 +3,10 @@
 @import "@fontsource/google-sans-code/600.css";
 @import "@fontsource/google-sans-code/700.css";
 @import "@fontsource/google-sans-code/800.css";
-@import "@fontsource/pretendard/400.css";
-@import "@fontsource/pretendard/500.css";
-@import "@fontsource/pretendard/600.css";
-@import "@fontsource/pretendard/700.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-sans/700.css";
 @import "@fontsource/zilla-slab/400.css";
 @import "@fontsource/zilla-slab/500.css";
 @import "@fontsource/zilla-slab/600.css";
@@ -18,7 +18,8 @@
 
 @theme {
   --font-sans:
-    Pretendard, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   --font-serif: "Zilla Slab", ui-serif, Georgia, Cambria, "Times New Roman", serif;
   --font-mono:
     "Google Sans Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",

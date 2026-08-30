@@ -113,7 +113,7 @@
   "dependencies": {
     "@base-ui/react": "catalog:react",
     "@fontsource/google-sans-code": "catalog:fonts",
-    "@fontsource/pretendard": "catalog:fonts",
+    "@fontsource/ibm-plex-sans": "catalog:fonts",
     "@fontsource/zilla-slab": "catalog:fonts",
     "class-variance-authority": "catalog:styling",
     "clsx": "catalog:styling",
