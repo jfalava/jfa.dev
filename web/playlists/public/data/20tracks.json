@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-29T00:03:31.308Z",
+  "fetchedAt": "2026-08-31T07:37:12.511Z",
   "sourceUrl": "https://music.apple.com/es/playlist/20tracks/pl.u-9N9LL2eI2K5oXV",
   "playlistId": "pl.u-9N9LL2eI2K5oXV",
   "title": "#20tracks",
@@ -193,8 +193,8 @@
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/14/a8/77/14a87761-3ca4-6549-cc38-e011c5d5f76b/20UMGIM35677.rgb.jpg/100x100bb.jpg",
       "primaryGenreName": "Electrónica",
       "releaseDate": "2020-05-15T12:00:00Z",
-      "spotifyUrl": "https://open.spotify.com/track/2IxhiriDpu4iBnXZb3ytXN",
-      "spotifyId": "2IxhiriDpu4iBnXZb3ytXN"
+      "spotifyUrl": "https://open.spotify.com/track/0zHSnpMaZhuH05jQ4PgIJr",
+      "spotifyId": "0zHSnpMaZhuH05jQ4PgIJr"
     },
     {
       "title": "New Person, Same Old Mistakes",
@@ -322,7 +322,7 @@
       "artworkRaw": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/e6/d2/bc/e6d2bc9c-cfa5-98f2-23b5-d96320478178/18CRGIM08518.rgb.jpg/{w}x{h}bb.{f}",
       "durationMs": 304200,
       "composer": "Francisco Buarque de Hollanda",
-      "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/41/85/df/4185df01-db90-05b5-6c9f-b3c53324f758/mzaf_2275648322153360436.plus.aac.p.m4a",
+      "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f9/bd/53/f9bd5334-0bcf-b9f3-0b95-069306131a9d/mzaf_10966384489015309740.plus.aac.p.m4a",
       "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/e6/d2/bc/e6d2bc9c-cfa5-98f2-23b5-d96320478178/18CRGIM08518.rgb.jpg/100x100bb.jpg",
       "primaryGenreName": "Salsa y Tropical",
       "releaseDate": "1981-01-01T12:00:00Z",
@@ -349,25 +349,6 @@
       "spotifyId": "4OFF1YlbaIHc2JbMhW9fdv"
     },
     {
-      "title": "空より現れし者 (Orchestral Version) 〜次元の狭間オメガ:アルファ編〜",
-      "artist": "Masayoshi Soken",
-      "artistId": "205701111",
-      "album": "GROWING LIGHT: FINAL FANTASY XIV Original Soundtrack",
-      "albumId": "1735934854",
-      "songId": "1735935375",
-      "url": "https://music.apple.com/es/album/%E7%A9%BA%E3%82%88%E3%82%8A%E7%8F%BE%E3%82%8C%E3%81%97%E8%80%85-orchestral-version-%E6%AC%A1%E5%85%83%E3%81%AE%E7%8B%AD%E9%96%93%E3%82%AA%E3%83%A1%E3%82%AC-%E3%82%A2%E3%83%AB%E3%83%95%E3%82%A1%E7%B7%A8/1735934854?i=1735935375",
-      "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a0/7b/18/a07b182b-d8db-822f-183b-976ff7173b37/SQEX-20096-1_3000x3000.jpg/500x500bb.jpg",
-      "artworkRaw": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a0/7b/18/a07b182b-d8db-822f-183b-976ff7173b37/SQEX-20096-1_3000x3000.jpg/{w}x{h}bb.{f}",
-      "durationMs": 276529,
-      "composer": "Masayoshi Soken",
-      "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/60/f2/9d/60f29d85-603e-f2d8-7e93-47de84e0bf26/mzaf_11374620631057260461.plus.aac.p.m4a",
-      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a0/7b/18/a07b182b-d8db-822f-183b-976ff7173b37/SQEX-20096-1_3000x3000.jpg/100x100bb.jpg",
-      "primaryGenreName": "Banda sonora",
-      "releaseDate": "2019-12-11T12:00:00Z",
-      "spotifyUrl": "https://open.spotify.com/track/0ih5vutFqAOZA3eQcVU4nx",
-      "spotifyId": "0ih5vutFqAOZA3eQcVU4nx"
-    },
-    {
       "title": "Idol Hands",
       "artist": "Kmac2021",
       "artistId": "1394698107",
@@ -385,6 +366,25 @@
       "releaseDate": "2022-04-25T12:00:00Z",
       "spotifyUrl": "https://open.spotify.com/track/4JcEaqyMGOaTxLOM6E44Io",
       "spotifyId": "4JcEaqyMGOaTxLOM6E44Io"
+    },
+    {
+      "title": "The Skyruin 〜ヴァリガルマンダ討滅戦〜",
+      "artist": "Masayoshi Soken",
+      "artistId": "205701111",
+      "album": "DAWNTRAIL: FINAL FANTASY XIV Original Soundtrack",
+      "albumId": "1774664181",
+      "songId": "1774664581",
+      "url": "https://music.apple.com/es/album/the-skyruin-%E3%83%B4%E3%82%A1%E3%83%AA%E3%82%AC%E3%83%AB%E3%83%9E%E3%83%B3%E3%83%80%E8%A8%8E%E6%BB%85%E6%88%A6/1774664181?i=1774664581",
+      "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/2b/ef/f1/2beff1c9-30b1-e551-b2fc-9adb6e7540da/SQEX-20099-1_3000x3000.jpg/500x500bb.jpg",
+      "artworkRaw": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/2b/ef/f1/2beff1c9-30b1-e551-b2fc-9adb6e7540da/SQEX-20099-1_3000x3000.jpg/{w}x{h}bb.{f}",
+      "durationMs": 452800,
+      "composer": "Masayoshi Soken & 矢崎 早彩",
+      "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/8e/55/63/8e5563f2-5311-4d7f-f73d-19e007f9322c/mzaf_15320279636765309905.plus.aac.p.m4a",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/2b/ef/f1/2beff1c9-30b1-e551-b2fc-9adb6e7540da/SQEX-20099-1_3000x3000.jpg/100x100bb.jpg",
+      "primaryGenreName": "Banda sonora",
+      "releaseDate": "2024-10-30T12:00:00Z",
+      "spotifyUrl": "https://open.spotify.com/track/7f7ucoYxPa0E7YfDTFXzNa",
+      "spotifyId": "7f7ucoYxPa0E7YfDTFXzNa"
     }
   ]
 }
