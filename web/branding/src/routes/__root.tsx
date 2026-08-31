@@ -34,18 +34,18 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body className="flex min-h-dvh flex-col bg-background font-sans text-base text-foreground">
         <ThemeProvider>
-          <div className="mx-auto flex min-h-dvh w-full max-w-screen-2xl flex-col border-x border-border bg-background">
-            <SiteHeader
-              title="BRANDING"
-              subtitle="Component showcase"
-              titleHref={appPath("/")}
-              packages={webPackages}
-              activePackagePath="/branding"
-              navLabel="Branding navigation"
-              githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/branding"
-            >
-              <ThemeToggle />
-            </SiteHeader>
+          <SiteHeader
+            title="BRANDING"
+            subtitle="Component showcase"
+            titleHref={appPath("/")}
+            packages={webPackages}
+            activePackagePath="/branding"
+            navLabel="Branding navigation"
+            githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/branding"
+          >
+            <ThemeToggle />
+          </SiteHeader>
+          <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
             {children}
           </div>
           <ToastBridge />

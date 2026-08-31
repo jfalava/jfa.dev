@@ -129,30 +129,32 @@ function EmptyState() {
   );
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
+    <div className="flex h-full min-h-0 w-full flex-col bg-background text-foreground">
       <KewekeHeader hideNewListButton={!isLoading && lists.length === 0} />
-      <main className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain">
-        <ListsPageHeader listCount={lists.length} />
+      <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
+        <main className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain">
+          <ListsPageHeader listCount={lists.length} />
 
-        {isLoading ? (
-          <p className="px-4 py-10 font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase sm:px-6 lg:px-8">
-            reading local storage…
-          </p>
-        ) : lists.length > 0 ? (
-          <>
-            <ListsCatalog
-              confirmingListId={confirmingListId}
-              deletingListId={deletingListId}
-              lists={lists}
-              onCancelDelete={cancelDelete}
-              onConfirmDelete={confirmDelete}
-              onRemove={onRemove}
-            />
-          </>
-        ) : (
-          <EmptyListsState isCreating={isCreating} onCreate={() => void createList()} />
-        )}
-      </main>
+          {isLoading ? (
+            <p className="px-4 py-10 font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase sm:px-6 lg:px-8">
+              reading local storage…
+            </p>
+          ) : lists.length > 0 ? (
+            <>
+              <ListsCatalog
+                confirmingListId={confirmingListId}
+                deletingListId={deletingListId}
+                lists={lists}
+                onCancelDelete={cancelDelete}
+                onConfirmDelete={confirmDelete}
+                onRemove={onRemove}
+              />
+            </>
+          ) : (
+            <EmptyListsState isCreating={isCreating} onCreate={() => void createList()} />
+          )}
+        </main>
+      </div>
     </div>
   );
 }

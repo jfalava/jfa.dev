@@ -22,15 +22,23 @@ export function LayoutSection() {
                   Design decision
                 </p>
                 <p className="text-sm leading-relaxed text-foreground">
-                  Full-width application pages sit inside a centered frame with explicit vertical
-                  rules. This makes the maximum width and the relationship between the page sections
-                  visible, instead of leaving centered content floating in the viewport.
+                  SiteHeader is always full-bleed across the viewport. Only page body content sits
+                  inside the centered frame with explicit vertical rules — never nest the shared
+                  header inside <code className="font-mono text-xs">max-w-screen-2xl</code>.
                 </p>
               </div>
               <div className="space-y-4 border-t border-border pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-6">
                 <div className="space-y-1">
                   <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-                    Shell
+                    Header
+                  </p>
+                  <code className="block rounded bg-muted px-2 py-1 font-mono text-xs break-words text-foreground">
+                    SiteHeader full-bleed (outside shell)
+                  </code>
+                </div>
+                <div className="space-y-1">
+                  <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+                    Content shell
                   </p>
                   <code className="block rounded bg-muted px-2 py-1 font-mono text-xs break-words text-foreground">
                     max-w-screen-2xl border-x border-border

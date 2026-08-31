@@ -601,43 +601,47 @@ function ListPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
+      <div className="flex h-full min-h-0 w-full flex-col bg-background text-foreground">
         <KewekeHeader listId={listId} />
-        <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
-          <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
-            loading list…
-          </p>
-        </main>
+        <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
+          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
+            <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
+              loading list…
+            </p>
+          </main>
+        </div>
       </div>
     );
   }
 
   if (!snapshot) {
     return (
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
+      <div className="flex h-full min-h-0 w-full flex-col bg-background text-foreground">
         <KewekeHeader listId={listId} />
-        <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
-          <section className="invoice-paper invoice-rule border border-t-4 border-t-destructive">
-            <div className="px-4 py-10 sm:px-8 sm:py-16">
-              <p className="font-mono text-[11px] tracking-[0.12em] text-destructive uppercase">
-                list unavailable
-              </p>
-              <h1 className="mt-3 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-                Nothing here
-              </h1>
-              <p className="mt-6 max-w-lg text-sm text-muted-foreground">
-                {currentUnavailableReason ??
-                  "This list is not available in local or remote storage."}
-              </p>
-            </div>
-          </section>
-        </main>
+        <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
+          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
+            <section className="invoice-paper invoice-rule border border-t-4 border-t-destructive">
+              <div className="px-4 py-10 sm:px-8 sm:py-16">
+                <p className="font-mono text-[11px] tracking-[0.12em] text-destructive uppercase">
+                  list unavailable
+                </p>
+                <h1 className="mt-3 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
+                  Nothing here
+                </h1>
+                <p className="mt-6 max-w-lg text-sm text-muted-foreground">
+                  {currentUnavailableReason ??
+                    "This list is not available in local or remote storage."}
+                </p>
+              </div>
+            </section>
+          </main>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-screen-2xl flex-col border-x border-border bg-background text-foreground">
+    <div className="flex h-full min-h-0 w-full flex-col bg-background text-foreground">
       <KewekeHeader
         backend={loadedList.backend}
         isMigrating={isMigrating}
@@ -672,55 +676,57 @@ function ListPage() {
           }}
         />
       ) : null}
-      <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-        <ListPageHeader
-          activeCount={activeCount}
-          alias={snapshot.alias}
-          backend={loadedList.backend}
-          completedCount={completedCount}
-          filter={filter}
-          isDesktop={isDesktop}
-          isSpreadsheetMode={isSpreadsheetModeActive}
-          isLiveDropped={isLiveDropped}
-          isRefreshing={isRefreshing}
-          isRenaming={isRenaming}
-          listId={snapshot.id}
-          onFilterChange={setFilter}
-          onOpenHelp={() => setIsItemEntryHelpOpen(true)}
-          onRefresh={() => void handleRefreshLive()}
-          onRename={renameList}
-          onSpreadsheetModeChange={handleSpreadsheetModeChange}
-          title={snapshot.title}
-        />
-        <ShoppingTable
-          emptyMessage={filter.trim() ? "no matching lines" : undefined}
-          identity={identity}
-          isSpreadsheetMode={isSpreadsheetModeActive}
-          items={visibleItems}
-          newItem={newItemDraft}
-          newItemErrors={displayedNewItemErrors}
-          onAdd={addItem}
-          onAdjustQuantity={adjustQuantity}
-          onNewItemChange={updateNewItemDraft}
-          onRemove={removeItem}
-          onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
-          onSpreadsheetModeChange={handleSpreadsheetModeChange}
-          onToggle={toggleItem}
-          onUpdate={updateItem}
-        />
-        <DeletedItemsHistory
-          busyArchiveId={busyArchiveId}
-          identity={identity}
-          items={snapshot.deletedItems}
-          onPurge={(archiveId) => {
-            void updateDeletedItem({ type: "purge-deleted-item", archiveId }, archiveId);
-          }}
-          onRestore={(archiveId) => {
-            void updateDeletedItem({ type: "restore-item", archiveId }, archiveId);
-          }}
-          onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
-        />
-      </main>
+      <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
+        <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+          <ListPageHeader
+            activeCount={activeCount}
+            alias={snapshot.alias}
+            backend={loadedList.backend}
+            completedCount={completedCount}
+            filter={filter}
+            isDesktop={isDesktop}
+            isSpreadsheetMode={isSpreadsheetModeActive}
+            isLiveDropped={isLiveDropped}
+            isRefreshing={isRefreshing}
+            isRenaming={isRenaming}
+            listId={snapshot.id}
+            onFilterChange={setFilter}
+            onOpenHelp={() => setIsItemEntryHelpOpen(true)}
+            onRefresh={() => void handleRefreshLive()}
+            onRename={renameList}
+            onSpreadsheetModeChange={handleSpreadsheetModeChange}
+            title={snapshot.title}
+          />
+          <ShoppingTable
+            emptyMessage={filter.trim() ? "no matching lines" : undefined}
+            identity={identity}
+            isSpreadsheetMode={isSpreadsheetModeActive}
+            items={visibleItems}
+            newItem={newItemDraft}
+            newItemErrors={displayedNewItemErrors}
+            onAdd={addItem}
+            onAdjustQuantity={adjustQuantity}
+            onNewItemChange={updateNewItemDraft}
+            onRemove={removeItem}
+            onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
+            onSpreadsheetModeChange={handleSpreadsheetModeChange}
+            onToggle={toggleItem}
+            onUpdate={updateItem}
+          />
+          <DeletedItemsHistory
+            busyArchiveId={busyArchiveId}
+            identity={identity}
+            items={snapshot.deletedItems}
+            onPurge={(archiveId) => {
+              void updateDeletedItem({ type: "purge-deleted-item", archiveId }, archiveId);
+            }}
+            onRestore={(archiveId) => {
+              void updateDeletedItem({ type: "restore-item", archiveId }, archiveId);
+            }}
+            onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
+          />
+        </main>
+      </div>
     </div>
   );
 }
