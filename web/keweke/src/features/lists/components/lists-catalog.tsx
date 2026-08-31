@@ -78,7 +78,7 @@ function createListsColumns({
         const list = row.original;
         return (
           <Link
-            className="group block min-w-0"
+            className="group block min-w-0 no-underline"
             params={{ listId: list.alias ?? list.id }}
             to="/$listId"
           >
@@ -238,7 +238,7 @@ function MobileListsList({
           <li key={list.id}>
             <div className="flex items-center gap-2 px-4 py-3 sm:px-6">
               <Link
-                className="group flex min-w-0 flex-1 items-center gap-3"
+                className="group flex min-w-0 flex-1 items-center gap-3 no-underline"
                 params={{ listId: list.alias ?? list.id }}
                 to="/$listId"
               >

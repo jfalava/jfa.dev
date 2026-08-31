@@ -163,6 +163,10 @@
     @apply underline decoration-dotted underline-offset-4 transition-colors hover:decoration-solid;
   }
 
+  .site-header :where(a, button) {
+    @apply no-underline;
+  }
+
   button,
   input,
   textarea,

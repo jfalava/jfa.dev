@@ -69,6 +69,10 @@
   z-index: 1;
 }
 
+#nd-sidebar a {
+  @apply no-underline;
+}
+
 html,
 body {
   @apply m-0 min-h-dvh;
