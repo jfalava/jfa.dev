@@ -68,11 +68,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <script src={appPath("/theme-init.js")}></script>
         <HeadContent />
       </head>
-      <body className="flex min-h-screen flex-col bg-background font-sans text-base text-foreground transition-colors duration-200">
+      <body className="flex min-h-dvh flex-col bg-background font-sans text-base text-foreground transition-colors duration-200">
         <ThemeProvider>
-          <QueryClientProvider client={queryClient}>
-            <main className="flex-1">{children}</main>
-          </QueryClientProvider>
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </ThemeProvider>
         <Scripts />
       </body>

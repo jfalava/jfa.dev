@@ -73,7 +73,7 @@ function Home() {
   };
 
   return (
-    <div className="mx-auto flex h-dvh min-h-0 w-full max-w-screen-2xl flex-col overflow-hidden border-x border-border bg-background text-foreground">
+    <div className="flex h-dvh min-h-0 w-full flex-col overflow-hidden bg-background text-foreground">
       <CatalogHeader
         activeQuery={activeQuery}
         currentLang={currentLang}
@@ -82,14 +82,16 @@ function Home() {
         services={services}
         t={t}
       />
-      <main id="services" className="catalog-main min-h-0 flex-1 overflow-hidden">
-        <ServicesTable
-          translations={t}
-          currentLang={currentLang}
-          searchQuery={activeQuery}
-          searchIndex={searchIndex}
-        />
-      </main>
+      <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col overflow-hidden border-x border-border bg-background">
+        <main id="services" className="catalog-main min-h-0 flex-1 overflow-hidden">
+          <ServicesTable
+            translations={t}
+            currentLang={currentLang}
+            searchQuery={activeQuery}
+            searchIndex={searchIndex}
+          />
+        </main>
+      </div>
     </div>
   );
 }
