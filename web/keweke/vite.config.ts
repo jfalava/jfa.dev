@@ -27,7 +27,7 @@ export default defineConfig({
       viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
       pwa: true,
     }),
-    sitemap({ exclude: ["/admin"], disallow: ["/user"] }),
+    sitemap(),
   ],
   optimizeDeps: {
     exclude: ["cloudflare:workers"],

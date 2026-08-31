@@ -5,8 +5,8 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+  buildMountedPaths,
   buildRobotsTxt,
-  buildSitemapIndex,
   buildUrlset,
   collectContentPaths,
   collectRoutePaths,
@@ -18,7 +18,9 @@ const TEMP_DIR = path.join(import.meta.dir, ".sitemap-test-fixture");
 beforeAll(() => {
   rmSync(TEMP_DIR, { recursive: true, force: true });
   mkdirSync(path.join(TEMP_DIR, "src", "routes", "api"), { recursive: true });
-  mkdirSync(path.join(TEMP_DIR, "content", "docs", "keweke", "lists"), { recursive: true });
+  mkdirSync(path.join(TEMP_DIR, "content", "docs", "keweke", "lists"), {
+    recursive: true,
+  });
 
   writeFileSync(
     path.join(TEMP_DIR, "src", "routes", "__root.tsx"),
@@ -44,9 +46,19 @@ beforeAll(() => {
     path.join(TEMP_DIR, "src", "routes", "api", "search.ts"),
     `export const Route = createFileRoute("/api/search")({});`,
   );
-  writeFileSync(path.join(TEMP_DIR, "content", "docs", "keweke", "index.mdx"), "# Keweke");
   writeFileSync(
-    path.join(TEMP_DIR, "content", "docs", "keweke", "lists", "create-a-list.mdx"),
+    path.join(TEMP_DIR, "content", "docs", "keweke", "index.mdx"),
+    "# Keweke",
+  );
+  writeFileSync(
+    path.join(
+      TEMP_DIR,
+      "content",
+      "docs",
+      "keweke",
+      "lists",
+      "create-a-list.mdx",
+    ),
     "# Create a list",
   );
 });
@@ -65,16 +77,18 @@ describe("toMountPath", () => {
 
 describe("collectRoutePaths", () => {
   test("finds static routes and skips dynamic, splat, and API routes", () => {
-    expect(collectRoutePaths(path.join(TEMP_DIR, "src", "routes"))).toEqual(["/", "/about"]);
+    expect(collectRoutePaths(path.join(TEMP_DIR, "src", "routes"))).toEqual([
+      "/",
+      "/about",
+    ]);
   });
 });
 
 describe("collectContentPaths", () => {
   test("maps MDX files to index-aware URL paths", () => {
-    expect(collectContentPaths(path.join(TEMP_DIR, "content", "docs"))).toEqual([
-      "/keweke",
-      "/keweke/lists/create-a-list",
-    ]);
+    expect(collectContentPaths(path.join(TEMP_DIR, "content", "docs"))).toEqual(
+      ["/keweke", "/keweke/lists/create-a-list"],
+    );
   });
 });
 
@@ -83,7 +97,9 @@ describe("buildUrlset", () => {
     const xml = buildUrlset("https://jfa.dev", "/keweke/", ["/", "/about"]);
     expect(xml).toContain("<loc>https://jfa.dev/keweke</loc>");
     expect(xml).toContain("<loc>https://jfa.dev/keweke/about</loc>");
-    expect(xml).toContain('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"');
+    expect(xml).toContain(
+      'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+    );
   });
 
   test("maps the root mount to the origin root", () => {
@@ -98,35 +114,33 @@ describe("buildUrlset", () => {
   });
 });
 
-describe("buildSitemapIndex", () => {
-  test("lists the app's own sitemap first, then each unique sibling", () => {
-    const xml = buildSitemapIndex("https://jfa.dev", "/", [
-      "/opengraph",
-      "/keweke/",
-      "/opengraph/",
+describe("buildMountedPaths", () => {
+  test("combines routes from every mounted worker", () => {
+    const paths = buildMountedPaths([
+      { mountPath: "/", routesDir: path.join(TEMP_DIR, "src", "routes") },
+      {
+        mountPath: "/docs",
+        routesDir: path.join(TEMP_DIR, "src", "routes"),
+        contentDir: path.join(TEMP_DIR, "content", "docs"),
+        exclude: ["/about"],
+      },
     ]);
-    const locs = [...xml.matchAll(/<loc>(.+?)<\/loc>/g)].map((match) => match[1]);
-    expect(locs).toEqual([
-      "https://jfa.dev/sitemap.xml",
-      "https://jfa.dev/opengraph/sitemap.xml",
-      "https://jfa.dev/keweke/sitemap.xml",
+    expect(paths).toEqual([
+      "/",
+      "/about",
+      "/docs",
+      "/docs/keweke",
+      "/docs/keweke/lists/create-a-list",
     ]);
   });
 });
 
 describe("buildRobotsTxt", () => {
-  test("allows all agents and points at the sitemap index", () => {
+  test("allows all agents and points at the canonical sitemap", () => {
     const txt = buildRobotsTxt("https://jfa.dev");
     expect(txt).toContain("User-agent: *");
     expect(txt).toContain("Disallow:");
-    expect(txt).toContain("Sitemap: https://jfa.dev/sitemap_index.xml");
-  });
-
-  test("points at the app sitemap when provided", () => {
-    const txt = buildRobotsTxt("https://jfa.dev", {
-      sitemap: "https://jfa.dev/keweke/sitemap.xml",
-    });
-    expect(txt).toContain("Sitemap: https://jfa.dev/keweke/sitemap.xml");
+    expect(txt).toContain("Sitemap: https://jfa.dev/sitemap.xml");
   });
 
   test("emits one Disallow line per disallowed path", () => {

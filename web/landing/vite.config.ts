@@ -30,9 +30,7 @@ export default defineConfig({
       description: "personal webpage",
       pwa: true,
     }),
-    sitemap({
-      sitemapIndex: ["/opengraph/", "/hyperscaler-services/", "/keweke/", "/branding/", "/docs/"],
-    }),
+    sitemap(),
   ],
   resolve: {
     alias: {

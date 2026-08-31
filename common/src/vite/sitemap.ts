@@ -1,12 +1,13 @@
 import path from "node:path";
 
 import {
-  buildPaths,
+  buildMountedPaths,
   buildRobotsTxt,
-  buildSitemapIndex,
   buildUrlset,
   toMountPath,
 } from "./sitemap-internal.ts";
+
+import { webPackages } from "../web-packages.ts";
 
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
@@ -15,13 +16,10 @@ import type { Plugin } from "vite";
 /**
  * Shared sitemap generator for mounted workers.
  *
- * Discovers static routes by scanning the app's TanStack file-based route
- * directory for `createFileRoute("<path>")` literals at build time, then emits
- * a `sitemap.xml` at the app's mount path (derived from the Vite `base`).
- * Dynamic routes (`$param`, `$` splat) and API routes are excluded. The app
- * mounted at `/` can additionally emit a `sitemap_index.xml` referencing every
- * mounted worker's sitemap plus a `robots.txt` pointing at the index. Serves
- * all generated files in dev/preview servers.
+ * Discovers static routes for every package in the shared mounted-package
+ * registry, then emits the same complete `sitemap.xml` from every worker.
+ * Dynamic routes (`$param`, `$` splat) and API routes are excluded. Serves the
+ * generated sitemap and robots.txt in dev/preview servers.
  */
 
 /** Check that mirrors `z.url()`: the value must parse as an absolute URL. */
@@ -34,30 +32,10 @@ const sitemapOptionsSchema = Schema.Struct({
   origin: Schema.String.check(isHttpUrl).pipe(
     Schema.withDecodingDefaultKey(Effect.succeed("https://jfa.dev")),
   ),
-  /**
-   * Route path prefixes to exclude from the sitemap, e.g. ["/admin"].
-   * Matches the path exactly or as a directory prefix.
-   */
-  exclude: Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
-  /** Extra explicit paths (mount-relative, with leading slash) to include. */
-  include: Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
-  /**
-   * Directory (relative to the app root) of MDX/MD pages whose files map to
-   * additional paths, e.g. "content/docs" where `keweke/index.mdx` becomes
-   * `/keweke` and `keweke/lists/create-a-list.mdx` becomes
-   * `/keweke/lists/create-a-list`.
-   */
-  contentDir: Schema.optional(Schema.String),
-  /**
-   * Sibling mount paths to reference from a `sitemap_index.xml`. When set,
-   * the plugin also emits `sitemap_index.xml` and a `robots.txt` pointing at
-   * it. Only meaningful for the app mounted at `/`.
-   */
-  sitemapIndex: Schema.optional(Schema.Array(Schema.String)),
   /** Emits `robots.txt` alongside the sitemap. Defaults to true. */
-  robots: Schema.Boolean.pipe(Schema.withDecodingDefaultKey(Effect.succeed(true))),
-  /** Paths to disallow in the generated `robots.txt`, e.g. ["/user"]. */
-  disallow: Schema.Array(Schema.String).pipe(Schema.withDecodingDefaultKey(Effect.succeed([]))),
+  robots: Schema.Boolean.pipe(
+    Schema.withDecodingDefaultKey(Effect.succeed(true)),
+  ),
 });
 
 export type SitemapOptions = Schema.Codec.Encoded<typeof sitemapOptionsSchema>;
@@ -65,39 +43,51 @@ export type SitemapOptions = Schema.Codec.Encoded<typeof sitemapOptionsSchema>;
 /** The generated sitemap artifacts for a single app. */
 type SitemapFiles = {
   sitemap: string;
-  index?: string;
   robots?: string;
 };
 
 /**
- * Vite plugin that generates `sitemap.xml` for a mounted worker from its
- * TanStack file routes (plus optional MDX content pages), and optionally a
- * root `sitemap_index.xml` and `robots.txt`.
+ * Vite plugin that generates the shared `sitemap.xml` and `robots.txt` for a
+ * mounted worker.
  *
- * @param options - Sitemap options (origin, exclude, include, contentDir, sitemapIndex).
- * @returns Vite plugin emitting `sitemap.xml` (and optionally the index files) at the mount path.
+ * @param options - Sitemap origin and robots.txt options.
+ * @returns Vite plugin emitting `sitemap.xml` and optionally `robots.txt` at the mount path.
  */
 export function sitemap(options: SitemapOptions = {}): Plugin {
-  const { origin, exclude, include, contentDir, sitemapIndex, robots, disallow } =
+  const { origin, robots } =
     Schema.decodeUnknownSync(sitemapOptionsSchema)(options);
 
   let mountPath = "/";
-  let routesDir = "";
-  let resolvedContentDir: string | undefined;
+  let webRoot = "";
 
   const build = (): SitemapFiles => {
-    const paths = buildPaths(routesDir, resolvedContentDir, exclude, include);
+    const paths = buildMountedPaths(
+      webPackages.map((webPackage) => {
+        const directory =
+          webPackage.path === "/" ? "landing" : webPackage.path.slice(1);
+        const packageRoot = path.resolve(webRoot, directory);
+        return {
+          mountPath: webPackage.path,
+          routesDir: path.resolve(packageRoot, "src", "routes"),
+          contentDir: webPackage.sitemapContentDir
+            ? path.resolve(packageRoot, webPackage.sitemapContentDir)
+            : undefined,
+          exclude: webPackage.sitemapExclude,
+        };
+      }),
+    );
     const result: SitemapFiles = {
-      sitemap: buildUrlset(origin, mountPath, paths),
+      sitemap: buildUrlset(origin, "/", paths),
     };
-    if (sitemapIndex) {
-      result.index = buildSitemapIndex(origin, mountPath, sitemapIndex);
-    }
     if (robots) {
-      result.robots = buildRobotsTxt(
-        origin,
-        sitemapIndex ? undefined : { disallow, sitemap: `${origin}${mountPath}sitemap.xml` },
+      const disallow = webPackages.flatMap((webPackage) =>
+        (webPackage.robotsDisallow ?? []).map((routePath) =>
+          webPackage.path === "/"
+            ? routePath
+            : `${webPackage.path}${routePath}`,
+        ),
       );
+      result.robots = buildRobotsTxt(origin, { disallow });
     }
     return result;
   };
@@ -112,17 +102,18 @@ export function sitemap(options: SitemapOptions = {}): Plugin {
   ): void => {
     const generated = build();
     const files: Array<[string, string, string]> = [
-      [`${mountPath}sitemap.xml`, "application/xml; charset=utf-8", generated.sitemap],
-    ];
-    if (generated.index) {
-      files.push([
-        `${mountPath}sitemap_index.xml`,
+      [
+        `${mountPath}sitemap.xml`,
         "application/xml; charset=utf-8",
-        generated.index,
-      ]);
-    }
+        generated.sitemap,
+      ],
+    ];
     if (generated.robots) {
-      files.push([`${mountPath}robots.txt`, "text/plain; charset=utf-8", generated.robots]);
+      files.push([
+        `${mountPath}robots.txt`,
+        "text/plain; charset=utf-8",
+        generated.robots,
+      ]);
     }
     for (const [file, contentType, body] of files) {
       if (pathname === file) {
@@ -138,8 +129,7 @@ export function sitemap(options: SitemapOptions = {}): Plugin {
     name: "jfa-dev:sitemap",
     configResolved(config) {
       mountPath = toMountPath(config.base);
-      routesDir = path.resolve(config.root, "src", "routes");
-      resolvedContentDir = contentDir ? path.resolve(config.root, contentDir) : undefined;
+      webRoot = path.resolve(config.root, "..");
     },
     generateBundle() {
       const generated = build();
@@ -148,13 +138,6 @@ export function sitemap(options: SitemapOptions = {}): Plugin {
         fileName: "sitemap.xml",
         source: generated.sitemap,
       });
-      if (generated.index) {
-        this.emitFile({
-          type: "asset",
-          fileName: "sitemap_index.xml",
-          source: generated.index,
-        });
-      }
       if (generated.robots) {
         this.emitFile({
           type: "asset",

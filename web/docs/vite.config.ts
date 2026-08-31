@@ -27,7 +27,7 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact({ compiler: true }),
-    sitemap({ contentDir: "content/docs" }),
+    sitemap(),
     siteMeta({
       title: "DOCS by JFA",
       description: "The Knowledge Base for the JFA's apps",

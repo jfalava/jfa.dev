@@ -14,6 +14,12 @@ export interface WebPackage {
   title: string;
   /** Routes mounted under the package with their header titles. */
   routes: WebPackageRoute[];
+  /** Mount-relative route prefixes omitted from the shared sitemap. */
+  sitemapExclude?: string[];
+  /** Directory of content pages, relative to the package root. */
+  sitemapContentDir?: string;
+  /** Mount-relative paths disallowed by the shared robots.txt. */
+  robotsDisallow?: string[];
 }
 
 /**
@@ -40,6 +46,8 @@ export const webPackages: WebPackage[] = [
   {
     path: "/keweke",
     title: "KEWEKE",
+    sitemapExclude: ["/admin"],
+    robotsDisallow: ["/user"],
     routes: [
       { path: "/", title: "Yet another collaborative shopping list" },
       { path: "/:listId", title: "List · KEWEKE" },
@@ -50,6 +58,7 @@ export const webPackages: WebPackage[] = [
   {
     path: "/docs",
     title: "DOCS",
+    sitemapContentDir: "content/docs",
     routes: [{ path: "/", title: "The Knowledge Base" }],
   },
   {
