@@ -238,6 +238,7 @@
         "@tanstack/router-plugin": "catalog:tanstack",
         "class-variance-authority": "catalog:styling",
         "clsx": "catalog:styling",
+        "effect": "catalog:iac",
         "lucide-react": "catalog:ui",
         "ogl": "1.0.11",
         "react": "catalog:react",

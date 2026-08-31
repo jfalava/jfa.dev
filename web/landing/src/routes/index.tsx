@@ -5,10 +5,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ThemeToggle } from "@/components/theme-toggle";
 import Grainient from "@/features/hero/components/grainient";
 import TextPressure from "@/features/hero/components/text-pressure";
+import { RepoLinks } from "@/features/links/components/repo-links";
+import { getRepositoryLinks } from "@/features/links/links";
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({
+  loader: () => getRepositoryLinks(),
+  component: App,
+});
 
 function App() {
+  const repositories = Route.useLoaderData();
+
   return (
     <div className="flex h-dvh min-h-svh flex-col">
       <SiteHeader
@@ -46,6 +53,9 @@ function App() {
               className="cursor-default font-sans leading-[0.95] font-medium tracking-tight drop-shadow-none select-none text-shadow-none"
             />
           </div>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center px-4 pb-5 sm:px-6 sm:pb-8">
+          <RepoLinks repositories={repositories} />
         </div>
       </main>
     </div>
