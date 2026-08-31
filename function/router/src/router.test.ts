@@ -70,6 +70,10 @@ describe("router configuration", () => {
       route: routes[0],
       mount: "/",
     });
+    expect(findMatchingRoute("/github.svg", routes, ["/github.svg"])).toEqual({
+      route: routes[0],
+      mount: "/",
+    });
     expect(findMatchingRoute("/wp-admin.php", routes, ["/assets/"])).toBeNull();
   });
 

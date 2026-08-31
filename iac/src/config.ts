@@ -82,6 +82,7 @@ const routeDefinitions = {
 const assetPrefixes = [
   "/assets/",
   "/icons/",
+  "/github.svg",
   "/manifest.json",
   "/sitemap.xml",
   "/theme-init.js",
