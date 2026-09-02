@@ -1,6 +1,7 @@
 import { Button, Kbd, KbdGroup } from "@jfa.dev/common/ui";
 import { Inbox } from "lucide-react";
 
+import { DocsLink } from "./docs-link";
 import { PreviewShell } from "./preview-shell";
 
 export function EmptyListsPreview() {
@@ -22,6 +23,11 @@ export function EmptyListsPreview() {
           <div>
             <h2 className="text-lg font-semibold tracking-tight">No lists yet</h2>
             <p className="mt-1 text-sm text-muted-foreground">Create one when you need it.</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              <DocsLink className="align-baseline" href="/docs/keweke/lists/create-a-list">
+                Create a list
+              </DocsLink>
+            </p>
           </div>
           <Button
             aria-label="Create new list"

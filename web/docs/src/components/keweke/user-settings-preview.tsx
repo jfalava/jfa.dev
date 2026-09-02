@@ -9,6 +9,7 @@ import {
 } from "@jfa.dev/common/ui";
 import { blobatarUri } from "blobatar/uri";
 
+import { DocsLink } from "./docs-link";
 import { PreviewShell } from "./preview-shell";
 
 /**
@@ -192,6 +193,13 @@ export function UserSettingsPreview({
             <h1 className="mt-1 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
               User settings
             </h1>
+            <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <DocsLink href="/docs/keweke/users">Users</DocsLink>
+              <span aria-hidden="true" className="text-[10px] text-muted-foreground/50">
+                ·
+              </span>
+              <DocsLink href="/docs/keweke/architecture/identity">Identity</DocsLink>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="min-w-0 sm:text-right">

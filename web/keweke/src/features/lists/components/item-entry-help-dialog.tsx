@@ -2,7 +2,9 @@ import { Button } from "@jfa.dev/common/ui";
 import type { ReactNode } from "react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 
+import { DocsLink } from "@/app/components/docs-link";
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+import { kewekeDocs } from "@/app/lib/docs-paths";
 
 interface ItemEntryHelpDialogProps {
   isOpen: boolean;
@@ -108,7 +110,8 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 border-t border-border px-4 py-3">
+          <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3">
+            <DocsLink href={kewekeDocs.workingWithList}>Working with the list</DocsLink>
             <Button onPress={() => onOpenChange(false)}>Got it</Button>
           </div>
         </Dialog>

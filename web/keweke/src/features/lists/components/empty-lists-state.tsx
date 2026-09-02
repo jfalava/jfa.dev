@@ -1,8 +1,10 @@
 import { Button } from "@jfa.dev/common/ui";
 import { Inbox } from "lucide-react";
 
+import { DocsLink } from "@/app/components/docs-link";
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 import { NEW_LIST_HOTKEY } from "@/app/components/keweke-header";
+import { kewekeDocs } from "@/app/lib/docs-paths";
 
 export function EmptyListsState({
   isCreating,
@@ -17,6 +19,11 @@ export function EmptyListsState({
       <div>
         <h2 className="text-lg font-semibold tracking-tight">No lists yet</h2>
         <p className="mt-1 text-sm text-muted-foreground">Create one when you need it.</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          <DocsLink className="align-baseline" href={kewekeDocs.createList}>
+            Create a list
+          </DocsLink>
+        </p>
       </div>
       <Button
         className="flex h-11 w-full gap-x-3 text-base sm:w-auto sm:px-8"

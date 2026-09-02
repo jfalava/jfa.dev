@@ -3,6 +3,7 @@ import { Check, CloudUpload, Copy } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
 
+import { DocsLink } from "./docs-link";
 import { PreviewShell } from "./preview-shell";
 
 export function PublishButtonPreview() {
@@ -155,7 +156,10 @@ export function PublishDialogPreview() {
         <div className="space-y-5 p-4">
           <p className="text-sm leading-6 text-muted-foreground">
             Publishing this list will make it public and accessible online. Anyone with its ID or
-            alias can open it.
+            alias can open it.{" "}
+            <DocsLink className="align-baseline" href="/docs/keweke/lists/publishing-a-list">
+              Publishing a list
+            </DocsLink>
           </p>
           <div className="space-y-2 border bg-muted/40 p-3 text-[11px]">
             <p className="tracking-widest text-muted-foreground uppercase">public addresses</p>

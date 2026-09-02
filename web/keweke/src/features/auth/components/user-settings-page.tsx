@@ -1,6 +1,8 @@
 import { Blobatar } from "blobatar/react";
 
+import { DocsLink } from "@/app/components/docs-link";
 import { KewekeHeader } from "@/app/components/keweke-header";
+import { kewekeDocs } from "@/app/lib/docs-paths";
 import { useUserManager } from "@/features/auth/hooks/use-user-manager";
 
 import { userAvatarSeed } from "../lib/blobatar";
@@ -22,6 +24,17 @@ export function UserSettingsPage() {
               <h1 className="mt-1 font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
                 User settings
               </h1>
+              <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+                <DocsLink href={kewekeDocs.users}>Users</DocsLink>
+                <span aria-hidden="true" className="text-[10px] text-muted-foreground/50">
+                  ·
+                </span>
+                <DocsLink href={kewekeDocs.identity}>Identity</DocsLink>
+                <span aria-hidden="true" className="text-[10px] text-muted-foreground/50">
+                  ·
+                </span>
+                <DocsLink href={kewekeDocs.whatYouSee}>What you see</DocsLink>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="min-w-0 sm:text-right">

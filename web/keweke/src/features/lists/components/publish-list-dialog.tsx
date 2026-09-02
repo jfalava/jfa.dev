@@ -2,6 +2,9 @@ import { Button } from "@jfa.dev/common/ui";
 import { RefreshCw } from "lucide-react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 
+import { DocsLink } from "@/app/components/docs-link";
+import { kewekeDocs } from "@/app/lib/docs-paths";
+
 interface PublishListDialogProps {
   alias: string | null;
   isOpen: boolean;
@@ -52,7 +55,10 @@ export function PublishListDialog({
           <div className="space-y-5 p-4">
             <p className="text-sm leading-6 text-muted-foreground">
               Publishing this list will make it public and accessible online. Anyone with its ID or
-              alias can open it.
+              alias can open it.{" "}
+              <DocsLink className="align-baseline" href={kewekeDocs.publishList}>
+                Publishing a list
+              </DocsLink>
             </p>
 
             <div className="space-y-2 border border-border bg-muted/40 p-3 text-[11px]">
