@@ -22,12 +22,11 @@
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/react-table": "catalog:tanstack",
     "class-variance-authority": "catalog:styling",
-    "clsx": "catalog:styling",
+    "cn": "catalog:styling",
     "effect": "catalog:iac",
     "lucide-react": "catalog:ui",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "tailwind-merge": "catalog:styling",
     "tailwindcss": "catalog:styling",
     "tw-animate-css": "catalog:styling"
   },

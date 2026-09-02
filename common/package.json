@@ -116,7 +116,7 @@
     "@fontsource/ibm-plex-sans": "catalog:fonts",
     "@fontsource/zilla-slab": "catalog:fonts",
     "class-variance-authority": "catalog:styling",
-    "clsx": "catalog:styling",
+    "cn": "catalog:styling",
     "effect": "catalog:iac",
     "js-cookie": "3.0.8",
     "lucide-react": "catalog:ui",
@@ -125,8 +125,7 @@
     "react-colorful": "^5.6.1",
     "react-dom": "catalog:react",
     "react-resizable-panels": "catalog:ui",
-    "sonner": "catalog:ui",
-    "tailwind-merge": "catalog:styling"
+    "sonner": "catalog:ui"
   },
   "devDependencies": {
     "@types/js-cookie": "3.0.6",

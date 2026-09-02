@@ -58,7 +58,7 @@ export default defineConfig({
     sortTailwindcss: {
       stylesheet: "./src/styles.css",
       attributes: ["class", "className"],
-      functions: ["clsx", "cn", "cva", "twMerge"],
+      functions: ["cn", "cva"],
       preserveDuplicates: false,
       preserveWhitespace: false,
     },

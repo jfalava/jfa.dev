@@ -24,7 +24,7 @@
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/react-table": "catalog:tanstack",
-    "blobatar": "2.5.0",
+    "blobatar": "catalog:ui",
     "class-variance-authority": "catalog:styling",
     "effect": "catalog:iac",
     "fuse.js": "catalog:backend",

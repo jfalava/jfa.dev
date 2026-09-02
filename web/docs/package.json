@@ -19,7 +19,7 @@
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/router-plugin": "catalog:tanstack",
-    "blobatar": "2.5.0",
+    "blobatar": "catalog:ui",
     "fumadocs-core": "16.15.4",
     "fumadocs-mdx": "15.4.0",
     "fumadocs-ui": "16.15.4",
