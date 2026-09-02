@@ -56,9 +56,11 @@ import {
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { Pressable } from "react-aria-components";
 
+import { DocsLink } from "@/components/docs-link";
 import { EditorCanvas, type EditorCanvasHandle } from "@/components/editor-canvas";
 import { EditorTabsBar } from "@/components/editor-tabs";
 import { ShortcutGuide } from "@/components/shortcut-guide";
+import { opengraphDocs } from "@/lib/docs-paths";
 import { editorCanvasRef } from "@/editor/canvas-ref";
 import { registerFontFile, registerStoredFont } from "@/editor/fonts";
 import {
@@ -1077,11 +1079,13 @@ function LayersPanel({
           ))
         )}
       </div>
-      <div className="flex items-center justify-between border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
-        <span>{project.layers.length} layers</span>
-        <span>
-          {project.width} × {project.height}
+      <div className="flex items-center justify-between gap-2 border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
+        <span className="shrink-0">
+          {project.layers.length} layers · {project.width} × {project.height}
         </span>
+        <DocsLink className="shrink-0" href={opengraphDocs.layers} variant="info">
+          Layers
+        </DocsLink>
       </div>
     </aside>
   );
@@ -1567,6 +1571,9 @@ function TextProperties({
           <p className="text-[10px] leading-relaxed text-muted-foreground">
             Variable WOFF2 fonts are recommended because one file can cover multiple weights.
           </p>
+          <DocsLink href={opengraphDocs.fonts} variant="info">
+            Fonts
+          </DocsLink>
           {fontFile !== null ? (
             <div className="space-y-2 border-t border-border pt-2">
               <p className="truncate text-[10px] font-medium" title={fontFile.name}>

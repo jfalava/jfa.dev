@@ -4,12 +4,13 @@ import {
   Button,
   DropdownMenu,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
   Kbd,
   SiteHeader,
 } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
-import { Download, FileDown, FileUp, Keyboard } from "lucide-react";
+import { ArrowUpRight, Download, FileDown, FileUp, Info, Keyboard } from "lucide-react";
 import { useRef, useState, type ChangeEvent } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -24,6 +25,7 @@ import { registerStoredFont } from "@/editor/fonts";
 import type { FontMeta } from "@/editor/model";
 import { loadFont as loadStoredFont } from "@/editor/storage";
 import { useEditorStore } from "@/editor/store";
+import { opengraphDocs } from "@/lib/docs-paths";
 import { appPath } from "@/lib/site-paths";
 
 async function registerProjectFonts(fonts: readonly FontMeta[]): Promise<number> {
@@ -165,7 +167,7 @@ export function OpengraphHeader() {
               <FileDown />
               <span className="hidden sm:inline">Export</span>
             </Button>
-            <DropdownMenu>
+            <DropdownMenu className="min-w-52">
               <DropdownMenuItem onAction={() => void handleExportZip()} textValue="Export ZIP">
                 <FileDown />
                 Export ZIP (.ogproj)
@@ -173,6 +175,20 @@ export function OpengraphHeader() {
               <DropdownMenuItem onAction={() => void handleExportPng()} textValue="Export PNG">
                 <Download />
                 Export PNG
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-muted-foreground"
+                href={opengraphDocs.projectsArchive}
+                rel="noopener noreferrer"
+                target="_blank"
+                textValue="What gets saved"
+              >
+                <Info aria-hidden="true" className="size-3.5 stroke-[1.5]" />
+                <span className="font-mono text-[10px] tracking-[0.08em] uppercase">
+                  What gets saved
+                </span>
+                <ArrowUpRight aria-hidden="true" className="ml-auto size-3 opacity-70" />
               </DropdownMenuItem>
             </DropdownMenu>
           </DropdownMenuTrigger>

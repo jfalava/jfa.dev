@@ -1,7 +1,9 @@
 import { Button } from "@jfa.dev/common/ui";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 
+import { DocsLink } from "@/components/docs-link";
 import { HotkeyKbd } from "@/components/hotkey-kbd";
+import { opengraphDocs } from "@/lib/docs-paths";
 import { CATEGORY_ORDER, SHORTCUT_BY_CATEGORY, type PhotoshopShortcut } from "@/editor/keymap";
 
 interface ShortcutGuideProps {
@@ -69,8 +71,9 @@ export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 border-t border-border bg-muted/20 px-5 py-3">
-            <Button onPress={() => onOpenChange(false)}>Got it</Button>
+          <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/20 px-5 py-3">
+            <DocsLink href={opengraphDocs.shortcuts}>Full shortcuts manual</DocsLink>
+            <Button onPress={() => onOpenChange(false)} variant="outline">Got it</Button>
           </div>
         </Dialog>
       </Modal>

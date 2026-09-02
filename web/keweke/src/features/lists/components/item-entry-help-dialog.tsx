@@ -120,7 +120,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
                 Spreadsheet mode
               </DocsLink>
             </div>
-            <Button onPress={() => onOpenChange(false)}>Got it</Button>
+            <Button onPress={() => onOpenChange(false)} variant="outline">Got it</Button>
           </div>
         </Dialog>
       </Modal>
