@@ -20,6 +20,7 @@ describe("opengraphDocsPath", () => {
     expect(opengraphDocs.projectsArchive).toBe("/docs/opengraph/projects#ogproj-archives");
     expect(opengraphDocs.fonts).toBe("/docs/opengraph/fonts");
     expect(opengraphDocs.layers).toBe("/docs/opengraph/layers");
+    expect(opengraphDocs.graphics).toBe("/docs/opengraph/shapes-images");
   });
 
   test("preserves hash anchors on nested paths", () => {

@@ -14,7 +14,8 @@ export const opengraphDocs = {
   tools: opengraphDocsPath("tools"),
   layers: opengraphDocsPath("layers"),
   text: opengraphDocsPath("text"),
-  shapesImages: opengraphDocsPath("shapes-images"),
+  /** Shapes & images docs page (rectangles, ellipses, local images). */
+  graphics: opengraphDocsPath("shapes-images"),
   fonts: opengraphDocsPath("fonts"),
   projects: opengraphDocsPath("projects"),
   /** Projects page — portable archives section. */
