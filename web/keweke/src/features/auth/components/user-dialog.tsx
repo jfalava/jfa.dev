@@ -111,28 +111,19 @@ export function UserDialog({
         className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
       >
         <div className="shrink-0 border-b border-border px-4 py-4">
-          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
-            <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-                device identity
-              </p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h3
-                className="text-[11px] font-normal text-muted-foreground/75"
-                id="create-user-heading"
-              >
-                Identify yourself
-              </h3>
-            </div>
-            <div className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-1">
-              <DocsLink href={kewekeDocs.users}>Users</DocsLink>
-              <span aria-hidden="true" className="text-[10px] text-muted-foreground/50">
-                ·
-              </span>
-              <DocsLink href={kewekeDocs.identity}>Identity</DocsLink>
-            </div>
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
+            <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
+              device identity
+            </p>
+            <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+              /
+            </span>
+            <h3
+              className="text-[11px] font-normal text-muted-foreground/75"
+              id="create-user-heading"
+            >
+              Identify yourself
+            </h3>
           </div>
         </div>
 
@@ -180,10 +171,9 @@ export function UserDialog({
               </div>
               <FeedbackMessage feedback={feedback} section="username" />
             </form>
-            <p className="text-xs text-muted-foreground">
-              How names work:{" "}
-              <DocsLink className="align-baseline" href={kewekeDocs.createUser}>
-                Create a user
+            <p className="flex">
+              <DocsLink href={kewekeDocs.createUser} variant="info">
+                How names work
               </DocsLink>
             </p>
           </section>
@@ -207,11 +197,12 @@ export function UserDialog({
               </div>
               <p className="text-sm text-muted-foreground">
                 Already have a user on another browser? Connect this one with a passkey or a pairing
-                code. See{" "}
-                <DocsLink className="align-baseline" href={kewekeDocs.identity}>
-                  Identity
-                </DocsLink>{" "}
-                for how pairing works.
+                code.
+              </p>
+              <p className="flex">
+                <DocsLink href={kewekeDocs.identity} variant="info">
+                  How pairing works
+                </DocsLink>
               </p>
               <div className="flex flex-col items-stretch gap-3">
                 {passkeyAvailable ? (

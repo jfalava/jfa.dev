@@ -111,7 +111,15 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
           </div>
 
           <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3">
-            <DocsLink href={kewekeDocs.workingWithList}>Working with the list</DocsLink>
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+              <DocsLink href={kewekeDocs.workingWithList}>Working with the list</DocsLink>
+              <span aria-hidden="true" className="hidden text-[10px] text-muted-foreground/50 sm:inline">
+                ·
+              </span>
+              <DocsLink className="hidden sm:inline-flex" href={kewekeDocs.workingWithListSpreadsheet}>
+                Spreadsheet mode
+              </DocsLink>
+            </div>
             <Button onPress={() => onOpenChange(false)}>Got it</Button>
           </div>
         </Dialog>

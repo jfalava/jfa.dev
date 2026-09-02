@@ -92,15 +92,29 @@ function PublishNudgeTooltip({
   }
 
   return createPortal(
-    <button
-      className={`${NUDGE_TOOLTIP_CLASSES} block cursor-pointer text-left`}
+    <div
+      className={NUDGE_TOOLTIP_CLASSES}
       id="preview-publish-nudge"
-      onClick={onDismiss}
+      role="tooltip"
       style={{ top: pos.top, right: pos.right }}
-      type="button"
     >
-      You can now publish this list to access it from anywhere.
-    </button>,
+      <button
+        aria-label="Dismiss publish tip"
+        className="block w-full cursor-pointer text-left"
+        onClick={onDismiss}
+        type="button"
+      >
+        You can now publish this list to access it from anywhere.
+      </button>
+      <div className="mt-2 border-t border-border pt-2">
+        <DocsLink
+          href="/docs/keweke/lists/publishing-a-list#the-dialog--what-you-are-making-public"
+          variant="info"
+        >
+          Learn more
+        </DocsLink>
+      </div>
+    </div>,
     document.body,
   );
 }
@@ -157,7 +171,7 @@ export function PublishDialogPreview() {
           <p className="text-sm leading-6 text-muted-foreground">
             Publishing this list will make it public and accessible online. Anyone with its ID or
             alias can open it.{" "}
-            <DocsLink className="align-baseline" href="/docs/keweke/lists/publishing-a-list">
+            <DocsLink className="align-baseline" href="/docs/keweke/lists/publishing-a-list#the-dialog--what-you-are-making-public">
               Publishing a list
             </DocsLink>
           </p>

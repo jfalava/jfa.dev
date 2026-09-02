@@ -19,23 +19,14 @@ export function UserDialogPreview() {
     <PreviewShell>
       <div className="flex flex-col rounded-lg border bg-popover text-popover-foreground">
         <div className="border-b px-4 py-4">
-          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
-            <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-                device identity
-              </p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h3 className="text-[11px] font-normal text-muted-foreground/75">Identify yourself</h3>
-            </div>
-            <div className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-1">
-              <DocsLink href="/docs/keweke/users">Users</DocsLink>
-              <span aria-hidden="true" className="text-[10px] text-muted-foreground/50">
-                ·
-              </span>
-              <DocsLink href="/docs/keweke/architecture/identity">Identity</DocsLink>
-            </div>
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
+            <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
+              device identity
+            </p>
+            <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
+              /
+            </span>
+            <h3 className="text-[11px] font-normal text-muted-foreground/75">Identify yourself</h3>
           </div>
         </div>
         <div className="space-y-5 p-4">
@@ -63,10 +54,9 @@ export function UserDialogPreview() {
               </div>
               <Button className="h-10 min-w-24 px-5 text-sm">Create</Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              How names work:{" "}
-              <DocsLink className="align-baseline" href="/docs/keweke/users/create-a-user">
-                Create a user
+            <p className="flex">
+              <DocsLink href="/docs/keweke/users/create-a-user" variant="info">
+                How names work
               </DocsLink>
             </p>
           </section>
@@ -86,11 +76,12 @@ export function UserDialogPreview() {
             </div>
             <p className="text-sm text-muted-foreground">
               Already have a user on another browser? Connect this one with a passkey or a pairing
-              code. See{" "}
-              <DocsLink className="align-baseline" href="/docs/keweke/architecture/identity">
-                Identity
-              </DocsLink>{" "}
-              for how pairing works.
+              code.
+            </p>
+            <p className="flex">
+              <DocsLink href="/docs/keweke/architecture/identity" variant="info">
+                How pairing works
+              </DocsLink>
             </p>
             <div className="flex flex-col items-stretch gap-3">
               <Button className="h-10 gap-1.5 px-5 text-sm">Pair with passkey</Button>

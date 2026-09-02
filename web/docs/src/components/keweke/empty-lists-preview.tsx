@@ -23,9 +23,9 @@ export function EmptyListsPreview() {
           <div>
             <h2 className="text-lg font-semibold tracking-tight">No lists yet</h2>
             <p className="mt-1 text-sm text-muted-foreground">Create one when you need it.</p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              <DocsLink className="align-baseline" href="/docs/keweke/lists/create-a-list">
-                Create a list
+            <p className="mt-3 flex justify-center">
+              <DocsLink href="/docs/keweke/lists/create-a-list" variant="info">
+                How lists work
               </DocsLink>
             </p>
           </div>

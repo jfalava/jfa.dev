@@ -6,8 +6,10 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Check, CloudUpload, Copy, Plus, UserRound } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
+import { DocsLink } from "@/app/components/docs-link";
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 import { ThemeToggle } from "@/app/components/theme-toggle";
+import { kewekeDocs } from "@/app/lib/docs-paths";
 import { appPath } from "@/app/lib/site-paths";
 import { UserDialog } from "@/features/auth/components/user-dialog";
 import { OpenListCommand } from "@/features/lists/components/open-list-command";
@@ -169,6 +171,11 @@ export function KewekeHeader({
               >
                 You can now publish this list to access it from anywhere.
               </button>
+              <div className="mt-2 border-t border-border pt-2">
+                <DocsLink href={kewekeDocs.publishListDialog} variant="info">
+                  Learn more
+                </DocsLink>
+              </div>
             </div>
           ) : null}
         </div>

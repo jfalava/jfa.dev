@@ -24,16 +24,10 @@ export function UserSettingsPage() {
               <h1 className="mt-1 font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
                 User settings
               </h1>
-              <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
-                <DocsLink href={kewekeDocs.users}>Users</DocsLink>
-                <span aria-hidden="true" className="text-[10px] text-muted-foreground/50">
-                  ·
-                </span>
-                <DocsLink href={kewekeDocs.identity}>Identity</DocsLink>
-                <span aria-hidden="true" className="text-[10px] text-muted-foreground/50">
-                  ·
-                </span>
-                <DocsLink href={kewekeDocs.whatYouSee}>What you see</DocsLink>
+              <div className="mt-3">
+                <DocsLink href={kewekeDocs.users} variant="info">
+                  How identity works
+                </DocsLink>
               </div>
             </div>
             <div className="flex items-center gap-4">
