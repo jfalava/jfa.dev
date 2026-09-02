@@ -18,5 +18,25 @@
       "en": "Governance enforcement for compliance standards",
       "es": "Aplicación de gobernanza para estándares de cumplimiento"
     }
+  },
+  {
+    "category": "governance",
+    "categoryName": {
+      "en": "Governance",
+      "es": "Gobernanza"
+    },
+    "aws": "AWS Config",
+    "awsUrl": "https://aws.amazon.com/config/",
+    "azure": "Azure Resource Graph / Policy Compliance",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/governance/policy/overview",
+    "gcp": "Asset Inventory / Policy Analyzer",
+    "gcpUrl": "https://cloud.google.com/asset-inventory/docs/overview",
+    "oracle": "Cloud Guard Config",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/cloud-guard/home.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Resource compliance and configuration auditing",
+      "es": "Auditoría de cumplimiento y configuración de recursos"
+    }
   }
 ]

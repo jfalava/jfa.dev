@@ -246,5 +246,106 @@
       "en": "Cloud security posture management",
       "es": "Gestión de postura de seguridad en la nube"
     }
+  },
+  {
+    "category": "security",
+    "categoryName": {
+      "en": "Security & Identity",
+      "es": "Seguridad e Identidad"
+    },
+    "aws": "Certificate Manager",
+    "awsUrl": "https://aws.amazon.com/certificate-manager/",
+    "azure": "Key Vault Certificates",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/key-vault/certificates/about-certificates",
+    "gcp": "Certificate Manager",
+    "gcpUrl": "https://cloud.google.com/certificate-manager/docs/overview",
+    "oracle": "Certificates",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/certificates/home.htm",
+    "cloudflare": "SSL / TLS",
+    "cloudflareUrl": "https://developers.cloudflare.com/ssl/",
+    "description": {
+      "en": "Managed SSL/TLS certificates",
+      "es": "Certificados SSL/TLS administrados"
+    }
+  },
+  {
+    "category": "security",
+    "categoryName": {
+      "en": "Security & Identity",
+      "es": "Seguridad e Identidad"
+    },
+    "aws": "Network ACL",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html",
+    "azure": "Network Security Group",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview",
+    "gcp": "VPC Firewall Rules",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/firewalls",
+    "oracle": "Security Lists",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Concepts/securitylists.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Subnet-level stateless traffic filtering",
+      "es": "Filtrado de tráfico sin estado a nivel de subred"
+    }
+  },
+  {
+    "category": "security",
+    "categoryName": {
+      "en": "Security & Identity",
+      "es": "Seguridad e Identidad"
+    },
+    "aws": "Private CA",
+    "awsUrl": "https://aws.amazon.com/private-ca/",
+    "azure": "Key Vault Managed HSM (Private CA)",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/key-vault/managed-hsm/overview",
+    "gcp": "Certificate Authority Service",
+    "gcpUrl": "https://cloud.google.com/certificate-authority-service/docs/overview",
+    "oracle": "OCI Certificates (Private CA)",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/certificates/home.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Managed private certificate authority",
+      "es": "Autoridad de certificación privada administrada"
+    }
+  },
+  {
+    "category": "security",
+    "categoryName": {
+      "en": "Security & Identity",
+      "es": "Seguridad e Identidad"
+    },
+    "aws": "GuardDuty",
+    "awsUrl": "https://aws.amazon.com/guardduty/",
+    "azure": "Defender for Cloud (Threat Protection)",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction",
+    "gcp": "Security Command Center (Threat Detection)",
+    "gcpUrl": "https://cloud.google.com/security-command-center/docs/concepts/threat-detection",
+    "oracle": "Cloud Guard (Threat Detector)",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/cloud-guard/home.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Intelligent threat detection",
+      "es": "Detección inteligente de amenazas"
+    }
+  },
+  {
+    "category": "security",
+    "categoryName": {
+      "en": "Security & Identity",
+      "es": "Seguridad e Identidad"
+    },
+    "aws": "Inspector",
+    "awsUrl": "https://aws.amazon.com/inspector/",
+    "azure": "Defender Vulnerability Management",
+    "azureUrl": "https://learn.microsoft.com/en-us/defender-vulnerability-management/",
+    "gcp": "Container Analysis / Artifact Analysis",
+    "gcpUrl": "https://cloud.google.com/artifact-analysis/docs/overview",
+    "oracle": "Vulnerability Scanning",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/vulnerability-scanning/home.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Automated vulnerability scanning",
+      "es": "Escaneo automatizado de vulnerabilidades"
+    }
   }
 ]

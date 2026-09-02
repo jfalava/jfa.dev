@@ -259,5 +259,24 @@
       "en": "Petabyte-scale data transport",
       "es": "Transporte de datos a escala de petabytes"
     }
+  },
+  {
+    "category": "storage",
+    "categoryName": {
+      "en": "Storage",
+      "es": "Almacenamiento"
+    },
+    "aws": "Storage Gateway",
+    "awsUrl": "https://aws.amazon.com/storagegateway/",
+    "azure": "Data Box Gateway",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/databox-gateway/overview",
+    "gcp": "—",
+    "oracle": "Storage Gateway",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/storage-gateway/home.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Hybrid storage gateway and cache",
+      "es": "Puerta de enlace de almacenamiento híbrido y caché"
+    }
   }
 ]

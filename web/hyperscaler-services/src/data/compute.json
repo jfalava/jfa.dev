@@ -199,5 +199,85 @@
       "en": "Interruptible capacity at discounted prices",
       "es": "Capacidad interrumpible a precios con descuento"
     }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "Amazon Machine Image (AMI)",
+    "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html",
+    "azure": "Managed Images / Azure Compute Gallery",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-machines/managed-images-overview",
+    "gcp": "Custom Images",
+    "gcpUrl": "https://cloud.google.com/compute/docs/images/create-custom-images",
+    "oracle": "Custom Images",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/managingcustomimages.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Pre-configured machine images for compute instances",
+      "es": "Imágenes de máquina preconfiguradas para instancias de cómputo"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "EC2 Instance Connect",
+    "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect.html",
+    "azure": "Serial Console / Run Command",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-machines/serial-console-overview",
+    "gcp": "Serial Console & OS Login",
+    "gcpUrl": "https://cloud.google.com/compute/docs/instances/interacting-with-serial-console",
+    "oracle": "Instance Console Connection",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/References/serialconsole.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Direct instance shell and serial console access",
+      "es": "Acceso directo a shell y consola serie de la instancia"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "Placement Groups",
+    "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html",
+    "azure": "Proximity Placement Groups",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-machines/co-location",
+    "gcp": "Compact Placement Policy",
+    "gcpUrl": "https://cloud.google.com/compute/docs/instances/placement-policies",
+    "oracle": "Cluster Networks",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/clusternetworks.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Low-latency instance placement control",
+      "es": "Control de colocación de instancias de baja latencia"
+    }
+  },
+  {
+    "category": "compute",
+    "categoryName": {
+      "en": "Compute",
+      "es": "Cómputo"
+    },
+    "aws": "Outposts",
+    "awsUrl": "https://aws.amazon.com/outposts/",
+    "azure": "Azure Stack Hub",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/azure-stack/hub/",
+    "gcp": "Distributed Cloud Edge",
+    "gcpUrl": "https://cloud.google.com/distributed-cloud/edge/latest/docs/overview",
+    "oracle": "Roving Edge Infrastructure",
+    "oracleUrl": "https://www.oracle.com/cloud/roving-edge/",
+    "cloudflare": "—",
+    "description": {
+      "en": "On-premises hybrid cloud extension",
+      "es": "Extensión híbrida de nube en sitio"
+    }
   }
 ]

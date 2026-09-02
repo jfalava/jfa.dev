@@ -60,5 +60,47 @@
       "en": "Operations management service",
       "es": "Servicio de gestión de operaciones"
     }
+  },
+  {
+    "category": "monitoring",
+    "categoryName": {
+      "en": "Monitoring",
+      "es": "Monitoreo"
+    },
+    "aws": "X-Ray",
+    "awsUrl": "https://aws.amazon.com/xray/",
+    "azure": "Application Insights",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview",
+    "gcp": "Cloud Trace",
+    "gcpUrl": "https://cloud.google.com/trace",
+    "oracle": "APM Trace Explorer",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/application-performance-monitoring/home.htm",
+    "cloudflare": "Workers Trace / Observability",
+    "cloudflareUrl": "https://developers.cloudflare.com/workers/observability/",
+    "description": {
+      "en": "Distributed tracing and observability",
+      "es": "Traza distribuida y observabilidad"
+    }
+  },
+  {
+    "category": "monitoring",
+    "categoryName": {
+      "en": "Monitoring",
+      "es": "Monitoreo"
+    },
+    "aws": "CloudWatch Synthetics",
+    "awsUrl": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics.html",
+    "azure": "Application Insights Availability",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-overview",
+    "gcp": "Uptime Checks",
+    "gcpUrl": "https://cloud.google.com/monitoring/uptime-checks",
+    "oracle": "Health Checks",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/HealthChecks/Concepts/healthchecks.htm",
+    "cloudflare": "Workers Analytics / Speed Brain",
+    "cloudflareUrl": "https://developers.cloudflare.com/workers/observability/",
+    "description": {
+      "en": "Synthetic monitoring and uptime checks",
+      "es": "Monitoreo sintético y verificaciones de disponibilidad"
+    }
   }
 ]

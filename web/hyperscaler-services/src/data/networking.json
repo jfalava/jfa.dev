@@ -390,5 +390,185 @@
       "en": "Distributed denial-of-service (DDoS) protection",
       "es": "Protección contra denegación de servicio distribuida (DDoS)"
     }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Elastic IP",
+    "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html",
+    "azure": "Static Public IP",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-address-overview",
+    "gcp": "Static External IP",
+    "gcpUrl": "https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address",
+    "oracle": "Reserved Public IP",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingpublicIPs.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Static public IP address for dynamic cloud resources",
+      "es": "Dirección IP pública estática para recursos dinámicos en la nube"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Security Groups",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html",
+    "azure": "Network Security Group",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview",
+    "gcp": "VPC Firewall Rules",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/firewalls",
+    "oracle": "Network Security Groups",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Concepts/networksecuritygroups.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Virtual firewall for compute instances",
+      "es": "Firewall virtual para instancias de cómputo"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Subnet",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
+    "azure": "Subnet",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-vnet-plan-design-section#subnets",
+    "gcp": "Subnet",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/subnets",
+    "oracle": "Subnet",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingSubnets.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Network segmentation within a VPC/VNet",
+      "es": "Segmentación de red dentro de VPC/VNet"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Bastion Hosts",
+    "awsUrl": "https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html",
+    "azure": "Azure Bastion",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/azure-bastion/",
+    "gcp": "Identity-Aware Proxy (TCP Forwarding)",
+    "gcpUrl": "https://cloud.google.com/iap/docs/tcp-forwarding-overview",
+    "oracle": "Bastion Service",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/bastion/home.htm",
+    "cloudflare": "Cloudflare Tunnel (Bastion)",
+    "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/",
+    "description": {
+      "en": "Managed bastion and secure shell access",
+      "es": "Bastión administrado y acceso shell seguro"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Elastic Network Interface",
+    "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html",
+    "azure": "Network Interface",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-network-interface",
+    "gcp": "Network Interface",
+    "gcpUrl": "https://cloud.google.com/vpc/docs/create-use-multiple-interfaces",
+    "oracle": "VNIC",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingVNICs.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Virtual network interface for compute instances",
+      "es": "Interfaz de red virtual para instancias de cómputo"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Internet Gateway",
+    "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html",
+    "azure": "—",
+    "gcp": "—",
+    "oracle": "Internet Gateway",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingIGs.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Gateway for Internet access from a VPC",
+      "es": "Puerta de enlace para acceso a Internet desde una VPC"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Private DNS",
+    "awsUrl": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html",
+    "azure": "Private DNS",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/dns/private-dns-overview",
+    "gcp": "Cloud DNS (Private Zones)",
+    "gcpUrl": "https://cloud.google.com/dns/docs/zones#private-zones",
+    "oracle": "Private DNS",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/DNS/Concepts/privatednszones.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Private DNS resolution inside VPC/VNet",
+      "es": "Resolución DNS privada dentro de VPC/VNet"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Client VPN",
+    "awsUrl": "https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html",
+    "azure": "VPN Gateway (P2S)",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/vpn-gateway/point-to-site-about",
+    "gcp": "Cloud VPN (Client)",
+    "gcpUrl": "https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview",
+    "oracle": "Client VPN",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingClientVPN.htm",
+    "cloudflare": "Cloudflare Access (Private Network)",
+    "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/",
+    "description": {
+      "en": "Managed client-to-site VPN access",
+      "es": "Acceso VPN administrado de cliente a sitio"
+    }
+  },
+  {
+    "category": "networking",
+    "categoryName": {
+      "en": "Networking",
+      "es": "Redes"
+    },
+    "aws": "Cloud Map",
+    "awsUrl": "https://aws.amazon.com/cloud-map/",
+    "azure": "—",
+    "gcp": "Service Directory",
+    "gcpUrl": "https://cloud.google.com/service-directory",
+    "oracle": "Service Discovery",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/service-discovery/home.htm",
+    "cloudflare": "Cloudflare Service Discovery",
+    "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/cloudflared/",
+    "description": {
+      "en": "Service registry and discovery",
+      "es": "Registro y descubrimiento de servicios"
+    }
   }
 ]

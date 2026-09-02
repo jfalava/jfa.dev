@@ -61,5 +61,45 @@
       "en": "Command-line interface",
       "es": "Interfaz de línea de comandos"
     }
+  },
+  {
+    "category": "infrastructure",
+    "categoryName": {
+      "en": "Infrastructure",
+      "es": "Infraestructura"
+    },
+    "aws": "CloudShell",
+    "awsUrl": "https://aws.amazon.com/cloudshell/",
+    "azure": "Cloud Shell",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/cloud-shell/overview",
+    "gcp": "Cloud Shell",
+    "gcpUrl": "https://cloud.google.com/shell",
+    "oracle": "Cloud Shell",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cloudshellintro.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Browser-based cloud shell",
+      "es": "Shell en la nube basado en navegador"
+    }
+  },
+  {
+    "category": "infrastructure",
+    "categoryName": {
+      "en": "Infrastructure",
+      "es": "Infraestructura"
+    },
+    "aws": "Service Catalog",
+    "awsUrl": "https://aws.amazon.com/servicecatalog/",
+    "azure": "Managed Applications",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/managed-applications/overview",
+    "gcp": "Private Catalog",
+    "gcpUrl": "https://cloud.google.com/private-catalog/docs/overview",
+    "oracle": "Service Catalog",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/service-catalog/home.htm",
+    "cloudflare": "—",
+    "description": {
+      "en": "Governed service catalog for provisioning",
+      "es": "Catálogo de servicios gobernado para aprovisionamiento"
+    }
   }
 ]
