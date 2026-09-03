@@ -39,6 +39,18 @@ function loadDevVars(): void {
 
 loadDevVars();
 
+// Alchemy deploy/dev Config uses `JFA_DEV_*`; Vite/Node fallback still reads
+// unprefixed `LASTFM_*` via `now-playing.ts` → `process.env`.
+for (const [from, to] of [
+  ["JFA_DEV_LASTFM_API_KEY", "LASTFM_API_KEY"],
+  ["JFA_DEV_LASTFM_USER", "LASTFM_USER"],
+] as const) {
+  const value = process.env[from];
+  if (value && (!(to in process.env) || !process.env[to])) {
+    process.env[to] = value;
+  }
+}
+
 const MOUNT_PATH = "/playlists/";
 
 export default defineConfig({

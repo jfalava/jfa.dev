@@ -291,17 +291,18 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
 
   // Playlists: 20tracks + Last.fm now-playing.
   // Prod/sync: Secrets Store (env.LASTFM_*.get(), never exposed to client).
-  // Local: plain `secret_text` from `effect/Config` seeded by `web/playlists/.dev.vars`
-  // (via loadDevVarsForLocal above) — avoids LocalSecretsStore emulation flakiness
-  // that was causing `Invalid server function ID` in `alchemy dev`.
+  // Local: plain `secret_text` from `effect/Config` (`JFA_DEV_LASTFM_*`), seeded by
+  // `web/playlists/.dev.vars` / `iac/.env` (via loadDevVarsForLocal above) — avoids
+  // LocalSecretsStore emulation flakiness that was causing `Invalid server function ID`
+  // in `alchemy dev`. Worker binding names stay `LASTFM_*`.
   let playlistsSecretsStore: ReturnType<typeof Cloudflare.SecretsStore.Store> | undefined;
   let lastfmApiKeySecret: ReturnType<typeof Cloudflare.SecretsStore.Secret> | undefined;
   let lastfmUserSecret: ReturnType<typeof Cloudflare.SecretsStore.Secret> | undefined;
 
-  const lastfmApiKeyValue = yield* Config.redacted("LASTFM_API_KEY").pipe(
+  const lastfmApiKeyValue = yield* Config.redacted("JFA_DEV_LASTFM_API_KEY").pipe(
     Config.withDefault(Redacted.make("")),
   );
-  const lastfmUserValue = yield* Config.redacted("LASTFM_USER").pipe(
+  const lastfmUserValue = yield* Config.redacted("JFA_DEV_LASTFM_USER").pipe(
     Config.withDefault(Redacted.make("")),
   );
 
