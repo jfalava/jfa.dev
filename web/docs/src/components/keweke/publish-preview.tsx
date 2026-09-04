@@ -171,7 +171,10 @@ export function PublishDialogPreview() {
           <p className="text-sm leading-6 text-muted-foreground">
             Publishing this list will make it public and accessible online. Anyone with its ID or
             alias can open it.{" "}
-            <DocsLink className="align-baseline" href="/docs/keweke/lists/publishing-a-list#the-dialog--what-you-are-making-public">
+            <DocsLink
+              className="align-baseline"
+              href="/docs/keweke/lists/publishing-a-list#the-dialog--what-you-are-making-public"
+            >
               Publishing a list
             </DocsLink>
           </p>

@@ -1,6 +1,6 @@
 {
   "title": "OpenGraph",
-  "description": "Zero-cost, local-first OpenGraph image editor.",
+  "description": "Local-first OpenGraph image editor.",
   "icon": "Image",
   "root": true,
   "pages": [

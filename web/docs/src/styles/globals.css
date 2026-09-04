@@ -69,7 +69,10 @@
   z-index: 1;
 }
 
-#nd-sidebar a {
+#nd-sidebar a,
+#nd-toc a,
+[data-tabs] a,
+[role="tablist"] a {
   @apply no-underline;
 }
 
