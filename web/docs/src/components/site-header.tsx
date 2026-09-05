@@ -19,6 +19,8 @@ export function DocsSiteHeader() {
     }
   }, [collapsed, mode, open, setCollapsed, setOpen]);
 
+  const sidebarHidden = mode === "drawer" ? !open : collapsed;
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
@@ -66,7 +68,11 @@ export function DocsSiteHeader() {
         aria-expanded={mode === "drawer" ? open : !collapsed}
         variant="ghost"
         size="lg"
-        className="gap-1.5 px-2 text-muted-foreground hover:text-foreground aria-expanded:bg-transparent aria-expanded:text-muted-foreground"
+        className={
+          sidebarHidden
+            ? "gap-1.5 bg-muted px-2 text-foreground hover:text-foreground dark:bg-muted/50"
+            : "gap-1.5 px-2 text-muted-foreground hover:text-foreground aria-expanded:bg-transparent aria-expanded:text-muted-foreground"
+        }
         onPress={toggleSidebar}
       >
         <PanelLeft aria-hidden="true" className="size-4" />

@@ -110,7 +110,8 @@
 #nd-sidebar-mobile > [class~="p-4"],
 #nd-sidebar [data-radix-scroll-area-viewport],
 #nd-sidebar-mobile [data-radix-scroll-area-viewport] {
-  padding-block: 0;
+  padding-block-start: 0.75rem;
+  padding-block-end: 0;
   padding-inline: 1.5rem;
   mask-image: none;
   -webkit-mask-image: none;
