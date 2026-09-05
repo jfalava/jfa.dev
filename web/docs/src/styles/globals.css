@@ -65,6 +65,104 @@
   display: none !important;
 }
 
+/*
+ * Keep the docs sidebar flush with its column. Fumadocs adds p-4 to the
+ * header/footer wrappers and to the scroll viewport independently. Its
+ * desktop sidebar spans the layout's outer spacer columns, so pin the
+ * visible rail to the start instead of aligning it to the far edge.
+ */
+#nd-sidebar {
+  width: var(--fd-sidebar-width);
+  align-items: flex-start;
+}
+
+#nd-sidebar,
+#nd-sidebar-mobile,
+[data-radix-popper-content-wrapper] {
+  font-size: 0.8125rem;
+}
+
+#nd-sidebar a,
+#nd-sidebar button,
+#nd-sidebar-mobile a,
+#nd-sidebar-mobile button,
+[data-radix-popper-content-wrapper] a,
+#nd-sidebar [class~="font-medium"],
+#nd-sidebar-mobile [class~="font-medium"],
+[data-radix-popper-content-wrapper] [class~="font-medium"] {
+  font-weight: 600;
+}
+
+#nd-sidebar [class~="text-sm"],
+#nd-sidebar-mobile [class~="text-sm"],
+[data-radix-popper-content-wrapper] [class~="text-sm"] {
+  font-size: inherit;
+}
+
+#nd-sidebar p[class~="text-fd-muted-foreground"],
+#nd-sidebar-mobile p[class~="text-fd-muted-foreground"],
+[data-radix-popper-content-wrapper]
+  p[class~="text-fd-muted-foreground"] {
+  font-weight: 400;
+}
+
+#nd-sidebar > [class~="p-4"],
+#nd-sidebar-mobile > [class~="p-4"],
+#nd-sidebar [data-radix-scroll-area-viewport],
+#nd-sidebar-mobile [data-radix-scroll-area-viewport] {
+  padding-block: 0;
+  padding-inline: 1.5rem;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/*
+ * Keep the package selector visually separate from the first page item.
+ * Landing pages render both package groups directly in the tree, so give
+ * subsequent root groups the same breathing room without spacing each page
+ * folder on a package page.
+ */
+#nd-sidebar > [class~="p-4"] > button[aria-haspopup="dialog"],
+#nd-sidebar-mobile > [class~="p-4"] > button[aria-haspopup="dialog"] {
+  margin-block-end: 0.5rem;
+}
+
+#nd-sidebar:not(:has(> [class~="p-4"] > button[aria-haspopup="dialog"]))
+  [data-radix-scroll-area-viewport]
+  > div
+  > [data-state]
+  + [data-state],
+#nd-sidebar-mobile:not(:has(> [class~="p-4"] > button[aria-haspopup="dialog"]))
+  [data-radix-scroll-area-viewport]
+  > div
+  > [data-state]
+  + [data-state] {
+  margin-block-start: 1rem;
+}
+
+/*
+ * The package switcher renders empty icon containers even when a tab has no
+ * icon. Hide the containers in both the selected trigger and its popover.
+ */
+#nd-sidebar [class~="size-9"][class~="shrink-0"][class~="empty:hidden"],
+#nd-sidebar-mobile [class~="size-9"][class~="shrink-0"][class~="empty:hidden"],
+[data-radix-popper-content-wrapper]
+  [class~="size-9"][class~="shrink-0"][class~="empty:hidden"] {
+  display: none;
+}
+
+/*
+ * Landing pages render the package tree directly instead of using the
+ * package-switcher dropdown. Remove those item icons as well, while leaving
+ * the expand/collapse chevrons after each label intact.
+ */
+#nd-sidebar a > span:has(+ [class~="fd-page-tree-item-name"]),
+#nd-sidebar button > span:has(+ [class~="fd-page-tree-item-name"]),
+#nd-sidebar-mobile a > span:has(+ [class~="fd-page-tree-item-name"]),
+#nd-sidebar-mobile button > span:has(+ [class~="fd-page-tree-item-name"]) {
+  display: none;
+}
+
 #nd-sidebar div[data-state].overflow-hidden.relative::before {
   z-index: 1;
 }
@@ -72,7 +170,8 @@
 #nd-sidebar a,
 #nd-toc a,
 [data-tabs] a,
-[role="tablist"] a {
+[role="tablist"] a,
+[data-radix-popper-content-wrapper] a {
   @apply no-underline;
 }
 
@@ -87,22 +186,7 @@ body {
 
 body {
   @apply m-0;
-  font-family:
-    "Pretendard Variable",
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    Roboto,
-    "Helvetica Neue",
-    "Segoe UI",
-    "Apple SD Gothic Neo",
-    "Noto Sans KR",
-    "Malgun Gothic",
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -51,6 +51,22 @@ function sidebarProviderSlot({ children }: { children?: ReactNode }) {
 /** Shell header height; keeps sticky docs rows below it and the page at 100dvh. */
 const shellHeaderHeight = "var(--fd-banner-height, 0px)";
 
+function openKewekeFolders(node: PageTree.Node): PageTree.Node {
+  if (node.type !== "folder") {
+    return node;
+  }
+
+  const folderPath = node.$ref?.folder.replaceAll("\\", "/") ?? "";
+  const openedNode = {
+    ...node,
+    children: node.children.map(openKewekeFolders),
+  };
+  if (folderPath.split("/").includes("keweke")) {
+    openedNode.defaultOpen = true;
+  }
+  return openedNode;
+}
+
 /** Shared DocsLayout wiring used by the landing page and every doc page. */
 function DocsShell({
   tree,
@@ -122,9 +138,13 @@ function Content({ path }: { path: string }) {
 
 export function DocsRouteView({ data }: { data: DocsLoaderData }) {
   const resolved = useFumadocsLoader(data);
+  const tree = {
+    ...resolved.pageTree,
+    children: resolved.pageTree.children.map(openKewekeFolders),
+  };
 
   return (
-    <DocsShell tree={resolved.pageTree} tabs={getLayoutTabs(resolved.pageTree)}>
+    <DocsShell tree={tree} tabs={getLayoutTabs(tree)}>
       <Content path={resolved.path} />
     </DocsShell>
   );
@@ -147,12 +167,16 @@ export function DocsLandingView({
   const { children: nodes } = resolved.pageTree;
 
   // Root folders render collapsed by default; open them so the landing
-  // sidebar presents both packages' pages without extra clicks.
+  // sidebar presents both packages' pages without extra clicks. The Keweke
+  // sections use the same default-open behavior on the landing page.
   const tree = {
     ...resolved.pageTree,
-    children: nodes.map((node) =>
-      node.type === "folder" && node.root ? { ...node, defaultOpen: true } : node,
-    ),
+    children: nodes.map((node) => {
+      const opened = openKewekeFolders(node);
+      return opened.type === "folder" && opened.root
+        ? { ...opened, defaultOpen: true }
+        : opened;
+    }),
   };
 
   return (
