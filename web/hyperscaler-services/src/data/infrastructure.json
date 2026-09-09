@@ -1,10 +1,7 @@
 [
   {
     "category": "infrastructure",
-    "categoryName": {
-      "en": "Infrastructure",
-      "es": "Infraestructura"
-    },
+    "categoryName": "Infrastructure",
     "aws": "CloudFormation",
     "awsUrl": "https://aws.amazon.com/cloudformation/",
     "azure": "ARM Templates",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://www.oracle.com/devops/resource-manager/",
     "cloudflare": "Terraform",
     "cloudflareUrl": "https://developers.cloudflare.com/terraform/",
-    "description": {
-      "en": "Infrastructure as code templates",
-      "es": "Plantillas de infraestructura como código"
-    }
+    "description": "Infrastructure as code templates"
   },
   {
     "category": "infrastructure",
-    "categoryName": {
-      "en": "Infrastructure",
-      "es": "Infraestructura"
-    },
+    "categoryName": "Infrastructure",
     "aws": "Management Console",
     "awsUrl": "https://aws.amazon.com/console/",
     "azure": "Portal",
@@ -36,17 +27,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/GSG/Concepts/console.htm",
     "cloudflare": "Dashboard",
     "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/concepts/accounts-and-zones/",
-    "description": {
-      "en": "Web-based management interface",
-      "es": "Interfaz de gestión basada en web"
-    }
+    "description": "Web-based management interface"
   },
   {
     "category": "infrastructure",
-    "categoryName": {
-      "en": "Infrastructure",
-      "es": "Infraestructura"
-    },
+    "categoryName": "Infrastructure",
     "aws": "CLI",
     "awsUrl": "https://aws.amazon.com/cli/",
     "azure": "CLI",
@@ -57,17 +42,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cliconcepts.htm",
     "cloudflare": "Wrangler CLI",
     "cloudflareUrl": "https://developers.cloudflare.com/workers/wrangler/",
-    "description": {
-      "en": "Command-line interface",
-      "es": "Interfaz de línea de comandos"
-    }
+    "description": "Command-line interface"
   },
   {
     "category": "infrastructure",
-    "categoryName": {
-      "en": "Infrastructure",
-      "es": "Infraestructura"
-    },
+    "categoryName": "Infrastructure",
     "aws": "CloudShell",
     "awsUrl": "https://aws.amazon.com/cloudshell/",
     "azure": "Cloud Shell",
@@ -77,17 +56,11 @@
     "oracle": "Cloud Shell",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cloudshellintro.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Browser-based cloud shell",
-      "es": "Shell en la nube basado en navegador"
-    }
+    "description": "Browser-based cloud shell"
   },
   {
     "category": "infrastructure",
-    "categoryName": {
-      "en": "Infrastructure",
-      "es": "Infraestructura"
-    },
+    "categoryName": "Infrastructure",
     "aws": "Service Catalog",
     "awsUrl": "https://aws.amazon.com/servicecatalog/",
     "azure": "Managed Applications",
@@ -97,9 +70,6 @@
     "oracle": "Service Catalog",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/service-catalog/home.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Governed service catalog for provisioning",
-      "es": "Catálogo de servicios gobernado para aprovisionamiento"
-    }
+    "description": "Governed service catalog for provisioning"
   }
 ]

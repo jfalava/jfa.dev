@@ -1,10 +1,7 @@
 [
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "IAM Roles & Resource-Based Policies",
     "awsUrl": "https://aws.amazon.com/iam/",
     "azure": "Azure RBAC",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/Concepts/overview.htm",
     "cloudflare": "Access Policies",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/policies/access/",
-    "description": {
-      "en": "Cross-account/subscription access management",
-      "es": "Gestión de acceso entre cuentas/suscripciones"
-    }
+    "description": "Cross-account/subscription access management"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "IAM",
     "awsUrl": "https://aws.amazon.com/iam/",
     "azure": "Microsoft Entra ID",
@@ -36,17 +27,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/Concepts/overview.htm",
     "cloudflare": "Access",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/policies/access/",
-    "description": {
-      "en": "Identity and access management",
-      "es": "Gestión de identidad y acceso"
-    }
+    "description": "Identity and access management"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "IAM Identity Center",
     "awsUrl": "https://aws.amazon.com/iam/identity-center/",
     "azure": "Microsoft Entra ID",
@@ -57,17 +42,11 @@
     "oracleUrl": "https://www.oracle.com/security/cloud-security/identity-cloud/",
     "cloudflare": "Zero Trust",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/",
-    "description": {
-      "en": "Centralized identity management with SSO",
-      "es": "Gestión de identidades centralizada con SSO"
-    }
+    "description": "Centralized identity management with SSO"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Organizations",
     "awsUrl": "https://aws.amazon.com/organizations/",
     "azure": "Management Groups",
@@ -78,17 +57,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/tenancy/managingtenancy.htm",
     "cloudflare": "Account",
     "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/setup/account/",
-    "description": {
-      "en": "Hierarchical account management",
-      "es": "Gestión jerárquica de cuentas"
-    }
+    "description": "Hierarchical account management"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Directory Service",
     "awsUrl": "https://aws.amazon.com/directoryservice/",
     "azure": "Entra Domain Services",
@@ -98,17 +71,11 @@
     "oracle": "Microsoft AD",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/services.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed directory services",
-      "es": "Servicios de directorio administrados"
-    }
+    "description": "Managed directory services"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "MFA",
     "awsUrl": "https://aws.amazon.com/iam/features/mfa/",
     "azure": "Entra MFA",
@@ -119,17 +86,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/mfa/understand-multi-factor-authentication.htm",
     "cloudflare": "Access (MFA)",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/identity/one-time-pin/",
-    "description": {
-      "en": "Multi-factor authentication",
-      "es": "Autenticación multifactor"
-    }
+    "description": "Multi-factor authentication"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "KMS",
     "awsUrl": "https://aws.amazon.com/kms/",
     "azure": "Key Vault",
@@ -139,17 +100,11 @@
     "oracle": "Vault",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Concepts/keyoverview.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Key management service",
-      "es": "Servicio de gestión de claves"
-    }
+    "description": "Key management service"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "WAF",
     "awsUrl": "https://aws.amazon.com/waf/",
     "azure": "Web Application Firewall",
@@ -160,17 +115,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/WAF/home.htm",
     "cloudflare": "WAF",
     "cloudflareUrl": "https://developers.cloudflare.com/waf/",
-    "description": {
-      "en": "Web application firewall",
-      "es": "Cortafuegos de aplicaciones web"
-    }
+    "description": "Web application firewall"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Secrets Manager",
     "awsUrl": "https://aws.amazon.com/secrets-manager/",
     "azure": "Key Vault Secrets",
@@ -180,17 +129,11 @@
     "oracle": "Vault (Secrets)",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Tasks/managingvaults.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Secrets management service",
-      "es": "Servicio de gestión de secretos"
-    }
+    "description": "Secrets management service"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Cognito",
     "awsUrl": "https://aws.amazon.com/cognito/",
     "azure": "Microsoft Identity Platform",
@@ -201,17 +144,11 @@
     "oracleUrl": "https://www.oracle.com/security/cloud-security/identity-cloud/",
     "cloudflare": "Access",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/policies/access/",
-    "description": {
-      "en": "Complete identity platform",
-      "es": "Plataforma de identidad completa"
-    }
+    "description": "Complete identity platform"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "WAF Bot Control",
     "awsUrl": "https://aws.amazon.com/waf/features/bot-control/",
     "azure": "Bot Manager",
@@ -222,17 +159,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/WAF/home.htm",
     "cloudflare": "Turnstile",
     "cloudflareUrl": "https://developers.cloudflare.com/turnstile/",
-    "description": {
-      "en": "Bot detection and mitigation",
-      "es": "Detección y mitigación de bots"
-    }
+    "description": "Bot detection and mitigation"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Security Hub",
     "awsUrl": "https://aws.amazon.com/security-hub/",
     "azure": "Defender for Cloud",
@@ -242,17 +173,11 @@
     "oracle": "Cloud Guard",
     "oracleUrl": "https://www.oracle.com/security/cloud-security/cloud-guard/",
     "cloudflare": "—",
-    "description": {
-      "en": "Cloud security posture management",
-      "es": "Gestión de postura de seguridad en la nube"
-    }
+    "description": "Cloud security posture management"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Certificate Manager",
     "awsUrl": "https://aws.amazon.com/certificate-manager/",
     "azure": "Key Vault Certificates",
@@ -263,17 +188,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/certificates/home.htm",
     "cloudflare": "SSL / TLS",
     "cloudflareUrl": "https://developers.cloudflare.com/ssl/",
-    "description": {
-      "en": "Managed SSL/TLS certificates",
-      "es": "Certificados SSL/TLS administrados"
-    }
+    "description": "Managed SSL/TLS certificates"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Network ACL",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html",
     "azure": "Network Security Group",
@@ -283,17 +202,11 @@
     "oracle": "Security Lists",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Concepts/securitylists.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Subnet-level stateless traffic filtering",
-      "es": "Filtrado de tráfico sin estado a nivel de subred"
-    }
+    "description": "Subnet-level stateless traffic filtering"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Private CA",
     "awsUrl": "https://aws.amazon.com/private-ca/",
     "azure": "Key Vault Managed HSM (Private CA)",
@@ -303,17 +216,11 @@
     "oracle": "OCI Certificates (Private CA)",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/certificates/home.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed private certificate authority",
-      "es": "Autoridad de certificación privada administrada"
-    }
+    "description": "Managed private certificate authority"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "GuardDuty",
     "awsUrl": "https://aws.amazon.com/guardduty/",
     "azure": "Defender for Cloud (Threat Protection)",
@@ -323,17 +230,11 @@
     "oracle": "Cloud Guard (Threat Detector)",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/cloud-guard/home.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Intelligent threat detection",
-      "es": "Detección inteligente de amenazas"
-    }
+    "description": "Intelligent threat detection"
   },
   {
     "category": "security",
-    "categoryName": {
-      "en": "Security & Identity",
-      "es": "Seguridad e Identidad"
-    },
+    "categoryName": "Security & Identity",
     "aws": "Inspector",
     "awsUrl": "https://aws.amazon.com/inspector/",
     "azure": "Defender Vulnerability Management",
@@ -343,9 +244,6 @@
     "oracle": "Vulnerability Scanning",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/vulnerability-scanning/home.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Automated vulnerability scanning",
-      "es": "Escaneo automatizado de vulnerabilidades"
-    }
+    "description": "Automated vulnerability scanning"
   }
 ]

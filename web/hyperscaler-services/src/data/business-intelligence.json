@@ -1,10 +1,7 @@
 [
   {
     "category": "business-intelligence",
-    "categoryName": {
-      "en": "Business Intelligence",
-      "es": "Inteligencia de Negocios"
-    },
+    "categoryName": "Business Intelligence",
     "aws": "QuickSight",
     "awsUrl": "https://aws.amazon.com/quicksight/",
     "azure": "Power BI",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://www.oracle.com/business-analytics/",
     "cloudflare": "Web Analytics",
     "cloudflareUrl": "https://developers.cloudflare.com/analytics/web-analytics/",
-    "description": {
-      "en": "Analytics and visualization tools",
-      "es": "Herramientas de análisis y visualización"
-    }
+    "description": "Analytics and visualization tools"
   },
   {
     "category": "business-intelligence",
-    "categoryName": {
-      "en": "Business Intelligence",
-      "es": "Inteligencia de Negocios"
-    },
+    "categoryName": "Business Intelligence",
     "aws": "QuickSight (Embedded)",
     "awsUrl": "https://docs.aws.amazon.com/quicksight/latest/user/embedded-analytics.html",
     "azure": "Power BI Embedded",
@@ -35,9 +26,6 @@
     "oracle": "Oracle Analytics Cloud (Embedded)",
     "oracleUrl": "https://www.oracle.com/business-analytics/",
     "cloudflare": "—",
-    "description": {
-      "en": "Embedded analytics and dashboards for applications",
-      "es": "Analítica y paneles integrados para aplicaciones"
-    }
+    "description": "Embedded analytics and dashboards for applications"
   }
 ]

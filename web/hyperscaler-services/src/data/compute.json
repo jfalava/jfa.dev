@@ -1,10 +1,7 @@
 [
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "EC2",
     "awsUrl": "https://aws.amazon.com/ec2/",
     "azure": "Virtual Machines",
@@ -14,17 +11,11 @@
     "oracle": "OCI Compute",
     "oracleUrl": "https://www.oracle.com/cloud/compute/",
     "cloudflare": "—",
-    "description": {
-      "en": "On-demand pay-as-you-go virtual machines",
-      "es": "Máquinas virtuales a petición de pago por uso"
-    }
+    "description": "On-demand pay-as-you-go virtual machines"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "VMware Cloud on AWS",
     "awsUrl": "https://aws.amazon.com/vmware/",
     "azure": "Azure VMware Solution",
@@ -34,17 +25,11 @@
     "oracle": "Oracle Cloud VMware Solution",
     "oracleUrl": "https://www.oracle.com/cloud/compute/vmware/",
     "cloudflare": "—",
-    "description": {
-      "en": "Enables migration of VMware vSphere environments",
-      "es": "Permite la migración de entornos VMware vSphere"
-    }
+    "description": "Enables migration of VMware vSphere environments"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "AWS ParallelCluster",
     "awsUrl": "https://aws.amazon.com/hpc/parallelcluster/",
     "azure": "Azure CycleCloud",
@@ -54,17 +39,11 @@
     "oracle": "OCI HPC",
     "oracleUrl": "https://www.oracle.com/cloud/hpc/",
     "cloudflare": "—",
-    "description": {
-      "en": "Facilitates creation and management of HPC clusters",
-      "es": "Facilita la creación y gestión de clústeres de HPC"
-    }
+    "description": "Facilitates creation and management of HPC clusters"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "AWS Auto Scaling",
     "awsUrl": "https://aws.amazon.com/autoscaling/",
     "azure": "Virtual Machine Scale Sets",
@@ -75,17 +54,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/autoscalinginstancepools.htm",
     "cloudflare": "Workers (auto-scale)",
     "cloudflareUrl": "https://developers.cloudflare.com/workers/",
-    "description": {
-      "en": "Automatic scaling of compute resources",
-      "es": "Escalado automático de recursos de cómputo"
-    }
+    "description": "Automatic scaling of compute resources"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "AWS Batch",
     "awsUrl": "https://aws.amazon.com/batch/",
     "azure": "Azure Batch",
@@ -94,17 +67,11 @@
     "gcpUrl": "https://cloud.google.com/batch",
     "oracle": "—",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed batch processing service",
-      "es": "Servicio de procesamiento por lotes administrado"
-    }
+    "description": "Managed batch processing service"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "Lambda",
     "awsUrl": "https://aws.amazon.com/lambda/",
     "azure": "Azure Functions",
@@ -115,17 +82,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/cloud-native/functions/",
     "cloudflare": "Workers",
     "cloudflareUrl": "https://developers.cloudflare.com/workers/",
-    "description": {
-      "en": "Serverless compute service",
-      "es": "Servicio de cómputo sin servidor"
-    }
+    "description": "Serverless compute service"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "Elastic Beanstalk",
     "awsUrl": "https://aws.amazon.com/elasticbeanstalk/",
     "azure": "App Service",
@@ -135,17 +96,11 @@
     "oracle": "—",
     "cloudflare": "Pages",
     "cloudflareUrl": "https://developers.cloudflare.com/pages/",
-    "description": {
-      "en": "Platform as a Service for web apps",
-      "es": "Plataforma como servicio para aplicaciones web"
-    }
+    "description": "Platform as a Service for web apps"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "EC2 Bare Metal Instances",
     "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-bare-metal-instances.html",
     "azure": "BareMetal Infrastructure",
@@ -155,17 +110,11 @@
     "oracle": "OCI Bare Metal",
     "oracleUrl": "https://www.oracle.com/cloud/compute/bare-metal/",
     "cloudflare": "—",
-    "description": {
-      "en": "Bare metal servers for non-virtualized workloads",
-      "es": "Servidores de metal desnudo para cargas de trabajo no virtualizadas"
-    }
+    "description": "Bare metal servers for non-virtualized workloads"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "EC2 GPU Instances",
     "awsUrl": "https://aws.amazon.com/ec2/instance-types/accelerated-computing/",
     "azure": "GPU VMs (N-series)",
@@ -175,17 +124,11 @@
     "oracle": "OCI GPU Instances",
     "oracleUrl": "https://www.oracle.com/cloud/compute/gpu/",
     "cloudflare": "—",
-    "description": {
-      "en": "GPU-accelerated compute instances",
-      "es": "Instancias de cómputo aceleradas por GPU"
-    }
+    "description": "GPU-accelerated compute instances"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "EC2 Spot Instances",
     "awsUrl": "https://aws.amazon.com/ec2/spot/",
     "azure": "Spot VMs",
@@ -195,17 +138,11 @@
     "oracle": "Preemptible Instances",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Concepts/preemptible.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Interruptible capacity at discounted prices",
-      "es": "Capacidad interrumpible a precios con descuento"
-    }
+    "description": "Interruptible capacity at discounted prices"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "Amazon Machine Image (AMI)",
     "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html",
     "azure": "Managed Images / Azure Compute Gallery",
@@ -215,17 +152,11 @@
     "oracle": "Custom Images",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/managingcustomimages.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Pre-configured machine images for compute instances",
-      "es": "Imágenes de máquina preconfiguradas para instancias de cómputo"
-    }
+    "description": "Pre-configured machine images for compute instances"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "EC2 Instance Connect",
     "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect.html",
     "azure": "Serial Console / Run Command",
@@ -235,17 +166,11 @@
     "oracle": "Instance Console Connection",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/References/serialconsole.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Direct instance shell and serial console access",
-      "es": "Acceso directo a shell y consola serie de la instancia"
-    }
+    "description": "Direct instance shell and serial console access"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "Placement Groups",
     "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html",
     "azure": "Proximity Placement Groups",
@@ -255,17 +180,11 @@
     "oracle": "Cluster Networks",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/clusternetworks.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Low-latency instance placement control",
-      "es": "Control de colocación de instancias de baja latencia"
-    }
+    "description": "Low-latency instance placement control"
   },
   {
     "category": "compute",
-    "categoryName": {
-      "en": "Compute",
-      "es": "Cómputo"
-    },
+    "categoryName": "Compute",
     "aws": "Outposts",
     "awsUrl": "https://aws.amazon.com/outposts/",
     "azure": "Azure Stack Hub",
@@ -275,9 +194,6 @@
     "oracle": "Roving Edge Infrastructure",
     "oracleUrl": "https://www.oracle.com/cloud/roving-edge/",
     "cloudflare": "—",
-    "description": {
-      "en": "On-premises hybrid cloud extension",
-      "es": "Extensión híbrida de nube en sitio"
-    }
+    "description": "On-premises hybrid cloud extension"
   }
 ]

@@ -40,8 +40,6 @@ interface ServiceSearchTranslations {
 interface ServiceSearchPaletteProps {
   /** The query currently applied to the table. */
   activeQuery: string;
-  /** Language used for preview labels and descriptions. */
-  currentLang: "en" | "es";
   /** Static catalog mappings used to render labels and suggestions. */
   services: ServiceMapping[];
   /** Search index generated from the catalog at build time. */
@@ -61,7 +59,6 @@ interface SearchScopeSuggestion {
 }
 
 interface SearchPalettePreviewProps {
-  currentLang: "en" | "es";
   hasEmptyScope: boolean;
   hasQuery: boolean;
   previewResults: readonly { service: ServiceMapping }[];
@@ -137,7 +134,6 @@ function SearchResultService({ label, name, url }: { label: string; name: string
 
 /** Renders the scoped suggestions or ranked service preview below the palette input. */
 function SearchPalettePreview({
-  currentLang,
   hasEmptyScope,
   hasQuery,
   previewResults,
@@ -186,7 +182,7 @@ function SearchPalettePreview({
             {previewResults.map(({ service }) => (
               <div key={`${service.category}-${service.aws}`} className="rounded-md px-2.5 py-2.5">
                 <div className="truncate text-xs font-medium text-foreground">
-                  {service.categoryName[currentLang]}
+                  {service.categoryName}
                 </div>
                 <div className="mt-1 grid gap-x-3 gap-y-1 text-xs text-muted-foreground sm:grid-cols-2">
                   {previewProviders.map(({ label, nameKey, urlKey }) => (
@@ -213,7 +209,6 @@ function SearchPalettePreview({
 /** Renders the search trigger and keyboard-first service search palette. */
 export function ServiceSearchPalette({
   activeQuery,
-  currentLang,
   services,
   searchIndex,
   translations,
@@ -271,16 +266,14 @@ export function ServiceSearchPalette({
     }
 
     if (parsedQuery.scope === "category") {
-      return [...new Set(services.map((service) => service.categoryName[currentLang]))].map(
-        (label) => ({
-          label,
-          query: `category:${label}`,
-        }),
-      );
+      return [...new Set(services.map((service) => service.categoryName))].map((label) => ({
+        label,
+        query: `category:${label}`,
+      }));
     }
 
     return [];
-  }, [currentLang, hasEmptyScope, parsedQuery.scope, services]);
+  }, [hasEmptyScope, parsedQuery.scope, services]);
 
   const selectSuggestion = (suggestion: SearchScopeSuggestion): void => {
     setDraftQuery(suggestion.query);
@@ -356,7 +349,6 @@ export function ServiceSearchPalette({
       to: "/",
       search: (previous) => ({
         ...previous,
-        lang: currentLang,
         q: nextQuery || undefined,
       }),
     });
@@ -459,7 +451,6 @@ export function ServiceSearchPalette({
         </div>
 
         <SearchPalettePreview
-          currentLang={currentLang}
           hasEmptyScope={hasEmptyScope}
           hasQuery={hasQuery}
           previewResults={previewResults}

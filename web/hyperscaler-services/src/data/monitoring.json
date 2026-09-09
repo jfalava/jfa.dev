@@ -1,10 +1,7 @@
 [
   {
     "category": "monitoring",
-    "categoryName": {
-      "en": "Monitoring",
-      "es": "Monitoreo"
-    },
+    "categoryName": "Monitoring",
     "aws": "CloudWatch",
     "awsUrl": "https://aws.amazon.com/cloudwatch/",
     "azure": "Azure Monitor",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Monitoring/Concepts/monitoringoverview.htm",
     "cloudflare": "Analytics",
     "cloudflareUrl": "https://developers.cloudflare.com/analytics/",
-    "description": {
-      "en": "Monitoring and observability service",
-      "es": "Servicio de monitoreo y observabilidad"
-    }
+    "description": "Monitoring and observability service"
   },
   {
     "category": "monitoring",
-    "categoryName": {
-      "en": "Monitoring",
-      "es": "Monitoreo"
-    },
+    "categoryName": "Monitoring",
     "aws": "CloudTrail",
     "awsUrl": "https://aws.amazon.com/cloudtrail/",
     "azure": "Activity Log",
@@ -36,17 +27,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Audit/Concepts/auditoverview.htm",
     "cloudflare": "Audit Logs",
     "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/account/account-security/audit-logs/",
-    "description": {
-      "en": "Audit and compliance logging",
-      "es": "Registro de auditoría y cumplimiento"
-    }
+    "description": "Audit and compliance logging"
   },
   {
     "category": "monitoring",
-    "categoryName": {
-      "en": "Monitoring",
-      "es": "Monitoreo"
-    },
+    "categoryName": "Monitoring",
     "aws": "Systems Manager",
     "awsUrl": "https://aws.amazon.com/systems-manager/",
     "azure": "Automation",
@@ -56,17 +41,11 @@
     "oracle": "OS Management",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/os-management/home.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Operations management service",
-      "es": "Servicio de gestión de operaciones"
-    }
+    "description": "Operations management service"
   },
   {
     "category": "monitoring",
-    "categoryName": {
-      "en": "Monitoring",
-      "es": "Monitoreo"
-    },
+    "categoryName": "Monitoring",
     "aws": "X-Ray",
     "awsUrl": "https://aws.amazon.com/xray/",
     "azure": "Application Insights",
@@ -77,17 +56,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/application-performance-monitoring/home.htm",
     "cloudflare": "Workers Trace / Observability",
     "cloudflareUrl": "https://developers.cloudflare.com/workers/observability/",
-    "description": {
-      "en": "Distributed tracing and observability",
-      "es": "Traza distribuida y observabilidad"
-    }
+    "description": "Distributed tracing and observability"
   },
   {
     "category": "monitoring",
-    "categoryName": {
-      "en": "Monitoring",
-      "es": "Monitoreo"
-    },
+    "categoryName": "Monitoring",
     "aws": "CloudWatch Synthetics",
     "awsUrl": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics.html",
     "azure": "Application Insights Availability",
@@ -98,9 +71,6 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/HealthChecks/Concepts/healthchecks.htm",
     "cloudflare": "Workers Analytics / Speed Brain",
     "cloudflareUrl": "https://developers.cloudflare.com/workers/observability/",
-    "description": {
-      "en": "Synthetic monitoring and uptime checks",
-      "es": "Monitoreo sintético y verificaciones de disponibilidad"
-    }
+    "description": "Synthetic monitoring and uptime checks"
   }
 ]

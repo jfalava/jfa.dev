@@ -1,10 +1,7 @@
 [
   {
     "category": "governance",
-    "categoryName": {
-      "en": "Governance",
-      "es": "Gobernanza"
-    },
+    "categoryName": "Governance",
     "aws": "Service Control Policies (SCPs)",
     "awsUrl": "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html",
     "azure": "Azure Policy",
@@ -14,17 +11,11 @@
     "oracle": "OCI Governance Rules",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/cloud-adoption-framework/governance.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Governance enforcement for compliance standards",
-      "es": "Aplicación de gobernanza para estándares de cumplimiento"
-    }
+    "description": "Governance enforcement for compliance standards"
   },
   {
     "category": "governance",
-    "categoryName": {
-      "en": "Governance",
-      "es": "Gobernanza"
-    },
+    "categoryName": "Governance",
     "aws": "AWS Config",
     "awsUrl": "https://aws.amazon.com/config/",
     "azure": "Azure Resource Graph / Policy Compliance",
@@ -34,9 +25,6 @@
     "oracle": "Cloud Guard Config",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/cloud-guard/home.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Resource compliance and configuration auditing",
-      "es": "Auditoría de cumplimiento y configuración de recursos"
-    }
+    "description": "Resource compliance and configuration auditing"
   }
 ]

@@ -1,7 +1,5 @@
 import type { ServiceSearchScope } from "@/lib/service-search";
 
-export type LanguageCode = "en" | "es";
-
 export interface PageTranslations {
   title: string;
   titleSmol: string;
@@ -28,75 +26,36 @@ export interface PageTranslations {
   sourceCode: string;
 }
 
-export const translations = {
-  en: {
-    title: "HYPERSCALER SERVICES",
-    titleSmol: "HYPERSCALERS",
-    subtitle: "A directory of equivalent cloud services",
-    services: "Services",
-    providers: "Providers",
-    categories: "Categories",
-    search: "Search",
-    clearSearch: "Clear search",
-    searchApply: "Apply",
-    searchDescription: "Type a service, provider, or category.",
-    searchNoResults: "No services found.",
-    searchPlaceholder: "S3, compute, Cloudflare...",
-    searchResults: (count) => `${count} ${count === 1 ? "result" : "results"}`,
-    filteredResults: (count) => `${count} matching ${count === 1 ? "service" : "services"}`,
-    searchScopeHint: (scope) => {
-      if (scope === "provider") {
-        return "Choose a provider or continue typing after provider:.";
-      }
-      if (scope === "category") {
-        return "Choose a category or continue typing after category:.";
-      }
-      return "Continue typing after service: to find a service.";
-    },
-    categoryColumn: "Category",
-    awsColumn: "AWS",
-    azureColumn: "Azure",
-    gcpColumn: "GCP",
-    oracleColumn: "Oracle",
-    cloudflareColumn: "Cloudflare",
-    descriptionColumn: "Description",
-    sourceCode: "Source code",
+export const translations: PageTranslations = {
+  title: "HYPERSCALER SERVICES",
+  titleSmol: "HYPERSCALERS",
+  subtitle: "A directory of equivalent cloud services",
+  services: "Services",
+  providers: "Providers",
+  categories: "Categories",
+  search: "Search",
+  clearSearch: "Clear search",
+  searchApply: "Apply",
+  searchDescription: "Type a service, provider, or category.",
+  searchNoResults: "No services found.",
+  searchPlaceholder: "S3, compute, Cloudflare...",
+  searchResults: (count) => `${count} ${count === 1 ? "result" : "results"}`,
+  filteredResults: (count) => `${count} matching ${count === 1 ? "service" : "services"}`,
+  searchScopeHint: (scope) => {
+    if (scope === "provider") {
+      return "Choose a provider or continue typing after provider:.";
+    }
+    if (scope === "category") {
+      return "Choose a category or continue typing after category:.";
+    }
+    return "Continue typing after service: to find a service.";
   },
-  es: {
-    title: "SERVICIOS de HIPERESCALARES",
-    titleSmol: "HIPERESCALARES",
-    subtitle: "Un directorio de servicios cloud equivalentes",
-    services: "Servicios",
-    providers: "Proveedores",
-    categories: "Categorías",
-    search: "Buscar",
-    clearSearch: "Borrar búsqueda",
-    searchApply: "Aplicar",
-    searchDescription: "Escribe un servicio, proveedor o categoría.",
-    searchNoResults: "No se encontraron servicios.",
-    searchPlaceholder: "S3, compute, Cloudflare...",
-    searchResults: (count) => `${count} ${count === 1 ? "resultado" : "resultados"}`,
-    filteredResults: (count) =>
-      `${count} ${count === 1 ? "servicio coincidente" : "servicios coincidentes"}`,
-    searchScopeHint: (scope) => {
-      if (scope === "provider") {
-        return "Elige un proveedor o sigue escribiendo después de provider:.";
-      }
-      if (scope === "category") {
-        return "Elige una categoría o sigue escribiendo después de category:.";
-      }
-      return "Sigue escribiendo después de service: para buscar un servicio.";
-    },
-    categoryColumn: "Categoría",
-    awsColumn: "AWS",
-    azureColumn: "Azure",
-    gcpColumn: "GCP",
-    oracleColumn: "Oracle",
-    cloudflareColumn: "Cloudflare",
-    descriptionColumn: "Descripción",
-    sourceCode: "Código fuente",
-  },
-} satisfies Record<LanguageCode, PageTranslations>;
-
-export const isLanguageCode = (value: string | undefined): value is LanguageCode =>
-  value === "en" || value === "es";
+  categoryColumn: "Category",
+  awsColumn: "AWS",
+  azureColumn: "Azure",
+  gcpColumn: "GCP",
+  oracleColumn: "Oracle",
+  cloudflareColumn: "Cloudflare",
+  descriptionColumn: "Description",
+  sourceCode: "Source code",
+};

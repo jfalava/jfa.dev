@@ -1,10 +1,7 @@
 [
   {
     "category": "data-migration",
-    "categoryName": {
-      "en": "Data Migration",
-      "es": "Migración de Datos"
-    },
+    "categoryName": "Data Migration",
     "aws": "DMS",
     "awsUrl": "https://aws.amazon.com/dms/",
     "azure": "Database Migration Service",
@@ -14,17 +11,11 @@
     "oracle": "Zero Downtime Migration",
     "oracleUrl": "https://www.oracle.com/database/zero-downtime-migration/",
     "cloudflare": "—",
-    "description": {
-      "en": "Cloud migration service",
-      "es": "Servicio de migración en la nube"
-    }
+    "description": "Cloud migration service"
   },
   {
     "category": "data-migration",
-    "categoryName": {
-      "en": "Data Migration",
-      "es": "Migración de Datos"
-    },
+    "categoryName": "Data Migration",
     "aws": "DataSync",
     "awsUrl": "https://aws.amazon.com/datasync/",
     "azure": "Data Box",
@@ -33,9 +24,6 @@
     "gcpUrl": "https://cloud.google.com/storage-transfer-service",
     "oracle": "—",
     "cloudflare": "—",
-    "description": {
-      "en": "Offline and online bulk data transfer",
-      "es": "Transferencia de datos masiva en línea y fuera de línea"
-    }
+    "description": "Offline and online bulk data transfer"
   }
 ]

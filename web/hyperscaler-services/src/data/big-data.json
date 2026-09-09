@@ -1,10 +1,7 @@
 [
   {
     "category": "big-data",
-    "categoryName": {
-      "en": "Big Data",
-      "es": "Big Data"
-    },
+    "categoryName": "Big Data",
     "aws": "EMR",
     "awsUrl": "https://aws.amazon.com/emr/",
     "azure": "HDInsight",
@@ -14,17 +11,11 @@
     "oracle": "Big Data Service",
     "oracleUrl": "https://www.oracle.com/big-data/",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed Hadoop and Spark service",
-      "es": "Servicio administrado de Hadoop y Spark"
-    }
+    "description": "Managed Hadoop and Spark service"
   },
   {
     "category": "big-data",
-    "categoryName": {
-      "en": "Big Data",
-      "es": "Big Data"
-    },
+    "categoryName": "Big Data",
     "aws": "Kinesis",
     "awsUrl": "https://aws.amazon.com/kinesis/",
     "azure": "Event Hubs",
@@ -34,17 +25,11 @@
     "oracle": "Streaming",
     "oracleUrl": "https://www.oracle.com/cloud/streaming/",
     "cloudflare": "—",
-    "description": {
-      "en": "Real-time data streaming",
-      "es": "Transmisión de datos en tiempo real"
-    }
+    "description": "Real-time data streaming"
   },
   {
     "category": "big-data",
-    "categoryName": {
-      "en": "Big Data",
-      "es": "Big Data"
-    },
+    "categoryName": "Big Data",
     "aws": "MSK",
     "awsUrl": "https://aws.amazon.com/msk/",
     "azure": "Event Hubs",
@@ -54,9 +39,6 @@
     "oracle": "Streaming (Kafka)",
     "oracleUrl": "https://www.oracle.com/cloud/streaming/",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed Kafka clusters",
-      "es": "Clústeres de Kafka administrados"
-    }
+    "description": "Managed Kafka clusters"
   }
 ]

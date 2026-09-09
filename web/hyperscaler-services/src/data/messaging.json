@@ -1,10 +1,7 @@
 [
   {
     "category": "messaging",
-    "categoryName": {
-      "en": "Messaging",
-      "es": "Mensajería"
-    },
+    "categoryName": "Messaging",
     "aws": "SQS",
     "awsUrl": "https://aws.amazon.com/sqs/",
     "azure": "Queue Storage / Service Bus",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/queue/",
     "cloudflare": "Queues",
     "cloudflareUrl": "https://developers.cloudflare.com/queues/",
-    "description": {
-      "en": "Message queue service",
-      "es": "Servicio de cola de mensajes"
-    }
+    "description": "Message queue service"
   },
   {
     "category": "messaging",
-    "categoryName": {
-      "en": "Messaging",
-      "es": "Mensajería"
-    },
+    "categoryName": "Messaging",
     "aws": "SNS",
     "awsUrl": "https://aws.amazon.com/sns/",
     "azure": "Service Bus / Event Grid",
@@ -35,17 +26,11 @@
     "oracle": "Notifications",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Notification/Concepts/notificationoverview.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Pub/sub messaging service",
-      "es": "Servicio de mensajería pub/sub"
-    }
+    "description": "Pub/sub messaging service"
   },
   {
     "category": "messaging",
-    "categoryName": {
-      "en": "Messaging",
-      "es": "Mensajería"
-    },
+    "categoryName": "Messaging",
     "aws": "EventBridge",
     "awsUrl": "https://aws.amazon.com/eventbridge/",
     "azure": "Event Grid",
@@ -55,17 +40,11 @@
     "oracle": "Events",
     "oracleUrl": "https://www.oracle.com/cloud/events/",
     "cloudflare": "—",
-    "description": {
-      "en": "Event routing service",
-      "es": "Servicio de enrutamiento de eventos"
-    }
+    "description": "Event routing service"
   },
   {
     "category": "messaging",
-    "categoryName": {
-      "en": "Messaging",
-      "es": "Mensajería"
-    },
+    "categoryName": "Messaging",
     "aws": "MQ",
     "awsUrl": "https://aws.amazon.com/amazon-mq/",
     "azure": "Service Bus",
@@ -75,9 +54,6 @@
     "oracle": "Advanced Queuing",
     "oracleUrl": "https://docs.oracle.com/en/database/oracle/oracle-database/19/adque/",
     "cloudflare": "—",
-    "description": {
-      "en": "JMS 2.0 API compatible messaging",
-      "es": "Mensajería compatible con API JMS 2.0"
-    }
+    "description": "JMS 2.0 API compatible messaging"
   }
 ]

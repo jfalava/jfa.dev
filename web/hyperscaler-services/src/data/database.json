@@ -1,10 +1,7 @@
 [
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "RDS",
     "awsUrl": "https://aws.amazon.com/rds/",
     "azure": "Azure SQL Database",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://www.oracle.com/database/",
     "cloudflare": "D1",
     "cloudflareUrl": "https://developers.cloudflare.com/d1/",
-    "description": {
-      "en": "Managed relational database service",
-      "es": "Servicio de base de datos relacional administrado"
-    }
+    "description": "Managed relational database service"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "RDS for MySQL",
     "awsUrl": "https://aws.amazon.com/rds/mysql/",
     "azure": "Database for MySQL",
@@ -35,17 +26,11 @@
     "oracle": "MySQL Database Service",
     "oracleUrl": "https://www.oracle.com/mysql/",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed MySQL database",
-      "es": "Base de datos MySQL administrada"
-    }
+    "description": "Managed MySQL database"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "RDS for PostgreSQL",
     "awsUrl": "https://aws.amazon.com/rds/postgresql/",
     "azure": "Database for PostgreSQL",
@@ -55,17 +40,11 @@
     "oracle": "PostgreSQL Service",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/postgresql/home.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed PostgreSQL database",
-      "es": "Base de datos PostgreSQL administrada"
-    }
+    "description": "Managed PostgreSQL database"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "Aurora Serverless",
     "awsUrl": "https://aws.amazon.com/rds/aurora/serverless/",
     "azure": "SQL Database Serverless",
@@ -76,17 +55,11 @@
     "oracleUrl": "https://www.oracle.com/autonomous-database/",
     "cloudflare": "D1",
     "cloudflareUrl": "https://developers.cloudflare.com/d1/",
-    "description": {
-      "en": "Auto-scales compute based on demand",
-      "es": "Escala automáticamente el proceso según la demanda"
-    }
+    "description": "Auto-scales compute based on demand"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "DynamoDB",
     "awsUrl": "https://aws.amazon.com/dynamodb/",
     "azure": "Cosmos DB",
@@ -97,17 +70,11 @@
     "oracleUrl": "https://www.oracle.com/database/nosql/",
     "cloudflare": "Workers KV",
     "cloudflareUrl": "https://developers.cloudflare.com/kv/",
-    "description": {
-      "en": "Managed NoSQL data store",
-      "es": "Almacén de datos NoSQL administrado"
-    }
+    "description": "Managed NoSQL data store"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "DocumentDB",
     "awsUrl": "https://aws.amazon.com/documentdb/",
     "azure": "Cosmos DB",
@@ -117,17 +84,11 @@
     "oracle": "NoSQL Database",
     "oracleUrl": "https://www.oracle.com/database/nosql/",
     "cloudflare": "—",
-    "description": {
-      "en": "Document database service",
-      "es": "Servicio de base de datos de documentos"
-    }
+    "description": "Document database service"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "Neptune",
     "awsUrl": "https://aws.amazon.com/neptune/",
     "azure": "Cosmos DB",
@@ -137,17 +98,11 @@
     "oracle": "Graph Studio",
     "oracleUrl": "https://docs.oracle.com/en/database/oracle/property-graph/",
     "cloudflare": "—",
-    "description": {
-      "en": "Graph database service",
-      "es": "Servicio de base de datos de grafos"
-    }
+    "description": "Graph database service"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "ElastiCache",
     "awsUrl": "https://aws.amazon.com/elasticache/",
     "azure": "Cache for Redis",
@@ -158,17 +113,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/cache/",
     "cloudflare": "Workers KV",
     "cloudflareUrl": "https://developers.cloudflare.com/kv/",
-    "description": {
-      "en": "In-memory caching service",
-      "es": "Servicio de caché en memoria"
-    }
+    "description": "In-memory caching service"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "MemoryDB for Redis",
     "awsUrl": "https://aws.amazon.com/memorydb/",
     "azure": "Cache for Redis",
@@ -178,17 +127,11 @@
     "oracle": "OCI Cache with Redis",
     "oracleUrl": "https://www.oracle.com/cloud/cache/",
     "cloudflare": "—",
-    "description": {
-      "en": "High-performance Redis-compatible store",
-      "es": "Almacén compatible con Redis de alto rendimiento"
-    }
+    "description": "High-performance Redis-compatible store"
   },
   {
     "category": "database",
-    "categoryName": {
-      "en": "Database",
-      "es": "Base de Datos"
-    },
+    "categoryName": "Database",
     "aws": "RDS Proxy",
     "awsUrl": "https://aws.amazon.com/rds/proxy/",
     "azure": "—",
@@ -198,9 +141,6 @@
     "oracleUrl": "https://www.oracle.com/database/",
     "cloudflare": "Hyperdrive",
     "cloudflareUrl": "https://developers.cloudflare.com/hyperdrive/",
-    "description": {
-      "en": "Database connection proxy and pooling",
-      "es": "Proxy y agrupación de conexiones de bases de datos"
-    }
+    "description": "Database connection proxy and pooling"
   }
 ]

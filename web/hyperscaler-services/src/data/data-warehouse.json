@@ -1,10 +1,7 @@
 [
   {
     "category": "data-warehouse",
-    "categoryName": {
-      "en": "Data Warehousing",
-      "es": "Almacenamiento de Datos"
-    },
+    "categoryName": "Data Warehousing",
     "aws": "Redshift",
     "awsUrl": "https://aws.amazon.com/redshift/",
     "azure": "Synapse Analytics",
@@ -14,17 +11,11 @@
     "oracle": "Autonomous Data Warehouse",
     "oracleUrl": "https://www.oracle.com/autonomous-database/autonomous-data-warehouse/",
     "cloudflare": "—",
-    "description": {
-      "en": "Petabyte-scale data warehouse",
-      "es": "Almacén de datos a escala de petabytes"
-    }
+    "description": "Petabyte-scale data warehouse"
   },
   {
     "category": "data-warehouse",
-    "categoryName": {
-      "en": "Data Warehousing",
-      "es": "Almacenamiento de Datos"
-    },
+    "categoryName": "Data Warehousing",
     "aws": "Redshift Spectrum",
     "awsUrl": "https://aws.amazon.com/redshift/features/",
     "azure": "OneLake Shortcuts",
@@ -34,9 +25,6 @@
     "oracle": "Autonomous Database (external tables)",
     "oracleUrl": "https://docs.oracle.com/en/database/oracle/oracle-database/21/sutil/oracle-bigdata-access-driver.html",
     "cloudflare": "—",
-    "description": {
-      "en": "Query external data without movement",
-      "es": "Consulta de datos externos sin movimiento"
-    }
+    "description": "Query external data without movement"
   }
 ]

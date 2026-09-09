@@ -1,10 +1,7 @@
 [
   {
     "category": "data-integration",
-    "categoryName": {
-      "en": "Data Integration",
-      "es": "Integración de Datos"
-    },
+    "categoryName": "Data Integration",
     "aws": "Glue",
     "awsUrl": "https://aws.amazon.com/glue/",
     "azure": "Data Factory",
@@ -14,17 +11,11 @@
     "oracle": "Data Integration",
     "oracleUrl": "https://www.oracle.com/integration/data-integration/",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed ETL service",
-      "es": "Servicio ETL administrado"
-    }
+    "description": "Managed ETL service"
   },
   {
     "category": "data-integration",
-    "categoryName": {
-      "en": "Data Integration",
-      "es": "Integración de Datos"
-    },
+    "categoryName": "Data Integration",
     "aws": "MWAA",
     "awsUrl": "https://aws.amazon.com/mwaa/",
     "azure": "Fabric Apache Airflow",
@@ -33,17 +24,11 @@
     "gcpUrl": "https://cloud.google.com/composer",
     "oracle": "—",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed workflow orchestration",
-      "es": "Orquestación de flujos de trabajo administrados"
-    }
+    "description": "Managed workflow orchestration"
   },
   {
     "category": "data-integration",
-    "categoryName": {
-      "en": "Data Integration",
-      "es": "Integración de Datos"
-    },
+    "categoryName": "Data Integration",
     "aws": "AppFlow",
     "awsUrl": "https://aws.amazon.com/appflow/",
     "azure": "Logic Apps",
@@ -53,17 +38,11 @@
     "oracle": "Integration Cloud",
     "oracleUrl": "https://www.oracle.com/integration/",
     "cloudflare": "—",
-    "description": {
-      "en": "Low-code data flow automation",
-      "es": "Automatización de flujos de datos de bajo código"
-    }
+    "description": "Low-code data flow automation"
   },
   {
     "category": "data-integration",
-    "categoryName": {
-      "en": "Data Integration",
-      "es": "Integración de Datos"
-    },
+    "categoryName": "Data Integration",
     "aws": "Step Functions",
     "awsUrl": "https://aws.amazon.com/step-functions/",
     "azure": "Logic Apps",
@@ -74,17 +53,11 @@
     "oracleUrl": "https://www.oracle.com/integration/process-automation/",
     "cloudflare": "Workflows",
     "cloudflareUrl": "https://developers.cloudflare.com/workflows/",
-    "description": {
-      "en": "Workflow orchestration service",
-      "es": "Servicio de orquestación de flujos de trabajo"
-    }
+    "description": "Workflow orchestration service"
   },
   {
     "category": "data-integration",
-    "categoryName": {
-      "en": "Data Integration",
-      "es": "Integración de Datos"
-    },
+    "categoryName": "Data Integration",
     "aws": "EventBridge Pipes",
     "awsUrl": "https://aws.amazon.com/eventbridge/pipes/",
     "azure": "Event Grid",
@@ -94,9 +67,6 @@
     "oracle": "Events",
     "oracleUrl": "https://www.oracle.com/cloud/events/",
     "cloudflare": "—",
-    "description": {
-      "en": "Point-to-point event integration",
-      "es": "Integración de eventos punto a punto"
-    }
+    "description": "Point-to-point event integration"
   }
 ]

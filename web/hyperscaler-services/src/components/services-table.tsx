@@ -27,10 +27,8 @@ interface ServicesTableTranslations {
 
 /** Props for the services catalog table. */
 interface ServicesTableProps {
-  /** Localized labels used by the table. */
+  /** Labels used by the table. */
   translations: ServicesTableTranslations;
-  /** Language used for category and description content. */
-  currentLang: "en" | "es";
   /** Optional search query reserved for the future search UI. */
   searchQuery?: string;
   /** Search index generated from the static catalog at build time. */
@@ -98,12 +96,11 @@ function ServiceLink({ name, url }: { name: string; url?: string }) {
 
 /** Builds the stable TanStack column definitions for the services catalog. */
 function createServiceColumns(
-  currentLang: "en" | "es",
   translations: ServicesTableTranslations,
   selectedProvider?: ServiceProvider,
 ) {
   const allColumns = serviceColumnHelper.columns([
-    serviceColumnHelper.accessor((row) => row.categoryName[currentLang], {
+    serviceColumnHelper.accessor((row) => row.categoryName, {
       id: "category",
       header: translations.categoryColumn,
       cell: ({ getValue }) => (
@@ -149,7 +146,7 @@ function createServiceColumns(
         <ServiceLink name={getValue()} url={row.original.cloudflareUrl} />
       ),
     }),
-    serviceColumnHelper.accessor((row) => row.description[currentLang], {
+    serviceColumnHelper.accessor((row) => row.description, {
       id: "description",
       header: translations.descriptionColumn,
       cell: ({ getValue }) => <span className="text-muted-foreground">{getValue()}</span>,
@@ -172,14 +169,13 @@ function createServiceColumns(
 /** Renders the dense, responsive services catalog using TanStack Table v9. */
 export function ServicesTable({
   translations,
-  currentLang,
   searchQuery = "",
   searchIndex,
 }: ServicesTableProps) {
   const selectedProvider = getProviderFromSearchQuery(searchQuery);
   const columns = useMemo(
-    () => createServiceColumns(currentLang, translations, selectedProvider),
-    [currentLang, selectedProvider, translations],
+    () => createServiceColumns(translations, selectedProvider),
+    [selectedProvider, translations],
   );
   const visibleServices = useMemo(
     () => searchServiceIndex(searchIndex, searchQuery).map(({ service }) => service),

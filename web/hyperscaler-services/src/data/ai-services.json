@@ -1,10 +1,7 @@
 [
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "Rekognition",
     "awsUrl": "https://aws.amazon.com/rekognition/",
     "azure": "Azure AI Vision",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://www.oracle.com/artificial-intelligence/vision/",
     "cloudflare": "Workers AI (Inference)",
     "cloudflareUrl": "https://developers.cloudflare.com/workers-ai/",
-    "description": {
-      "en": "Image and video analysis",
-      "es": "Análisis de imágenes y video"
-    }
+    "description": "Image and video analysis"
   },
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "Polly",
     "awsUrl": "https://aws.amazon.com/polly/",
     "azure": "Azure AI Speech (Text-to-Speech)",
@@ -35,17 +26,11 @@
     "oracle": "OCI Speech (Text-to-Speech)",
     "oracleUrl": "https://www.oracle.com/artificial-intelligence/speech/",
     "cloudflare": "—",
-    "description": {
-      "en": "Text-to-speech synthesis",
-      "es": "Síntesis de voz a partir de texto"
-    }
+    "description": "Text-to-speech synthesis"
   },
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "Transcribe",
     "awsUrl": "https://aws.amazon.com/transcribe/",
     "azure": "Azure AI Speech (Speech-to-Text)",
@@ -55,17 +40,11 @@
     "oracle": "OCI Speech (Speech-to-Text)",
     "oracleUrl": "https://www.oracle.com/artificial-intelligence/speech/",
     "cloudflare": "—",
-    "description": {
-      "en": "Automatic speech recognition and transcription",
-      "es": "Reconocimiento automático del habla y transcripción"
-    }
+    "description": "Automatic speech recognition and transcription"
   },
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "Translate",
     "awsUrl": "https://aws.amazon.com/translate/",
     "azure": "Azure Translator",
@@ -75,17 +54,11 @@
     "oracle": "OCI Language",
     "oracleUrl": "https://www.oracle.com/artificial-intelligence/language/",
     "cloudflare": "—",
-    "description": {
-      "en": "Neural machine translation",
-      "es": "Traducción automática neuronal"
-    }
+    "description": "Neural machine translation"
   },
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "Comprehend",
     "awsUrl": "https://aws.amazon.com/comprehend/",
     "azure": "Azure AI Language",
@@ -95,17 +68,11 @@
     "oracle": "OCI Language",
     "oracleUrl": "https://www.oracle.com/artificial-intelligence/language/",
     "cloudflare": "—",
-    "description": {
-      "en": "Natural language processing and text analytics",
-      "es": "Procesamiento de lenguaje natural y análisis de texto"
-    }
+    "description": "Natural language processing and text analytics"
   },
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "Lex",
     "awsUrl": "https://aws.amazon.com/lex/",
     "azure": "Azure AI Language (Conversational)",
@@ -115,17 +82,11 @@
     "oracle": "Oracle Digital Assistant",
     "oracleUrl": "https://www.oracle.com/chatbots/",
     "cloudflare": "—",
-    "description": {
-      "en": "Conversational interfaces and chatbots",
-      "es": "Interfaces conversacionales y chatbots"
-    }
+    "description": "Conversational interfaces and chatbots"
   },
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "Textract",
     "awsUrl": "https://aws.amazon.com/textract/",
     "azure": "Azure AI Document Intelligence",
@@ -135,17 +96,11 @@
     "oracle": "OCI Document Understanding",
     "oracleUrl": "https://www.oracle.com/artificial-intelligence/document-understanding/",
     "cloudflare": "—",
-    "description": {
-      "en": "Document data extraction (OCR)",
-      "es": "Extracción de datos de documentos (OCR)"
-    }
+    "description": "Document data extraction (OCR)"
   },
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "OpenSearch Service",
     "awsUrl": "https://aws.amazon.com/opensearch-service/",
     "azure": "Azure AI Search",
@@ -156,17 +111,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/search-opensearch/home.htm",
     "cloudflare": "Vectorize",
     "cloudflareUrl": "https://developers.cloudflare.com/vectorize/",
-    "description": {
-      "en": "Managed search and vector retrieval service",
-      "es": "Servicio administrado de búsqueda y recuperación vectorial"
-    }
+    "description": "Managed search and vector retrieval service"
   },
   {
     "category": "ai-services",
-    "categoryName": {
-      "en": "AI Services",
-      "es": "Servicios de IA"
-    },
+    "categoryName": "AI Services",
     "aws": "Rekognition Content Moderation",
     "awsUrl": "https://aws.amazon.com/rekognition/content-moderation/",
     "azure": "Azure AI Content Safety",
@@ -174,9 +123,6 @@
     "gcp": "—",
     "oracle": "—",
     "cloudflare": "—",
-    "description": {
-      "en": "Detect and moderate harmful content",
-      "es": "Detección y moderación de contenido dañino"
-    }
+    "description": "Detect and moderate harmful content"
   }
 ]

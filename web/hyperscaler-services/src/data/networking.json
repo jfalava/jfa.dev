@@ -1,10 +1,7 @@
 [
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "VPC",
     "awsUrl": "https://aws.amazon.com/vpc/",
     "azure": "Virtual Network",
@@ -14,17 +11,11 @@
     "oracle": "VCN",
     "oracleUrl": "https://www.oracle.com/cloud/networking/virtual-cloud-network/",
     "cloudflare": "—",
-    "description": {
-      "en": "Private network in the cloud",
-      "es": "Red privada en la nube"
-    }
+    "description": "Private network in the cloud"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "NAT Gateway",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html",
     "azure": "NAT Gateway",
@@ -34,17 +25,11 @@
     "oracle": "NAT Gateway",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/NATgateway.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Outbound Internet connectivity",
-      "es": "Conectividad de Internet de salida"
-    }
+    "description": "Outbound Internet connectivity"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Route Tables",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html",
     "azure": "User Defined Routes",
@@ -54,17 +39,11 @@
     "oracle": "Route Tables",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingroutetables.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Custom network routing",
-      "es": "Enrutamiento de red personalizado"
-    }
+    "description": "Custom network routing"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Site-to-Site VPN",
     "awsUrl": "https://aws.amazon.com/vpn/",
     "azure": "VPN Gateway",
@@ -75,17 +54,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingIPsec.htm",
     "cloudflare": "Magic WAN",
     "cloudflareUrl": "https://developers.cloudflare.com/magic-wan/",
-    "description": {
-      "en": "VPN connectivity up to 10 Gbps",
-      "es": "Conectividad VPN de hasta 10 Gbps"
-    }
+    "description": "VPN connectivity up to 10 Gbps"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Direct Connect",
     "awsUrl": "https://aws.amazon.com/directconnect/",
     "azure": "ExpressRoute",
@@ -96,17 +69,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/networking/fastconnect/",
     "cloudflare": "Network Interconnect",
     "cloudflareUrl": "https://developers.cloudflare.com/network-interconnect/",
-    "description": {
-      "en": "Dedicated private network connections",
-      "es": "Conexiones de red privadas dedicadas"
-    }
+    "description": "Dedicated private network connections"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Network Load Balancer",
     "awsUrl": "https://aws.amazon.com/elasticloadbalancing/network-load-balancer/",
     "azure": "Load Balancer",
@@ -117,17 +84,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/networking/load-balancing/",
     "cloudflare": "Load Balancing",
     "cloudflareUrl": "https://developers.cloudflare.com/load-balancing/",
-    "description": {
-      "en": "Layer 4 TCP/UDP load balancing",
-      "es": "Equilibrio de carga TCP/UDP de capa 4"
-    }
+    "description": "Layer 4 TCP/UDP load balancing"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Application Load Balancer",
     "awsUrl": "https://aws.amazon.com/elasticloadbalancing/application-load-balancer/",
     "azure": "Application Gateway",
@@ -138,17 +99,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/networking/load-balancing/",
     "cloudflare": "Load Balancing",
     "cloudflareUrl": "https://developers.cloudflare.com/load-balancing/",
-    "description": {
-      "en": "Layer 7 application load balancing",
-      "es": "Equilibrio de carga de aplicaciones de capa 7"
-    }
+    "description": "Layer 7 application load balancing"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Route 53",
     "awsUrl": "https://aws.amazon.com/route53/",
     "azure": "DNS",
@@ -159,17 +114,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/networking/dns/",
     "cloudflare": "DNS",
     "cloudflareUrl": "https://developers.cloudflare.com/dns/",
-    "description": {
-      "en": "Domain name system service",
-      "es": "Servicio de sistema de nombres de dominio"
-    }
+    "description": "Domain name system service"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Route 53",
     "awsUrl": "https://aws.amazon.com/route53/",
     "azure": "Traffic Manager",
@@ -180,17 +129,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/TrafficManagement/Concepts/overview.htm",
     "cloudflare": "Load Balancing (Traffic Steering)",
     "cloudflareUrl": "https://developers.cloudflare.com/load-balancing/understand-basics/traffic-steering/",
-    "description": {
-      "en": "DNS-level traffic routing",
-      "es": "Enrutamiento de tráfico a nivel de DNS"
-    }
+    "description": "DNS-level traffic routing"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Global Accelerator",
     "awsUrl": "https://aws.amazon.com/global-accelerator/",
     "azure": "Traffic Manager",
@@ -201,17 +144,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/TrafficManagement/Concepts/overview.htm",
     "cloudflare": "Argo Smart Routing",
     "cloudflareUrl": "https://developers.cloudflare.com/argo-smart-routing/",
-    "description": {
-      "en": "Global routing and performance",
-      "es": "Enrutamiento global y rendimiento"
-    }
+    "description": "Global routing and performance"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "CloudFront",
     "awsUrl": "https://aws.amazon.com/cloudfront/",
     "azure": "CDN",
@@ -222,17 +159,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/TrafficManagement/Concepts/overview.htm",
     "cloudflare": "CDN",
     "cloudflareUrl": "https://developers.cloudflare.com/cache/",
-    "description": {
-      "en": "Content delivery network",
-      "es": "Red de distribución de contenido"
-    }
+    "description": "Content delivery network"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "PrivateLink",
     "awsUrl": "https://aws.amazon.com/privatelink/",
     "azure": "Private Link",
@@ -242,17 +173,11 @@
     "oracle": "Private Endpoint",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/servicegateway.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Private connectivity to PaaS",
-      "es": "Conectividad privada a PaaS"
-    }
+    "description": "Private connectivity to PaaS"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "VPC Endpoints",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html",
     "azure": "Private Endpoint",
@@ -262,17 +187,11 @@
     "oracle": "Service Gateway",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/servicegateway.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Private endpoint connectivity",
-      "es": "Conectividad de punto final privado"
-    }
+    "description": "Private endpoint connectivity"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "VPC Peering",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html",
     "azure": "Virtual Network Peering",
@@ -282,17 +201,11 @@
     "oracle": "VCN Peering",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/VCNpeering.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Connect virtual networks",
-      "es": "Conectar redes virtuales"
-    }
+    "description": "Connect virtual networks"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Transit Gateway",
     "awsUrl": "https://aws.amazon.com/transit-gateway/",
     "azure": "Virtual WAN",
@@ -302,17 +215,11 @@
     "oracle": "DRG (Dynamic Routing Gateway)",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingDRGs.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Multi-environment network connectivity",
-      "es": "Conectividad de red de múltiples entornos"
-    }
+    "description": "Multi-environment network connectivity"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "VPC Flow Logs",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html",
     "azure": "Network Watcher",
@@ -323,17 +230,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Concepts/vcn_flow_logs.htm",
     "cloudflare": "Network Analytics",
     "cloudflareUrl": "https://developers.cloudflare.com/analytics/network-analytics/",
-    "description": {
-      "en": "Network traffic monitoring",
-      "es": "Monitoreo de tráfico de red"
-    }
+    "description": "Network traffic monitoring"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "API Gateway",
     "awsUrl": "https://aws.amazon.com/api-gateway/",
     "azure": "API Management",
@@ -344,17 +245,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/api-gateway/",
     "cloudflare": "API Shield",
     "cloudflareUrl": "https://developers.cloudflare.com/api-shield/",
-    "description": {
-      "en": "API management and security",
-      "es": "Gestión y seguridad de APIs"
-    }
+    "description": "API management and security"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Network Firewall",
     "awsUrl": "https://aws.amazon.com/network-firewall/",
     "azure": "Azure Firewall",
@@ -365,17 +260,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/network-firewall/home.htm",
     "cloudflare": "Magic Firewall",
     "cloudflareUrl": "https://developers.cloudflare.com/magic-firewall/",
-    "description": {
-      "en": "Managed cloud network firewall",
-      "es": "Cortafuegos de red en la nube administrado"
-    }
+    "description": "Managed cloud network firewall"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Shield",
     "awsUrl": "https://aws.amazon.com/shield/",
     "azure": "DDoS Protection",
@@ -386,17 +275,11 @@
     "oracleUrl": "https://docs.oracle.com/en/solutions/learn-ddos-prevention-oci/index.html",
     "cloudflare": "Magic Transit / Advanced DDoS",
     "cloudflareUrl": "https://developers.cloudflare.com/magic-transit/",
-    "description": {
-      "en": "Distributed denial-of-service (DDoS) protection",
-      "es": "Protección contra denegación de servicio distribuida (DDoS)"
-    }
+    "description": "Distributed denial-of-service (DDoS) protection"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Elastic IP",
     "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html",
     "azure": "Static Public IP",
@@ -406,17 +289,11 @@
     "oracle": "Reserved Public IP",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingpublicIPs.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Static public IP address for dynamic cloud resources",
-      "es": "Dirección IP pública estática para recursos dinámicos en la nube"
-    }
+    "description": "Static public IP address for dynamic cloud resources"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Security Groups",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html",
     "azure": "Network Security Group",
@@ -426,17 +303,11 @@
     "oracle": "Network Security Groups",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Concepts/networksecuritygroups.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Virtual firewall for compute instances",
-      "es": "Firewall virtual para instancias de cómputo"
-    }
+    "description": "Virtual firewall for compute instances"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Subnet",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html",
     "azure": "Subnet",
@@ -446,17 +317,11 @@
     "oracle": "Subnet",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingSubnets.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Network segmentation within a VPC/VNet",
-      "es": "Segmentación de red dentro de VPC/VNet"
-    }
+    "description": "Network segmentation within a VPC/VNet"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Bastion Hosts",
     "awsUrl": "https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html",
     "azure": "Azure Bastion",
@@ -467,17 +332,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/bastion/home.htm",
     "cloudflare": "Cloudflare Tunnel (Bastion)",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/",
-    "description": {
-      "en": "Managed bastion and secure shell access",
-      "es": "Bastión administrado y acceso shell seguro"
-    }
+    "description": "Managed bastion and secure shell access"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Elastic Network Interface",
     "awsUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html",
     "azure": "Network Interface",
@@ -487,17 +346,11 @@
     "oracle": "VNIC",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingVNICs.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Virtual network interface for compute instances",
-      "es": "Interfaz de red virtual para instancias de cómputo"
-    }
+    "description": "Virtual network interface for compute instances"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Internet Gateway",
     "awsUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html",
     "azure": "—",
@@ -505,17 +358,11 @@
     "oracle": "Internet Gateway",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingIGs.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Gateway for Internet access from a VPC",
-      "es": "Puerta de enlace para acceso a Internet desde una VPC"
-    }
+    "description": "Gateway for Internet access from a VPC"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Private DNS",
     "awsUrl": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html",
     "azure": "Private DNS",
@@ -525,17 +372,11 @@
     "oracle": "Private DNS",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/DNS/Concepts/privatednszones.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Private DNS resolution inside VPC/VNet",
-      "es": "Resolución DNS privada dentro de VPC/VNet"
-    }
+    "description": "Private DNS resolution inside VPC/VNet"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Client VPN",
     "awsUrl": "https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html",
     "azure": "VPN Gateway (P2S)",
@@ -546,17 +387,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingClientVPN.htm",
     "cloudflare": "Cloudflare Access (Private Network)",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/",
-    "description": {
-      "en": "Managed client-to-site VPN access",
-      "es": "Acceso VPN administrado de cliente a sitio"
-    }
+    "description": "Managed client-to-site VPN access"
   },
   {
     "category": "networking",
-    "categoryName": {
-      "en": "Networking",
-      "es": "Redes"
-    },
+    "categoryName": "Networking",
     "aws": "Cloud Map",
     "awsUrl": "https://aws.amazon.com/cloud-map/",
     "azure": "—",
@@ -566,9 +401,6 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/service-discovery/home.htm",
     "cloudflare": "Cloudflare Service Discovery",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/cloudflared/",
-    "description": {
-      "en": "Service registry and discovery",
-      "es": "Registro y descubrimiento de servicios"
-    }
+    "description": "Service registry and discovery"
   }
 ]

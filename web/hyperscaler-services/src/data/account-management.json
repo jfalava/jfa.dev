@@ -1,10 +1,7 @@
 [
   {
     "category": "account-management",
-    "categoryName": {
-      "en": "Account Management",
-      "es": "Gestión de Cuentas"
-    },
+    "categoryName": "Account Management",
     "aws": "AWS Organizations (Root)",
     "awsUrl": "https://aws.amazon.com/organizations/",
     "azure": "Azure Tenant (Microsoft Entra ID)",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/tenancy/managingtenancy.htm",
     "cloudflare": "Cloudflare Account",
     "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/setup/account/",
-    "description": {
-      "en": "Top-level organizational structure for managing users, groups, and applications",
-      "es": "Estructura organizacional de nivel superior para administrar usuarios, grupos y aplicaciones"
-    }
+    "description": "Top-level organizational structure for managing users, groups, and applications"
   },
   {
     "category": "account-management",
-    "categoryName": {
-      "en": "Account Management",
-      "es": "Gestión de Cuentas"
-    },
+    "categoryName": "Account Management",
     "aws": "AWS Account",
     "awsUrl": "https://aws.amazon.com/account/",
     "azure": "Azure Subscription",
@@ -36,17 +27,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/compartments/managingcompartments.htm",
     "cloudflare": "Cloudflare Zone",
     "cloudflareUrl": "https://developers.cloudflare.com/fundamentals/setup/manage-domains/",
-    "description": {
-      "en": "Logical unit for services linked to billing and resource management boundaries",
-      "es": "Unidad lógica para servicios vinculados a límites de facturación y administración de recursos"
-    }
+    "description": "Logical unit for services linked to billing and resource management boundaries"
   },
   {
     "category": "account-management",
-    "categoryName": {
-      "en": "Account Management",
-      "es": "Gestión de Cuentas"
-    },
+    "categoryName": "Account Management",
     "aws": "Organizational Units (OUs)",
     "awsUrl": "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_ous.html",
     "azure": "Management Groups",
@@ -56,17 +41,11 @@
     "oracle": "Compartment Hierarchy",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/compartments/managingcompartments.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Hierarchical structures for organizing and managing resources across multiple accounts/subscriptions",
-      "es": "Estructuras jerárquicas para organizar y administrar recursos en múltiples cuentas/suscripciones"
-    }
+    "description": "Hierarchical structures for organizing and managing resources across multiple accounts/subscriptions"
   },
   {
     "category": "account-management",
-    "categoryName": {
-      "en": "Account Management",
-      "es": "Gestión de Cuentas"
-    },
+    "categoryName": "Account Management",
     "aws": "IAM Roles for Workloads",
     "awsUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html",
     "azure": "Managed Identities",
@@ -77,17 +56,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Identity/Tasks/managingdynamicgroups.htm",
     "cloudflare": "Access Service Tokens",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/access-controls/service-credentials/service-tokens/",
-    "description": {
-      "en": "Workload identities for applications and automated services",
-      "es": "Identidades de cargas de trabajo para aplicaciones y servicios automatizados"
-    }
+    "description": "Workload identities for applications and automated services"
   },
   {
     "category": "account-management",
-    "categoryName": {
-      "en": "Account Management",
-      "es": "Gestión de Cuentas"
-    },
+    "categoryName": "Account Management",
     "aws": "Cost Management",
     "awsUrl": "https://aws.amazon.com/aws-cost-management/",
     "azure": "Cost Management + Billing",
@@ -98,17 +71,11 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Billing/home.htm",
     "cloudflare": "Billing",
     "cloudflareUrl": "https://developers.cloudflare.com/billing/",
-    "description": {
-      "en": "Billing, budgets, and cost tracking",
-      "es": "Facturación, presupuestos y seguimiento de costos"
-    }
+    "description": "Billing, budgets, and cost tracking"
   },
   {
     "category": "account-management",
-    "categoryName": {
-      "en": "Account Management",
-      "es": "Gestión de Cuentas"
-    },
+    "categoryName": "Account Management",
     "aws": "Service Quotas",
     "awsUrl": "https://docs.aws.amazon.com/servicequotas/",
     "azure": "Service Quotas",
@@ -118,17 +85,11 @@
     "oracle": "Service Limits",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/General/Concepts/servicelimits.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Service quotas and usage limits",
-      "es": "Cuotas de servicio y límites de uso"
-    }
+    "description": "Service quotas and usage limits"
   },
   {
     "category": "account-management",
-    "categoryName": {
-      "en": "Account Management",
-      "es": "Gestión de Cuentas"
-    },
+    "categoryName": "Account Management",
     "aws": "Resource Groups & Tags",
     "awsUrl": "https://docs.aws.amazon.com/ARG/latest/userguide/welcome.html",
     "azure": "Resource Groups & Tags",
@@ -138,17 +99,11 @@
     "oracle": "Tags",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Tagging/Concepts/taggingoverview.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Tagging and grouping resources for organization and cost allocation",
-      "es": "Etiquetado y agrupación de recursos para organización y asignación de costos"
-    }
+    "description": "Tagging and grouping resources for organization and cost allocation"
   },
   {
     "category": "account-management",
-    "categoryName": {
-      "en": "Account Management",
-      "es": "Gestión de Cuentas"
-    },
+    "categoryName": "Account Management",
     "aws": "Control Tower",
     "awsUrl": "https://aws.amazon.com/controltower/",
     "azure": "Azure Landing Zones",
@@ -158,9 +113,6 @@
     "oracle": "OCI Landing Zones",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/cloud-adoption-framework/oci-landing-zones-overview.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Reference architecture for secure multi-account setup",
-      "es": "Arquitectura de referencia para una configuración multicuenta segura"
-    }
+    "description": "Reference architecture for secure multi-account setup"
   }
 ]

@@ -186,10 +186,8 @@ function createServiceFields(service: ServiceMapping): readonly SearchField[] {
   }
 
   addField("category", service.category);
-  addField("category", service.categoryName.en);
-  addField("category", service.categoryName.es);
-  addField("description", service.description.en);
-  addField("description", service.description.es);
+  addField("category", service.categoryName);
+  addField("description", service.description);
 
   return fields;
 }

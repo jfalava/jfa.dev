@@ -1,10 +1,7 @@
 [
   {
     "category": "generative-ai",
-    "categoryName": {
-      "en": "Generative AI",
-      "es": "IA Generativa"
-    },
+    "categoryName": "Generative AI",
     "aws": "Bedrock",
     "awsUrl": "https://aws.amazon.com/bedrock/",
     "azure": "AI Foundry",
@@ -15,17 +12,11 @@
     "oracleUrl": "https://www.oracle.com/artificial-intelligence/generative-ai/",
     "cloudflare": "Workers AI",
     "cloudflareUrl": "https://developers.cloudflare.com/workers-ai/",
-    "description": {
-      "en": "Foundation model platform",
-      "es": "Plataforma de modelos fundamentales"
-    }
+    "description": "Foundation model platform"
   },
   {
     "category": "generative-ai",
-    "categoryName": {
-      "en": "Generative AI",
-      "es": "IA Generativa"
-    },
+    "categoryName": "Generative AI",
     "aws": "Amazon Q",
     "awsUrl": "https://aws.amazon.com/q/",
     "azure": "Copilot in Azure",
@@ -34,17 +25,11 @@
     "gcpUrl": "https://cloud.google.com/gemini",
     "oracle": "—",
     "cloudflare": "—",
-    "description": {
-      "en": "AI assistant for cloud operations",
-      "es": "Asistente de IA para operaciones en la nube"
-    }
+    "description": "AI assistant for cloud operations"
   },
   {
     "category": "generative-ai",
-    "categoryName": {
-      "en": "Generative AI",
-      "es": "IA Generativa"
-    },
+    "categoryName": "Generative AI",
     "aws": "Bedrock Knowledge Bases",
     "awsUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html",
     "azure": "Azure OpenAI On Your Data",
@@ -55,9 +40,6 @@
     "oracleUrl": "https://www.oracle.com/database/ai-vector-search/",
     "cloudflare": "AutoRAG",
     "cloudflareUrl": "https://developers.cloudflare.com/autorag/",
-    "description": {
-      "en": "Managed retrieval-augmented generation (RAG) and knowledge grounding",
-      "es": "Generación aumentada por recuperación (RAG) administrada y fundamentación en conocimiento"
-    }
+    "description": "Managed retrieval-augmented generation (RAG) and knowledge grounding"
   }
 ]

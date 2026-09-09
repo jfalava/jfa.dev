@@ -1,10 +1,7 @@
 [
   {
     "category": "containers",
-    "categoryName": {
-      "en": "Containers",
-      "es": "Contenedores"
-    },
+    "categoryName": "Containers",
     "aws": "ECS",
     "awsUrl": "https://aws.amazon.com/ecs/",
     "azure": "Container Instances",
@@ -14,17 +11,11 @@
     "oracle": "Container Instances",
     "oracleUrl": "https://www.oracle.com/cloud/cloud-native/container-instances/",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed container execution service",
-      "es": "Servicio administrado de ejecución de contenedores"
-    }
+    "description": "Managed container execution service"
   },
   {
     "category": "containers",
-    "categoryName": {
-      "en": "Containers",
-      "es": "Contenedores"
-    },
+    "categoryName": "Containers",
     "aws": "Fargate",
     "awsUrl": "https://aws.amazon.com/fargate/",
     "azure": "Azure Container Apps",
@@ -35,17 +26,11 @@
     "oracleUrl": "https://www.oracle.com/cloud/cloud-native/container-instances/",
     "cloudflare": "Containers",
     "cloudflareUrl": "https://developers.cloudflare.com/containers/",
-    "description": {
-      "en": "Serverless container runtime for running containerized apps",
-      "es": "Runtime serverless de contenedores para ejecutar aplicaciones contenedorizadas"
-    }
+    "description": "Serverless container runtime for running containerized apps"
   },
   {
     "category": "containers",
-    "categoryName": {
-      "en": "Containers",
-      "es": "Contenedores"
-    },
+    "categoryName": "Containers",
     "aws": "ECR",
     "awsUrl": "https://aws.amazon.com/ecr/",
     "azure": "Azure Container Registry",
@@ -55,17 +40,11 @@
     "oracle": "Container Registry",
     "oracleUrl": "https://www.oracle.com/cloud/cloud-native/container-registry/",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed container image registry",
-      "es": "Registro de imágenes de contenedores administrado"
-    }
+    "description": "Managed container image registry"
   },
   {
     "category": "containers",
-    "categoryName": {
-      "en": "Containers",
-      "es": "Contenedores"
-    },
+    "categoryName": "Containers",
     "aws": "EKS",
     "awsUrl": "https://aws.amazon.com/eks/",
     "azure": "AKS",
@@ -75,17 +54,11 @@
     "oracle": "OKE",
     "oracleUrl": "https://www.oracle.com/cloud/cloud-native/container-engine-kubernetes/",
     "cloudflare": "—",
-    "description": {
-      "en": "Managed Kubernetes service",
-      "es": "Servicio de Kubernetes administrado"
-    }
+    "description": "Managed Kubernetes service"
   },
   {
     "category": "containers",
-    "categoryName": {
-      "en": "Containers",
-      "es": "Contenedores"
-    },
+    "categoryName": "Containers",
     "aws": "App Mesh",
     "awsUrl": "https://aws.amazon.com/app-mesh/",
     "azure": "Istio add-on for AKS",
@@ -95,9 +68,6 @@
     "oracle": "Service Mesh",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/service-mesh/home.htm",
     "cloudflare": "—",
-    "description": {
-      "en": "Service mesh for microservices",
-      "es": "Malla de servicios para microservicios"
-    }
+    "description": "Service mesh for microservices"
   }
 ]

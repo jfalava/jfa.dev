@@ -2,24 +2,21 @@ import { SiteHeader } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { X } from "lucide-react";
 
-import { LanguageToggle } from "@/components/language-toggle";
 import { ServiceSearchPalette } from "@/components/service-search-palette";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { importServices } from "@/data/services";
-import type { LanguageCode, PageTranslations } from "@/features/catalog/lib/translations";
+import type { PageTranslations } from "@/features/catalog/lib/translations";
 import type { ServiceSearchIndex } from "@/lib/service-search";
 
 /** Renders the compact utility header used by the services catalog. */
 export function CatalogHeader({
   activeQuery,
-  currentLang,
   onClearQuery,
   searchIndex,
   services,
   t,
 }: {
   activeQuery: string;
-  currentLang: LanguageCode;
   onClearQuery: () => void;
   searchIndex: ServiceSearchIndex;
   services: Awaited<ReturnType<typeof importServices>>;
@@ -37,7 +34,6 @@ export function CatalogHeader({
     >
       <ServiceSearchPalette
         activeQuery={activeQuery}
-        currentLang={currentLang}
         searchIndex={searchIndex}
         services={services}
         translations={t}
@@ -54,7 +50,6 @@ export function CatalogHeader({
           <X className="size-4 shrink-0" />
         </button>
       ) : null}
-      <LanguageToggle currentLang={currentLang} />
       <ThemeToggle />
     </SiteHeader>
   );

@@ -12,13 +12,13 @@ import {
 function createService(overrides: Partial<ServiceMapping>): ServiceMapping {
   return {
     category: "compute",
-    categoryName: { en: "Compute", es: "Computación" },
+    categoryName: "Compute",
     aws: "Amazon EC2",
     azure: "Azure Virtual Machines",
     gcp: "Compute Engine",
     oracle: "Compute",
     cloudflare: "Workers",
-    description: { en: "Virtual machines", es: "Máquinas virtuales" },
+    description: "Virtual machines",
     ...overrides,
   };
 }
@@ -34,9 +34,9 @@ describe("service search", () => {
     const services = [
       createService({
         category: "storage",
-        categoryName: { en: "Storage", es: "Almacenamiento" },
+        categoryName: "Storage",
         aws: "Amazon S3",
-        description: { en: "Object storage", es: "Almacenamiento de objetos" },
+        description: "Object storage",
       }),
       createService({ aws: "Amazon EC2" }),
     ];
@@ -62,7 +62,7 @@ describe("service search", () => {
     const services = [
       createService({
         category: "storage",
-        categoryName: { en: "Storage", es: "Almacenamiento" },
+        categoryName: "Storage",
         aws: "Amazon S3",
       }),
       createService({ aws: "Storage Gateway" }),
@@ -77,7 +77,7 @@ describe("service search", () => {
     const services = [
       createService({
         category: "storage",
-        categoryName: { en: "Storage", es: "Almacenamiento" },
+        categoryName: "Storage",
         aws: "Amazon S3",
       }),
     ];

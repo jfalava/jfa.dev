@@ -7,23 +7,15 @@
  */
 
 /**
- * Text content available in multiple languages.
- */
-export interface ServiceTranslations {
-  en: string;
-  es: string;
-}
-
-/**
  * Represents a mapping between equivalent cloud services across providers.
  *
  * Each service includes category information, service names from all
- * providers, and localized descriptions to help users understand
+ * providers, and descriptions to help users understand
  * purpose and equivalence of services.
  */
 export interface ServiceMapping {
   category: string;
-  categoryName: ServiceTranslations;
+  categoryName: string;
   aws: string;
   awsUrl?: string;
   azure: string;
@@ -34,7 +26,7 @@ export interface ServiceMapping {
   oracleUrl?: string;
   cloudflare: string;
   cloudflareUrl?: string;
-  description: ServiceTranslations;
+  description: string;
 }
 
 /** Providers supported by the catalog and their stable display labels. */
@@ -66,10 +58,6 @@ function hasStringProperties(value: JsonObject, properties: readonly string[]): 
   return properties.every((property) => isString(value[property]));
 }
 
-function isServiceTranslations(value: JsonValue): value is JsonObject & ServiceTranslations {
-  return isRecord(value) && hasStringProperties(value, ["en", "es"]);
-}
-
 function isOptionalString(value: JsonValue | undefined): value is string | undefined {
   return value === undefined || isString(value);
 }
@@ -84,9 +72,9 @@ function isServiceMapping(value: JsonValue): value is JsonObject & ServiceMappin
 
   return (
     hasStringProperties(value, serviceProperties) &&
-    isServiceTranslations(value.categoryName) &&
+    isString(value.categoryName) &&
     urlProperties.every((property) => isOptionalString(value[property])) &&
-    isServiceTranslations(value.description)
+    isString(value.description)
   );
 }
 
