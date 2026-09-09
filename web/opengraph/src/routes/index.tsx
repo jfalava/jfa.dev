@@ -591,7 +591,7 @@ function EditorPage() {
         {/* Center: Canvas + options bar + status bar */}
         <section
           aria-label="Canvas"
-          className="order-1 flex min-h-[420px] min-w-0 flex-1 flex-col lg:order-none"
+          className="order-1 flex min-h-105 min-w-0 flex-1 flex-col lg:order-0"
         >
           <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-auto bg-[linear-gradient(45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(-45deg,rgba(127,127,127,0.08)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(127,127,127,0.08)_75%),linear-gradient(-45deg,transparent_75%,rgba(127,127,127,0.08)_75%)] bg-size-[16px_16px] bg-position-[0_0,0_0,8px_8px,-8px_8px] p-6">
             <div className="flex max-w-full min-w-0 items-center justify-center rounded-sm border border-border bg-background p-1 shadow-2xl shadow-black/10">
@@ -647,7 +647,7 @@ function EditorPage() {
         </section>
 
         {/* Right: Photoshop-style dock — resizable vertical (Properties / Layers) with inner resizable for layer name/state */}
-        <div className="order-2 hidden min-h-0 w-full flex-col border-border bg-background lg:flex lg:w-[22rem] lg:shrink-0 lg:overflow-hidden lg:border-l xl:w-[24rem]">
+        <div className="order-2 hidden min-h-0 w-full flex-col border-border bg-background lg:flex lg:w-88 lg:shrink-0 lg:overflow-hidden lg:border-l xl:w-[24rem]">
           <ResizablePanelGroup orientation="vertical" className="min-h-0 flex-1">
             <ResizablePanel defaultSize="60%" minSize="28%">
               <PropertiesPanel
@@ -686,7 +686,7 @@ function EditorPage() {
             onUpdate={updateSelected}
           />
           <LayersPanel
-            className="flex min-h-[260px] flex-col overflow-hidden"
+            className="flex min-h-65 flex-col overflow-hidden"
             filter={filter}
             onAddGeometry={addGeometryLayer}
             onAddImage={() => imageInputRef.current?.click()}
@@ -759,7 +759,7 @@ function PhotoshopToolbox({
   return (
     <aside
       aria-label="Tools"
-      className="hidden w-[56px] shrink-0 flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 lg:flex dark:border-zinc-800 dark:bg-[#1e1e1e]"
+      className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 lg:flex dark:border-zinc-800 dark:bg-[#1e1e1e]"
     >
       {/* Move / Select */}
       <ToolboxButton
@@ -767,27 +767,27 @@ function PhotoshopToolbox({
         ariaLabel="Move tool (V)"
         onPress={() => onSelectTool("select")}
       >
-        <MousePointer2 className="size-[18px]" />
+        <MousePointer2 className="size-4.5" />
       </ToolboxButton>
       <ToolboxButton
         active={activeTool === "hand"}
         ariaLabel="Hand tool (H)"
         onPress={() => onSelectTool("hand")}
       >
-        <Hand className="size-[18px]" />
+        <Hand className="size-4.5" />
       </ToolboxButton>
 
       <ToolboxSeparator />
 
       {/* Insert */}
       <ToolboxButton ariaLabel="Add text (T)" onPress={onAddText} isDisabled={busy}>
-        <Type className="size-[18px]" />
+        <Type className="size-4.5" />
       </ToolboxButton>
       <ToolboxButton ariaLabel="Add shape (U)" onPress={onAddGeometry} isDisabled={busy}>
-        <Square className="size-[18px]" />
+        <Square className="size-4.5" />
       </ToolboxButton>
       <ToolboxButton ariaLabel="Add image" onPress={onAddImage} isDisabled={busy}>
-        <ImageIcon className="size-[18px]" />
+        <ImageIcon className="size-4.5" />
       </ToolboxButton>
 
       <ToolboxSeparator />
@@ -798,7 +798,7 @@ function PhotoshopToolbox({
         active={activeTool === "pipette"}
         onPress={() => onSelectTool("pipette")}
       >
-        <Pipette className="size-[18px]" />
+        <Pipette className="size-4.5" />
       </ToolboxButton>
 
       {/* Photoshop-style foreground/background swatches — react-colorful */}
@@ -808,14 +808,14 @@ function PhotoshopToolbox({
           onChange={onBackgroundColorChange}
           ariaLabel="Background color"
           compact
-          className="absolute top-1 left-1 !size-5 !rounded-sm !border-white/30 !p-0 shadow-sm"
+          className="absolute top-1 left-1 size-5! rounded-sm! border-white/30! p-0! shadow-sm"
         />
         <ColorPicker
           color={foregroundColor}
           onChange={onForegroundColorChange}
           ariaLabel="Foreground color"
           compact
-          className="absolute right-1 bottom-1 !size-5 !rounded-sm !border-white !p-0 shadow-sm"
+          className="absolute right-1 bottom-1 size-5! rounded-sm! border-white! p-0! shadow-sm"
         />
         {/* Swap icon hint */}
         <div className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-zinc-700" />
@@ -828,20 +828,20 @@ function PhotoshopToolbox({
 
       {/* Edit */}
       <ToolboxButton ariaLabel="Duplicate layer" onPress={onDuplicate} isDisabled={!canModify}>
-        <Copy className="size-[18px]" />
+        <Copy className="size-4.5" />
       </ToolboxButton>
       <ToolboxButton ariaLabel="Delete layer" onPress={onRemove} isDisabled={!canModify}>
-        <Trash2 className="size-[18px]" />
+        <Trash2 className="size-4.5" />
       </ToolboxButton>
 
       <ToolboxSeparator />
 
       {/* History */}
       <ToolboxButton ariaLabel="Undo" onPress={onUndo} isDisabled={!canUndo}>
-        <Undo2 className="size-[18px]" />
+        <Undo2 className="size-4.5" />
       </ToolboxButton>
       <ToolboxButton ariaLabel="Redo" onPress={onRedo} isDisabled={!canRedo}>
-        <Redo2 className="size-[18px]" />
+        <Redo2 className="size-4.5" />
       </ToolboxButton>
     </aside>
   );
@@ -866,7 +866,7 @@ function ToolboxButton({
       disabled={isDisabled}
       onClick={onPress}
       type="button"
-      className={`flex size-8 items-center justify-center rounded-[4px] border text-zinc-400 transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
+      className={`flex size-8 items-center justify-center rounded-lg border text-zinc-400 transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
         active
           ? "border-white/20 bg-white/15 text-white shadow-inner"
           : "border-transparent bg-transparent hover:border-white/10 hover:bg-white/10 hover:text-white"
@@ -953,7 +953,7 @@ function LayersPanel({
           <Button aria-label="Add layer" size="icon-sm" variant="ghost">
             <Plus />
           </Button>
-          <DropdownMenu className="!w-auto !min-w-56">
+          <DropdownMenu className="w-auto! min-w-56!">
             <DropdownMenuItem onAction={onAddText} textValue="Add text layer">
               <Type />
               New text layer
@@ -972,7 +972,7 @@ function LayersPanel({
           <Button aria-label="Layer options" size="icon-sm" variant="ghost">
             <MoreHorizontal />
           </Button>
-          <DropdownMenu className="!w-auto !min-w-56">
+          <DropdownMenu className="w-auto! min-w-56!">
             <DropdownMenuItem
               onAction={() => setAllLayersVisibility(true)}
               isDisabled={!hasHidden && hasVisible}
@@ -1185,7 +1185,7 @@ function LayerRow({
           </Button>
         </div>
       </Pressable>
-      <ContextMenu className="!w-auto !max-w-52 !min-w-40">
+      <ContextMenu className="w-auto! max-w-52! min-w-40!">
         <ContextMenuItem onAction={onRenameStart} isDisabled={layer.locked}>
           <Pencil />
           Rename
@@ -1307,7 +1307,7 @@ function CanvasSection() {
           })}
         </div>
         <div
-          className={`rounded-md border p-2 ${isCustom ? "border-primary/20 bg-primary/[0.04]" : "border-dashed"}`}
+          className={`rounded-md border p-2 ${isCustom ? "border-primary/20 bg-primary/4" : "border-dashed"}`}
         >
           <p className="mb-2 text-[10px] font-medium text-muted-foreground">
             Custom {isCustom ? <span className="text-primary">• active</span> : null}

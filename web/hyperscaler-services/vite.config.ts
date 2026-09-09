@@ -76,7 +76,7 @@ export default defineConfig({
       preserveDuplicates: false,
       preserveWhitespace: false,
     },
-    ignorePatterns: ["src/routeTree.gen.ts", "node_modules/**", "bun.lock"],
+    ignorePatterns: ["src/routeTree.gen.ts", "node_modules/**", "bun.lock", "src/data/*"],
   },
   lint: {
     plugins: ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],

@@ -167,11 +167,7 @@ function createServiceColumns(
 }
 
 /** Renders the dense, responsive services catalog using TanStack Table v9. */
-export function ServicesTable({
-  translations,
-  searchQuery = "",
-  searchIndex,
-}: ServicesTableProps) {
+export function ServicesTable({ translations, searchQuery = "", searchIndex }: ServicesTableProps) {
   const selectedProvider = getProviderFromSearchQuery(searchQuery);
   const columns = useMemo(
     () => createServiceColumns(translations, selectedProvider),
@@ -194,9 +190,7 @@ export function ServicesTable({
           {translations.filteredResults(visibleServices.length)}
         </output>
       ) : null}
-      <table
-        className={cn("w-full border-collapse", selectedProvider ? "min-w-[42rem]" : "min-w-310")}
-      >
+      <table className={cn("w-full border-collapse", selectedProvider ? "min-w-2xl" : "min-w-310")}>
         {selectedProvider ? (
           <colgroup>
             <col className="w-[28%]" />

@@ -36,7 +36,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <ThemeProvider>
           <SiteHeader
             title="BRANDING"
-            subtitle="common/ui"
+            subtitle="Common UI components showcase"
             titleHref={appPath("/")}
             packages={webPackages}
             activePackagePath="/branding"

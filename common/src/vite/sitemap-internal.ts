@@ -16,9 +16,7 @@ const CREATE_FILE_ROUTE_PATTERN = /createFileRoute\(\s*(['"`])(.+?)\1/g;
  */
 export function toMountPath(base: string): string {
   const withLeadingSlash = base.startsWith("/") ? base : `/${base}`;
-  return withLeadingSlash.endsWith("/")
-    ? withLeadingSlash
-    : `${withLeadingSlash}/`;
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
 }
 
 /**
@@ -26,13 +24,9 @@ export function toMountPath(base: string): string {
  * slash and no trailing slash (except for the root, which stays "/").
  */
 export function toRelativePath(routePath: string): string | null {
-  const withLeadingSlash = routePath.startsWith("/")
-    ? routePath
-    : `/${routePath}`;
+  const withLeadingSlash = routePath.startsWith("/") ? routePath : `/${routePath}`;
   const withoutTrailingSlash =
-    withLeadingSlash.length > 1
-      ? withLeadingSlash.replace(/\/+$/, "")
-      : withLeadingSlash;
+    withLeadingSlash.length > 1 ? withLeadingSlash.replace(/\/+$/, "") : withLeadingSlash;
   return withoutTrailingSlash || "/";
 }
 
@@ -47,22 +41,13 @@ export function escapeXml(value: string): string {
 }
 
 /** Whether an excluded prefix matches the route path exactly or as a directory. */
-export function isExcluded(
-  routePath: string,
-  exclude: readonly string[],
-): boolean {
-  return exclude.some(
-    (prefix) => routePath === prefix || routePath.startsWith(`${prefix}/`),
-  );
+export function isExcluded(routePath: string, exclude: readonly string[]): boolean {
+  return exclude.some((prefix) => routePath === prefix || routePath.startsWith(`${prefix}/`));
 }
 
 /** Whether a route should never appear in a sitemap. */
 export function isImplicitlyExcluded(routePath: string): boolean {
-  return (
-    routePath.includes("$") ||
-    routePath === "/api" ||
-    routePath.startsWith("/api/")
-  );
+  return routePath.includes("$") || routePath === "/api" || routePath.startsWith("/api/");
 }
 
 /** Recursively lists files under a directory. Returns an empty array when absent. */
@@ -170,9 +155,7 @@ export function buildMountedPaths(sources: readonly SitemapSource[]): string[] {
       source.exclude ?? [],
       [],
     )) {
-      paths.add(
-        routePath === "/" ? mountPrefix || "/" : `${mountPrefix}${routePath}`,
-      );
+      paths.add(routePath === "/" ? mountPrefix || "/" : `${mountPrefix}${routePath}`);
     }
   }
   return [...paths].toSorted();
@@ -183,11 +166,7 @@ export function buildMountedPaths(sources: readonly SitemapSource[]): string[] {
  * app is its mount path itself (without a trailing slash), and the root of
  * the app mounted at `/` is the origin root.
  */
-export function toAbsoluteUrl(
-  origin: string,
-  mountPrefix: string,
-  relativePath: string,
-): string {
+export function toAbsoluteUrl(origin: string, mountPrefix: string, relativePath: string): string {
   if (relativePath === "/") {
     return `${origin}${mountPrefix || "/"}`;
   }
@@ -195,11 +174,7 @@ export function toAbsoluteUrl(
 }
 
 /** Builds the `<urlset>` document for the app's own pages. */
-export function buildUrlset(
-  origin: string,
-  mountPath: string,
-  paths: string[],
-): string {
+export function buildUrlset(origin: string, mountPath: string, paths: string[]): string {
   const mountPrefix = mountPath === "/" ? "" : mountPath.replace(/\/+$/, "");
   const urls = paths.map(
     (relativePath) =>
@@ -215,10 +190,7 @@ export function buildUrlset(
 }
 
 /** Builds the shared robots.txt. */
-export function buildRobotsTxt(
-  origin: string,
-  options?: { disallow?: readonly string[] },
-): string {
+export function buildRobotsTxt(origin: string, options?: { disallow?: readonly string[] }): string {
   const disallow = options?.disallow ?? [];
   const lines = ["User-agent: *"];
   if (disallow.length > 0) {

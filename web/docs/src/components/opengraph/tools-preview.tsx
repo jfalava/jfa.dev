@@ -32,7 +32,7 @@ export function ToolsPreview() {
       caption="V Move, H Hand (hold Space), T Text, U Shape, P Image, I Eyedropper, G Fill. Single keys, no Mod."
     >
       <div className="flex justify-center bg-muted/20 p-6">
-        <div className="flex w-[56px] flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 dark:bg-[#1e1e1e]">
+        <div className="flex w-14 flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 dark:bg-[#1e1e1e]">
           <button
             aria-label="Move tool (V)"
             aria-pressed={active === "move"}
@@ -40,7 +40,7 @@ export function ToolsPreview() {
             type="button"
             className={`${btnBase} ${active === "move" ? activeCls : idleCls}`}
           >
-            <MousePointer2 className="size-[18px]" />
+            <MousePointer2 className="size-4.5" />
           </button>
           <button
             aria-label="Hand tool (H)"
@@ -49,7 +49,7 @@ export function ToolsPreview() {
             type="button"
             className={`${btnBase} ${active === "hand" ? activeCls : idleCls}`}
           >
-            <Hand className="size-[18px]" />
+            <Hand className="size-4.5" />
           </button>
           <div className="my-1 h-px w-8 bg-white/10" />
           <button
@@ -59,7 +59,7 @@ export function ToolsPreview() {
             type="button"
             className={`${btnBase} ${active === "text" ? activeCls : idleCls}`}
           >
-            <Type className="size-[18px]" />
+            <Type className="size-4.5" />
           </button>
           <button
             aria-label="Add shape (U)"
@@ -68,7 +68,7 @@ export function ToolsPreview() {
             type="button"
             className={`${btnBase} ${active === "shape" ? activeCls : idleCls}`}
           >
-            <Square className="size-[18px]" />
+            <Square className="size-4.5" />
           </button>
           <button
             aria-label="Add image (P)"
@@ -77,7 +77,7 @@ export function ToolsPreview() {
             type="button"
             className={`${btnBase} ${active === "image" ? activeCls : idleCls}`}
           >
-            <ImageIcon className="size-[18px]" />
+            <ImageIcon className="size-4.5" />
           </button>
           <div className="my-1 h-px w-8 bg-white/10" />
           <button
@@ -87,7 +87,7 @@ export function ToolsPreview() {
             type="button"
             className={`${btnBase} ${active === "pipette" ? activeCls : idleCls}`}
           >
-            <Pipette className="size-[18px]" />
+            <Pipette className="size-4.5" />
           </button>
           <button
             aria-label="Fill / swatches (G)"
@@ -96,7 +96,7 @@ export function ToolsPreview() {
             type="button"
             className={`${btnBase} ${active === "fill" ? activeCls : idleCls}`}
           >
-            <Palette className="size-[18px]" />
+            <Palette className="size-4.5" />
           </button>
           <div className="relative my-1 flex size-9 items-center justify-center">
             <ColorPicker
@@ -104,14 +104,14 @@ export function ToolsPreview() {
               color={bgColor}
               onChange={setBgColor}
               ariaLabel="Background color"
-              className="absolute top-1 left-1 !size-5 !rounded-sm !border-white/30 !p-0 shadow-sm"
+              className="absolute top-1 left-1 size-5! rounded-sm! border-white/30! p-0! shadow-sm"
             />
             <ColorPicker
               compact
               color={fgColor}
               onChange={setFgColor}
               ariaLabel="Foreground color"
-              className="absolute right-1 bottom-1 !size-5 !rounded-sm !border-white !p-0 shadow-sm"
+              className="absolute right-1 bottom-1 size-5! rounded-sm! border-white! p-0! shadow-sm"
             />
             <span className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-zinc-700" />
           </div>

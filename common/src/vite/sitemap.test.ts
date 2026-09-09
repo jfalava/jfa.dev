@@ -46,19 +46,9 @@ beforeAll(() => {
     path.join(TEMP_DIR, "src", "routes", "api", "search.ts"),
     `export const Route = createFileRoute("/api/search")({});`,
   );
+  writeFileSync(path.join(TEMP_DIR, "content", "docs", "keweke", "index.mdx"), "# Keweke");
   writeFileSync(
-    path.join(TEMP_DIR, "content", "docs", "keweke", "index.mdx"),
-    "# Keweke",
-  );
-  writeFileSync(
-    path.join(
-      TEMP_DIR,
-      "content",
-      "docs",
-      "keweke",
-      "lists",
-      "create-a-list.mdx",
-    ),
+    path.join(TEMP_DIR, "content", "docs", "keweke", "lists", "create-a-list.mdx"),
     "# Create a list",
   );
 });
@@ -77,18 +67,16 @@ describe("toMountPath", () => {
 
 describe("collectRoutePaths", () => {
   test("finds static routes and skips dynamic, splat, and API routes", () => {
-    expect(collectRoutePaths(path.join(TEMP_DIR, "src", "routes"))).toEqual([
-      "/",
-      "/about",
-    ]);
+    expect(collectRoutePaths(path.join(TEMP_DIR, "src", "routes"))).toEqual(["/", "/about"]);
   });
 });
 
 describe("collectContentPaths", () => {
   test("maps MDX files to index-aware URL paths", () => {
-    expect(collectContentPaths(path.join(TEMP_DIR, "content", "docs"))).toEqual(
-      ["/keweke", "/keweke/lists/create-a-list"],
-    );
+    expect(collectContentPaths(path.join(TEMP_DIR, "content", "docs"))).toEqual([
+      "/keweke",
+      "/keweke/lists/create-a-list",
+    ]);
   });
 });
 
@@ -97,9 +85,7 @@ describe("buildUrlset", () => {
     const xml = buildUrlset("https://jfa.dev", "/keweke/", ["/", "/about"]);
     expect(xml).toContain("<loc>https://jfa.dev/keweke</loc>");
     expect(xml).toContain("<loc>https://jfa.dev/keweke/about</loc>");
-    expect(xml).toContain(
-      'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
-    );
+    expect(xml).toContain('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"');
   });
 
   test("maps the root mount to the origin root", () => {

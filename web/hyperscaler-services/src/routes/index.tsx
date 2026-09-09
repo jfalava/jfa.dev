@@ -61,11 +61,7 @@ function Home() {
       />
       <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col overflow-hidden border-x border-border bg-background">
         <main id="services" className="catalog-main min-h-0 flex-1 overflow-hidden">
-          <ServicesTable
-            translations={t}
-            searchQuery={activeQuery}
-            searchIndex={searchIndex}
-          />
+          <ServicesTable translations={t} searchQuery={activeQuery} searchIndex={searchIndex} />
         </main>
       </div>
     </div>

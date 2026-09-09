@@ -1,13 +1,8 @@
 import path from "node:path";
 
-import {
-  buildMountedPaths,
-  buildRobotsTxt,
-  buildUrlset,
-  toMountPath,
-} from "./sitemap-internal.ts";
-
 import { webPackages } from "../web-packages.ts";
+
+import { buildMountedPaths, buildRobotsTxt, buildUrlset, toMountPath } from "./sitemap-internal.ts";
 
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
@@ -33,9 +28,7 @@ const sitemapOptionsSchema = Schema.Struct({
     Schema.withDecodingDefaultKey(Effect.succeed("https://jfa.dev")),
   ),
   /** Emits `robots.txt` alongside the sitemap. Defaults to true. */
-  robots: Schema.Boolean.pipe(
-    Schema.withDecodingDefaultKey(Effect.succeed(true)),
-  ),
+  robots: Schema.Boolean.pipe(Schema.withDecodingDefaultKey(Effect.succeed(true))),
 });
 
 export type SitemapOptions = Schema.Codec.Encoded<typeof sitemapOptionsSchema>;
@@ -54,8 +47,7 @@ type SitemapFiles = {
  * @returns Vite plugin emitting `sitemap.xml` and optionally `robots.txt` at the mount path.
  */
 export function sitemap(options: SitemapOptions = {}): Plugin {
-  const { origin, robots } =
-    Schema.decodeUnknownSync(sitemapOptionsSchema)(options);
+  const { origin, robots } = Schema.decodeUnknownSync(sitemapOptionsSchema)(options);
 
   let mountPath = "/";
   let webRoot = "";
@@ -63,8 +55,7 @@ export function sitemap(options: SitemapOptions = {}): Plugin {
   const build = (): SitemapFiles => {
     const paths = buildMountedPaths(
       webPackages.map((webPackage) => {
-        const directory =
-          webPackage.path === "/" ? "landing" : webPackage.path.slice(1);
+        const directory = webPackage.path === "/" ? "landing" : webPackage.path.slice(1);
         const packageRoot = path.resolve(webRoot, directory);
         return {
           mountPath: webPackage.path,
@@ -82,9 +73,7 @@ export function sitemap(options: SitemapOptions = {}): Plugin {
     if (robots) {
       const disallow = webPackages.flatMap((webPackage) =>
         (webPackage.robotsDisallow ?? []).map((routePath) =>
-          webPackage.path === "/"
-            ? routePath
-            : `${webPackage.path}${routePath}`,
+          webPackage.path === "/" ? routePath : `${webPackage.path}${routePath}`,
         ),
       );
       result.robots = buildRobotsTxt(origin, { disallow });
@@ -102,18 +91,10 @@ export function sitemap(options: SitemapOptions = {}): Plugin {
   ): void => {
     const generated = build();
     const files: Array<[string, string, string]> = [
-      [
-        `${mountPath}sitemap.xml`,
-        "application/xml; charset=utf-8",
-        generated.sitemap,
-      ],
+      [`${mountPath}sitemap.xml`, "application/xml; charset=utf-8", generated.sitemap],
     ];
     if (generated.robots) {
-      files.push([
-        `${mountPath}robots.txt`,
-        "text/plain; charset=utf-8",
-        generated.robots,
-      ]);
+      files.push([`${mountPath}robots.txt`, "text/plain; charset=utf-8", generated.robots]);
     }
     for (const [file, contentType, body] of files) {
       if (pathname === file) {

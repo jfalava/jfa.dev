@@ -126,7 +126,7 @@ function ExampleField({ label, value }: { label: string; value: string }) {
       <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
         {label}
       </span>
-      <span className="ml-2 font-serif break-words text-primary">{value}</span>
+      <span className="ml-2 font-serif wrap-break-word text-primary">{value}</span>
     </p>
   );
 }

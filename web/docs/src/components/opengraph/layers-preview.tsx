@@ -234,7 +234,7 @@ export function ColorPickerPreview() {
               color={color}
               onChange={setColor}
               ariaLabel="Color"
-              className="!size-7 !p-0.5"
+              className="size-7! p-0.5!"
             />
             <Input
               aria-label="Color hex"
