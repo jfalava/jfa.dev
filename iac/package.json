@@ -18,8 +18,8 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:types",
-    "@types/bun": "catalog:types",
     "@types/node": "catalog:types",
+    "bun-types": "catalog:types",
     "oxfmt": "catalog:build",
     "oxlint": "catalog:build",
     "typescript": "catalog:build"

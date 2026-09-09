@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:types",
-    "@types/bun": "catalog:types",
+    "bun-types": "catalog:types",
     "@types/node": "catalog:types",
     "typescript": "catalog:build",
     "vite-plus": "catalog:build"

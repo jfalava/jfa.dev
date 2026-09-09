@@ -33,7 +33,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:types",
     "@oxlint/plugins": "catalog:build",
-    "@types/bun": "catalog:types",
+    "bun-types": "catalog:types",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",

@@ -42,7 +42,7 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:cloudflare",
     "@cloudflare/workers-types": "catalog:types",
-    "@types/bun": "catalog:types",
+    "bun-types": "catalog:types",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
