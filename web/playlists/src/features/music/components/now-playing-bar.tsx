@@ -79,7 +79,7 @@ export function NowPlayingBar() {
                 )}
               >
                 {isLoading && !nowPlaying
-                  ? "Listening…"
+                  ? "Listening..."
                   : isPlaying
                     ? "Now playing"
                     : displayTitle

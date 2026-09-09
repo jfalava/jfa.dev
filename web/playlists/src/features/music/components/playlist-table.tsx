@@ -30,6 +30,19 @@ function formatDuration(ms: number): string {
   return `${m}:${String(r).padStart(2, "0")}`;
 }
 
+function PlayingMark() {
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1 text-xs text-success">
+      <span className="size-1.5 animate-pulse rounded-full bg-success" aria-hidden />
+      Playing
+    </span>
+  );
+}
+
+function trackLinkLabel(track: PlaylistTrack, service: "Apple Music" | "Spotify"): string {
+  return `${track.title} by ${track.artist} on ${service}`;
+}
+
 function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
   return trackColumnHelper.columns([
     trackColumnHelper.display({
@@ -57,12 +70,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
           <div className="max-w-full min-w-0 scrollbar-none overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:hidden">
             <div className="inline-flex min-w-max items-center gap-2 whitespace-nowrap">
               <span className="leading-tight font-medium whitespace-nowrap">{getValue()}</span>
-              {isActive ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide whitespace-nowrap text-success dark:text-success">
-                  <span className="size-1.5 animate-pulse rounded-full bg-success" aria-hidden />
-                  Now listening
-                </span>
-              ) : null}
+              {isActive ? <PlayingMark /> : null}
             </div>
           </div>
         );
@@ -87,7 +95,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
       id: "duration",
       header: () => <span className="block text-right">Length</span>,
       cell: ({ row }) => (
-        <span className="block text-right font-mono text-xs tracking-wide text-muted-foreground tabular-nums">
+        <span className="block text-right font-mono text-xs text-muted-foreground tabular-nums">
           {formatDuration(row.original.durationMs)}
         </span>
       ),
@@ -103,7 +111,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
               href={track.url}
               target="_blank"
               rel="noreferrer"
-              aria-label={`${track.title} — ${track.artist} on Apple Music`}
+              aria-label={trackLinkLabel(track, "Apple Music")}
               className={cn(
                 buttonVariants({ variant: "default", size: "icon" }),
                 "size-8 shrink-0 rounded-xl [&_svg]:size-5",
@@ -116,7 +124,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
                 href={track.spotifyUrl}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={`${track.title} — ${track.artist} on Spotify`}
+                aria-label={trackLinkLabel(track, "Spotify")}
                 className={cn(
                   buttonVariants({ variant: "default", size: "icon" }),
                   "size-8 shrink-0 rounded-xl [&_svg]:size-5",
@@ -159,15 +167,7 @@ function createMobilePlaylistColumns(activeTrack: NowPlayingTrack | null) {
                   <span className="leading-tight font-medium whitespace-nowrap text-foreground">
                     {track.title}
                   </span>
-                  {isActive ? (
-                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/15 px-1.5 py-0.5 font-mono text-[10px] tracking-wide whitespace-nowrap text-success dark:text-success">
-                      <span
-                        className="size-1.5 animate-pulse rounded-full bg-success"
-                        aria-hidden
-                      />
-                      Now listening
-                    </span>
-                  ) : null}
+                  {isActive ? <PlayingMark /> : null}
                 </div>
                 <div className="text-sm leading-tight whitespace-nowrap text-muted-foreground">
                   {track.artist}
@@ -194,7 +194,7 @@ function createMobilePlaylistColumns(activeTrack: NowPlayingTrack | null) {
               href={track.url}
               target="_blank"
               rel="noreferrer"
-              aria-label={`${track.title} — ${track.artist} on Apple Music`}
+              aria-label={trackLinkLabel(track, "Apple Music")}
               className={cn(
                 buttonVariants({ variant: "default", size: "icon" }),
                 "size-9 shrink-0 rounded-xl [&_svg]:size-6",
@@ -207,7 +207,7 @@ function createMobilePlaylistColumns(activeTrack: NowPlayingTrack | null) {
                 href={track.spotifyUrl}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={`${track.title} — ${track.artist} on Spotify`}
+                aria-label={trackLinkLabel(track, "Spotify")}
                 className={cn(
                   buttonVariants({ variant: "default", size: "icon" }),
                   "size-9 shrink-0 rounded-xl [&_svg]:size-6",
@@ -335,7 +335,7 @@ export function PlaylistTable({
                       className={cn(
                         "max-w-65 px-3 py-2.5 align-middle text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
                         cell.column.id === "cover" && "w-14 pl-4 sm:pl-6 lg:pl-8",
-                        // Same title-cell scroll pattern as mobile: bound width, scroll the pill+title.
+                        // Same title-cell scroll pattern as mobile: bound width, scroll the title.
                         cell.column.id === "title" && "max-w-0 overflow-hidden whitespace-nowrap",
                         cell.column.id === "links" && "pr-4 text-right sm:pr-6 lg:pr-8",
                       )}

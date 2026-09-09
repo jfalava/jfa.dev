@@ -106,13 +106,8 @@ function createServiceColumns(
     serviceColumnHelper.accessor((row) => row.categoryName[currentLang], {
       id: "category",
       header: translations.categoryColumn,
-      cell: ({ getValue, row }) => (
-        <div className="min-w-44">
-          <div className="font-medium text-foreground">{getValue()}</div>
-          <div className="mt-1 font-mono text-[11px] text-muted-foreground/75">
-            {row.original.category}
-          </div>
-        </div>
+      cell: ({ getValue }) => (
+        <div className="min-w-44 font-medium text-foreground">{getValue()}</div>
       ),
     }),
     serviceColumnHelper.accessor("aws", {
@@ -199,7 +194,7 @@ export function ServicesTable({
   return (
     <div className="catalog-scroll">
       {searchQuery.trim() ? (
-        <output className="block border-b border-border bg-muted/20 px-4 py-2 text-[11px] text-muted-foreground sm:px-6 lg:px-8">
+        <output className="block border-b border-border bg-muted/20 px-4 py-2 text-xs text-muted-foreground sm:px-6 lg:px-8">
           {translations.filteredResults(visibleServices.length)}
         </output>
       ) : null}

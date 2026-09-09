@@ -18,6 +18,8 @@ import { PlaylistTable } from "./playlist-table";
 
 const DISPLAY_TITLE_CLASS_NAME =
   "font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl";
+const ACCORDION_TITLE_CLASS_NAME =
+  "font-sans text-2xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-3xl";
 
 function PlaylistMeta({
   playlist,
@@ -39,7 +41,7 @@ function PlaylistMeta({
     <Root className="min-w-0 flex-1 text-left">
       <Heading
         id={`${playlistAnchorId(playlist.id)}-heading`}
-        className={`block ${DISPLAY_TITLE_CLASS_NAME}`}
+        className={`block ${headingLevel === "h1" ? DISPLAY_TITLE_CLASS_NAME : ACCORDION_TITLE_CLASS_NAME}`}
       >
         <a
           href={snapshot.sourceUrl}
@@ -50,12 +52,11 @@ function PlaylistMeta({
           {snapshot.title}
         </a>
       </Heading>
-      <Meta className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-normal text-muted-foreground">
+      <Meta
+        className={`${headingLevel === "h1" ? "mt-3" : "mt-1.5"} flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-normal text-muted-foreground`}
+      >
         <span>{snapshot.trackCount} tracks</span>
-        <span>
-          Updated{" "}
-          <span className="font-mono">{new Date(snapshot.fetchedAt).toLocaleDateString()}</span>
-        </span>
+        <span>Updated {new Date(snapshot.fetchedAt).toLocaleDateString()}</span>
       </Meta>
     </Root>
   );

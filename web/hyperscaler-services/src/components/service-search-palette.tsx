@@ -118,7 +118,7 @@ function HotkeyKbd({
 function SearchResultService({ label, name, url }: { label: string; name: string; url?: string }) {
   return (
     <span className="inline-flex min-w-0 items-baseline gap-1">
-      <span className="shrink-0 text-[10px] text-muted-foreground">{label}</span>
+      <span className="shrink-0 text-xs text-muted-foreground">{label}</span>
       {url && name !== "—" ? (
         <a
           href={url}
@@ -170,11 +170,11 @@ function SearchPalettePreview({
           )}
         </div>
       ) : !hasQuery ? (
-        <div className="px-4 py-10 text-center text-xs text-muted-foreground">
+        <div className="px-4 py-5 text-sm text-muted-foreground">
           {translations.searchDescription}
         </div>
       ) : searchResultCount === 0 ? (
-        <div className="px-4 py-10 text-center text-xs text-muted-foreground">
+        <div className="px-4 py-5 text-sm text-muted-foreground">
           {translations.searchNoResults}
         </div>
       ) : (
@@ -188,7 +188,7 @@ function SearchPalettePreview({
                 <div className="truncate text-xs font-medium text-foreground">
                   {service.categoryName[currentLang]}
                 </div>
-                <div className="mt-1 grid gap-x-3 gap-y-1 text-[11px] text-muted-foreground sm:grid-cols-2">
+                <div className="mt-1 grid gap-x-3 gap-y-1 text-xs text-muted-foreground sm:grid-cols-2">
                   {previewProviders.map(({ label, nameKey, urlKey }) => (
                     <SearchResultService
                       key={nameKey}
@@ -201,7 +201,7 @@ function SearchPalettePreview({
               </div>
             ))}
           </div>
-          <div className="border-t border-border px-4 py-2 text-[10px] text-muted-foreground">
+          <div className="border-t border-border px-4 py-2 text-xs text-muted-foreground">
             {translations.searchApply}
           </div>
         </>

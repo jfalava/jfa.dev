@@ -119,7 +119,7 @@ export function PlaylistSearchPalette() {
         aria-label="Search playlists"
       >
         <Search className="size-4" />
-        <span className="hidden sm:inline">Lists</span>
+        <span className="hidden sm:inline">Search</span>
         <HotkeyKbd
           hotkey="Mod+K"
           className="hidden md:inline-flex"
@@ -174,7 +174,7 @@ export function PlaylistSearchPalette() {
 
         <div className="max-h-[min(24rem,55vh)] overflow-y-auto" aria-live="polite">
           {results.length === 0 ? (
-            <div className="px-4 py-10 text-center text-xs text-muted-foreground">
+            <div className="px-4 py-5 text-sm text-muted-foreground">
               No playlists match "{draftQuery.trim()}"
             </div>
           ) : (
@@ -203,7 +203,7 @@ export function PlaylistSearchPalette() {
                         tracks
                       </span>
                     </span>
-                    <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
+                    <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
                       {new Date(playlist.snapshot.fetchedAt).toLocaleDateString()}
                     </span>
                   </button>
