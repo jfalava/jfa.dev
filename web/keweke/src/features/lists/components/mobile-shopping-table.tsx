@@ -265,7 +265,7 @@ export function MobileShoppingTable({
           ) : emptyMessage ? (
             <tr>
               <TableCell
-                className="px-4 py-8 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
+                className="px-4 py-8 text-center text-sm text-muted-foreground"
                 colSpan={3}
               >
                 {emptyMessage}

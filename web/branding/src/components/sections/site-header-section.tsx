@@ -1,18 +1,18 @@
 import { Button, Kbd, KbdGroup, buttonVariants } from "@jfa.dev/common/ui";
 import { ArrowUpRight, CodeXml, Monitor, PanelLeft, Plus, Search, UserRound } from "lucide-react";
 
-import { Card, Preview } from "@/components/preview";
+import { Row, Specimen } from "@/components/preview";
 import { Section } from "@/components/section";
 
 export function SiteHeaderSection() {
   return (
     <Section
-      description="The shared header used by every web app. You’re already looking at it — sticky at the top of this page."
+      description="Shared header for every web app. The live one is sticky at the top of this page. Actions are ghost lg, 4px icons, optional kbd from sm up."
       id="site-header"
       title="SiteHeader"
     >
-      <Card>
-        <Preview label="header actions — normalized">
+      <Specimen label="Actions">
+        <Row>
           <Button
             aria-label="Open search"
             variant="ghost"
@@ -81,11 +81,8 @@ export function SiteHeaderSection() {
               <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">E</Kbd>
             </KbdGroup>
           </Button>
-        </Preview>
-        <div className="space-y-3 px-6 py-4 text-sm leading-relaxed text-muted-foreground">
-          <p>All header actions share one visual language.</p>
-        </div>
-      </Card>
+        </Row>
+      </Specimen>
     </Section>
   );
 }

@@ -1,62 +1,65 @@
 import { Button } from "@jfa.dev/common/ui";
 import { toast } from "sonner";
 
-import { Card, Preview } from "@/components/preview";
+import { Row, Specimen } from "@/components/preview";
 import { Section } from "@/components/section";
 
 export function SonnerSection() {
   return (
     <Section
-      description="Sonner toaster (common/ui/Toaster). Theme-aware via the header toggle. Try each toast variant."
+      description="Sonner toaster from common/ui. Follows the header theme."
       id="sonner"
       title="Toaster"
     >
-      <Card>
-        <Preview label="toast variants">
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onPress={() => toast("Heads up — plain toast.")}>
-              Default
-            </Button>
-            <Button variant="outline" onPress={() => toast.success("Saved successfully.")}>
-              Success
-            </Button>
-            <Button variant="outline" onPress={() => toast.error("Something went wrong.")}>
-              Error
-            </Button>
-            <Button variant="outline" onPress={() => toast.info("FYI — new version available.")}>
-              Info
-            </Button>
-            <Button variant="outline" onPress={() => toast.warning("Check your input.")}>
-              Warning
-            </Button>
-            <Button
-              variant="outline"
-              onPress={() =>
-                toast.promise(new Promise((resolve) => setTimeout(resolve, 1200)), {
-                  loading: "Saving…",
-                  success: "Saved!",
-                  error: "Failed",
-                })
-              }
-            >
-              Promise
-            </Button>
-          </div>
-        </Preview>
-        <Preview label="with description & action">
+      <Specimen label="Variants">
+        <Row>
+          <Button variant="outline" onPress={() => toast("List published.")}>
+            Default
+          </Button>
+          <Button variant="outline" onPress={() => toast.success("Saved Weekend groceries.")}>
+            Success
+          </Button>
           <Button
-            variant="secondary"
+            variant="outline"
+            onPress={() => toast.error("Could not save the list title right now.")}
+          >
+            Error
+          </Button>
+          <Button variant="outline" onPress={() => toast.info("This list no longer exists.")}>
+            Info
+          </Button>
+          <Button variant="outline" onPress={() => toast.warning("Title can't be empty.")}>
+            Warning
+          </Button>
+          <Button
+            variant="outline"
             onPress={() =>
-              toast("Event created", {
-                description: "Sunday · 10:30 AM",
-                action: { label: "Undo", onClick: () => toast("Undone") },
+              toast.promise(new Promise((resolve) => setTimeout(resolve, 1200)), {
+                loading: "Saving list…",
+                success: "Saved Weekend groceries.",
+                error: "Could not save.",
               })
             }
           >
-            With action
+            Promise
           </Button>
-        </Preview>
-      </Card>
+        </Row>
+      </Specimen>
+      <Specimen label="With action">
+        <Row>
+          <Button
+            variant="secondary"
+            onPress={() =>
+              toast("Item removed", {
+                description: "Oat milk",
+                action: { label: "Undo", onClick: () => toast("Oat milk restored.") },
+              })
+            }
+          >
+            With undo
+          </Button>
+        </Row>
+      </Specimen>
     </Section>
   );
 }

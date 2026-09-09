@@ -244,11 +244,11 @@ export function ShoppingTable({
             </colgroup>
             <thead className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="invoice-rule border-b-2">
+                <tr key={headerGroup.id} className="border-b">
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="h-10 bg-muted/50 px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase first:pl-4"
+                      className="h-10 bg-muted/50 px-3 text-left align-middle text-xs font-medium text-muted-foreground first:pl-4"
                     >
                       {header.isPlaceholder ? null : <table.FlexRender header={header} />}
                     </th>
@@ -273,7 +273,7 @@ export function ShoppingTable({
               ) : emptyMessage ? (
                 <tr>
                   <TableCell
-                    className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
+                    className="px-4 py-12 text-center text-sm text-muted-foreground"
                     colSpan={columns.length}
                   >
                     {emptyMessage}

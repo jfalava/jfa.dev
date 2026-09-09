@@ -34,16 +34,9 @@ export function DeletedItemsHistory({
   }, []);
 
   return (
-    <section className="invoice-rule border-t border-destructive/30 px-4 py-6 sm:px-6 lg:px-8">
+    <section className="border-t px-4 py-6 sm:px-6 lg:px-8">
       <div className="border-b border-border pb-3">
-        <div>
-          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-            Item history
-          </p>
-          <h2 className="mt-1 text-xl leading-none font-semibold tracking-tight uppercase">
-            Deleted items
-          </h2>
-        </div>
+        <h2 className="text-xl leading-none font-semibold tracking-tight">Deleted items</h2>
       </div>
       <div className="divide-y divide-border">
         {historyItems.map((item) => {

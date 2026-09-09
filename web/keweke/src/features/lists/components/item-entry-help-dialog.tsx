@@ -25,17 +25,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
           className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
         >
           <div className="border-b border-border px-4 py-4">
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="text-[10px] tracking-[0.12em] text-primary uppercase">
-                new item fields
-              </p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h2 className="text-[11px] font-normal text-muted-foreground/75">
-                How to fill a row
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold tracking-tight">How to add items</h2>
           </div>
 
           <div className="max-h-[70vh] space-y-5 overflow-y-auto p-4">
@@ -45,9 +35,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
             </p>
 
             <div className="space-y-2 border border-border bg-muted/40 p-3">
-              <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                example — microwave popcorn
-              </p>
+              <p className="text-xs text-muted-foreground">Microwave popcorn</p>
               <div className="grid grid-cols-2 gap-x-3 gap-y-1 sm:grid-cols-3">
                 <ExampleField label="item" value="popcorn" />
                 <ExampleField label="qty" value="1" />
@@ -55,8 +43,8 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
                 <ExampleField label="each" value="3 bags" />
                 <ExampleField label="category" value="snacks" />
               </div>
-              <p className="border-t border-border pt-2 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                shows as{" "}
+              <p className="border-t border-border pt-2 text-xs text-muted-foreground">
+                Shows as{" "}
                 <span className="text-foreground">
                   <span className="font-mono">1</span> <span className="font-serif">box</span> ({" "}
                   <span className="font-serif">3 bags</span> <span className="font-mono">each</span>
@@ -83,10 +71,8 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
               </FieldGuide>
             </ul>
 
-            <div className="hidden space-y-2 border border-primary/20 bg-primary/5 p-3 md:block">
-              <p className="font-mono text-[10px] tracking-[0.08em] text-primary uppercase">
-                spreadsheet mode
-              </p>
+            <div className="hidden space-y-2 border border-border bg-muted/40 p-3 md:block">
+              <p className="text-sm font-medium">Spreadsheet</p>
               <p className="text-[13px] leading-snug text-muted-foreground">
                 On desktop, use the grid button or <HotkeyKbd hotkey="Mod+Shift+E" /> to edit every
                 row with the keyboard.
@@ -99,9 +85,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
             </div>
 
             <div className="space-y-2 border border-border bg-muted/40 p-3">
-              <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                quick focus
-              </p>
+              <p className="text-sm font-medium">Shortcuts</p>
               <p className="text-[13px] leading-snug text-muted-foreground">
                 <HotkeyKbd hotkey="F" /> focuses search, <HotkeyKbd hotkey="N" /> jumps to the new
                 item name. Both work in list and spreadsheet mode and avoid browser shortcuts like
@@ -113,14 +97,22 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
           <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3">
             <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               <DocsLink href={kewekeDocs.workingWithList}>Working with the list</DocsLink>
-              <span aria-hidden="true" className="hidden text-[10px] text-muted-foreground/50 sm:inline">
+              <span
+                aria-hidden="true"
+                className="hidden text-[10px] text-muted-foreground/50 sm:inline"
+              >
                 ·
               </span>
-              <DocsLink className="hidden sm:inline-flex" href={kewekeDocs.workingWithListSpreadsheet}>
+              <DocsLink
+                className="hidden sm:inline-flex"
+                href={kewekeDocs.workingWithListSpreadsheet}
+              >
                 Spreadsheet mode
               </DocsLink>
             </div>
-            <Button onPress={() => onOpenChange(false)} variant="outline">Got it</Button>
+            <Button onPress={() => onOpenChange(false)} variant="outline">
+              Close
+            </Button>
           </div>
         </Dialog>
       </Modal>

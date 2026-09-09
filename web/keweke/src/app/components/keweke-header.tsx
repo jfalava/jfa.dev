@@ -169,11 +169,11 @@ export function KewekeHeader({
                 onClick={() => setIsPublishNudgeDismissed(true)}
                 type="button"
               >
-                You can now publish this list to access it from anywhere.
+                Publish to open this list on other devices.
               </button>
               <div className="mt-2 border-t border-border pt-2">
                 <DocsLink href={kewekeDocs.publishListDialog} variant="info">
-                  Learn more
+                  Publishing
                 </DocsLink>
               </div>
             </div>

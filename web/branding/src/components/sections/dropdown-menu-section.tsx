@@ -4,82 +4,77 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@jfa.dev/common/ui";
-import { CreditCard, LogOut, Plus, Settings, User, UserPlus } from "lucide-react";
+import { Copy, Link2, Pencil, Plus, Trash2, UserPlus } from "lucide-react";
 
-import { Card, Preview } from "@/components/preview";
+import { Row, Specimen } from "@/components/preview";
 import { Section } from "@/components/section";
 
 export function DropdownMenuSection() {
   return (
     <Section
-      description="Aria Menu + Popover. Composition: DropdownMenuTrigger wraps a Button and a DropdownMenu (popover + menu)."
+      description="Aria Menu + Popover. DropdownMenuTrigger wraps a Button and a DropdownMenu."
       id="dropdown-menu"
-      title="Dropdown Menu"
+      title="Dropdown"
     >
-      <Card>
-        <Preview label="basic">
+      <Specimen label="List actions">
+        <Row>
           <DropdownMenuTrigger>
-            <Button variant="outline">Open menu</Button>
+            <Button variant="outline">List actions</Button>
             <DropdownMenu>
-              <DropdownMenuLabel>My account</DropdownMenuLabel>
-              <DropdownMenuItem textValue="Profile">
-                <User />
-                Profile
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              <DropdownMenuLabel>Weekend groceries</DropdownMenuLabel>
+              <DropdownMenuItem textValue="Rename">
+                <Pencil />
+                Rename
               </DropdownMenuItem>
-              <DropdownMenuItem textValue="Billing">
-                <CreditCard />
-                Billing
-                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+              <DropdownMenuItem textValue="Duplicate">
+                <Copy />
+                Duplicate
               </DropdownMenuItem>
-              <DropdownMenuItem textValue="Settings">
-                <Settings />
-                Settings
-                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+              <DropdownMenuItem textValue="Copy link">
+                <Link2 />
+                Copy link
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem textValue="Log out" variant="destructive">
-                <LogOut />
-                Log out
-                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+              <DropdownMenuItem textValue="Delete list" variant="destructive">
+                <Trash2 />
+                Delete list
               </DropdownMenuItem>
             </DropdownMenu>
           </DropdownMenuTrigger>
-        </Preview>
-        <Preview label="with sub-menu">
+        </Row>
+      </Specimen>
+      <Specimen label="With sub-menu">
+        <Row>
           <DropdownMenuTrigger>
-            <Button variant="outline">With sub-menu</Button>
+            <Button variant="outline">Share</Button>
             <DropdownMenu>
-              <DropdownMenuItem textValue="New project">
+              <DropdownMenuItem textValue="New list">
                 <Plus />
-                New project
+                New list
               </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger textValue="Invite">
                   <UserPlus />
-                  Invite people
+                  Invite
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem textValue="Email">Email</DropdownMenuItem>
+                  <DropdownMenuItem textValue="Alias">Share alias</DropdownMenuItem>
                   <DropdownMenuItem textValue="Copy link">Copy link</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem textValue="More">More…</DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
               <DropdownMenuSeparator />
-              <DropdownMenuItem textValue="Archive" variant="destructive">
-                Archive
+              <DropdownMenuItem textValue="Delete list" variant="destructive">
+                Delete list
               </DropdownMenuItem>
             </DropdownMenu>
           </DropdownMenuTrigger>
-        </Preview>
-      </Card>
+        </Row>
+      </Specimen>
     </Section>
   );
 }

@@ -104,14 +104,14 @@ function PublishNudgeTooltip({
         onClick={onDismiss}
         type="button"
       >
-        You can now publish this list to access it from anywhere.
+        Publish to open this list on other devices.
       </button>
       <div className="mt-2 border-t border-border pt-2">
         <DocsLink
           href="/docs/keweke/lists/publishing-a-list#the-dialog--what-you-are-making-public"
           variant="info"
         >
-          Learn more
+          Publishing
         </DocsLink>
       </div>
     </div>,
@@ -155,22 +155,11 @@ export function PublishDialogPreview() {
     <PreviewShell>
       <div className="overflow-hidden rounded-lg border bg-popover text-popover-foreground">
         <div className="border-b px-4 py-4">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <p className="text-[10px] tracking-[0.12em] text-primary uppercase">
-              publish to remote
-            </p>
-            <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-              /
-            </span>
-            <h2 className="text-[11px] font-normal text-muted-foreground/75">
-              Make this list public?
-            </h2>
-          </div>
+          <h2 className="text-lg font-semibold tracking-tight">Publish this list?</h2>
         </div>
         <div className="space-y-5 p-4">
           <p className="text-sm leading-6 text-muted-foreground">
-            Publishing this list will make it public and accessible online. Anyone with its ID or
-            alias can open it.{" "}
+            Anyone with the ID or alias can open it.{" "}
             <DocsLink
               className="align-baseline"
               href="/docs/keweke/lists/publishing-a-list#the-dialog--what-you-are-making-public"
@@ -178,19 +167,16 @@ export function PublishDialogPreview() {
               Publishing a list
             </DocsLink>
           </p>
-          <div className="space-y-2 border bg-muted/40 p-3 text-[11px]">
-            <p className="tracking-widest text-muted-foreground uppercase">public addresses</p>
+          <div className="space-y-2 border bg-muted/40 p-3 text-sm">
             <div className="flex gap-3">
-              <span className="w-12 shrink-0 text-muted-foreground uppercase">id</span>
-              <span className="min-w-0 font-mono break-all text-primary">
+              <span className="w-12 shrink-0 text-muted-foreground">ID</span>
+              <span className="min-w-0 font-mono break-all">
                 0199c2f0-8a1b-7c3d-9e4f-2a1b3c4d5e6f
               </span>
             </div>
             <div className="flex gap-3">
-              <span className="w-12 shrink-0 text-muted-foreground uppercase">alias</span>
-              <span className="min-w-0 font-mono break-all text-primary">
-                weekend-groceries-a3k
-              </span>
+              <span className="w-12 shrink-0 text-muted-foreground">Alias</span>
+              <span className="min-w-0 font-mono break-all">weekend-groceries-a3k</span>
             </div>
           </div>
           <div className="flex justify-end gap-2">
@@ -208,17 +194,15 @@ export function RemoteListPreview() {
     <PreviewShell>
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b bg-background px-3 py-2 sm:px-4">
-          <span className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
-            remote list · public
-          </span>
+          <span className="text-xs text-muted-foreground">Remote · public</span>
           <span className="font-mono text-[10px] tracking-wide text-muted-foreground">
             Anyone with the link can open it
           </span>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-background px-3 py-2 sm:px-4">
-          <div className="flex items-center gap-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="size-2 rounded-full bg-emerald-500" />
-            live
+            Live
             <span className="hidden sm:inline">· WebSocket connected</span>
           </div>
           <div className="flex items-center gap-1.5">

@@ -15,7 +15,7 @@ export function createDevicesSection(manager: UserManager): SettingsSectionRow {
 
   return {
     id: "devices",
-    eyebrow: "accepted devices",
+    eyebrow: "Accepted devices",
     subheading: "Manage devices",
     description:
       "Every active device that can sign mutations and approve other devices for this user.",
@@ -42,7 +42,7 @@ export function createDevicesSection(manager: UserManager): SettingsSectionRow {
 export function createPasskeysSection(manager: UserManager): SettingsSectionRow {
   return {
     id: "passkeys",
-    eyebrow: "passkeys",
+    eyebrow: "Passkeys",
     subheading: "Sign in without pairing codes",
     description:
       "Add passkeys to this user. Each passkey can instantly adopt a new browser without generating pairing codes.",

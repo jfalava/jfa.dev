@@ -101,8 +101,7 @@
 
 #nd-sidebar p[class~="text-fd-muted-foreground"],
 #nd-sidebar-mobile p[class~="text-fd-muted-foreground"],
-[data-radix-popper-content-wrapper]
-  p[class~="text-fd-muted-foreground"] {
+[data-radix-popper-content-wrapper] p[class~="text-fd-muted-foreground"] {
   font-weight: 400;
 }
 
@@ -147,8 +146,7 @@
  */
 #nd-sidebar [class~="size-9"][class~="shrink-0"][class~="empty:hidden"],
 #nd-sidebar-mobile [class~="size-9"][class~="shrink-0"][class~="empty:hidden"],
-[data-radix-popper-content-wrapper]
-  [class~="size-9"][class~="shrink-0"][class~="empty:hidden"] {
+[data-radix-popper-content-wrapper] [class~="size-9"][class~="shrink-0"][class~="empty:hidden"] {
   display: none;
 }
 

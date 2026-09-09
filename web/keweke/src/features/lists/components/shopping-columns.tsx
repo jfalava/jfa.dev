@@ -50,10 +50,10 @@ export function createShoppingColumns() {
   return shoppingColumnHelper.columns([
     shoppingColumnHelper.display({
       id: "line",
-      header: "no.",
+      header: "No.",
       cell: ({ row }) => (
-        <span className="font-mono text-[11px] text-muted-foreground">
-          {String(row.index + 1).padStart(2, "0")}
+        <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+          {row.index + 1}
         </span>
       ),
     }),
@@ -73,7 +73,7 @@ export function createShoppingColumns() {
     }),
     shoppingColumnHelper.accessor("name", {
       id: "item",
-      header: "item",
+      header: "Item",
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -113,7 +113,7 @@ export function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("quantity", {
-      header: "qty",
+      header: "Qty",
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onAdjustQuantity, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -174,7 +174,7 @@ export function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("unit", {
-      header: "unit",
+      header: "Unit",
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -206,7 +206,7 @@ export function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("amount", {
-      header: "amount each",
+      header: "Amount each",
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -239,7 +239,7 @@ export function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("category", {
-      header: "category",
+      header: "Category",
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -274,7 +274,7 @@ export function createShoppingColumns() {
     }),
     shoppingColumnHelper.display({
       id: "signed",
-      header: "signed",
+      header: "Signed",
       cell: ({ row, table }) => {
         const { identity } = getShoppingTableMeta(table);
         return <SignedItemBadge identity={identity} item={row.original} />;
@@ -282,16 +282,14 @@ export function createShoppingColumns() {
     }),
     shoppingColumnHelper.display({
       id: "status",
-      header: "status",
+      header: "Status",
       cell: ({ row }) => (
         <span
           className={
-            row.original.checked
-              ? "font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase"
-              : "font-mono text-[10px] tracking-[0.08em] text-primary uppercase"
+            row.original.checked ? "text-xs text-muted-foreground" : "text-xs text-primary"
           }
         >
-          {row.original.checked ? "done" : "open"}
+          {row.original.checked ? "Done" : "Open"}
         </span>
       ),
     }),
@@ -385,7 +383,7 @@ export function createMobileShoppingColumns({
   return shoppingColumnHelper.columns([
     shoppingColumnHelper.display({
       id: "done",
-      header: "done",
+      header: "Done",
       cell: ({ row }) => (
         <Checkbox
           aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "done"}`}
@@ -397,7 +395,7 @@ export function createMobileShoppingColumns({
     }),
     shoppingColumnHelper.display({
       id: "item",
-      header: "item details",
+      header: "Item",
       cell: ({ row }) => (
         <div className="min-w-0 py-1">
           <p
@@ -409,16 +407,12 @@ export function createMobileShoppingColumns({
           >
             {row.original.name}
           </p>
-          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[10px] tracking-[0.08em] text-muted-foreground">
+          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
             <ItemMeasure item={row.original} />
-            <span aria-hidden="true" className="font-mono">
-              ·
-            </span>
+            <span aria-hidden="true">·</span>
             <span className="font-serif">{row.original.category}</span>
-            <span aria-hidden="true" className="font-mono">
-              ·
-            </span>
-            <span className="font-mono uppercase">{row.original.checked ? "done" : "open"}</span>
+            <span aria-hidden="true">·</span>
+            <span>{row.original.checked ? "Done" : "Open"}</span>
           </div>
           <div className="mt-1">
             <SignedItemBadge identity={identity} item={row.original} />
@@ -428,7 +422,7 @@ export function createMobileShoppingColumns({
     }),
     shoppingColumnHelper.display({
       id: "actions",
-      header: "actions",
+      header: "Actions",
       cell: ({ row }) => (
         <div className="flex shrink-0 flex-wrap items-center gap-0.5">
           {onShowHistory ? (

@@ -154,20 +154,17 @@ export function ItemHistoryDialog({
         >
           <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
             <div className="min-w-0">
-              <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-                item history
-              </p>
-              <h2 className="mt-1 truncate font-serif text-base font-semibold tracking-tight">
+              <h2 className="truncate font-serif text-base font-semibold tracking-tight">
                 {itemName}
               </h2>
-              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5">
                   <span aria-hidden="true" className="size-1.5 rounded-full bg-destructive" />
-                  changed
+                  Changed
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span aria-hidden="true" className="size-1.5 rounded-full bg-success" />
-                  new value
+                  New value
                 </span>
               </div>
             </div>
@@ -186,12 +183,12 @@ export function ItemHistoryDialog({
 
           <div className="min-h-0 flex-1 overflow-auto">
             {isLoading && events.length === 0 ? (
-              <p className="px-5 py-10 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
-                loading history…
+              <p className="px-5 py-10 text-center text-sm text-muted-foreground">
+                Loading history…
               </p>
             ) : events.length === 0 ? (
-              <p className="px-5 py-10 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
-                no recorded changes yet
+              <p className="px-5 py-10 text-center text-sm text-muted-foreground">
+                No recorded changes yet.
               </p>
             ) : (
               <HistoryTable events={events} />

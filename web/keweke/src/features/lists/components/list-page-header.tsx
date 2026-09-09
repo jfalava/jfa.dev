@@ -55,21 +55,17 @@ export function ListPageHeader({
 
   return (
     <>
-      <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-            {backend} list
-          </p>
           <ListTitleEditor isSaving={isRenaming} onSave={onRename} title={title} />
           <ListAlias key={`${listId}:${alias ?? ""}`} alias={alias} listId={listId} />
         </div>
-        <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-          {String(activeCount).padStart(2, "0")} open · {String(completedCount).padStart(2, "0")}{" "}
-          done
+        <p className="text-sm text-muted-foreground">
+          {backend === "local" ? "Local" : "Remote"} · {activeCount} open · {completedCount} done
         </p>
       </div>
 
-      <div className="invoice-rule border-b px-4 py-3 sm:px-6 lg:px-8">
+      <div className="border-b px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-1.5">
           <div className="relative min-w-0 flex-1 lg:max-w-5xl">
             <Search
@@ -110,7 +106,7 @@ export function ListPageHeader({
           >
             <FileSpreadsheet aria-hidden="true" />
             <span className="hidden sm:inline">
-              {isSpreadsheetMode ? "Exit Excel" : "Excel Mode"}
+              {isSpreadsheetMode ? "Exit spreadsheet" : "Spreadsheet"}
             </span>
             <HotkeyKbd className="hidden sm:inline-flex" hotkey={SPREADSHEET_MODE_HOTKEY} />
           </Button>

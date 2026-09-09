@@ -10,7 +10,7 @@ import { FeedbackMessage } from "./user-feedback";
 export function createUsernameSection(manager: UserManager): SettingsSectionRow {
   return {
     id: "username",
-    eyebrow: "username",
+    eyebrow: "Username",
     subheading: "Your display name across lists",
     description:
       "Set the name attached to your list edits and items. Changes sync to all shared lists.",
@@ -50,7 +50,7 @@ export function createUsernameSection(manager: UserManager): SettingsSectionRow 
 export function createRemoteAccountSection(manager: UserManager): SettingsSectionRow {
   return {
     id: "account-create",
-    eyebrow: "remote account",
+    eyebrow: "Remote account",
     subheading: "Use this user across browsers",
     description:
       "Create a remote user with this username so you can pair other browsers and publish lists without creating a list first.",
@@ -70,7 +70,7 @@ export function createRemoteAccountSection(manager: UserManager): SettingsSectio
 export function createPasskeyAdoptionSection(manager: UserManager): SettingsSectionRow {
   return {
     id: "passkey-adoption",
-    eyebrow: "pair with a passkey",
+    eyebrow: "Pair with a passkey",
     subheading: "Connect this browser without a code",
     description: "Use a saved passkey to connect this browser to your existing remote user.",
     content: <FeedbackMessage feedback={manager.feedback} section="passkey-adoption" />,
@@ -89,7 +89,7 @@ export function createPasskeyAdoptionSection(manager: UserManager): SettingsSect
 export function createPairingSection(manager: UserManager): SettingsSectionRow {
   return {
     id: "pairing",
-    eyebrow: "pair a browser",
+    eyebrow: "Pair a browser",
     subheading: "Use on another device",
     description:
       "Generate a pairing code in this browser and approve it from an existing accepted device.",
@@ -99,9 +99,7 @@ export function createPairingSection(manager: UserManager): SettingsSectionRow {
 
         {manager.pairingCode ? (
           <div className="mt-4 border border-border bg-muted/40 p-4">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-              pairing code
-            </p>
+            <p className="text-xs text-muted-foreground">Pairing code</p>
             <p className="mt-1 font-mono text-2xl font-semibold tracking-[0.2em] break-all text-primary sm:text-3xl">
               {manager.pairingCode}
             </p>
@@ -145,7 +143,7 @@ export function createPairingSection(manager: UserManager): SettingsSectionRow {
 export function createApprovalSection(manager: UserManager): SettingsSectionRow {
   return {
     id: "approval",
-    eyebrow: "approve a browser",
+    eyebrow: "Approve a browser",
     subheading: "Add another device",
     description: "Enter the ten-character pairing code shown on another device to authorize it.",
     content: (

@@ -20,17 +20,12 @@ export function AfterCreatePreview() {
       </div>
 
       {/* Header mimics ListPageHeader */}
-      <div className="invoice-rule flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5">
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-            local · 0199… · new
-          </p>
-          <h1 className="mt-1 truncate text-3xl font-semibold tracking-tighter uppercase sm:text-4xl">
+          <h1 className="truncate text-3xl font-semibold tracking-tighter uppercase sm:text-4xl">
             New list
           </h1>
-          <p className="mt-2 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-            0 items · 0 done
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Local · 0 open · 0 done</p>
         </div>
       </div>
 
@@ -50,22 +45,22 @@ export function AfterCreatePreview() {
             <col className="w-12" />
           </colgroup>
           <thead className="sticky top-0">
-            <tr className="invoice-rule border-b-2">
+            <tr className="border-b">
               {[
-                "no.",
+                "No.",
                 "",
-                "item",
-                "qty",
-                "unit",
-                "amount each",
-                "category",
-                "signed",
-                "status",
+                "Item",
+                "Qty",
+                "Unit",
+                "Amount each",
+                "Category",
+                "Signed",
+                "Status",
                 "",
               ].map((header) => (
                 <th
                   key={header || "actions"}
-                  className="h-10 bg-muted/50 px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase first:pl-4"
+                  className="h-10 bg-muted/50 px-3 text-left align-middle text-xs font-medium text-muted-foreground first:pl-4"
                 >
                   {header}
                 </th>
@@ -75,10 +70,10 @@ export function AfterCreatePreview() {
           <tbody>
             <tr>
               <TableCell
-                className="px-4 py-12 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
+                className="px-4 py-12 text-center text-sm text-muted-foreground"
                 colSpan={10}
               >
-                no lines yet — add your first item
+                Add your first item
               </TableCell>
             </tr>
             <tr className="border-b-2 border-primary/20 bg-primary/5 align-top">

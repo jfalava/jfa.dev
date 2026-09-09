@@ -39,40 +39,26 @@ export function PublishListDialog({
           className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
         >
           <div className="border-b border-border px-4 py-4">
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-                publish to remote
-              </p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h2 className="text-[11px] font-normal text-muted-foreground/75">
-                Make this list public?
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold tracking-tight">Publish this list?</h2>
           </div>
 
           <div className="space-y-5 p-4">
             <p className="text-sm leading-6 text-muted-foreground">
-              Publishing this list will make it public and accessible online. Anyone with its ID or
-              alias can open it.{" "}
+              Anyone with the ID or alias can open it.{" "}
               <DocsLink className="align-baseline" href={kewekeDocs.publishListDialog}>
                 Publishing a list
               </DocsLink>
             </p>
 
-            <div className="space-y-2 border border-border bg-muted/40 p-3 text-[11px]">
-              <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-                public addresses
-              </p>
+            <div className="space-y-2 border border-border bg-muted/40 p-3 text-sm">
               <div className="flex gap-3">
-                <span className="w-12 shrink-0 text-muted-foreground uppercase">id</span>
-                <span className="min-w-0 font-mono break-all text-primary">{listId}</span>
+                <span className="w-12 shrink-0 text-muted-foreground">ID</span>
+                <span className="min-w-0 font-mono break-all">{listId}</span>
               </div>
               {alias ? (
                 <div className="flex gap-3">
-                  <span className="w-12 shrink-0 text-muted-foreground uppercase">alias</span>
-                  <span className="min-w-0 font-mono break-all text-primary">{alias}</span>
+                  <span className="w-12 shrink-0 text-muted-foreground">Alias</span>
+                  <span className="min-w-0 font-mono break-all">{alias}</span>
                 </div>
               ) : null}
             </div>

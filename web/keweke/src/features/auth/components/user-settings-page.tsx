@@ -19,9 +19,9 @@ export function UserSettingsPage() {
       <KewekeHeader />
       <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
         <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-          <div className="invoice-rule flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
             <div className="min-w-0 flex-1">
-              <h1 className="mt-1 font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
+              <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
                 User settings
               </h1>
               <div className="mt-3">
@@ -32,7 +32,7 @@ export function UserSettingsPage() {
             </div>
             <div className="flex items-center gap-4">
               <div className="min-w-0 sm:text-right">
-                <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                <p className="text-xs text-muted-foreground">
                   {manager.identity?.remoteUsername
                     ? "Remote user"
                     : manager.identity?.username

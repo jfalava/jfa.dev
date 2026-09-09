@@ -430,16 +430,14 @@ function AdminRoutePage() {
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
       <KewekeHeader />
       <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-        <div className="invoice-rule flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
           <div>
-            <h1 className="mt-1 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
+            <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
               Admin
             </h1>
           </div>
           <div className="flex items-center gap-3 sm:justify-end">
-            <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-              {countsLabel}
-            </p>
+            <p className="text-sm text-muted-foreground">{countsLabel}</p>
             <Button
               className="h-8 gap-1.5 px-3 text-sm"
               onPress={() => window.location.reload()}
@@ -452,7 +450,7 @@ function AdminRoutePage() {
         </div>
 
         {overview === null ? (
-          <p className="border-b border-destructive/40 px-4 py-3 font-mono text-[10px] tracking-wide text-destructive uppercase sm:px-6 lg:px-8">
+          <p className="border-b border-destructive/40 px-4 py-3 text-sm text-destructive sm:px-6 lg:px-8">
             Could not read the directory.
           </p>
         ) : null}
@@ -461,12 +459,8 @@ function AdminRoutePage() {
           <>
             <section aria-label="Users">
               <div className="flex items-baseline justify-between gap-4 px-4 pt-8 pb-3 sm:px-6 lg:px-8">
-                <h2 className="font-mono text-[11px] font-medium tracking-[0.12em] uppercase">
-                  Users
-                </h2>
-                <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                  {users.length} registered
-                </p>
+                <h2 className="text-sm font-medium">Users</h2>
+                <p className="text-sm text-muted-foreground">{users.length} registered</p>
               </div>
               {users.length > 0 ? (
                 <div className="w-full overflow-x-auto">
@@ -481,12 +475,8 @@ function AdminRoutePage() {
 
             <section aria-label="Lists">
               <div className="flex items-baseline justify-between gap-4 border-t border-border px-4 pt-8 pb-3 sm:px-6 lg:px-8">
-                <h2 className="font-mono text-[11px] font-medium tracking-[0.12em] uppercase">
-                  Lists
-                </h2>
-                <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                  {lists.length} published
-                </p>
+                <h2 className="text-sm font-medium">Lists</h2>
+                <p className="text-sm text-muted-foreground">{lists.length} published</p>
               </div>
               {lists.length > 0 ? (
                 <div className="w-full overflow-x-auto">

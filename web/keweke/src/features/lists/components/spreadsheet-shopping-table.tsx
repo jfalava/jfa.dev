@@ -373,11 +373,9 @@ export function SpreadsheetShoppingTable({
 
   return (
     <div aria-hidden={!isActive} className={isActive ? "w-full" : "hidden"} ref={gridRef}>
-      <div className="invoice-rule flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-primary/5 px-4 py-2 sm:px-6 lg:px-8">
-        <p className="font-mono text-[10px] tracking-[0.1em] text-primary uppercase">
-          spreadsheet mode · edits save when you leave a row
-        </p>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] tracking-[0.06em] text-muted-foreground uppercase">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-muted/40 px-4 py-2 sm:px-6 lg:px-8">
+        <p className="text-sm text-foreground">Spreadsheet. Edits save when you leave a row.</p>
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <HotkeyKbd hotkey="Tab" /> next
           </span>
@@ -419,11 +417,11 @@ export function SpreadsheetShoppingTable({
             <col className="w-24" />
           </colgroup>
           <thead className="sticky top-0 z-10">
-            <tr className="invoice-rule border-b-2">
-              {["no.", "done", "item", "qty", "unit", "amount each", "category", "actions"].map(
+            <tr className="border-b">
+              {["No.", "Done", "Item", "Qty", "Unit", "Amount each", "Category", "Actions"].map(
                 (heading) => (
                   <th
-                    className="h-10 bg-muted/50 px-3 text-left align-middle font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase first:pl-4"
+                    className="h-10 bg-muted/50 px-3 text-left align-middle text-xs font-medium text-muted-foreground first:pl-4"
                     key={heading}
                     scope="col"
                   >
@@ -452,7 +450,7 @@ export function SpreadsheetShoppingTable({
             ) : emptyMessage ? (
               <tr>
                 <TableCell
-                  className="px-4 py-8 text-center font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
+                  className="px-4 py-8 text-center text-sm text-muted-foreground"
                   colSpan={8}
                 >
                   {emptyMessage}

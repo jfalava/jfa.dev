@@ -72,7 +72,7 @@ export const webPackages: WebPackage[] = [
     routes: [
       {
         path: "/",
-        title: "Branding and Component showcase",
+        title: "Branding",
       },
     ],
   },

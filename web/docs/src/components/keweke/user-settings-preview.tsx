@@ -37,50 +37,50 @@ const SETTINGS_ACTION_COLUMN_WIDTH = 192;
 
 const mockRows: MockRow[] = [
   {
-    eyebrow: "username",
+    eyebrow: "Username",
     subheading: "Your display name across lists",
     description: "Set the name attached to your list edits and items.",
     actionLabel: "Save",
   },
   {
-    eyebrow: "remote account",
+    eyebrow: "Remote account",
     subheading: "Use this user across browsers",
     description: "Create a remote user so you can pair other browsers and publish lists.",
     actionLabel: "Create remote user",
   },
   {
-    eyebrow: "pair a browser",
+    eyebrow: "Pair a browser",
     subheading: "Use on another device",
     description: "Generate a pairing code and approve it from an existing device.",
     actionLabel: "Show pairing code",
   },
   {
-    eyebrow: "approve a browser",
+    eyebrow: "Approve a browser",
     subheading: "Add another device",
     description: "Enter the ten-character pairing code shown on another device.",
     actionLabel: "Find",
   },
   {
-    eyebrow: "accepted devices",
+    eyebrow: "Accepted devices",
     subheading: "Manage devices",
     description: "Every active device that can sign mutations.",
     actionLabel: undefined,
   },
   {
-    eyebrow: "passkeys",
+    eyebrow: "Passkeys",
     subheading: "Sign in without pairing codes",
     description: "Add passkeys to instantly adopt a new browser.",
     actionLabel: "Add passkey",
   },
   {
-    eyebrow: "session",
+    eyebrow: "Session",
     subheading: "Log out",
     description: "Disconnect this identity from this browser. Lists are retained.",
     actionLabel: "Log out",
     actionVariant: "outline",
   },
   {
-    eyebrow: "local data",
+    eyebrow: "Local data",
     subheading: "Clear this browser",
     description: "Remove local lists, identity, and stored data. Remote lists not deleted.",
     actionLabel: "Clear data",
@@ -106,18 +106,13 @@ function SettingsTableMock() {
           {mockRows.map((row) => (
             <TableRow className="hover:bg-transparent" key={row.eyebrow}>
               <TableCell className="py-6 align-top">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <div className="space-y-1">
                   <p
-                    className={`font-mono text-[10px] tracking-widest uppercase ${row.eyebrowTone === "destructive" ? "text-destructive" : "text-primary"}`}
+                    className={`text-sm font-medium ${row.eyebrowTone === "destructive" ? "text-destructive" : ""}`}
                   >
                     {row.eyebrow}
                   </p>
-                  <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                    /
-                  </span>
-                  <span className="text-[11px] font-normal text-muted-foreground/75">
-                    {row.subheading}
-                  </span>
+                  <p className="text-xs text-muted-foreground">{row.subheading}</p>
                 </div>
               </TableCell>
               <TableCell className="py-6 align-top">
@@ -188,9 +183,9 @@ export function UserSettingsPreview({
             /keweke/user
           </span>
         </div>
-        <div className="invoice-rule flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6">
+        <div className="flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6">
           <div>
-            <h1 className="mt-1 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
+            <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
               User settings
             </h1>
             <div className="mt-3">
@@ -201,9 +196,7 @@ export function UserSettingsPreview({
           </div>
           <div className="flex items-center gap-4">
             <div className="min-w-0 sm:text-right">
-              <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                {meta.label}
-              </p>
+              <p className="text-xs text-muted-foreground">{meta.label}</p>
               <p className="mt-0.5 font-serif text-base font-medium text-foreground sm:text-lg">
                 {meta.name}
               </p>

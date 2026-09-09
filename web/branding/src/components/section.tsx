@@ -12,16 +12,16 @@ export function Section({
   title: string;
 }) {
   return (
-    <section className="scroll-mt-20 space-y-4" id={id}>
-      <div>
-        <h2 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-          <a className="hover:text-foreground" href={`#${id}`}>
+    <section className="scroll-mt-24 space-y-6 py-10" id={id}>
+      <div className="max-w-prose space-y-2">
+        <h2 className="font-sans text-2xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-3xl">
+          <a className="text-foreground hover:text-foreground" href={`#${id}`}>
             {title}
           </a>
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+        <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
       </div>
-      {children}
+      <div className="space-y-8">{children}</div>
     </section>
   );
 }

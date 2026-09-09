@@ -3,14 +3,6 @@
 @import "@jfa.dev/common/styles.css";
 
 @layer components {
-  .invoice-rule {
-    border-color: var(--border);
-  }
-
-  .invoice-paper {
-    box-shadow: none;
-  }
-
   .site-header {
     padding-top: env(safe-area-inset-top);
   }

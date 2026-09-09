@@ -173,9 +173,7 @@ export function DocsLandingView({
     ...resolved.pageTree,
     children: nodes.map((node) => {
       const opened = openKewekeFolders(node);
-      return opened.type === "folder" && opened.root
-        ? { ...opened, defaultOpen: true }
-        : opened;
+      return opened.type === "folder" && opened.root ? { ...opened, defaultOpen: true } : opened;
     }),
   };
 

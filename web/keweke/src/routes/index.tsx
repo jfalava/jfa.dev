@@ -136,8 +136,8 @@ function EmptyState() {
           <ListsPageHeader listCount={lists.length} />
 
           {isLoading ? (
-            <p className="px-4 py-10 font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase sm:px-6 lg:px-8">
-              reading local storage…
+            <p className="px-4 py-10 text-sm text-muted-foreground sm:px-6 lg:px-8">
+              Loading lists…
             </p>
           ) : lists.length > 0 ? (
             <>

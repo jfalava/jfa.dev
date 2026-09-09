@@ -1,26 +1,28 @@
 import { Button, Kbd } from "@jfa.dev/common/ui";
-import { ArrowRight, Mail, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
-import { Card, Preview } from "@/components/preview";
+import { Row, Specimen } from "@/components/preview";
 import { Section } from "@/components/section";
 
 export function ButtonSection() {
   return (
     <Section
-      description="Variants and sizes from buttonVariants (cva). Focus ring uses ring tokens."
+      description="Variants and sizes from buttonVariants. Focus uses the ring token. data-icon tightens padding around inline icons."
       id="button"
       title="Button"
     >
-      <Card>
-        <Preview label="variants">
+      <Specimen label="Variants">
+        <Row>
           <Button variant="default">Default</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="outline">Outline</Button>
           <Button variant="ghost">Ghost</Button>
           <Button variant="destructive">Destructive</Button>
           <Button variant="link">Link</Button>
-        </Preview>
-        <Preview label="sizes">
+        </Row>
+      </Specimen>
+      <Specimen label="Sizes">
+        <Row>
           <Button size="xs">xs</Button>
           <Button size="sm">sm</Button>
           <Button size="default">default</Button>
@@ -37,30 +39,30 @@ export function ButtonSection() {
           <Button aria-label="Add large" size="icon-lg">
             <Plus />
           </Button>
-        </Preview>
-        <Preview label="with icons · data-icon tightens padding">
+        </Row>
+      </Specimen>
+      <Specimen label="With icons">
+        <Row>
           <Button>
-            <Mail data-icon="inline-start" />
-            Login with email
-          </Button>
-          <Button variant="outline">
-            Next
-            <ArrowRight data-icon="inline-end" />
+            <Plus data-icon="inline-start" />
+            New list
           </Button>
           <Button variant="secondary">
             <Search data-icon="inline-start" />
             Search
             <Kbd className="ml-1">⌘K</Kbd>
           </Button>
-        </Preview>
-        <Preview label="states">
+        </Row>
+      </Specimen>
+      <Specimen label="States">
+        <Row>
           <Button isDisabled>Disabled</Button>
           <Button aria-busy="true" isDisabled>
             <span className="size-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            Loading
+            Saving
           </Button>
-        </Preview>
-      </Card>
+        </Row>
+      </Specimen>
     </Section>
   );
 }

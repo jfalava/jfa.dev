@@ -605,9 +605,7 @@ function ListPage() {
         <KewekeHeader listId={listId} />
         <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
           <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
-            <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
-              loading list…
-            </p>
+            <p className="text-sm text-muted-foreground">Loading list…</p>
           </main>
         </div>
       </div>
@@ -620,19 +618,14 @@ function ListPage() {
         <KewekeHeader listId={listId} />
         <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
           <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
-            <section className="invoice-paper invoice-rule border border-t-4 border-t-destructive">
-              <div className="px-4 py-10 sm:px-8 sm:py-16">
-                <p className="font-mono text-[11px] tracking-[0.12em] text-destructive uppercase">
-                  list unavailable
-                </p>
-                <h1 className="mt-3 text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-                  Nothing here
-                </h1>
-                <p className="mt-6 max-w-lg text-sm text-muted-foreground">
-                  {currentUnavailableReason ??
-                    "This list is not available in local or remote storage."}
-                </p>
-              </div>
+            <section className="max-w-prose">
+              <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
+                This list isn&apos;t here
+              </h1>
+              <p className="mt-4 text-sm text-muted-foreground">
+                {currentUnavailableReason ??
+                  "This list is not available in local or remote storage."}
+              </p>
             </section>
           </main>
         </div>
@@ -698,7 +691,7 @@ function ListPage() {
             title={snapshot.title}
           />
           <ShoppingTable
-            emptyMessage={filter.trim() ? "no matching lines" : undefined}
+            emptyMessage={filter.trim() ? "No matching items" : undefined}
             identity={identity}
             isSpreadsheetMode={isSpreadsheetModeActive}
             items={visibleItems}

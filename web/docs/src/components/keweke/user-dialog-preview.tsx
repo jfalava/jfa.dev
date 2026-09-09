@@ -7,7 +7,7 @@ function OrDivider() {
   return (
     <div aria-hidden="true" className="relative my-1 flex items-center">
       <hr className="h-px w-full border-0 bg-border" />
-      <span className="absolute left-1/2 -translate-x-1/2 bg-popover px-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+      <span className="absolute left-1/2 -translate-x-1/2 bg-popover px-2 text-xs text-muted-foreground">
         or
       </span>
     </div>
@@ -19,31 +19,15 @@ export function UserDialogPreview() {
     <PreviewShell>
       <div className="flex flex-col rounded-lg border bg-popover text-popover-foreground">
         <div className="border-b px-4 py-4">
-          <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
-            <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-              device identity
-            </p>
-            <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-              /
-            </span>
-            <h3 className="text-[11px] font-normal text-muted-foreground/75">Identify yourself</h3>
-          </div>
+          <h2 className="text-lg font-semibold tracking-tight">Identify this browser</h2>
         </div>
         <div className="space-y-5 p-4">
           <section className="space-y-3" aria-labelledby="preview-create-user-heading">
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
-                create a user
-              </p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h3
-                className="text-[11px] font-normal text-muted-foreground/75"
-                id="preview-create-user-heading"
-              >
-                Publish lists from this browser
+            <div className="space-y-1">
+              <h3 className="text-sm font-medium" id="preview-create-user-heading">
+                Create a user
               </h3>
+              <p className="text-sm text-muted-foreground">Publish lists from this browser.</p>
             </div>
             <div className="flex items-end gap-2">
               <div className="min-w-0 flex-1">
@@ -63,16 +47,11 @@ export function UserDialogPreview() {
 
           <section className="space-y-3">
             <OrDivider />
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-mono text-[10px] tracking-widest text-primary uppercase">
-                pair a user
+            <div className="space-y-1">
+              <h3 className="text-sm font-medium">Pair a user</h3>
+              <p className="text-sm text-muted-foreground">
+                Use an existing user from another device.
               </p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h3 className="text-[11px] font-normal text-muted-foreground/75">
-                Use an existing user from another device
-              </h3>
             </div>
             <p className="text-sm text-muted-foreground">
               Already have a user on another browser? Connect this one with a passkey or a pairing
@@ -89,9 +68,7 @@ export function UserDialogPreview() {
               <Button className="h-10 min-w-24 px-5 text-sm">Show pairing code</Button>
             </div>
             <div className="border border-border bg-muted/40 p-3">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                pairing code
-              </p>
+              <p className="text-xs text-muted-foreground">Pairing code</p>
               <p className="mt-1 font-mono text-xl tracking-[0.18em] break-all text-primary">
                 aB3x9Qp2Zk
               </p>
@@ -112,9 +89,7 @@ export function UserDialogPreview() {
 export function InlineUserCreationPreview() {
   return (
     <div className="not-prose my-4 flex flex-col gap-2 rounded-md border bg-muted/30 p-3">
-      <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-        quick create
-      </p>
+      <p className="text-xs text-muted-foreground">Quick create</p>
       <div className="flex items-end gap-2">
         <Input className="h-9 flex-1" placeholder="Your username" />
         <Button size="sm" className="h-9">

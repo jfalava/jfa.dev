@@ -59,22 +59,17 @@ const settingsColumns = settingsColumnHelper.columns([
     id: "setting",
     header: "Setting",
     cell: ({ row }) => (
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <div className="space-y-1">
         <p
           className={
             row.original.eyebrowTone === "destructive"
-              ? "font-mono text-[10px] tracking-widest text-destructive uppercase"
-              : "font-mono text-[10px] tracking-widest text-primary uppercase"
+              ? "text-sm font-medium text-destructive"
+              : "text-sm font-medium"
           }
         >
           {row.original.eyebrow}
         </p>
-        <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-          /
-        </span>
-        <span className="text-[11px] font-normal text-muted-foreground/75">
-          {row.original.subheading}
-        </span>
+        <p className="text-xs text-muted-foreground">{row.original.subheading}</p>
       </div>
     ),
   }),

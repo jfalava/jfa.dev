@@ -19,8 +19,8 @@ function OrDivider({ size = "default" }: { size?: "default" | "small" }) {
       <span
         className={
           size === "small"
-            ? "absolute left-1/2 -translate-x-1/2 bg-popover px-1.5 font-mono text-[9px] tracking-widest text-muted-foreground uppercase"
-            : "absolute left-1/2 -translate-x-1/2 bg-popover px-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase"
+            ? "absolute left-1/2 -translate-x-1/2 bg-popover px-1.5 text-[11px] text-muted-foreground"
+            : "absolute left-1/2 -translate-x-1/2 bg-popover px-2 text-xs text-muted-foreground"
         }
       >
         or
@@ -111,37 +111,16 @@ export function UserDialog({
         className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
       >
         <div className="shrink-0 border-b border-border px-4 py-4">
-          <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
-            <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-              device identity
-            </p>
-            <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-              /
-            </span>
-            <h3
-              className="text-[11px] font-normal text-muted-foreground/75"
-              id="create-user-heading"
-            >
-              Identify yourself
-            </h3>
-          </div>
+          <h2 className="text-lg font-semibold tracking-tight">Identify this browser</h2>
         </div>
 
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-4">
           <section className="space-y-3" aria-labelledby="create-user-heading">
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-                create a user
-              </p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h3
-                className="text-[11px] font-normal text-muted-foreground/75"
-                id="create-user-heading"
-              >
-                Publish lists from this browser
+            <div className="space-y-1">
+              <h3 className="text-sm font-medium" id="create-user-heading">
+                Create a user
               </h3>
+              <p className="text-sm text-muted-foreground">Publish lists from this browser.</p>
             </div>
             <form className="space-y-3" onSubmit={(event) => void save(event)}>
               <div className="flex items-end gap-2">
@@ -181,19 +160,13 @@ export function UserDialog({
           {identity && !identity.remoteUsername ? (
             <section className="space-y-3" aria-labelledby="pair-user-heading">
               <OrDivider />
-              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-                  pair a user
-                </p>
-                <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                  /
-                </span>
-                <h3
-                  className="text-[11px] font-normal text-muted-foreground/75"
-                  id="pair-user-heading"
-                >
-                  Use an existing user from another device
+              <div className="space-y-1">
+                <h3 className="text-sm font-medium" id="pair-user-heading">
+                  Pair a user
                 </h3>
+                <p className="text-sm text-muted-foreground">
+                  Use an existing user from another device.
+                </p>
               </div>
               <p className="text-sm text-muted-foreground">
                 Already have a user on another browser? Connect this one with a passkey or a pairing
@@ -228,9 +201,7 @@ export function UserDialog({
               <FeedbackMessage feedback={feedback} section="pairing" />
               {pairingCode ? (
                 <div className="border border-border bg-muted/40 p-3">
-                  <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                    pairing code
-                  </p>
+                  <p className="text-xs text-muted-foreground">Pairing code</p>
                   <p className="mt-1 font-mono text-xl tracking-[0.18em] break-all text-primary">
                     {pairingCode}
                   </p>

@@ -9,7 +9,7 @@ import { FeedbackMessage } from "./user-feedback";
 export function createLogoutSection(manager: UserManager): SettingsSectionRow {
   return {
     id: "logout",
-    eyebrow: "session",
+    eyebrow: "Session",
     subheading: "Log out",
     description:
       "Disconnect this user identity from this browser. Lists and local data are retained.",
@@ -61,7 +61,7 @@ export function createAccountDeletionSection(manager: UserManager): SettingsSect
 
   return {
     id: "account-delete",
-    eyebrow: "remote account",
+    eyebrow: "Remote account",
     eyebrowTone: "destructive",
     subheading: "Delete user and created lists",
     description: (
@@ -132,7 +132,7 @@ export function createAccountDeletionSection(manager: UserManager): SettingsSect
 export function createLocalDataSection(manager: UserManager): SettingsSectionRow {
   return {
     id: "data",
-    eyebrow: "local data",
+    eyebrow: "Local data",
     subheading: "Clear this browser",
     description:
       "Remove local lists, this browser's identity, and Keweke's stored browser data. Remote lists are not deleted.",

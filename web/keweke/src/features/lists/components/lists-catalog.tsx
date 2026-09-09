@@ -56,15 +56,15 @@ function createListsColumns({
         const index = row.index;
         if (index >= 9) {
           return (
-            <span className="font-mono text-[11px] text-muted-foreground">
-              {String(index + 1).padStart(2, "0")}
+            <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+              {index + 1}
             </span>
           );
         }
         return (
           <span className="inline-flex items-center gap-1.5">
-            <span className="font-mono text-[11px] text-muted-foreground">
-              {String(index + 1).padStart(2, "0")}
+            <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+              {index + 1}
             </span>
             <HotkeyKbd hotkey={`Mod+Shift+${index + 1}`} />
           </span>
@@ -85,8 +85,8 @@ function createListsColumns({
             <p className="truncate font-serif text-lg font-semibold tracking-tight group-hover:text-primary">
               {list.title}
             </p>
-            <p className="mt-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-              {list.backend}
+            <p className="mt-1 text-xs text-muted-foreground">
+              {list.backend === "local" ? "Local" : "Remote"}
               {list.alias ? ` · ${list.alias}` : ""}
             </p>
           </Link>
@@ -97,8 +97,8 @@ function createListsColumns({
       id: "progress",
       header: "Progress",
       cell: ({ row }) => (
-        <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-          {row.original.itemCount} lines · {row.original.completedCount} done
+        <span className="text-sm text-muted-foreground tabular-nums">
+          {row.original.itemCount} items · {row.original.completedCount} done
         </span>
       ),
     }),
@@ -113,7 +113,7 @@ function createListsColumns({
             {list.backend === "local" || list.backend === "remote" ? (
               confirmingListId === list.id ? (
                 <>
-                  <span className="font-mono text-[10px] tracking-[0.08em] text-destructive">
+                  <span className="text-xs text-destructive">
                     {isForgetOnly ? "Forget?" : "Delete?"}
                   </span>
                   <Button
@@ -242,8 +242,8 @@ function MobileListsList({
                 params={{ listId: list.alias ?? list.id }}
                 to="/$listId"
               >
-                <span className="hidden items-center gap-1.5 font-mono text-[10px] text-muted-foreground sm:inline-flex">
-                  <span>{String(index + 1).padStart(2, "0")}</span>
+                <span className="hidden items-center gap-1.5 font-mono text-[10px] text-muted-foreground tabular-nums sm:inline-flex">
+                  <span>{index + 1}</span>
                   {index < 9 ? <HotkeyKbd hotkey={`Mod+Shift+${index + 1}`} /> : null}
                 </span>
                 <BackendIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
@@ -251,7 +251,7 @@ function MobileListsList({
                   <p className="truncate font-serif text-base font-semibold tracking-tight group-hover:text-primary">
                     {list.title}
                   </p>
-                  <p className="mt-0.5 flex items-center gap-x-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                  <p className="mt-0.5 flex items-center gap-x-3 text-xs text-muted-foreground tabular-nums">
                     <span
                       aria-label={`${list.itemCount} items`}
                       className="inline-flex items-center gap-1"
@@ -275,7 +275,7 @@ function MobileListsList({
               </Link>
               {isConfirming ? (
                 <div className="flex shrink-0 items-center gap-1.5">
-                  <span className="font-mono text-[10px] tracking-[0.08em] text-destructive">
+                  <span className="text-xs text-destructive">
                     {isForgetOnly ? "Forget?" : "Delete?"}
                   </span>
                   <Button

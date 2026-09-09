@@ -59,12 +59,9 @@ export function ListHeaderPreview() {
   return (
     <PreviewShell>
       <div className="flex flex-col">
-        <div className="invoice-rule flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6">
+        <div className="flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6">
           <div className="min-w-0">
-            <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-              local list
-            </p>
-            <div className="mt-1 flex items-center gap-1">
+            <div className="flex items-center gap-1">
               <h1 className="font-serif text-xl leading-none font-semibold tracking-tight sm:text-2xl">
                 Weekend groceries
               </h1>
@@ -105,12 +102,10 @@ export function ListHeaderPreview() {
               </Button>
             </div>
           </div>
-          <p className="font-mono text-[11px] tracking-[0.08em] whitespace-nowrap text-muted-foreground uppercase">
-            02 open · 01 done
-          </p>
+          <p className="text-sm whitespace-nowrap text-muted-foreground">Local · 2 open · 1 done</p>
         </div>
 
-        <div className="invoice-rule border-b px-4 py-3 sm:px-6">
+        <div className="border-b px-4 py-3 sm:px-6">
           <div className="flex items-center gap-1.5">
             <div className="relative min-w-0 flex-1">
               <Search
@@ -130,7 +125,7 @@ export function ListHeaderPreview() {
               variant="ghost"
             >
               <FileSpreadsheet aria-hidden="true" className="size-4" />
-              <span className="hidden sm:inline">Excel Mode</span>
+              <span className="hidden sm:inline">Spreadsheet</span>
             </Button>
             <Button aria-label="How to add items" className="shrink-0" size="icon" variant="ghost">
               <Info aria-hidden="true" className="size-4" />
@@ -174,14 +169,9 @@ export function ListAliasIdPreview() {
 export function DeletedItemsPreview() {
   return (
     <PreviewShell>
-      <section className="border-t border-destructive/30 px-4 py-6 sm:px-6">
+      <section className="border-t px-4 py-6 sm:px-6">
         <div className="border-b border-border pb-3">
-          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-            Item history
-          </p>
-          <h2 className="mt-1 text-xl leading-none font-semibold tracking-tight uppercase">
-            Deleted items
-          </h2>
+          <h2 className="text-xl leading-none font-semibold tracking-tight">Deleted items</h2>
         </div>
         <div className="divide-y divide-border">
           {[
@@ -229,20 +219,17 @@ export function ItemHistoryPreview() {
       <div className="flex max-h-128 flex-col overflow-hidden rounded-lg border bg-popover text-popover-foreground">
         <div className="flex items-start justify-between gap-4 border-b px-5 py-4">
           <div className="min-w-0">
-            <p className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
-              item history
-            </p>
-            <h2 className="mt-1 truncate font-serif text-base font-semibold tracking-tight">
+            <h2 className="truncate font-serif text-base font-semibold tracking-tight">
               Coffee · 1 BAG
             </h2>
-            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-destructive" />
-                changed
+                Changed
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-green-600" />
-                new value
+                New value
               </span>
             </div>
           </div>
