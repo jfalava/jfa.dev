@@ -55,6 +55,7 @@ export function SiteHeader({
       ? "/"
       : `${activePackagePath.replace(/\/+$/, "")}/`
     : "/";
+  const showHomeLink = packages?.find((pkg) => pkg.path === activePackagePath)?.showHomeLink ?? false;
 
   const brandBody = (
     <>
@@ -116,17 +117,19 @@ export function SiteHeader({
     >
       <div className="flex min-h-11 items-center justify-between gap-4 px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
         <div className="flex min-w-0 items-center gap-1">
-          <a
-            href={homeHref}
-            aria-label="Home"
-            className={buttonVariants({
-              className: "text-muted-foreground hover:text-foreground",
-              size: "icon-lg",
-              variant: "ghost",
-            })}
-          >
-            <Home aria-hidden="true" />
-          </a>
+          {showHomeLink ? (
+            <a
+              href={homeHref}
+              aria-label="Home"
+              className={buttonVariants({
+                className: "text-muted-foreground hover:text-foreground",
+                size: "icon-lg",
+                variant: "ghost",
+              })}
+            >
+              <Home aria-hidden="true" />
+            </a>
+          ) : null}
           {brand}
         </div>
 

@@ -20,6 +20,12 @@ export interface WebPackage {
   sitemapContentDir?: string;
   /** Mount-relative paths disallowed by the shared robots.txt. */
   robotsDisallow?: string[];
+  /**
+   * Show the package-home shortcut in `SiteHeader`. Set for packages with
+   * slug/id routes (deep links with no other escape hatch). Omit elsewhere
+   * so the home icon only appears where it can do something useful.
+   */
+  showHomeLink?: boolean;
 }
 
 /**
@@ -46,6 +52,7 @@ export const webPackages: WebPackage[] = [
   {
     path: "/keweke",
     title: "KEWEKE",
+    showHomeLink: true,
     sitemapExclude: ["/admin"],
     robotsDisallow: ["/user"],
     routes: [
