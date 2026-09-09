@@ -1,4 +1,4 @@
-/// <reference types="bun" />
+/// <reference types="bun-types" />
 
 import { describe, expect, test } from "bun:test";
 
@@ -12,7 +12,10 @@ const DEVICE_ID = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 describe("public-key identity contract", () => {
   test("normalizes display names without changing the fingerprint", () => {
     expect(
-      Schema.decodeUnknownSync(listIdentitySchema)({ id: USER_ID, username: "  Alex  " }),
+      Schema.decodeUnknownSync(listIdentitySchema)({
+        id: USER_ID,
+        username: "  Alex  ",
+      }),
     ).toEqual({
       id: USER_ID,
       username: "Alex",
@@ -20,7 +23,12 @@ describe("public-key identity contract", () => {
   });
 
   test("keeps local anonymous attribution distinct from a named identity", () => {
-    expect(Schema.decodeUnknownSync(listIdentitySchema)({ id: USER_ID, username: null })).toEqual({
+    expect(
+      Schema.decodeUnknownSync(listIdentitySchema)({
+        id: USER_ID,
+        username: null,
+      }),
+    ).toEqual({
       id: USER_ID,
       username: null,
     });
@@ -28,7 +36,10 @@ describe("public-key identity contract", () => {
 
   test("requires a full base64url fingerprint and complete publish credentials", () => {
     expect(() =>
-      Schema.decodeUnknownSync(listIdentitySchema)({ id: "abcde", username: "Alex" }),
+      Schema.decodeUnknownSync(listIdentitySchema)({
+        id: "abcde",
+        username: "Alex",
+      }),
     ).toThrow();
     expect(() =>
       Schema.decodeUnknownSync(publishAuthSchema)({

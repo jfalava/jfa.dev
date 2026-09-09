@@ -33,11 +33,11 @@
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:types",
     "@oxlint/plugins": "catalog:build",
-    "bun-types": "catalog:types",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
+    "bun-types": "catalog:types",
     "oxc-transform-react": "catalog:build",
     "oxlint": "catalog:build",
     "tailwindcss": "catalog:styling",

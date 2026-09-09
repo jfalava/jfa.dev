@@ -42,11 +42,11 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:cloudflare",
     "@cloudflare/workers-types": "catalog:types",
-    "bun-types": "catalog:types",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
+    "bun-types": "catalog:types",
     "fake-indexeddb": "6.2.5",
     "oxc-transform-react": "catalog:build",
     "oxlint": "catalog:build",

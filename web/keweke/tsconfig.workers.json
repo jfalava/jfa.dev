@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["@cloudflare/vitest-pool-workers/types", "bun"]
+    "types": ["@cloudflare/vitest-pool-workers/types", "bun-types"]
   },
   "include": ["src/worker-configuration.d.ts", "test/**/*.ts"]
 }

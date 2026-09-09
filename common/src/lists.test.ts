@@ -1,4 +1,4 @@
-/// <reference types="bun" />
+/// <reference types="bun-types" />
 
 import { describe, expect, test } from "bun:test";
 
@@ -285,7 +285,10 @@ describe("list contract", () => {
       {
         id: "019c5f7e-7b7b-7000-8000-000000000016",
         baseRevision: 1,
-        command: { type: "restore-item", archiveId: removed.deletedItems[0]!.archiveId },
+        command: {
+          type: "restore-item",
+          archiveId: removed.deletedItems[0]!.archiveId,
+        },
       },
       NOW,
     );
@@ -491,7 +494,10 @@ describe("list mutation diff", () => {
 
   test("deletes the removed row and archives it without touching survivor positions", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const applied = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-tomatoes" });
+    const applied = applyWithDiff(snapshot, {
+      type: "remove-item",
+      itemId: "starter-tomatoes",
+    });
 
     expect(applied.diff.deleteItemIds).toEqual(["starter-tomatoes"]);
     expect(applied.diff.upsertDeletedItems).toEqual([...applied.snapshot.deletedItems]);
@@ -502,7 +508,10 @@ describe("list mutation diff", () => {
 
   test("remove first item still leaves survivor positions untouched in the diff", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const applied = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-bread" });
+    const applied = applyWithDiff(snapshot, {
+      type: "remove-item",
+      itemId: "starter-bread",
+    });
 
     expect(applied.diff).toEqual({
       upsertItems: [],
@@ -515,7 +524,10 @@ describe("list mutation diff", () => {
 
   test("restores a deleted item by upserting the row and dropping the archive", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const removed = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-bread" });
+    const removed = applyWithDiff(snapshot, {
+      type: "remove-item",
+      itemId: "starter-bread",
+    });
     const applied = applyWithDiff(removed.snapshot, {
       type: "restore-item",
       archiveId: removed.snapshot.deletedItems[0]!.archiveId,
@@ -529,9 +541,15 @@ describe("list mutation diff", () => {
 
   test("purges a deleted item by dropping only its archive row", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const removed = applyWithDiff(snapshot, { type: "remove-item", itemId: "starter-bread" });
+    const removed = applyWithDiff(snapshot, {
+      type: "remove-item",
+      itemId: "starter-bread",
+    });
     const archiveId = removed.snapshot.deletedItems[0]!.archiveId;
-    const applied = applyWithDiff(removed.snapshot, { type: "purge-deleted-item", archiveId });
+    const applied = applyWithDiff(removed.snapshot, {
+      type: "purge-deleted-item",
+      archiveId,
+    });
 
     expect(applied.diff).toEqual({
       upsertItems: [],
@@ -543,7 +561,10 @@ describe("list mutation diff", () => {
 
   test("touches no item rows for a rename", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
-    const applied = applyWithDiff(snapshot, { type: "rename-list", title: "Saturday market" });
+    const applied = applyWithDiff(snapshot, {
+      type: "rename-list",
+      title: "Saturday market",
+    });
 
     expect(applied.diff).toEqual({
       upsertItems: [],
@@ -570,7 +591,10 @@ describe("list mutation diff", () => {
           category: "MISC",
         },
       }).snapshot;
-      current = applyWithDiff(current, { type: "remove-item", itemId }).snapshot;
+      current = applyWithDiff(current, {
+        type: "remove-item",
+        itemId,
+      }).snapshot;
     }
 
     expect(current.deletedItems).toHaveLength(MAX_DELETED_ITEMS);
@@ -601,7 +625,13 @@ describe("listItemFieldsSchema", () => {
   });
 
   test("rejects a missing unit just like the item command schema", () => {
-    const input = { name: "Milk", quantity: 2, unit: "", amount: "", category: "DAIRY" };
+    const input = {
+      name: "Milk",
+      quantity: 2,
+      unit: "",
+      amount: "",
+      category: "DAIRY",
+    };
     expect(Schema.is(listItemFieldsSchema)(input)).toBe(false);
     expect(
       Schema.is(listCommandSchema)({

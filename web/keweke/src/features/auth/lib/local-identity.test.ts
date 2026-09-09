@@ -1,4 +1,4 @@
-/// <reference types="bun" />
+/// <reference types="bun-types" />
 
 // oxlint-disable-next-line import/no-unassigned-import
 import "fake-indexeddb/auto";
