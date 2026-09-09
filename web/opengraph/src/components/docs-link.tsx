@@ -7,7 +7,7 @@ interface DocsLinkProps {
   className?: string;
   href: string;
   /**
-   * `inline` — mono chip with external arrow (body copy, footers).
+   * `inline` — text link with external arrow (body copy, footers).
    * `info` — quiet Info icon + optional label (empty states, menus).
    */
   variant?: "inline" | "info";
@@ -19,7 +19,7 @@ export function DocsLink({ children, className, href, variant = "inline" }: Docs
     return (
       <a
         className={buttonVariants({
-          className: `h-auto gap-1 px-0 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase hover:text-foreground${className ? ` ${className}` : ""}`,
+          className: `h-auto gap-1 px-0 text-xs text-muted-foreground hover:text-foreground${className ? ` ${className}` : ""}`,
           size: "xs",
           variant: "link",
         })}
@@ -37,7 +37,7 @@ export function DocsLink({ children, className, href, variant = "inline" }: Docs
   return (
     <a
       className={buttonVariants({
-        className: `h-auto gap-0.5 px-0 font-mono text-[10px] tracking-[0.08em] uppercase${className ? ` ${className}` : ""}`,
+        className: `h-auto gap-0.5 px-0 text-xs${className ? ` ${className}` : ""}`,
         size: "xs",
         variant: "link",
       })}

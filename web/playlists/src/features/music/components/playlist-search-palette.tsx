@@ -175,7 +175,7 @@ export function PlaylistSearchPalette() {
         <div className="max-h-[min(24rem,55vh)] overflow-y-auto" aria-live="polite">
           {results.length === 0 ? (
             <div className="px-4 py-10 text-center text-xs text-muted-foreground">
-              No playlists match “{draftQuery.trim()}”
+              No playlists match "{draftQuery.trim()}"
             </div>
           ) : (
             <div className="p-1.5">
@@ -197,7 +197,7 @@ export function PlaylistSearchPalette() {
                       <span className="block truncate text-sm font-medium">
                         {playlist.snapshot.title}
                       </span>
-                      <span className="mt-0.5 block truncate font-mono text-[10px] tracking-wide text-muted-foreground uppercase">
+                      <span className="mt-0.5 block truncate text-xs text-muted-foreground">
                         {playlist.id}
                         {playlist.isDefault ? " · default" : ""} · {playlist.snapshot.trackCount}{" "}
                         tracks

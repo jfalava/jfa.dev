@@ -33,17 +33,13 @@ function PlaylistMeta({
   const Heading = headingLevel;
   const { snapshot } = playlist;
   const Root = headingLevel === "h1" ? "div" : "span";
-  const Label = headingLevel === "h1" ? "p" : "span";
   const Meta = headingLevel === "h1" ? "p" : "span";
 
   return (
     <Root className="min-w-0 flex-1 text-left">
-      <Label className="block font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-        playlist
-      </Label>
       <Heading
         id={`${playlistAnchorId(playlist.id)}-heading`}
-        className={`mt-2 block ${DISPLAY_TITLE_CLASS_NAME}`}
+        className={`block ${DISPLAY_TITLE_CLASS_NAME}`}
       >
         <a
           href={snapshot.sourceUrl}

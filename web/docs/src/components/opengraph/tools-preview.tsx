@@ -28,8 +28,8 @@ export function ToolsPreview() {
 
   return (
     <PreviewShell
-      label="Toolbox — Photoshop map"
-      caption="V Move, H Hand (hold Space), T Text, U Shape, P Image, I Eyedropper, G Fill. All are single keys — no Mod needed."
+      label="Toolbox"
+      caption="V Move, H Hand (hold Space), T Text, U Shape, P Image, I Eyedropper, G Fill. Single keys, no Mod."
     >
       <div className="flex justify-center bg-muted/20 p-6">
         <div className="flex w-[56px] flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 dark:bg-[#1e1e1e]">
@@ -126,31 +126,24 @@ export function ToolsPreview() {
 
 export function ShortcutsPreview() {
   return (
-    <PreviewShell
-      label="Shortcuts — hold ? to peek"
-      caption="Every tool and action has a Photoshop-style shortcut. The guide is the same component you open with ? in the editor."
-    >
+    <PreviewShell label="Shortcuts" caption="Hold ? in the editor to open the same guide.">
       <div className="p-4">
         <div className="rounded-lg border bg-popover p-4 text-popover-foreground">
           <div className="flex items-baseline gap-2 border-b pb-2">
-            <span className="font-mono text-[11px] tracking-[0.14em] text-primary uppercase">
-              Shortcuts
-            </span>
-            <span className="text-[11px] text-muted-foreground/75">/</span>
-            <span className="text-[11px] text-muted-foreground/75">Photoshop map</span>
-            <span className="ml-auto hidden items-center gap-1.5 text-[11px] text-muted-foreground sm:flex">
+            <h2 className="text-lg font-semibold tracking-tight">Keyboard shortcuts</h2>
+            <span className="ml-auto hidden items-center gap-1.5 text-xs text-muted-foreground sm:flex">
               Hold <Kbd>?</Kbd> to preview
             </span>
           </div>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             <div className="space-y-1">
-              <p className="border-b pb-1 font-mono text-[11px] uppercase">Tools</p>
+              <p className="border-b pb-1 text-xs font-medium">Tools</p>
               <p className="text-xs">
                 <Kbd>V</Kbd> Move · <Kbd>H</Kbd> Hand · <Kbd>T</Kbd> Text
               </p>
             </div>
             <div className="space-y-1">
-              <p className="border-b pb-1 font-mono text-[11px] uppercase">File</p>
+              <p className="border-b pb-1 text-xs font-medium">File</p>
               <p className="text-xs">
                 <KbdGroup>
                   <Kbd>Alt</Kbd>

@@ -60,7 +60,6 @@ import { DocsLink } from "@/components/docs-link";
 import { EditorCanvas, type EditorCanvasHandle } from "@/components/editor-canvas";
 import { EditorTabsBar } from "@/components/editor-tabs";
 import { ShortcutGuide } from "@/components/shortcut-guide";
-import { opengraphDocs } from "@/lib/docs-paths";
 import { editorCanvasRef } from "@/editor/canvas-ref";
 import { registerFontFile, registerStoredFont } from "@/editor/fonts";
 import {
@@ -96,6 +95,7 @@ import {
 } from "@/editor/storage";
 import { useEditorStore } from "@/editor/store";
 import { usePhotoshopHotkeys } from "@/hooks/use-photoshop-hotkeys";
+import { opengraphDocs } from "@/lib/docs-paths";
 
 export const Route = createFileRoute("/")({ component: EditorPage });
 
@@ -843,12 +843,6 @@ function PhotoshopToolbox({
       <ToolboxButton ariaLabel="Redo" onPress={onRedo} isDisabled={!canRedo}>
         <Redo2 className="size-[18px]" />
       </ToolboxButton>
-
-      <div className="mt-auto flex flex-col items-center gap-1 pt-2">
-        <span className="text-[7px] tracking-[0.14em] text-zinc-500">TOOLS</span>
-        <div className="h-px w-8 bg-white/10" />
-        <span className="text-[7px] text-zinc-600">PS</span>
-      </div>
     </aside>
   );
 }
@@ -1367,10 +1361,7 @@ function PropertiesPanel({
       <div className="min-h-0 flex-1 overflow-auto p-3">
         <CanvasSection />
         {layer === undefined ? (
-          <div className="flex flex-col items-center justify-center gap-2 py-8 text-center text-xs text-muted-foreground">
-            <MousePointer2 className="size-5" />
-            <p>Select a layer to edit its properties.</p>
-          </div>
+          <p className="py-8 text-center text-sm text-muted-foreground">Select a layer.</p>
         ) : (
           <div className="mt-2">
             <PropertySection icon={Frame} label="Position & size">

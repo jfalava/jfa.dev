@@ -135,7 +135,7 @@ export function OpengraphHeader() {
             className="max-h-[819px]:hidden hidden gap-1.5 px-2 text-muted-foreground hover:text-foreground max-[1179px]:hidden min-[1180px]:inline-flex"
           >
             <Keyboard />
-            <span className="hidden sm:inline">Keybinds</span>
+            <span className="hidden sm:inline">Shortcuts</span>
             <Kbd
               aria-hidden="true"
               className="hidden h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none sm:inline-flex"
@@ -185,9 +185,7 @@ export function OpengraphHeader() {
                 textValue="What gets saved"
               >
                 <Info aria-hidden="true" className="size-3.5 stroke-[1.5]" />
-                <span className="font-mono text-[10px] tracking-[0.08em] uppercase">
-                  What gets saved
-                </span>
+                <span>What gets saved</span>
                 <ArrowUpRight aria-hidden="true" className="ml-auto size-3 opacity-70" />
               </DropdownMenuItem>
             </DropdownMenu>

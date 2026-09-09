@@ -3,8 +3,8 @@ import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 
 import { DocsLink } from "@/components/docs-link";
 import { HotkeyKbd } from "@/components/hotkey-kbd";
-import { opengraphDocs } from "@/lib/docs-paths";
 import { CATEGORY_ORDER, SHORTCUT_BY_CATEGORY, type PhotoshopShortcut } from "@/editor/keymap";
+import { opengraphDocs } from "@/lib/docs-paths";
 
 interface ShortcutGuideProps {
   isOpen: boolean;
@@ -14,7 +14,7 @@ interface ShortcutGuideProps {
 export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
   return (
     <ModalOverlay
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-[2px]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
       isDismissable
       isOpen={isOpen}
       onOpenChange={onOpenChange}
@@ -22,26 +22,21 @@ export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
       <Modal className="w-full max-w-3xl outline-none">
         <Dialog
           aria-label="Keyboard shortcuts"
-          className="overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl outline-none"
+          className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
         >
           <div className="border-b border-border px-5 py-4">
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="text-[11px] tracking-[0.14em] text-primary uppercase">Shortcuts</p>
-              <span aria-hidden="true" className="text-[11px] text-muted-foreground/75">
-                /
-              </span>
-              <h2 className="text-[11px] font-normal text-muted-foreground/75">Photoshop map</h2>
-              <span className="ml-auto hidden items-center gap-1.5 text-[11px] text-muted-foreground sm:flex">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+              <h2 className="text-lg font-semibold tracking-tight">Keyboard shortcuts</h2>
+              <span className="hidden items-center gap-1.5 text-xs text-muted-foreground sm:flex">
                 Hold <HotkeyKbd hotkey="?" /> to preview
-                <span className="mx-1 text-muted-foreground/50">•</span>
+                <span className="mx-1 text-muted-foreground/50">·</span>
                 <HotkeyKbd hotkey="Escape" /> to close
               </span>
             </div>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Every tool and action mirrors Photoshop. Single keys switch tools,{" "}
-              <span className="text-foreground">Alt</span> combos handle file and edit to avoid
-              browser clashes (<span className="text-foreground">Mod</span> only for
-              undo/redo/duplicate/zoom). Works only when not typing in an input.
+              Single keys switch tools. Alt is for file and edit so it does not fight the browser.
+              Mod is only undo, redo, duplicate, and zoom. Keys do nothing while an input is
+              focused.
             </p>
           </div>
 
@@ -54,9 +49,9 @@ export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
                 }
                 return (
                   <section key={category} className="space-y-3">
-                    <h3 className="flex items-center gap-2 border-b border-border pb-2 font-mono text-[11px] tracking-[0.08em] text-primary uppercase">
+                    <h3 className="flex items-center gap-2 border-b border-border pb-2 text-xs font-medium">
                       {category}
-                      <span className="ml-auto font-mono text-[10px] font-normal tracking-normal text-muted-foreground/60">
+                      <span className="ml-auto text-[10px] font-normal text-muted-foreground">
                         {shortcuts.length}
                       </span>
                     </h3>
@@ -73,7 +68,9 @@ export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
 
           <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/20 px-5 py-3">
             <DocsLink href={opengraphDocs.shortcuts}>Full shortcuts manual</DocsLink>
-            <Button onPress={() => onOpenChange(false)} variant="outline">Got it</Button>
+            <Button onPress={() => onOpenChange(false)} variant="outline">
+              Close
+            </Button>
           </div>
         </Dialog>
       </Modal>

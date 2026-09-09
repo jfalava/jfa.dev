@@ -118,9 +118,7 @@ function HotkeyKbd({
 function SearchResultService({ label, name, url }: { label: string; name: string; url?: string }) {
   return (
     <span className="inline-flex min-w-0 items-baseline gap-1">
-      <span className="shrink-0 text-[9px] font-medium tracking-wide text-muted-foreground/70 uppercase">
-        {label}
-      </span>
+      <span className="shrink-0 text-[10px] text-muted-foreground">{label}</span>
       {url && name !== "—" ? (
         <a
           href={url}
@@ -181,7 +179,7 @@ function SearchPalettePreview({
         </div>
       ) : (
         <>
-          <div className="border-b border-border px-4 py-2 text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+          <div className="border-b border-border px-4 py-2 text-xs text-muted-foreground">
             {translations.searchResults(searchResultCount)}
           </div>
           <div className="p-1.5">

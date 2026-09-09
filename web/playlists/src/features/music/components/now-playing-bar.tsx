@@ -74,7 +74,7 @@ export function NowPlayingBar() {
               />
               <span
                 className={cn(
-                  "font-mono text-[10px] tracking-[0.14em] uppercase",
+                  "text-xs font-medium",
                   isPlaying ? "text-success" : "text-muted-foreground",
                 )}
               >
@@ -102,7 +102,7 @@ export function NowPlayingBar() {
                 </div>
               </div>
             ) : !displayTitle ? (
-              <span className="truncate font-mono text-xs tracking-wide text-muted-foreground">
+              <span className="truncate text-xs text-muted-foreground">
                 Not scrobbling anything atm
               </span>
             ) : (
@@ -135,12 +135,12 @@ export function NowPlayingBar() {
                     {displayTitle}
                     <span className="font-normal text-muted-foreground sm:hidden">
                       {displayArtist ? ` · ${displayArtist}` : ""}
-                      {displayAlbum ? ` — ${displayAlbum}` : ""}
+                      {displayAlbum ? ` · ${displayAlbum}` : ""}
                     </span>
                   </TitleLink>
                   <div className="mt-0.5 hidden truncate text-[11px] leading-none text-muted-foreground sm:block">
                     {displayArtist}
-                    {displayAlbum ? ` — ${displayAlbum}` : ""}
+                    {displayAlbum ? ` · ${displayAlbum}` : ""}
                   </div>
                 </div>
               </div>

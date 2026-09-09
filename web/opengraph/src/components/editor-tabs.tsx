@@ -82,7 +82,7 @@ export function EditorTabsBar() {
                   className="max-w-28 truncate text-left text-[11px] font-medium focus-visible:outline-none"
                   onClick={() => switchTab(tab.id)}
                   onDoubleClick={() => startEdit(tab.id, tab.project.name)}
-                  title={`${tab.project.name} — double-click to rename`}
+                  title={`${tab.project.name}. Double-click to rename.`}
                 >
                   {tab.project.name}
                 </button>

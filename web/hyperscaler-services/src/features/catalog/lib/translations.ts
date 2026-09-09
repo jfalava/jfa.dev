@@ -53,13 +53,13 @@ export const translations = {
       }
       return "Continue typing after service: to find a service.";
     },
-    categoryColumn: "CATEGORY",
+    categoryColumn: "Category",
     awsColumn: "AWS",
-    azureColumn: "AZURE",
+    azureColumn: "Azure",
     gcpColumn: "GCP",
-    oracleColumn: "ORACLE",
-    cloudflareColumn: "CLOUDFLARE",
-    descriptionColumn: "DESCRIPTION",
+    oracleColumn: "Oracle",
+    cloudflareColumn: "Cloudflare",
+    descriptionColumn: "Description",
     sourceCode: "Source code",
   },
   es: {
@@ -87,13 +87,13 @@ export const translations = {
       }
       return "Sigue escribiendo después de service: para buscar un servicio.";
     },
-    categoryColumn: "CATEGORÍA",
+    categoryColumn: "Categoría",
     awsColumn: "AWS",
-    azureColumn: "AZURE",
+    azureColumn: "Azure",
     gcpColumn: "GCP",
-    oracleColumn: "ORACLE",
-    cloudflareColumn: "CLOUDFLARE",
-    descriptionColumn: "DESCRIPCIÓN",
+    oracleColumn: "Oracle",
+    cloudflareColumn: "Cloudflare",
+    descriptionColumn: "Descripción",
     sourceCode: "Código fuente",
   },
 } satisfies Record<LanguageCode, PageTranslations>;

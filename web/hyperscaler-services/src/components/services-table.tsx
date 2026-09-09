@@ -230,7 +230,7 @@ export function ServicesTable({
                 <th
                   key={header.id}
                   className={cn(
-                    "relative sticky top-0 z-10 h-10 bg-background px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border sm:px-4",
+                    "relative sticky top-0 z-10 h-10 bg-background px-3 text-left align-middle text-xs font-medium text-muted-foreground after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border sm:px-4",
                     header.index === 0 && "pl-4 sm:pl-6 lg:pl-8",
                     header.index === headerGroup.headers.length - 1 && "pr-4 sm:pr-6 lg:pr-8",
                   )}

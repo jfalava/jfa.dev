@@ -54,7 +54,7 @@ function createPlaylistColumns(activeTrack: NowPlayingTrack | null) {
       cell: ({ getValue, row }) => {
         const isActive = activeTrack ? isNowPlayingMatch(row.original, activeTrack) : false;
         return (
-          <div className="min-w-0 max-w-full scrollbar-none overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:hidden">
+          <div className="max-w-full min-w-0 scrollbar-none overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:hidden">
             <div className="inline-flex min-w-max items-center gap-2 whitespace-nowrap">
               <span className="leading-tight font-medium whitespace-nowrap">{getValue()}</span>
               {isActive ? (
@@ -305,7 +305,7 @@ export function PlaylistTable({
                   <th
                     key={header.id}
                     className={cn(
-                      "relative sticky top-0 z-10 h-10 bg-background px-3 text-left align-middle text-[13px] font-semibold tracking-widest text-muted-foreground uppercase after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border sm:px-4",
+                      "relative sticky top-0 z-10 h-10 bg-background px-3 text-left align-middle text-xs font-medium text-muted-foreground after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border sm:px-4",
                       header.index === 0 && "pl-4 sm:pl-6 lg:pl-8",
                       header.index === headerGroup.headers.length - 1 && "pr-4 sm:pr-6 lg:pr-8",
                       header.column.id === "duration" && "text-right",
@@ -349,8 +349,8 @@ export function PlaylistTable({
           </tbody>
         </table>
         {lazy && visibleCount < tracks.length ? (
-          <div className="px-4 py-3 text-center font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
-            Showing {visibleCount} / {tracks.length} · scroll for more
+          <div className="px-4 py-3 text-center text-sm text-muted-foreground">
+            Showing {visibleCount} of {tracks.length}. Scroll for more.
           </div>
         ) : null}
       </div>
@@ -407,8 +407,8 @@ export function PlaylistTable({
           </tbody>
         </table>
         {lazy && visibleCount < tracks.length ? (
-          <div className="px-4 py-3 text-center font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
-            Showing {visibleCount} / {tracks.length} · scroll for more
+          <div className="px-4 py-3 text-center text-sm text-muted-foreground">
+            Showing {visibleCount} of {tracks.length}. Scroll for more.
           </div>
         ) : null}
       </div>
