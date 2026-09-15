@@ -64,7 +64,7 @@ export function createShoppingColumns() {
         const { onToggle } = getShoppingTableMeta(table);
         return (
           <Checkbox
-            aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "done"}`}
+            aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "purchased"}`}
             isSelected={row.original.checked}
             onChange={(checked) => onToggle(row.original.id, checked)}
           />
@@ -289,7 +289,7 @@ export function createShoppingColumns() {
             row.original.checked ? "text-xs text-muted-foreground" : "text-xs text-primary"
           }
         >
-          {row.original.checked ? "Done" : "Open"}
+          {row.original.checked ? "Purchased" : "Open"}
         </span>
       ),
     }),
@@ -386,7 +386,7 @@ export function createMobileShoppingColumns({
       header: "Done",
       cell: ({ row }) => (
         <Checkbox
-          aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "done"}`}
+          aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "purchased"}`}
           className="size-11 shrink-0 justify-center rounded-md"
           isSelected={row.original.checked}
           onChange={(checked) => onToggle(row.original.id, checked)}
@@ -412,7 +412,7 @@ export function createMobileShoppingColumns({
             <span aria-hidden="true">·</span>
             <span className="font-serif">{row.original.category}</span>
             <span aria-hidden="true">·</span>
-            <span>{row.original.checked ? "Done" : "Open"}</span>
+            <span>{row.original.checked ? "Purchased" : "Open"}</span>
           </div>
           <div className="mt-1">
             <SignedItemBadge identity={identity} item={row.original} />

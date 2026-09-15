@@ -28,6 +28,7 @@ export function MobileShoppingTable({
   onNewItemChange,
   onNewItemKeyDown,
   onSaveEditing,
+  showNewItemRow,
 }: {
   emptyMessage?: string;
   editDraft?: ItemEditDraft;
@@ -43,6 +44,7 @@ export function MobileShoppingTable({
   onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
   onNewItemKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
   onSaveEditing: () => void;
+  showNewItemRow: boolean;
 }) {
   const rows = table.getRowModel().rows;
 
@@ -272,13 +274,15 @@ export function MobileShoppingTable({
               </TableCell>
             </tr>
           ) : null}
-          <MobileNewItemRow
-            newItem={newItem}
-            errors={newItemErrors}
-            onAdd={onAdd}
-            onChange={onNewItemChange}
-            onKeyDown={onNewItemKeyDown}
-          />
+          {showNewItemRow ? (
+            <MobileNewItemRow
+              newItem={newItem}
+              errors={newItemErrors}
+              onAdd={onAdd}
+              onChange={onNewItemChange}
+              onKeyDown={onNewItemKeyDown}
+            />
+          ) : null}
         </tbody>
       </table>
     </div>

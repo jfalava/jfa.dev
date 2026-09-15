@@ -38,6 +38,7 @@ export function SpreadsheetShoppingTable({
   onToggle,
   onUpdate,
   onExit,
+  showNewItemRow,
 }: {
   emptyMessage?: string;
   isActive: boolean;
@@ -51,6 +52,7 @@ export function SpreadsheetShoppingTable({
   onToggle: (id: string, checked: boolean) => void;
   onUpdate: (itemId: string, draft: ItemEditDraft) => Promise<boolean>;
   onExit: () => void;
+  showNewItemRow: boolean;
 }) {
   const gridRef = useRef<HTMLDivElement>(null);
   const [drafts, setDrafts] = useState<Record<string, ItemEditDraft>>({});
@@ -457,13 +459,15 @@ export function SpreadsheetShoppingTable({
                 </TableCell>
               </tr>
             ) : null}
-            <SpreadsheetNewItemRow
-              errors={newItemErrors}
-              isAdding={isAdding}
-              newItem={newItem}
-              onAdd={() => void addNewItemAndFocus()}
-              onChange={onNewItemChange}
-            />
+            {showNewItemRow ? (
+              <SpreadsheetNewItemRow
+                errors={newItemErrors}
+                isAdding={isAdding}
+                newItem={newItem}
+                onAdd={() => void addNewItemAndFocus()}
+                onChange={onNewItemChange}
+              />
+            ) : null}
           </tbody>
         </table>
       </div>

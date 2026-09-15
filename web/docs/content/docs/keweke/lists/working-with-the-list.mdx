@@ -11,7 +11,7 @@ import {
   LiveDroppedPreview,
 } from "@/components/keweke/list-details-preview";
 
-A list page is more than its items. The header, the search bar, and the history sections tell you where you are and what changed — all rendered as static previews below, not screenshots.
+A list page is more than its items. The header, list views, search bar, and history sections tell you where you are and what changed — all rendered as interactive previews below, not screenshots.
 
 ## The header — title, alias, and counts
 
@@ -19,6 +19,7 @@ A list page is more than its items. The header, the search bar, and the history 
 
 - **Title** — tap the pencil to rename. The list starts as “New list” and any name you type appears immediately for everyone on the shared copy.
 - **Alias vs. ID** — every list has both. The row below the title shows one at a time; the arrow button swaps between them, and copy copies the full URL for whichever is visible.
+- **List and Inventory** — the tabs split items still to buy from items marked purchased. Checking an item moves it to Inventory; unchecking it returns it to the list. The selected tab is preserved in the URL with `?tab=inventory`.
 
 <ListAliasIdPreview />
 
@@ -29,11 +30,13 @@ The right side shows `02 open · 01 done` — a quick count so you know how much
 
 ## Search and spreadsheet mode
 
-Below the header is a second bar:
+Below the view heading is a second bar:
 
-- **Search** — filters the visible rows as you type. It looks at name, category, unit and amount, and shows “no matching lines” when nothing matches.
+- **Search** — filters the active view as you type. It looks at name, category, unit and amount, and shows “No matching items” when nothing matches.
 - **Excel Mode** — on desktop, toggles a spreadsheet-like table where you can tab through cells. Mobile stays in card mode.
 - **Help (?)** — opens tips for adding items.
+
+The **List** tab includes the new-item row. **Inventory** keeps the same item actions, but is intentionally focused on items already marked purchased.
 
 <LiveDroppedPreview />
 

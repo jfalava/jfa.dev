@@ -36,6 +36,7 @@ export function ShoppingTable({
   onSpreadsheetModeChange,
   onToggle,
   onUpdate,
+  showNewItemRow,
 }: {
   emptyMessage?: string;
   identity?: LocalIdentity;
@@ -51,6 +52,7 @@ export function ShoppingTable({
   onSpreadsheetModeChange: (isActive: boolean) => void;
   onToggle: (id: string, checked: boolean) => void;
   onUpdate: (itemId: string, draft: ItemEditDraft) => Promise<boolean>;
+  showNewItemRow: boolean;
 }) {
   const [editingItemId, setEditingItemId] = useState<string>();
   const [editDraft, setEditDraft] = useState<ItemEditDraft>();
@@ -210,6 +212,7 @@ export function ShoppingTable({
         onToggle={onToggle}
         onUpdate={onUpdate}
         onExit={() => onSpreadsheetModeChange(false)}
+        showNewItemRow={showNewItemRow}
       />
       <div className={isSpreadsheetMode ? "hidden" : undefined}>
         <MobileShoppingTable
@@ -227,6 +230,7 @@ export function ShoppingTable({
           onNewItemChange={onNewItemChange}
           onSaveEditing={saveEditing}
           onNewItemKeyDown={submitNewItemOnEnter}
+          showNewItemRow={showNewItemRow}
         />
         <div className="hidden w-full overflow-x-auto md:block">
           <table className="w-full min-w-190 border-collapse [&_td:first-child]:pl-4 sm:[&_td:first-child]:pl-6 lg:[&_td:first-child]:pl-8 [&_td:last-child]:pr-4 sm:[&_td:last-child]:pr-6 lg:[&_td:last-child]:pr-8 [&_th:first-child]:pl-4 sm:[&_th:first-child]:pl-6 lg:[&_th:first-child]:pl-8 [&_th:last-child]:pr-4 sm:[&_th:last-child]:pr-6 lg:[&_th:last-child]:pr-8">
@@ -280,13 +284,15 @@ export function ShoppingTable({
                   </TableCell>
                 </tr>
               ) : null}
-              <DesktopNewItemRow
-                newItem={newItem}
-                errors={newItemErrors}
-                onAdd={handleAdd}
-                onKeyDown={submitNewItemOnEnter}
-                onChange={onNewItemChange}
-              />
+              {showNewItemRow ? (
+                <DesktopNewItemRow
+                  newItem={newItem}
+                  errors={newItemErrors}
+                  onAdd={handleAdd}
+                  onKeyDown={submitNewItemOnEnter}
+                  onChange={onNewItemChange}
+                />
+              ) : null}
             </tbody>
           </table>
         </div>

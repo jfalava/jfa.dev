@@ -23,6 +23,7 @@ import { ItemEntryHelpDialog } from "@/features/lists/components/item-entry-help
 import { ItemHistoryDialog } from "@/features/lists/components/item-history-dialog";
 import type { ItemEditDraft, NewItemDraft } from "@/features/lists/components/list-item-types";
 import { ListPageHeader } from "@/features/lists/components/list-page-header";
+import { LIST_VIEW_PANEL_ID } from "@/features/lists/components/list-view-tabs";
 import { PublishListDialog } from "@/features/lists/components/publish-list-dialog";
 import { ShoppingTable } from "@/features/lists/components/shopping-table";
 import { NEW_SPREADSHEET_ROW_ID } from "@/features/lists/components/spreadsheet-mode";
@@ -39,6 +40,7 @@ import {
   loadList,
   migrateList,
 } from "@/features/lists/lib/list-repository";
+import { itemsForListView, parseListView, type ListView } from "@/features/lists/lib/list-view";
 import {
   deleteLocalList,
   listLocalLists,
@@ -54,7 +56,17 @@ const EMPTY_ITEMS: ListItem[] = [];
 export const FOCUS_SEARCH_HOTKEY = "F";
 export const FOCUS_NEW_ITEM_HOTKEY = "N";
 
+type ListSearch = {
+  tab?: string;
+};
+
+type ValidatedListSearch = {
+  tab?: "inventory";
+};
+
 export const Route = createFileRoute("/$listId")({
+  validateSearch: (search: ListSearch): ValidatedListSearch =>
+    search.tab === "inventory" ? { tab: "inventory" } : {},
   beforeLoad: ({ params }) => {
     if (!isListAddress(params.listId)) {
       throw notFound();
@@ -91,8 +103,10 @@ export const Route = createFileRoute("/$listId")({
 
 function ListPage() {
   const { listId } = Route.useParams();
+  const { tab } = Route.useSearch();
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
+  const view = parseListView(tab);
   const [loadedList, setLoadedList] = useState<
     { backend: "local" | "remote"; snapshot: ListSnapshot } | undefined
   >();
@@ -130,6 +144,22 @@ function ListPage() {
       setIsSpreadsheetMode(isActive);
     },
     [isDesktop],
+  );
+
+  const handleViewChange = useCallback(
+    (nextView: ListView): void => {
+      if (nextView === view) {
+        return;
+      }
+      setFilter("");
+      void navigate({
+        to: "/$listId",
+        params: { listId },
+        replace: true,
+        search: { tab: nextView === "inventory" ? "inventory" : undefined },
+      });
+    },
+    [listId, navigate, view],
   );
 
   const focusSearchInput = useCallback((): void => {
@@ -586,18 +616,19 @@ function ListPage() {
     document.title = snapshot ? `${snapshot.title} - KEWEKE` : "keweke";
   }, [snapshot]);
 
+  const viewItems = useMemo(() => itemsForListView(items, view), [items, view]);
   const visibleItems = useMemo(() => {
     const normalizedFilter = filter.trim().toLowerCase();
     if (!normalizedFilter) {
-      return items;
+      return viewItems;
     }
 
-    return items.filter((item) =>
+    return viewItems.filter((item) =>
       [item.name, item.category, item.unit, item.amount].some((value) =>
         value.toLowerCase().includes(normalizedFilter),
       ),
     );
-  }, [filter, items]);
+  }, [filter, viewItems]);
 
   if (isLoading) {
     return (
@@ -683,41 +714,70 @@ function ListPage() {
             isRefreshing={isRefreshing}
             isRenaming={isRenaming}
             listId={snapshot.id}
+            onViewChange={handleViewChange}
             onFilterChange={setFilter}
             onOpenHelp={() => setIsItemEntryHelpOpen(true)}
             onRefresh={() => void handleRefreshLive()}
             onRename={renameList}
             onSpreadsheetModeChange={handleSpreadsheetModeChange}
+            view={view}
             title={snapshot.title}
           />
-          <ShoppingTable
-            emptyMessage={filter.trim() ? "No matching items" : undefined}
-            identity={identity}
-            isSpreadsheetMode={isSpreadsheetModeActive}
-            items={visibleItems}
-            newItem={newItemDraft}
-            newItemErrors={displayedNewItemErrors}
-            onAdd={addItem}
-            onAdjustQuantity={adjustQuantity}
-            onNewItemChange={updateNewItemDraft}
-            onRemove={removeItem}
-            onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
-            onSpreadsheetModeChange={handleSpreadsheetModeChange}
-            onToggle={toggleItem}
-            onUpdate={updateItem}
-          />
-          <DeletedItemsHistory
-            busyArchiveId={busyArchiveId}
-            identity={identity}
-            items={snapshot.deletedItems}
-            onPurge={(archiveId) => {
-              void updateDeletedItem({ type: "purge-deleted-item", archiveId }, archiveId);
-            }}
-            onRestore={(archiveId) => {
-              void updateDeletedItem({ type: "restore-item", archiveId }, archiveId);
-            }}
-            onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
-          />
+          <section
+            aria-labelledby={`list-view-tab-${view}`}
+            id={LIST_VIEW_PANEL_ID}
+            role="tabpanel"
+            tabIndex={-1}
+          >
+            <div className="border-b px-4 py-5 sm:px-6 lg:px-8">
+              <h2 className="text-xl leading-none font-semibold tracking-tight">
+                {view === "inventory" ? "Inventory" : "List"}
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {view === "inventory"
+                  ? `${viewItems.length} purchased ${viewItems.length === 1 ? "item" : "items"}`
+                  : `${viewItems.length} ${viewItems.length === 1 ? "item" : "items"} to buy`}
+              </p>
+            </div>
+            <ShoppingTable
+              emptyMessage={
+                filter.trim()
+                  ? "No matching items"
+                  : view === "inventory"
+                    ? "No purchased items yet"
+                    : undefined
+              }
+              identity={identity}
+              isSpreadsheetMode={isSpreadsheetModeActive}
+              items={visibleItems}
+              key={view}
+              newItem={newItemDraft}
+              newItemErrors={displayedNewItemErrors}
+              onAdd={addItem}
+              onAdjustQuantity={adjustQuantity}
+              onNewItemChange={updateNewItemDraft}
+              onRemove={removeItem}
+              onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
+              onSpreadsheetModeChange={handleSpreadsheetModeChange}
+              onToggle={toggleItem}
+              onUpdate={updateItem}
+              showNewItemRow={view === "list"}
+            />
+            {view === "list" ? (
+              <DeletedItemsHistory
+                busyArchiveId={busyArchiveId}
+                identity={identity}
+                items={snapshot.deletedItems}
+                onPurge={(archiveId) => {
+                  void updateDeletedItem({ type: "purge-deleted-item", archiveId }, archiveId);
+                }}
+                onRestore={(archiveId) => {
+                  void updateDeletedItem({ type: "restore-item", archiveId }, archiveId);
+                }}
+                onShowHistory={loadedList.backend === "remote" ? showHistory : undefined}
+              />
+            ) : null}
+          </section>
         </main>
       </div>
     </div>

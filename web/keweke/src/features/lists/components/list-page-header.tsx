@@ -4,7 +4,10 @@ import { FileSpreadsheet, Info, RefreshCw, Search } from "lucide-react";
 
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 
+import type { ListView } from "../lib/list-view";
+
 import { ListAlias, ListTitleEditor } from "./list-header-controls";
+import { ListViewTabs } from "./list-view-tabs";
 
 export const SPREADSHEET_MODE_HOTKEY = "Mod+Shift+E";
 export const FOCUS_SEARCH_HOTKEY = "F";
@@ -22,11 +25,13 @@ export type ListPageHeaderProps = {
   isRefreshing: boolean;
   isRenaming: boolean;
   listId: string;
+  view: ListView;
   onFilterChange: (value: string) => void;
   onOpenHelp: () => void;
   onRefresh: () => void;
   onRename: (title: string) => Promise<boolean>;
   onSpreadsheetModeChange: (isActive: boolean) => void;
+  onViewChange: (view: ListView) => void;
   title: string;
 };
 
@@ -42,11 +47,13 @@ export function ListPageHeader({
   isRefreshing,
   isRenaming,
   listId,
+  view,
   onFilterChange,
   onOpenHelp,
   onRefresh,
   onRename,
   onSpreadsheetModeChange,
+  onViewChange,
   title,
 }: ListPageHeaderProps) {
   useHotkey(SPREADSHEET_MODE_HOTKEY, () => onSpreadsheetModeChange(!isSpreadsheetMode), {
@@ -64,6 +71,8 @@ export function ListPageHeader({
           {backend === "local" ? "Local" : "Remote"} · {activeCount} open · {completedCount} done
         </p>
       </div>
+
+      <ListViewTabs onChange={onViewChange} view={view} />
 
       <div className="border-b px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-1.5">

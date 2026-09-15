@@ -36,10 +36,15 @@ function AvatarMock({ username }: { username: string }) {
 
 const MOCK_ALIAS = "weekend-groceries-a3k";
 const MOCK_LIST_ID = "0199c2f0-8a1b-7c3d-9e4f-2a1b3c4d5e6f";
+const LIST_VIEW_TABS = [
+  { id: "list", label: "List" },
+  { id: "inventory", label: "Inventory" },
+] satisfies ReadonlyArray<{ id: "list" | "inventory"; label: string }>;
 
 export function ListHeaderPreview() {
   const [showId, setShowId] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [view, setView] = useState<"list" | "inventory">("list");
   const value = showId ? MOCK_LIST_ID : MOCK_ALIAS;
 
   const copyUrl = () => {
@@ -103,6 +108,39 @@ export function ListHeaderPreview() {
             </div>
           </div>
           <p className="text-sm whitespace-nowrap text-muted-foreground">Local · 2 open · 1 done</p>
+        </div>
+
+        <div className="border-b px-4 sm:px-6">
+          <div aria-label="List views" className="flex items-center gap-1" role="tablist">
+            {LIST_VIEW_TABS.map(({ id, label }) => {
+              const isActive = view === id;
+              return (
+                <button
+                  aria-selected={isActive}
+                  className={`relative h-9 rounded-none px-2 text-xs font-medium ${
+                    isActive
+                      ? "text-foreground after:absolute after:right-0 after:bottom-[-1px] after:left-0 after:h-0.5 after:bg-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  key={id}
+                  onClick={() => setView(id)}
+                  role="tab"
+                  type="button"
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="border-b px-4 py-4 sm:px-6">
+          <h2 className="text-lg leading-none font-semibold tracking-tight">
+            {view === "inventory" ? "Inventory" : "List"}
+          </h2>
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            {view === "inventory" ? "1 purchased item" : "2 items to buy"}
+          </p>
         </div>
 
         <div className="border-b px-4 py-3 sm:px-6">
