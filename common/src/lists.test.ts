@@ -138,7 +138,12 @@ describe("list contract", () => {
     const legacy = {
       ...snapshot,
       items: snapshot.items.map(
-        ({ createdBy: _createdBy, updatedBy: _updatedBy, ...item }) => item,
+        ({
+          createdBy: _createdBy,
+          updatedBy: _updatedBy,
+          inventoryQuantity: _inventoryQuantity,
+          ...item
+        }) => item,
       ),
       deletedItems: [],
     };
@@ -146,6 +151,7 @@ describe("list contract", () => {
     const parsed = parseListSnapshot(legacy);
     expect(parsed.items[0]?.createdBy).toBeNull();
     expect(parsed.items[0]?.updatedBy).toBeNull();
+    expect(parsed.items[0]?.inventoryQuantity).toBeNull();
   });
 
   test("keeps an anonymous signer id on created items", () => {
@@ -432,6 +438,93 @@ describe("list mutation diff", () => {
       deleteArchiveIds: [],
     });
     expect(applied.snapshot.revision).toBe(snapshot.revision);
+  });
+
+  test("remembers the quantity entering inventory and restores it from zero", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const inventoried = applyWithDiff(snapshot, {
+      type: "set-item-checked",
+      itemId: "starter-tomatoes",
+      checked: true,
+    });
+    expect(
+      inventoried.snapshot.items.find((item) => item.id === "starter-tomatoes"),
+    ).toMatchObject({
+      checked: true,
+      quantity: 6,
+      inventoryQuantity: 6,
+    });
+
+    const depleted = applyWithDiff(inventoried.snapshot, {
+      type: "update-item",
+      itemId: "starter-tomatoes",
+      changes: { quantity: 0 },
+    });
+    expect(
+      depleted.snapshot.items.find((item) => item.id === "starter-tomatoes"),
+    ).toMatchObject({
+      checked: true,
+      quantity: 0,
+      inventoryQuantity: 6,
+    });
+
+    const restored = applyWithDiff(depleted.snapshot, {
+      type: "set-item-checked",
+      itemId: "starter-tomatoes",
+      checked: false,
+    });
+    expect(
+      restored.snapshot.items.find((item) => item.id === "starter-tomatoes"),
+    ).toMatchObject({
+      checked: false,
+      quantity: 6,
+      inventoryQuantity: null,
+    });
+  });
+
+  test("rejects zero quantity on the shopping list", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    expect(
+      applyListMutation(snapshot, {
+        id: "zero-open-item",
+        baseRevision: snapshot.revision,
+        command: {
+          type: "update-item",
+          itemId: "starter-bread",
+          changes: { quantity: 0 },
+        },
+      }),
+    ).toBeNull();
+  });
+
+  test("restores an archived inventory item with its original quantity", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    const inventoried = applyWithDiff(snapshot, {
+      type: "set-item-checked",
+      itemId: "starter-tomatoes",
+      checked: true,
+    });
+    const depleted = applyWithDiff(inventoried.snapshot, {
+      type: "update-item",
+      itemId: "starter-tomatoes",
+      changes: { quantity: 0 },
+    });
+    const removed = applyWithDiff(depleted.snapshot, {
+      type: "remove-item",
+      itemId: "starter-tomatoes",
+    });
+    const restored = applyWithDiff(removed.snapshot, {
+      type: "restore-item",
+      archiveId: removed.snapshot.deletedItems[0]!.archiveId,
+    });
+
+    expect(
+      restored.snapshot.items.find((item) => item.id === "starter-tomatoes"),
+    ).toMatchObject({
+      checked: true,
+      quantity: 6,
+      inventoryQuantity: 6,
+    });
   });
 
   test("keeps the snapshot unchanged when an edit matches the stored values", () => {

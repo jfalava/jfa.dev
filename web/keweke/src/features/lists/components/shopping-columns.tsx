@@ -46,6 +46,21 @@ function getShoppingTableMeta(table: { options: { meta?: ShoppingTableMeta } }):
   return table.options.meta;
 }
 
+function isDepleted(item: ListItem): boolean {
+  return item.checked && item.quantity === 0;
+}
+
+function itemStatus(item: ListItem): string {
+  if (!item.checked) {
+    return "Open";
+  }
+  return isDepleted(item) ? "Out of stock" : "Purchased";
+}
+
+function itemToggleLabel(item: ListItem): string {
+  return item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`;
+}
+
 export function createShoppingColumns() {
   return shoppingColumnHelper.columns([
     shoppingColumnHelper.display({
@@ -64,7 +79,7 @@ export function createShoppingColumns() {
         const { onToggle } = getShoppingTableMeta(table);
         return (
           <Checkbox
-            aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "purchased"}`}
+            aria-label={itemToggleLabel(row.original)}
             isSelected={row.original.checked}
             onChange={(checked) => onToggle(row.original.id, checked)}
           />
@@ -104,7 +119,11 @@ export function createShoppingColumns() {
         return (
           <span
             className={
-              row.original.checked ? "font-serif text-muted-foreground line-through" : "font-serif"
+              isDepleted(row.original)
+                ? "font-serif text-muted-foreground line-through"
+                : row.original.checked
+                  ? "font-serif text-muted-foreground"
+                  : "font-serif"
             }
           >
             {getValue()}
@@ -119,8 +138,11 @@ export function createShoppingColumns() {
           getShoppingTableMeta(table);
         if (editingItemId === row.original.id) {
           const draftQuantity = Number(editDraft?.quantity);
+          const minimumQuantity = row.original.checked ? 0 : 1;
           const isDraftQuantityValid =
-            Number.isInteger(draftQuantity) && draftQuantity >= 1 && draftQuantity <= 100_000;
+            Number.isInteger(draftQuantity) &&
+            draftQuantity >= minimumQuantity &&
+            draftQuantity <= 100_000;
           return (
             <>
               <span className="flex items-center justify-between gap-0.5">
@@ -141,6 +163,7 @@ export function createShoppingColumns() {
                 <QuantityStepper
                   isDisabled={!isDraftQuantityValid}
                   itemName={row.original.name}
+                  minimumQuantity={minimumQuantity}
                   onAdjust={(nextQuantity) => onEditDraftChange("quantity", String(nextQuantity))}
                   quantity={isDraftQuantityValid ? draftQuantity : 1}
                   size="icon-sm"
@@ -165,6 +188,7 @@ export function createShoppingColumns() {
             />
             <QuantityStepper
               itemName={row.original.name}
+              minimumQuantity={row.original.checked ? 0 : 1}
               onAdjust={(nextQuantity) => onAdjustQuantity(row.original.id, nextQuantity)}
               quantity={row.original.quantity}
               size="icon-sm"
@@ -289,7 +313,7 @@ export function createShoppingColumns() {
             row.original.checked ? "text-xs text-muted-foreground" : "text-xs text-primary"
           }
         >
-          {row.original.checked ? "Purchased" : "Open"}
+          {itemStatus(row.original)}
         </span>
       ),
     }),
@@ -386,7 +410,7 @@ export function createMobileShoppingColumns({
       header: "Done",
       cell: ({ row }) => (
         <Checkbox
-          aria-label={`Mark ${row.original.name} as ${row.original.checked ? "open" : "purchased"}`}
+          aria-label={itemToggleLabel(row.original)}
           className="size-11 shrink-0 justify-center rounded-md"
           isSelected={row.original.checked}
           onChange={(checked) => onToggle(row.original.id, checked)}
@@ -400,9 +424,11 @@ export function createMobileShoppingColumns({
         <div className="min-w-0 py-1">
           <p
             className={
-              row.original.checked
+              isDepleted(row.original)
                 ? "truncate font-serif font-medium text-muted-foreground line-through"
-                : "truncate font-serif font-medium"
+                : row.original.checked
+                  ? "truncate font-serif font-medium text-muted-foreground"
+                  : "truncate font-serif font-medium"
             }
           >
             {row.original.name}
@@ -412,7 +438,7 @@ export function createMobileShoppingColumns({
             <span aria-hidden="true">·</span>
             <span className="font-serif">{row.original.category}</span>
             <span aria-hidden="true">·</span>
-            <span>{row.original.checked ? "Purchased" : "Open"}</span>
+            <span>{itemStatus(row.original)}</span>
           </div>
           <div className="mt-1">
             <SignedItemBadge identity={identity} item={row.original} />
@@ -438,6 +464,7 @@ export function createMobileShoppingColumns({
           <QuantityStepper
             buttonClassName="size-11 p-0"
             itemName={row.original.name}
+            minimumQuantity={row.original.checked ? 0 : 1}
             onAdjust={(nextQuantity) => onAdjustQuantity(row.original.id, nextQuantity)}
             quantity={row.original.quantity}
             size="icon"

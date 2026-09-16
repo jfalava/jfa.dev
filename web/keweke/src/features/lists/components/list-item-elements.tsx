@@ -82,12 +82,17 @@ export function MobileEditQuantityStepper({
   onAdjust: (nextQuantity: number) => void;
 }) {
   const draftQuantity = Number(editDraft?.quantity ?? item.quantity);
-  const isValid = Number.isInteger(draftQuantity) && draftQuantity >= 1 && draftQuantity <= 100_000;
+  const minimumQuantity = item.checked ? 0 : 1;
+  const isValid =
+    Number.isInteger(draftQuantity) &&
+    draftQuantity >= minimumQuantity &&
+    draftQuantity <= 100_000;
   return (
     <QuantityStepper
       buttonClassName="size-6 p-0"
       isDisabled={!isValid}
       itemName={item.name}
+      minimumQuantity={minimumQuantity}
       onAdjust={onAdjust}
       quantity={isValid ? draftQuantity : 1}
       size="icon-sm"
@@ -147,6 +152,7 @@ export function QuantityStepper({
   buttonClassName,
   isDisabled,
   itemName,
+  minimumQuantity = 1,
   onAdjust,
   quantity,
   size,
@@ -154,6 +160,7 @@ export function QuantityStepper({
   buttonClassName?: string;
   isDisabled?: boolean;
   itemName: string;
+  minimumQuantity?: number;
   onAdjust: (nextQuantity: number) => void;
   quantity: number;
   size: "icon-sm" | "icon";
@@ -173,7 +180,7 @@ export function QuantityStepper({
       <Button
         aria-label={`Decrease ${itemName} quantity`}
         className={buttonClassName}
-        isDisabled={isDisabled || quantity <= 1}
+        isDisabled={isDisabled || quantity <= minimumQuantity}
         onPress={() => onAdjust(quantity - 1)}
         size={size}
         variant="ghost"

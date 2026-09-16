@@ -122,14 +122,14 @@ export function SpreadsheetShoppingTable({
         return pendingCommit;
       }
 
-      const errors = validateItemDraft(draft);
-      if (hasItemDraftErrors(errors)) {
-        setDraftErrors((current) => ({ ...current, [itemId]: errors }));
+      const item = itemsRef.current.find((candidate) => candidate.id === itemId);
+      if (!item) {
         return Promise.resolve(false);
       }
 
-      const item = itemsRef.current.find((candidate) => candidate.id === itemId);
-      if (!item) {
+      const errors = validateItemDraft(draft, { allowZeroQuantity: item.checked });
+      if (hasItemDraftErrors(errors)) {
+        setDraftErrors((current) => ({ ...current, [itemId]: errors }));
         return Promise.resolve(false);
       }
 
@@ -508,7 +508,7 @@ function SpreadsheetItemRow({
       </TableCell>
       <TableCell className="px-3 py-2">
         <Checkbox
-          aria-label={`Mark ${item.name} as ${item.checked ? "open" : "done"}`}
+          aria-label={item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`}
           isSelected={item.checked}
           onChange={(checked) => onToggle(item.id, checked)}
         />
@@ -517,7 +517,11 @@ function SpreadsheetItemRow({
         <SpreadsheetInput
           error={errors?.name}
           field="name"
-          inputClassName="min-w-44 font-serif"
+          inputClassName={
+            item.checked && item.quantity === 0
+              ? "min-w-44 font-serif text-muted-foreground line-through"
+              : "min-w-44 font-serif"
+          }
           label={`Edit ${item.name} name`}
           rowId={item.id}
           value={draft.name}

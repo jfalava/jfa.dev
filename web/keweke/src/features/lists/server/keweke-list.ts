@@ -53,6 +53,7 @@ interface ListItemRow {
   id: string;
   name: string;
   quantity: number;
+  inventory_quantity: number | null;
   unit: string;
   amount: string;
   category: string;
@@ -72,6 +73,7 @@ interface DeletedListItemRow {
   item_id: string;
   name: string;
   quantity: number;
+  inventory_quantity: number | null;
   unit: string;
   amount: string;
   category: string;
@@ -604,6 +606,14 @@ export class KewekeList extends DurableObject {
         INSERT INTO _sql_schema_migrations (id) VALUES (6);
       `);
     }
+
+    if (currentVersion < 7) {
+      this.ctx.storage.sql.exec(`
+        ALTER TABLE items ADD COLUMN inventory_quantity INTEGER;
+        ALTER TABLE deleted_items ADD COLUMN inventory_quantity INTEGER;
+        INSERT INTO _sql_schema_migrations (id) VALUES (7);
+      `);
+    }
   }
 
   private readSnapshot(): ListSnapshot | null {
@@ -614,7 +624,7 @@ export class KewekeList extends DurableObject {
 
     const items = this.ctx.storage.sql
       .exec<ListItemRow>(
-        `SELECT id, name, quantity, unit, amount, category, checked, position, created_at, updated_at,
+        `SELECT id, name, quantity, inventory_quantity, unit, amount, category, checked, position, created_at, updated_at,
                 created_by_id, created_by_username, updated_by_id, updated_by_username
          FROM items WHERE list_id = ? ORDER BY position ASC, id ASC`,
         metadata.list_id,
@@ -624,6 +634,7 @@ export class KewekeList extends DurableObject {
         id: item.id,
         name: item.name,
         quantity: item.quantity,
+        inventoryQuantity: item.inventory_quantity,
         unit: item.unit,
         amount: item.amount,
         category: item.category,
@@ -637,7 +648,7 @@ export class KewekeList extends DurableObject {
 
     const deletedItems = this.ctx.storage.sql
       .exec<DeletedListItemRow>(
-        `SELECT archive_id, item_id, name, quantity, unit, amount, category, checked, position,
+        `SELECT archive_id, item_id, name, quantity, inventory_quantity, unit, amount, category, checked, position,
                 created_at, updated_at, deleted_at, created_by_id, created_by_username,
                 updated_by_id, updated_by_username, deleted_by_id, deleted_by_username
          FROM deleted_items WHERE list_id = ? ORDER BY deleted_at ASC, archive_id ASC`,
@@ -649,6 +660,7 @@ export class KewekeList extends DurableObject {
         id: item.item_id,
         name: item.name,
         quantity: item.quantity,
+        inventoryQuantity: item.inventory_quantity,
         unit: item.unit,
         amount: item.amount,
         category: item.category,
@@ -776,12 +788,13 @@ export class KewekeList extends DurableObject {
   private upsertItemRow(listId: string, item: ListItem): void {
     this.ctx.storage.sql.exec(
       `INSERT INTO items
-        (id, list_id, name, quantity, unit, amount, category, checked, position, created_at, updated_at,
-         created_by_id, created_by_username, updated_by_id, updated_by_username)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id, list_id, name, quantity, inventory_quantity, unit, amount, category, checked, position,
+         created_at, updated_at, created_by_id, created_by_username, updated_by_id, updated_by_username)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          name = excluded.name,
          quantity = excluded.quantity,
+         inventory_quantity = excluded.inventory_quantity,
          unit = excluded.unit,
          amount = excluded.amount,
          category = excluded.category,
@@ -797,6 +810,7 @@ export class KewekeList extends DurableObject {
       listId,
       item.name,
       item.quantity,
+      item.inventoryQuantity,
       item.unit,
       item.amount,
       item.category,
@@ -814,13 +828,14 @@ export class KewekeList extends DurableObject {
   private upsertDeletedItemRow(listId: string, item: DeletedListItem): void {
     this.ctx.storage.sql.exec(
       `INSERT INTO deleted_items
-        (archive_id, list_id, item_id, name, quantity, unit, amount, category, checked, position,
-         created_at, updated_at, deleted_at, created_by_id, created_by_username,
+        (archive_id, list_id, item_id, name, quantity, inventory_quantity, unit, amount, category,
+         checked, position, created_at, updated_at, deleted_at, created_by_id, created_by_username,
          updated_by_id, updated_by_username, deleted_by_id, deleted_by_username)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(archive_id) DO UPDATE SET
          name = excluded.name,
          quantity = excluded.quantity,
+         inventory_quantity = excluded.inventory_quantity,
          unit = excluded.unit,
          amount = excluded.amount,
          category = excluded.category,
@@ -840,6 +855,7 @@ export class KewekeList extends DurableObject {
       item.id,
       item.name,
       item.quantity,
+      item.inventoryQuantity,
       item.unit,
       item.amount,
       item.category,

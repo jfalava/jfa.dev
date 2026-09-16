@@ -13,6 +13,7 @@ const MOUNT_PATH = "/keweke/";
 export default defineConfig({
   base: MOUNT_PATH,
   server: {
+    host: "0.0.0.0",
     allowedHosts: [".onamp.dev", ".amp.jfa.dev", ".e2b.app"],
   },
   plugins: [

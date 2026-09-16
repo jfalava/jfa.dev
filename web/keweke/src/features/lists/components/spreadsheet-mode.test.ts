@@ -64,6 +64,7 @@ describe("spreadsheet drafts", () => {
         unit: "bag",
         amount: "250g",
         category: "PANTRY",
+        inventoryQuantity: null,
         checked: false,
         position: 0,
         createdAt: "2026-08-20T00:00:00.000Z",

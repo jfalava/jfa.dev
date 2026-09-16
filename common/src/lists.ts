@@ -40,8 +40,17 @@ const listIdentityField = Schema.NullOr(listIdentitySchema).pipe(
 
 const nameField = Schema.Trim.check(Schema.isMinLength(1), Schema.isMaxLength(200));
 const quantityField = Schema.Int.check(
+  Schema.isGreaterThanOrEqualTo(0),
+  Schema.isLessThanOrEqualTo(100_000),
+);
+const positiveQuantityField = Schema.Int.check(
   Schema.isGreaterThanOrEqualTo(1),
   Schema.isLessThanOrEqualTo(100_000),
+);
+
+/** Quantity captured when an item enters Inventory; null means it is on the list. */
+const inventoryQuantityField = Schema.NullOr(quantityField).pipe(
+  Schema.withDecodingDefault(Effect.succeed(null)),
 );
 const unitField = Schema.Trim.check(Schema.isMinLength(1), Schema.isMaxLength(32));
 const amountField = Schema.Trim.check(Schema.isMaxLength(64));
@@ -55,6 +64,7 @@ const listItemFields = {
   unit: unitField,
   amount: amountField,
   category: categoryField,
+  inventoryQuantity: inventoryQuantityField,
   checked: Schema.Boolean,
   position: Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)),
   createdAt: timestampSchema,
@@ -91,18 +101,21 @@ export const listSnapshotSchema = Schema.Struct({
 });
 
 /** Editable item fields, shared by add/update commands and client-side draft validation. */
-const listItemFieldSpecs = {
+const editableListItemFieldSpecs = {
   name: nameField,
-  quantity: quantityField,
+  quantity: positiveQuantityField,
   unit: unitField,
   amount: amountField,
   category: categoryField,
 };
 
-export const listItemFieldsSchema = Schema.Struct(listItemFieldSpecs);
+export const listItemFieldsSchema = Schema.Struct({
+  ...editableListItemFieldSpecs,
+  quantity: quantityField,
+});
 
 const itemInputSchema = Schema.Struct({
-  ...listItemFieldSpecs,
+  ...editableListItemFieldSpecs,
   id: itemIdSchema,
 });
 
@@ -309,6 +322,7 @@ export function createStarterListSnapshot(
         unit: "EA",
         amount: "",
         category: "BAKERY",
+        inventoryQuantity: null,
         checked: false,
         position: 0,
         createdAt: now,
@@ -323,6 +337,7 @@ export function createStarterListSnapshot(
         unit: "EA",
         amount: "",
         category: "PRODUCE",
+        inventoryQuantity: null,
         checked: false,
         position: 1,
         createdAt: now,
@@ -337,6 +352,7 @@ export function createStarterListSnapshot(
         unit: "BAG",
         amount: "",
         category: "PANTRY",
+        inventoryQuantity: 1,
         checked: true,
         position: 2,
         createdAt: now,
@@ -409,6 +425,7 @@ export function applyListMutationWithDiff(
     case "add-item": {
       const item: ListItem = {
         ...command.item,
+        inventoryQuantity: null,
         position: nextItemPosition(snapshot.items),
         checked: false,
         createdAt: now,
@@ -422,7 +439,16 @@ export function applyListMutationWithDiff(
     }
     case "update-item":
     case "set-item-checked": {
-      const mapped = mapCheckedOrUpdatedItem(snapshot.items, command, actor, now, diff);
+      const mapped = applyItemCommand(
+        snapshot.items,
+        command,
+        actor,
+        now,
+        diff,
+      );
+      if (mapped === INVALID_ITEM_COMMAND) {
+        return null;
+      }
       if (mapped === null) {
         return { snapshot, diff, noop: true };
       }
@@ -430,20 +456,9 @@ export function applyListMutationWithDiff(
       break;
     }
     case "remove-item": {
-      const removedItem = snapshot.items.find((item) => item.id === command.itemId);
-      // Sparse positions: survivors keep their ranks so remove is O(1) row writes.
-      nextItems = snapshot.items.filter((item) => item.id !== command.itemId);
-      if (removedItem) {
-        const archivedItem: DeletedListItem = {
-          ...removedItem,
-          archiveId: `${removedItem.id}:${snapshot.revision + 1}`,
-          deletedAt: now,
-          deletedBy: actor,
-        };
-        diff.deleteItemIds.push(removedItem.id);
-        diff.upsertDeletedItems.push(archivedItem);
-        nextDeletedItems = trimDeletedItems([...snapshot.deletedItems, archivedItem], diff);
-      }
+      const removed = applyRemoveItem(snapshot, command.itemId, actor, now, diff);
+      nextItems = removed.items;
+      nextDeletedItems = removed.deletedItems;
       break;
     }
     case "restore-item": {
@@ -501,7 +516,55 @@ export function parseListSnapshot(
   return Schema.decodeUnknownSync(listSnapshotSchema)(value);
 }
 
-type ItemFieldCommand = Extract<ListCommand, { type: "update-item" | "set-item-checked" }>;
+type ItemFieldCommand = Extract<
+  ListCommand,
+  { type: "update-item" | "set-item-checked" }
+>;
+const INVALID_ITEM_COMMAND = Symbol("invalid-item-command");
+
+function applyRemoveItem(
+  snapshot: ListSnapshot,
+  itemId: string,
+  actor: ListIdentity | null,
+  now: string,
+  diff: ListSnapshotDiff,
+) {
+  // Sparse positions: survivors keep their ranks so remove is O(1) row writes.
+  const items = snapshot.items.filter((item) => item.id !== itemId);
+  const removedItem = snapshot.items.find((item) => item.id === itemId);
+  if (!removedItem) {
+    return { items, deletedItems: snapshot.deletedItems };
+  }
+
+  const archivedItem: DeletedListItem = {
+    ...removedItem,
+    archiveId: `${removedItem.id}:${snapshot.revision + 1}`,
+    deletedAt: now,
+    deletedBy: actor,
+  };
+  diff.deleteItemIds.push(removedItem.id);
+  diff.upsertDeletedItems.push(archivedItem);
+  return {
+    items,
+    deletedItems: trimDeletedItems(
+      [...snapshot.deletedItems, archivedItem],
+      diff,
+    ),
+  };
+}
+
+function applyItemCommand(
+  items: readonly ListItem[],
+  command: ItemFieldCommand,
+  actor: ListIdentity | null,
+  now: string,
+  diff: ListSnapshotDiff,
+): readonly ListItem[] | null | typeof INVALID_ITEM_COMMAND {
+  if (isInvalidOpenQuantityUpdate(items, command)) {
+    return INVALID_ITEM_COMMAND;
+  }
+  return mapCheckedOrUpdatedItem(items, command, actor, now, diff);
+}
 
 function mapCheckedOrUpdatedItem(
   items: readonly ListItem[],
@@ -523,8 +586,7 @@ function mapCheckedOrUpdatedItem(
     return null;
   }
 
-  const changes =
-    command.type === "set-item-checked" ? { checked: command.checked } : command.changes;
+  const changes = getItemChanges(current, command);
   return mapUpdatedItem(
     items,
     command.itemId,
@@ -536,6 +598,35 @@ function mapCheckedOrUpdatedItem(
     }),
     diff,
   );
+}
+
+function isInvalidOpenQuantityUpdate(
+  items: readonly ListItem[],
+  command: ItemFieldCommand,
+): boolean {
+  return (
+    command.type === "update-item" &&
+    command.changes.quantity === 0 &&
+    items.some((item) => item.id === command.itemId && !item.checked)
+  );
+}
+
+function getItemChanges(
+  current: ListItem,
+  command: ItemFieldCommand,
+): Schema.Schema.Type<typeof itemChangesSchema> &
+  Partial<Pick<ListItem, "checked" | "inventoryQuantity">> {
+  if (command.type === "update-item") {
+    return command.changes;
+  }
+  if (command.checked) {
+    return { checked: true, inventoryQuantity: current.quantity };
+  }
+  return {
+    checked: false,
+    quantity: current.inventoryQuantity ?? current.quantity,
+    inventoryQuantity: null,
+  };
 }
 
 function itemChangesDiffer(
@@ -578,10 +669,14 @@ function buildRestoredItem(
   return {
     id: deletedItem.id,
     name: deletedItem.name,
-    quantity: deletedItem.quantity,
+    quantity:
+      deletedItem.checked && deletedItem.inventoryQuantity !== null
+        ? deletedItem.inventoryQuantity
+        : deletedItem.quantity,
     unit: deletedItem.unit,
     amount: deletedItem.amount,
     category: deletedItem.category,
+    inventoryQuantity: deletedItem.inventoryQuantity,
     checked: deletedItem.checked,
     position,
     createdAt: deletedItem.createdAt,
@@ -636,6 +731,7 @@ function listItemsEqual(left: ListItem, right: ListItem): boolean {
     left.unit === right.unit &&
     left.amount === right.amount &&
     left.category === right.category &&
+    left.inventoryQuantity === right.inventoryQuantity &&
     left.checked === right.checked &&
     left.position === right.position &&
     left.createdAt === right.createdAt &&

@@ -485,7 +485,12 @@ function ListPage() {
 
   const updateItem = useCallback(
     async (itemId: string, draft: ItemEditDraft): Promise<boolean> => {
-      if (hasItemDraftErrors(validateItemDraft(draft))) {
+      const item = loadedList?.snapshot.items.find((candidate) => candidate.id === itemId);
+      if (
+        hasItemDraftErrors(
+          validateItemDraft(draft, { allowZeroQuantity: item?.checked }),
+        )
+      ) {
         return false;
       }
       const name = draft.name.trim();
@@ -507,7 +512,7 @@ function ListPage() {
         return false;
       }
     },
-    [commit],
+    [commit, loadedList],
   );
 
   const showHistory = useCallback((item: Pick<ListItem, "id" | "name">): void => {
@@ -522,14 +527,26 @@ function ListPage() {
     async (command: ListCommand, archiveId: string): Promise<void> => {
       setBusyArchiveId(archiveId);
       try {
-        await commit(command);
+        const item = loadedList?.snapshot.deletedItems.find(
+          (candidate) => candidate.archiveId === archiveId,
+        );
+        const committed = await commit(command);
+        if (committed && item) {
+          if (command.type === "restore-item") {
+            toast.success(
+              `${item.name} restored to ${item.checked ? "inventory" : "the list"}.`,
+            );
+          } else if (command.type === "purge-deleted-item") {
+            toast.success(`${item.name} permanently deleted.`);
+          }
+        }
       } catch {
         toast.error("Could not update deleted-item history right now.");
       } finally {
         setBusyArchiveId(undefined);
       }
     },
-    [commit],
+    [commit, loadedList],
   );
 
   const updateNewItemDraft = useCallback((field: keyof NewItemDraft, value: string): void => {
@@ -574,31 +591,53 @@ function ListPage() {
       amount: "",
       category: "GENERAL",
     });
+    toast.success(`${name} added to the list.`);
     return true;
   }, [commit, newItemDraft]);
 
   const toggleItem = useCallback(
     (id: string, checked: boolean): void => {
-      void commit({ type: "set-item-checked", itemId: id, checked });
+      const item = loadedList?.snapshot.items.find((candidate) => candidate.id === id);
+      void commit({ type: "set-item-checked", itemId: id, checked }).then((committed) => {
+        if (!committed || !item) {
+          return undefined;
+        }
+        toast.success(
+          checked ? `${item.name} purchased · moved to inventory.` : `${item.name} restored to the list.`,
+        );
+        return undefined;
+      });
     },
-    [commit],
+    [commit, loadedList],
   );
 
   const adjustQuantity = useCallback(
     (id: string, nextQuantity: number): void => {
-      if (!Number.isInteger(nextQuantity) || nextQuantity < 1 || nextQuantity > 100_000) {
+      const item = loadedList?.snapshot.items.find((candidate) => candidate.id === id);
+      const minimumQuantity = item?.checked ? 0 : 1;
+      if (
+        !Number.isInteger(nextQuantity) ||
+        nextQuantity < minimumQuantity ||
+        nextQuantity > 100_000
+      ) {
         return;
       }
       void commit({ type: "update-item", itemId: id, changes: { quantity: nextQuantity } });
     },
-    [commit],
+    [commit, loadedList],
   );
 
   const removeItem = useCallback(
     (id: string): void => {
-      void commit({ type: "remove-item", itemId: id });
+      const item = loadedList?.snapshot.items.find((candidate) => candidate.id === id);
+      void commit({ type: "remove-item", itemId: id }).then((committed) => {
+        if (committed && item) {
+          toast.success(`${item.name} deleted.`);
+        }
+        return undefined;
+      });
     },
-    [commit],
+    [commit, loadedList],
   );
 
   const snapshot = loadedList?.snapshot;

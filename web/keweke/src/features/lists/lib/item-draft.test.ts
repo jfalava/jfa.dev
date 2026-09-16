@@ -53,6 +53,15 @@ describe("validateItemDraft", () => {
     expect(validateItemDraft({ ...VALID_DRAFT, quantity: "100000" })).toEqual({});
   });
 
+  test("accepts zero quantity for an inventory item", () => {
+    expect(
+      validateItemDraft(
+        { ...VALID_DRAFT, quantity: "0" },
+        { allowZeroQuantity: true },
+      ),
+    ).toEqual({});
+  });
+
   test("rejects a missing or whitespace-only unit", () => {
     for (const unit of ["", "   "]) {
       expect(validateItemDraft({ ...VALID_DRAFT, unit })).toEqual({ unit: "Enter a unit" });

@@ -100,14 +100,20 @@ export function ShoppingTable({
   }, []);
 
   const displayedEditErrors =
-    editAttempted && editDraft ? validateItemDraft(editDraft) : editErrors;
+    editAttempted && editDraft
+      ? validateItemDraft(editDraft, {
+          allowZeroQuantity: items.find((item) => item.id === editingItemId)?.checked,
+        })
+      : editErrors;
 
   const saveEditing = useCallback(async (): Promise<void> => {
     if (!editingItemId || !editDraft || isSaving) {
       return;
     }
 
-    const draftErrors = validateItemDraft(editDraft);
+    const draftErrors = validateItemDraft(editDraft, {
+      allowZeroQuantity: items.find((item) => item.id === editingItemId)?.checked,
+    });
     if (hasItemDraftErrors(draftErrors)) {
       setEditAttempted(true);
       setEditErrors(draftErrors);
@@ -127,7 +133,7 @@ export function ShoppingTable({
     } finally {
       setIsSaving(false);
     }
-  }, [editDraft, editingItemId, isSaving]);
+  }, [editDraft, editingItemId, isSaving, items]);
 
   // Keep these cell definitions stable. TanStack renders each cell function as
   // a React component, so recreating them for every draft update remounts the

@@ -76,7 +76,10 @@ function isItemDraftField(value: PropertyKey | undefined): value is ItemDraftFie
  * and returns a per-field error message for every rejected field. An empty
  * result means the draft passes the schema unchanged.
  */
-export function validateItemDraft(draft: ItemDraft): ItemDraftErrors {
+export function validateItemDraft(
+  draft: ItemDraft,
+  options: { allowZeroQuantity?: boolean } = {},
+): ItemDraftErrors {
   const result = Schema.decodeUnknownResult(listItemFieldsSchema, { errors: "all" })({
     name: draft.name,
     quantity: Number(draft.quantity),
@@ -85,6 +88,12 @@ export function validateItemDraft(draft: ItemDraft): ItemDraftErrors {
     category: draft.category,
   });
   if (Result.isSuccess(result)) {
+    if (draft.quantity.trim() === "") {
+      return { quantity: "Enter a quantity" };
+    }
+    if (!options.allowZeroQuantity && Number(draft.quantity) === 0) {
+      return { quantity: FIELD_PROBLEMS.quantity.tooSmall ?? FIELD_PROBLEMS.quantity.fallback };
+    }
     return {};
   }
 
