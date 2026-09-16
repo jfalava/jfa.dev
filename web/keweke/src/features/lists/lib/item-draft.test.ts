@@ -55,10 +55,7 @@ describe("validateItemDraft", () => {
 
   test("accepts zero quantity for an inventory item", () => {
     expect(
-      validateItemDraft(
-        { ...VALID_DRAFT, quantity: "0" },
-        { allowZeroQuantity: true },
-      ),
+      validateItemDraft({ ...VALID_DRAFT, quantity: "0" }, { allowZeroQuantity: true }),
     ).toEqual({});
   });
 

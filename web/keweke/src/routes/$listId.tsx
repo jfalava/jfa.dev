@@ -486,11 +486,7 @@ function ListPage() {
   const updateItem = useCallback(
     async (itemId: string, draft: ItemEditDraft): Promise<boolean> => {
       const item = loadedList?.snapshot.items.find((candidate) => candidate.id === itemId);
-      if (
-        hasItemDraftErrors(
-          validateItemDraft(draft, { allowZeroQuantity: item?.checked }),
-        )
-      ) {
+      if (hasItemDraftErrors(validateItemDraft(draft, { allowZeroQuantity: item?.checked }))) {
         return false;
       }
       const name = draft.name.trim();
@@ -533,9 +529,7 @@ function ListPage() {
         const committed = await commit(command);
         if (committed && item) {
           if (command.type === "restore-item") {
-            toast.success(
-              `${item.name} restored to ${item.checked ? "inventory" : "the list"}.`,
-            );
+            toast.success(`${item.name} restored to ${item.checked ? "inventory" : "the list"}.`);
           } else if (command.type === "purge-deleted-item") {
             toast.success(`${item.name} permanently deleted.`);
           }
@@ -603,7 +597,9 @@ function ListPage() {
           return undefined;
         }
         toast.success(
-          checked ? `${item.name} purchased · moved to inventory.` : `${item.name} restored to the list.`,
+          checked
+            ? `${item.name} purchased · moved to inventory.`
+            : `${item.name} restored to the list.`,
         );
         return undefined;
       });

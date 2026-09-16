@@ -439,13 +439,7 @@ export function applyListMutationWithDiff(
     }
     case "update-item":
     case "set-item-checked": {
-      const mapped = applyItemCommand(
-        snapshot.items,
-        command,
-        actor,
-        now,
-        diff,
-      );
+      const mapped = applyItemCommand(snapshot.items, command, actor, now, diff);
       if (mapped === INVALID_ITEM_COMMAND) {
         return null;
       }
@@ -516,10 +510,7 @@ export function parseListSnapshot(
   return Schema.decodeUnknownSync(listSnapshotSchema)(value);
 }
 
-type ItemFieldCommand = Extract<
-  ListCommand,
-  { type: "update-item" | "set-item-checked" }
->;
+type ItemFieldCommand = Extract<ListCommand, { type: "update-item" | "set-item-checked" }>;
 const INVALID_ITEM_COMMAND = Symbol("invalid-item-command");
 
 function applyRemoveItem(
@@ -546,10 +537,7 @@ function applyRemoveItem(
   diff.upsertDeletedItems.push(archivedItem);
   return {
     items,
-    deletedItems: trimDeletedItems(
-      [...snapshot.deletedItems, archivedItem],
-      diff,
-    ),
+    deletedItems: trimDeletedItems([...snapshot.deletedItems, archivedItem], diff),
   };
 }
 

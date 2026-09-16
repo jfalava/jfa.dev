@@ -84,9 +84,7 @@ export function MobileEditQuantityStepper({
   const draftQuantity = Number(editDraft?.quantity ?? item.quantity);
   const minimumQuantity = item.checked ? 0 : 1;
   const isValid =
-    Number.isInteger(draftQuantity) &&
-    draftQuantity >= minimumQuantity &&
-    draftQuantity <= 100_000;
+    Number.isInteger(draftQuantity) && draftQuantity >= minimumQuantity && draftQuantity <= 100_000;
   return (
     <QuantityStepper
       buttonClassName="size-6 p-0"

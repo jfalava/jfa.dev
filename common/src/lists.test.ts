@@ -447,22 +447,20 @@ describe("list mutation diff", () => {
       itemId: "starter-tomatoes",
       checked: true,
     });
-    expect(
-      inventoried.snapshot.items.find((item) => item.id === "starter-tomatoes"),
-    ).toMatchObject({
-      checked: true,
-      quantity: 6,
-      inventoryQuantity: 6,
-    });
+    expect(inventoried.snapshot.items.find((item) => item.id === "starter-tomatoes")).toMatchObject(
+      {
+        checked: true,
+        quantity: 6,
+        inventoryQuantity: 6,
+      },
+    );
 
     const depleted = applyWithDiff(inventoried.snapshot, {
       type: "update-item",
       itemId: "starter-tomatoes",
       changes: { quantity: 0 },
     });
-    expect(
-      depleted.snapshot.items.find((item) => item.id === "starter-tomatoes"),
-    ).toMatchObject({
+    expect(depleted.snapshot.items.find((item) => item.id === "starter-tomatoes")).toMatchObject({
       checked: true,
       quantity: 0,
       inventoryQuantity: 6,
@@ -473,9 +471,7 @@ describe("list mutation diff", () => {
       itemId: "starter-tomatoes",
       checked: false,
     });
-    expect(
-      restored.snapshot.items.find((item) => item.id === "starter-tomatoes"),
-    ).toMatchObject({
+    expect(restored.snapshot.items.find((item) => item.id === "starter-tomatoes")).toMatchObject({
       checked: false,
       quantity: 6,
       inventoryQuantity: null,
@@ -518,9 +514,7 @@ describe("list mutation diff", () => {
       archiveId: removed.snapshot.deletedItems[0]!.archiveId,
     });
 
-    expect(
-      restored.snapshot.items.find((item) => item.id === "starter-tomatoes"),
-    ).toMatchObject({
+    expect(restored.snapshot.items.find((item) => item.id === "starter-tomatoes")).toMatchObject({
       checked: true,
       quantity: 6,
       inventoryQuantity: 6,

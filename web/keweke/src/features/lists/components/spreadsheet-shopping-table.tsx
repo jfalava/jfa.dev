@@ -508,7 +508,9 @@ function SpreadsheetItemRow({
       </TableCell>
       <TableCell className="px-3 py-2">
         <Checkbox
-          aria-label={item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`}
+          aria-label={
+            item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`
+          }
           isSelected={item.checked}
           onChange={(checked) => onToggle(item.id, checked)}
         />

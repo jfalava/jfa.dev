@@ -55,7 +55,8 @@ export function SiteHeader({
       ? "/"
       : `${activePackagePath.replace(/\/+$/, "")}/`
     : "/";
-  const showHomeLink = packages?.find((pkg) => pkg.path === activePackagePath)?.showHomeLink ?? false;
+  const showHomeLink =
+    packages?.find((pkg) => pkg.path === activePackagePath)?.showHomeLink ?? false;
 
   const brandBody = (
     <>
