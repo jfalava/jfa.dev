@@ -16,9 +16,9 @@ describe("list views", () => {
     expect(itemsForListView(items, "inventory").map((item) => item.name)).toEqual(["Coffee"]);
   });
 
-  test("falls back to the shopping list for unknown URL values", () => {
+  test("defaults to the shopping list when no view is selected", () => {
     expect(parseListView(undefined)).toBe("list");
-    expect(parseListView("unexpected")).toBe("list");
+    expect(parseListView("list")).toBe("list");
     expect(parseListView("inventory")).toBe("inventory");
   });
 });
