@@ -28,8 +28,10 @@ interface KewekeHeaderProps {
   onMigrate?: () => void;
   isUserDialogOpen?: boolean;
   userDialogMessage?: string;
+  userDialogMessageTone?: "error" | "message";
   onUserDialogOpenChange?: (isOpen: boolean) => void;
   onUserDialogSaved?: () => void;
+  userDialogPurpose?: "identity" | "publish";
   hideNewListButton?: boolean;
 }
 
@@ -42,8 +44,10 @@ export function KewekeHeader({
   onMigrate,
   isUserDialogOpen,
   userDialogMessage,
+  userDialogMessageTone = "message",
   onUserDialogOpenChange,
   onUserDialogSaved,
+  userDialogPurpose = "identity",
 }: KewekeHeaderProps) {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
@@ -118,11 +122,13 @@ export function KewekeHeader({
 
       {isUserDialogOpen !== undefined ? (
         <UserDialog
-          key={userDialogMessage ?? "default"}
+          key={`${userDialogPurpose}:${userDialogMessage ?? "default"}`}
           isOpen={isUserDialogOpen}
+          initialMessageTone={userDialogMessageTone}
           message={userDialogMessage}
           onOpenChange={onUserDialogOpenChange}
           onSaved={onUserDialogSaved}
+          purpose={userDialogPurpose}
           showTrigger={false}
         />
       ) : null}

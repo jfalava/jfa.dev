@@ -7,20 +7,24 @@ import { kewekeDocs } from "@/app/lib/docs-paths";
 
 interface PublishListDialogProps {
   alias: string | null;
+  error?: string;
   isOpen: boolean;
   isPublishing: boolean;
   listId: string;
   onConfirm: () => void;
   onOpenChange: (isOpen: boolean) => void;
+  willCreateRemoteUser: boolean;
 }
 
 export function PublishListDialog({
   alias,
+  error,
   isOpen,
   isPublishing,
   listId,
   onConfirm,
   onOpenChange,
+  willCreateRemoteUser,
 }: PublishListDialogProps) {
   return (
     <ModalOverlay
@@ -50,6 +54,12 @@ export function PublishListDialog({
               </DocsLink>
             </p>
 
+            {willCreateRemoteUser ? (
+              <p className="border border-primary/30 bg-primary/5 p-3 text-sm leading-5 text-foreground">
+                This list will be available on other devices, and you’ll be able to edit it there.
+              </p>
+            ) : null}
+
             <div className="space-y-2 border border-border bg-muted/40 p-3 text-sm">
               <div className="flex gap-3">
                 <span className="w-12 shrink-0 text-muted-foreground">ID</span>
@@ -62,6 +72,12 @@ export function PublishListDialog({
                 </div>
               ) : null}
             </div>
+
+            {error ? (
+              <p className="text-sm font-medium text-destructive" role="alert">
+                {error}
+              </p>
+            ) : null}
 
             <div className="flex justify-end gap-2">
               <Button isDisabled={isPublishing} onPress={() => onOpenChange(false)} variant="ghost">

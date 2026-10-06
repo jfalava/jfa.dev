@@ -54,18 +54,22 @@ function FeedbackMessage({
 }
 
 export interface UserDialogProps {
+  initialMessageTone?: DialogFeedback["tone"];
   isOpen?: boolean;
   message?: string;
   onOpenChange?: (isOpen: boolean) => void;
   onSaved?: () => void;
+  purpose?: "identity" | "publish";
   showTrigger?: boolean;
 }
 
 export function UserDialog({
+  initialMessageTone = "message",
   isOpen: controlledIsOpen,
   message,
   onOpenChange,
   onSaved,
+  purpose = "identity",
   showTrigger = false,
 }: UserDialogProps = {}) {
   const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(false);
@@ -98,11 +102,13 @@ export function UserDialog({
   } = useUserManager({
     isActive: isDialogOpen,
     initialMessage: message,
+    initialMessageTone,
     onSaved,
     onNavigateAfterClear: () => {
       setDialogOpen(false);
     },
   });
+  const isPublishFlow = purpose === "publish";
 
   const dialogContent = (
     <Modal className="flex w-full max-w-lg flex-col outline-none max-sm:max-h-[calc(100vh-5.5rem)]">
@@ -111,16 +117,22 @@ export function UserDialog({
         className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
       >
         <div className="shrink-0 border-b border-border px-4 py-4">
-          <h2 className="text-lg font-semibold tracking-tight">Identify this browser</h2>
+          <h2 className="text-lg font-semibold tracking-tight">
+            {isPublishFlow ? "Before you publish" : "Identify this browser"}
+          </h2>
         </div>
 
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-4">
           <section className="space-y-3" aria-labelledby="create-user-heading">
             <div className="space-y-1">
               <h3 className="text-sm font-medium" id="create-user-heading">
-                Create a user
+                {isPublishFlow ? "Choose your name" : "Create a user"}
               </h3>
-              <p className="text-sm text-muted-foreground">Publish lists from this browser.</p>
+              <p className="text-sm text-muted-foreground">
+                {isPublishFlow
+                  ? "This name will appear as the publisher of this list. You can change it later."
+                  : "Publish lists from this browser."}
+              </p>
             </div>
             <form className="space-y-3" onSubmit={(event) => void save(event)}>
               <div className="flex items-end gap-2">
@@ -145,7 +157,7 @@ export function UserDialog({
                   size="lg"
                   type="submit"
                 >
-                  {isSaving ? "Creating…" : "Create"}
+                  {isSaving ? "Saving…" : isPublishFlow ? "Continue" : "Create"}
                 </Button>
               </div>
               <FeedbackMessage feedback={feedback} section="username" />
@@ -162,16 +174,20 @@ export function UserDialog({
               <OrDivider />
               <div className="space-y-1">
                 <h3 className="text-sm font-medium" id="pair-user-heading">
-                  Pair a user
+                  {isPublishFlow ? "Connect another device" : "Pair a user"}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Use an existing user from another device.
+                  {isPublishFlow
+                    ? "Already set up Keweke on another device? Connect this browser with a passkey or pairing code."
+                    : "Use an existing user from another device."}
                 </p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Already have a user on another browser? Connect this one with a passkey or a pairing
-                code.
-              </p>
+              {!isPublishFlow ? (
+                <p className="text-sm text-muted-foreground">
+                  Already have a user on another browser? Connect this one with a passkey or a
+                  pairing code.
+                </p>
+              ) : null}
               <p className="flex">
                 <DocsLink href={kewekeDocs.identity} variant="info">
                   How pairing works
@@ -223,7 +239,7 @@ export function UserDialog({
                       onPress={() => void adopt()}
                       size="sm"
                     >
-                      {isAdopting ? "Saving…" : "Use this username"}
+                      {isAdopting ? "Saving…" : isPublishFlow ? "Continue" : "Use this username"}
                     </Button>
                   ) : null}
                 </div>

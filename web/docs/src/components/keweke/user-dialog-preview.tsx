@@ -33,7 +33,7 @@ export function UserDialogPreview() {
               <div className="min-w-0 flex-1">
                 <Input
                   className="mt-1.5 h-10 font-serif text-base sm:text-sm"
-                  placeholder="Your username"
+                  placeholder="Your name"
                 />
               </div>
               <Button className="h-10 min-w-24 px-5 text-sm">Create</Button>
@@ -91,7 +91,7 @@ export function InlineUserCreationPreview() {
     <div className="not-prose my-4 flex flex-col gap-2 rounded-md border bg-muted/30 p-3">
       <p className="text-xs text-muted-foreground">Quick create</p>
       <div className="flex items-end gap-2">
-        <Input className="h-9 flex-1" placeholder="Your username" />
+        <Input className="h-9 flex-1" placeholder="Your name" />
         <Button size="sm" className="h-9">
           Create
         </Button>

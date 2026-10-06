@@ -212,7 +212,7 @@ export async function migrateList(snapshot: ListSnapshot): Promise<ImportSnapsho
   });
 
   if (result.status === "unauthorized") {
-    throw new Error("The remote user could not authorize this publish");
+    return result;
   }
   if (result.status !== "conflict" && result.status !== "alias-conflict") {
     await saveLocalList(result.snapshot, "remote");

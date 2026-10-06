@@ -13,6 +13,7 @@ import { uuidv7 } from "uuidv7";
 import { KewekeHeader } from "@/app/components/keweke-header";
 import { useIsDesktop } from "@/app/hooks/use-desktop-media-query";
 import { shouldShowPublishNudge } from "@/app/lib/publish-nudge";
+import { ListIdentityCallout } from "@/features/auth/components/list-identity-callout";
 import {
   ensureLocalIdentity,
   subscribeToLocalIdentity,
@@ -115,6 +116,8 @@ function ListPage() {
   const [isPublishConfirmOpen, setIsPublishConfirmOpen] = useState(false);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const [userDialogMessage, setUserDialogMessage] = useState<string>();
+  const [userDialogPurpose, setUserDialogPurpose] = useState<"identity" | "publish">("identity");
+  const [publishError, setPublishError] = useState<string>();
   const [isItemEntryHelpOpen, setIsItemEntryHelpOpen] = useState(false);
   const [isSpreadsheetMode, setIsSpreadsheetMode] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
@@ -343,7 +346,12 @@ function ListPage() {
         return null;
       }
       if (!identity) {
-        toast.error("Your local identity is still being prepared. Try again in a moment.");
+        return null;
+      }
+      if (loadedList.backend === "remote" && !identity.remoteUsername) {
+        setUserDialogPurpose("identity");
+        setUserDialogMessage(undefined);
+        setIsUserDialogOpen(true);
         return null;
       }
 
@@ -355,11 +363,13 @@ function ListPage() {
           await createMutation(loadedList.snapshot, command, identity, loadedList.backend),
         );
       } catch {
-        toast.error(
-          loadedList.backend === "remote"
-            ? "Set up an accepted named user before changing a remote list."
-            : "Could not prepare this change.",
-        );
+        if (loadedList.backend === "remote" && !identity.remoteUsername) {
+          setUserDialogPurpose("identity");
+          setUserDialogMessage(undefined);
+          setIsUserDialogOpen(true);
+        } else {
+          toast.error("Could not prepare this change.");
+        }
         return null;
       }
       if (result.status === "missing") {
@@ -388,25 +398,28 @@ function ListPage() {
     }
 
     setIsMigrating(true);
+    setPublishError(undefined);
     try {
       const result = await migrateList(loadedList.snapshot);
       if (result.status === "unauthorized") {
-        toast.error("Set up an accepted named user before publishing this list.");
+        setPublishError("Could not finish publishing this list. Try again.");
         return;
       }
       if (result.status === "conflict") {
-        toast.error("A remote list already exists for this identifier.");
+        setPublishError("A remote list already exists for this identifier.");
         return;
       }
       if (result.status === "alias-conflict") {
-        toast.error("That friendly address is already in use. Choose another one.");
+        setPublishError("That friendly address is already in use. Choose another one.");
         return;
       }
 
       setLoadedList({ backend: "remote", snapshot: result.snapshot });
       setIsPublishConfirmOpen(false);
     } catch {
-      toast.error("Remote migration is not available right now.");
+      setPublishError(
+        "Could not publish this list right now. Check your connection and try again.",
+      );
     } finally {
       setIsMigrating(false);
     }
@@ -414,11 +427,13 @@ function ListPage() {
 
   const requestMigration = useCallback((): void => {
     if (!identity?.username) {
-      setUserDialogMessage("You must create an user to publish remote lists.");
+      setUserDialogPurpose("publish");
+      setUserDialogMessage("Choose a name to continue.");
       setIsUserDialogOpen(true);
       return;
     }
 
+    setPublishError(undefined);
     setIsPublishConfirmOpen(true);
   }, [identity?.username]);
 
@@ -426,10 +441,16 @@ function ListPage() {
     setIsUserDialogOpen(isOpen);
     if (!isOpen) {
       setUserDialogMessage(undefined);
+      setUserDialogPurpose("identity");
     }
   }, []);
 
   const handleUserDialogSaved = useCallback((): void => {
+    if (userDialogPurpose !== "publish") {
+      setIsUserDialogOpen(false);
+      return;
+    }
+
     if (!userDialogMessage) {
       return;
     }
@@ -437,11 +458,18 @@ function ListPage() {
     setIsUserDialogOpen(false);
     setUserDialogMessage(undefined);
     setIsPublishConfirmOpen(true);
-  }, [userDialogMessage]);
+  }, [userDialogMessage, userDialogPurpose]);
 
   const confirmMigration = useCallback((): void => {
+    setPublishError(undefined);
     void migrate();
   }, [migrate]);
+
+  const openIdentityDialog = useCallback((): void => {
+    setUserDialogPurpose("identity");
+    setUserDialogMessage(undefined);
+    setIsUserDialogOpen(true);
+  }, []);
 
   const renameList = useCallback(
     async (title: string): Promise<boolean> => {
@@ -711,14 +739,18 @@ function ListPage() {
         onUserDialogOpenChange={handleUserDialogOpenChange}
         onUserDialogSaved={handleUserDialogSaved}
         userDialogMessage={userDialogMessage}
+        userDialogMessageTone="message"
+        userDialogPurpose={userDialogPurpose}
       />
       <PublishListDialog
         alias={snapshot.alias}
+        error={publishError}
         isOpen={isPublishConfirmOpen}
         isPublishing={isMigrating}
         listId={snapshot.id}
         onConfirm={confirmMigration}
         onOpenChange={setIsPublishConfirmOpen}
+        willCreateRemoteUser={Boolean(identity?.username && !identity.remoteUsername)}
       />
       <ItemEntryHelpDialog isOpen={isItemEntryHelpOpen} onOpenChange={setIsItemEntryHelpOpen} />
       {historyTarget ? (
@@ -737,6 +769,13 @@ function ListPage() {
       ) : null}
       <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
         <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+          {!identity ? (
+            <ListIdentityCallout kind="loading" />
+          ) : loadedList.backend === "remote" && !identity.remoteUsername ? (
+            <ListIdentityCallout kind="remote" onAction={openIdentityDialog} />
+          ) : loadedList.backend === "local" && isFirstList && !identity.username ? (
+            <ListIdentityCallout kind="local" onAction={openIdentityDialog} />
+          ) : null}
           <ListPageHeader
             activeCount={activeCount}
             alias={snapshot.alias}

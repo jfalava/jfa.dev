@@ -81,6 +81,7 @@ export type DialogFeedback = {
 
 export interface UseUserManagerOptions {
   initialMessage?: string;
+  initialMessageTone?: DialogFeedback["tone"];
   onSaved?: () => void;
   onNavigateAfterClear?: () => void;
   isActive?: boolean;
@@ -88,6 +89,7 @@ export interface UseUserManagerOptions {
 
 export function useUserManager({
   initialMessage,
+  initialMessageTone = "message",
   onNavigateAfterClear,
   onSaved,
   isActive = true,
@@ -101,7 +103,7 @@ export function useUserManager({
   const [pairingStatus, setPairingStatus] = useState<PairingStatusView>();
   const [feedback, setFeedback] = useState<DialogFeedback | undefined>(() =>
     isActive && initialMessage
-      ? { section: "username", tone: "error", text: initialMessage }
+      ? { section: "username", tone: initialMessageTone, text: initialMessage }
       : undefined,
   );
   const [isSaving, setIsSaving] = useState(false);
@@ -427,6 +429,7 @@ export function useUserManager({
       setValue(nextIdentity.username ?? "");
       await syncRemoteLists(nextIdentity);
       setMessage("username", "This browser is connected.");
+      onSaved?.();
     } catch {
       setError("passkey-adoption", "Passkey use was cancelled or failed. Try again.");
     } finally {
@@ -448,6 +451,7 @@ export function useUserManager({
       setValue(nextIdentity.username ?? "");
       setMessage("username", "This browser is connected.");
       setPairingCode("");
+      onSaved?.();
     } catch {
       setError("pairing", "This browser could not adopt that user.");
     } finally {

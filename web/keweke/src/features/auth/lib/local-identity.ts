@@ -13,7 +13,7 @@ const DATABASE_VERSION = 1;
 const RECORD_KEY = "current";
 const IDENTITY_CHANGE_EVENT = "keweke-local-identity-change";
 const STORAGE_VERSION = 2 as const;
-export const LOCAL_IDENTITY_PLACEHOLDER = "Your username";
+export const LOCAL_IDENTITY_PLACEHOLDER = "Your name";
 
 interface LocalIdentityRecord {
   id: typeof RECORD_KEY;
