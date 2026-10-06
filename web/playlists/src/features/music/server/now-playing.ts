@@ -83,7 +83,7 @@ const secretBinding = Schema.ObjectKeyword.pipe(
 const secretFromBinding = Schema.decodeTo<typeof Schema.String, typeof secretBinding>(
   Schema.String,
   {
-    decode: SchemaGetter.transformOrFail((binding) =>
+    decode: SchemaGetter.transformEffect((binding) =>
       Effect.promise(async () => {
         try {
           // SAFETY: Secrets Store bindings are exactly `{ get(): Promise<string> }`;
