@@ -23,7 +23,7 @@
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
-    "dexie": "4.4.5",
+    "dexie": "4.4.6",
     "effect": "catalog:iac",
     "fabric": "7.4.0",
     "fflate": "0.8.3",

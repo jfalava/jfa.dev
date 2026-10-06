@@ -105,7 +105,9 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     },
   };
   if (config.workers.opengraph.domain !== undefined) {
-    Object.assign(opengraphOptions, { domain: config.workers.opengraph.domain });
+    Object.assign(opengraphOptions, {
+      domain: config.workers.opengraph.domain,
+    });
   }
   if (isLocal) {
     Object.assign(opengraphOptions, { dev: localDev(3101) });
@@ -295,20 +297,24 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   // `web/playlists/.dev.vars` / `iac/.env` (via loadDevVarsForLocal above) — avoids
   // LocalSecretsStore emulation flakiness that was causing `Invalid server function ID`
   // in `alchemy dev`. Worker binding names stay `LASTFM_*`.
-  let playlistsSecretsStore: ReturnType<typeof Cloudflare.SecretsStore.Store> | undefined;
-  let lastfmApiKeySecret: ReturnType<typeof Cloudflare.SecretsStore.Secret> | undefined;
-  let lastfmUserSecret: ReturnType<typeof Cloudflare.SecretsStore.Secret> | undefined;
+  let playlistsSecretsStore: Cloudflare.SecretsStore.Store | undefined;
+  let lastfmApiKeySecret: Cloudflare.SecretsStore.Secret | undefined;
+  let lastfmUserSecret: Cloudflare.SecretsStore.Secret | undefined;
 
-  const lastfmApiKeyValue = yield* Config.redacted("JFA_DEV_LASTFM_API_KEY").pipe(
-    Config.withDefault(Redacted.make("")),
-  );
-  const lastfmUserValue = yield* Config.redacted("JFA_DEV_LASTFM_USER").pipe(
+  const lastfmApiKeyValue = yield* Config.Redacted(
+    "JFA_DEV_LASTFM_API_KEY",
+  ).pipe(Config.withDefault(Redacted.make("")));
+  const lastfmUserValue = yield* Config.Redacted("JFA_DEV_LASTFM_USER").pipe(
     Config.withDefault(Redacted.make("")),
   );
 
   type PlaylistsEnvironment = {
-    LASTFM_API_KEY: ReturnType<typeof Redacted.make> | typeof lastfmApiKeySecret;
-    LASTFM_USER: ReturnType<typeof Redacted.make> | typeof lastfmUserSecret;
+    LASTFM_API_KEY:
+      | ReturnType<typeof Redacted.make>
+      | Cloudflare.SecretsStore.Secret;
+    LASTFM_USER:
+      | ReturnType<typeof Redacted.make>
+      | Cloudflare.SecretsStore.Secret;
     VITE_BASE_PATH?: string;
     VITE_ASSET_BASE_PATH?: string;
   };
