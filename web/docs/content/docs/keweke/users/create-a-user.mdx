@@ -6,28 +6,28 @@ description: Create a display name, make it available on other browsers, or brin
 import { UserDialogPreview } from "@/components/keweke/user-dialog-preview";
 import { UserSettingsPreview } from "@/components/keweke/user-settings-preview";
 
-You create a user from the same identity popup or from your settings page — they share the same controls.
+You choose a name from the publish prompt or from the `/user` settings page. The publish prompt is a compact version for getting a list shared quickly; `/user` contains the full identity and device controls.
 
 <UserDialogPreview />
 
 ## Where to find it
 
-- **Header → User** — the round user icon in the top bar opens the identity popup.
-- **Publish prompt** — if you try to publish a list without a name, the same popup opens automatically and explains you need a name first.
+- **Header → User** — the round user icon in the top bar opens the `/user` settings page.
+- **Publish prompt** — if you try to publish a list without a name, a **Before you publish** popup opens automatically so you can choose a name or connect another device.
 - **Settings** — open `/user` directly for a full-page version.
 
 ## Create a name on this browser
 
-The first section of the popup is **Create a user**.
+The first section of the popup is **Create a user**. In the publish flow it is labelled **Choose your name** instead.
 
 1. Type a display name.
-2. Tap **Create**.
+2. Tap **Create** on the settings page, or **Continue** in the publish prompt.
 
-That name is saved on this browser right away and shows up on items you add. You do not need network access for this step.
+That name is saved on this browser right away and shows up on items you add. You do not need network access for this step. If you reached this popup from **Publish**, continue to the confirmation dialog; the first confirmed publish connects this browser so you can use the list on other devices.
 
-## Make it a remote user
+## Make the name available on other browsers
 
-To use the same name from another browser or to publish lists, promote it to a remote user. On the `/user` page this appears as the **Remote account** row when you have not yet promoted.
+Publishing does not require you to create a remote user in advance. If you want to prepare the connection before publishing, or use the same name from another browser without publishing a list first, open `/user`. The **Remote account** row appears while this browser is local.
 
 <UserSettingsPreview variant="local" />
 

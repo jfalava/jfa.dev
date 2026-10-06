@@ -19,7 +19,7 @@ A list starts on your browser. Publishing gives it a second home on the edge so 
 - **Local list** — header shows an outlined **Publish** button (cloud upload icon, hotkey `⌘U` / `Ctrl+U`).
 - **Remote list** — the Publish button disappears and a **Share** button takes its place (copy icon). Local catalog rows show a cloud badge instead of the house badge for remote lists.
 
-If you click Publish without a name, the app opens a **Before you publish** dialog. Choose the name that will appear as the publisher of the list, or connect another device if you have already set up Keweke elsewhere. You do not lose your list.
+If you click Publish without a name, the app opens a **Before you publish** dialog. Choose the name that will appear as the publisher of the list, or connect another device if you have already set up Keweke elsewhere. You do not need to set up a remote account first: when you confirm the first publish, Keweke connects this browser so you can edit the list from other devices.
 
 ## The nudge — a gentle hint
 
@@ -39,9 +39,10 @@ Tapping **Publish** opens a modal that confirms the public addresses before anyt
 
 - a short explainer that anyone with the ID or alias can open the list
 - a box listing the **public addresses** — the raw ID and, if present, the friendly alias
+- a note when this is your first publish, explaining that the list will be available on other devices and that you will be able to edit it there
 - **Cancel** and **Publish list** — the publishing spinner shows while the service creates the Durable Object copy
 
-The dialog is the only step that writes to the network. Until you confirm, the list stays local.
+Choosing a name only saves it in this browser. The confirmation dialog is the step that writes to the network and moves the list from local storage to its shared copy. Until you confirm, the list stays local.
 
 ## What happens now — remote, public
 

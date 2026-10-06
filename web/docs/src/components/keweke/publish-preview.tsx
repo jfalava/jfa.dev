@@ -167,6 +167,9 @@ export function PublishDialogPreview() {
               Publishing a list
             </DocsLink>
           </p>
+          <p className="border border-primary/30 bg-primary/5 p-3 text-sm leading-5 text-foreground">
+            This list will be available on other devices, and you’ll be able to edit it there.
+          </p>
           <div className="space-y-2 border bg-muted/40 p-3 text-sm">
             <div className="flex gap-3">
               <span className="w-12 shrink-0 text-muted-foreground">ID</span>
@@ -181,7 +184,7 @@ export function PublishDialogPreview() {
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="ghost">Cancel</Button>
-            <Button>Publish</Button>
+            <Button>Publish list</Button>
           </div>
         </div>
       </div>

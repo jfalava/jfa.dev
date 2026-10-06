@@ -19,15 +19,17 @@ export function UserDialogPreview() {
     <PreviewShell>
       <div className="flex flex-col rounded-lg border bg-popover text-popover-foreground">
         <div className="border-b px-4 py-4">
-          <h2 className="text-lg font-semibold tracking-tight">Identify this browser</h2>
+          <h2 className="text-lg font-semibold tracking-tight">Before you publish</h2>
         </div>
         <div className="space-y-5 p-4">
           <section className="space-y-3" aria-labelledby="preview-create-user-heading">
             <div className="space-y-1">
               <h3 className="text-sm font-medium" id="preview-create-user-heading">
-                Create a user
+                Choose your name
               </h3>
-              <p className="text-sm text-muted-foreground">Publish lists from this browser.</p>
+              <p className="text-sm text-muted-foreground">
+                This name will appear as the publisher of this list. You can change it later.
+              </p>
             </div>
             <div className="flex items-end gap-2">
               <div className="min-w-0 flex-1">
@@ -36,7 +38,7 @@ export function UserDialogPreview() {
                   placeholder="Your name"
                 />
               </div>
-              <Button className="h-10 min-w-24 px-5 text-sm">Create</Button>
+              <Button className="h-10 min-w-24 px-5 text-sm">Continue</Button>
             </div>
             <p className="flex">
               <DocsLink href="/docs/keweke/users/create-a-user" variant="info">
@@ -48,15 +50,12 @@ export function UserDialogPreview() {
           <section className="space-y-3">
             <OrDivider />
             <div className="space-y-1">
-              <h3 className="text-sm font-medium">Pair a user</h3>
+              <h3 className="text-sm font-medium">Connect another device</h3>
               <p className="text-sm text-muted-foreground">
-                Use an existing user from another device.
+                Already set up Keweke on another device? Connect this browser with a passkey or
+                pairing code.
               </p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Already have a user on another browser? Connect this one with a passkey or a pairing
-              code.
-            </p>
             <p className="flex">
               <DocsLink href="/docs/keweke/architecture/identity" variant="info">
                 How pairing works
@@ -65,7 +64,7 @@ export function UserDialogPreview() {
             <div className="flex flex-col items-stretch gap-3">
               <Button className="h-10 gap-1.5 px-5 text-sm">Pair with passkey</Button>
               <OrDivider />
-              <Button className="h-10 min-w-24 px-5 text-sm">Show pairing code</Button>
+              <Button className="h-10 min-w-24 px-5 text-sm">Show code</Button>
             </div>
             <div className="border border-border bg-muted/40 p-3">
               <p className="text-xs text-muted-foreground">Pairing code</p>
