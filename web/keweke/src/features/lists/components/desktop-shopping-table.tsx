@@ -3,20 +3,24 @@ import { Plus } from "lucide-react";
 import type { KeyboardEvent } from "react";
 
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+import type { InventoryMatch } from "@/features/lists/lib/inventory-match";
 import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
 
+import { InventoryMatchNotice } from "./inventory-match-notice";
 import { ItemFieldError, NewQuantityStepper } from "./list-item-elements";
 import type { NewItemDraft } from "./list-item-types";
 
 export function DesktopNewItemRow({
   newItem,
   errors,
+  inventoryMatch,
   onAdd,
   onChange,
   onKeyDown,
 }: {
   newItem: NewItemDraft;
   errors: ItemDraftErrors;
+  inventoryMatch: InventoryMatch;
   onAdd: () => void;
   onChange: (field: keyof NewItemDraft, value: string) => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
@@ -45,6 +49,7 @@ export function DesktopNewItemRow({
           value={newItem.name}
         />
         {errors.name ? <ItemFieldError id="new-item-name-error" message={errors.name} /> : null}
+        <InventoryMatchNotice id="new-item-desktop-inventory-match" match={inventoryMatch} />
       </TableCell>
       <TableCell className="px-3 py-3">
         <span className="flex items-center justify-between gap-0.5">

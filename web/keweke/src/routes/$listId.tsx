@@ -20,6 +20,7 @@ import {
   type LocalIdentity,
 } from "@/features/auth/lib/local-identity";
 import { DeletedItemsHistory } from "@/features/lists/components/deleted-items-history";
+import { DuplicateItemDialog } from "@/features/lists/components/duplicate-item-dialog";
 import { ItemEntryHelpDialog } from "@/features/lists/components/item-entry-help-dialog";
 import { ItemHistoryDialog } from "@/features/lists/components/item-history-dialog";
 import type { ItemEditDraft, NewItemDraft } from "@/features/lists/components/list-item-types";
@@ -28,6 +29,11 @@ import { LIST_VIEW_PANEL_ID } from "@/features/lists/components/list-view-tabs";
 import { PublishListDialog } from "@/features/lists/components/publish-list-dialog";
 import { ShoppingTable } from "@/features/lists/components/shopping-table";
 import { NEW_SPREADSHEET_ROW_ID } from "@/features/lists/components/spreadsheet-mode";
+import {
+  buildInventoryIndex,
+  matchInventoryName,
+  type InventoryMatch,
+} from "@/features/lists/lib/inventory-match";
 import {
   hasItemDraftErrors,
   validateItemDraft,
@@ -53,6 +59,9 @@ import { useRemoteListLiveSession } from "@/features/sync/hooks/use-remote-list-
 
 type HistoryTarget = { itemId: string; itemName: string };
 const EMPTY_ITEMS: ListItem[] = [];
+
+/** A draft held back while the user decides about an apparent duplicate. */
+type PendingDuplicate = { draft: NewItemDraft; match: InventoryMatch };
 
 export const FOCUS_SEARCH_HOTKEY = "F";
 export const FOCUS_NEW_ITEM_HOTKEY = "N";
@@ -136,6 +145,8 @@ function ListPage() {
   });
   const [newItemAttempted, setNewItemAttempted] = useState(false);
   const [newItemErrors, setNewItemErrors] = useState<ItemDraftErrors>({});
+  const [pendingDuplicate, setPendingDuplicate] = useState<PendingDuplicate>();
+  const [isAddingDuplicate, setIsAddingDuplicate] = useState(false);
   const [identity, setIdentity] = useState<LocalIdentity>();
 
   const isSpreadsheetModeActive = isDesktop && isSpreadsheetMode;
@@ -270,6 +281,21 @@ function ListPage() {
   }, [loadedList?.backend, loadedList?.snapshot.id]);
 
   const displayedNewItemErrors = newItemAttempted ? validateItemDraft(newItemDraft) : newItemErrors;
+
+  // Declared ahead of the add callbacks below so they can close over `items`.
+  const snapshot = loadedList?.snapshot;
+  const items = snapshot?.items ?? EMPTY_ITEMS;
+
+  const activeCount = items.filter((item) => !item.checked).length;
+  const completedCount = items.length - activeCount;
+
+  // Item names are tokenised once per snapshot rather than once per keystroke;
+  // a snapshot may hold thousands of items.
+  const inventoryIndex = useMemo(() => buildInventoryIndex(items), [items]);
+  const newItemMatch = useMemo(
+    () => matchInventoryName(newItemDraft.name, inventoryIndex),
+    [inventoryIndex, newItemDraft.name],
+  );
 
   const remoteListId = loadedList?.backend === "remote" ? loadedList.snapshot.id : undefined;
 
@@ -571,9 +597,39 @@ function ListPage() {
     [commit, loadedList],
   );
 
-  const updateNewItemDraft = useCallback((field: keyof NewItemDraft, value: string): void => {
-    setNewItemDraft((current) => ({ ...current, [field]: value }));
-  }, []);
+  const commitNewItem = useCallback(
+    async (draft: NewItemDraft): Promise<boolean> => {
+      const name = draft.name.trim();
+
+      const committed = await commit({
+        type: "add-item",
+        item: {
+          id: uuidv7(),
+          name,
+          quantity: Number(draft.quantity),
+          unit: draft.unit.trim(),
+          amount: draft.amount.trim(),
+          category: draft.category.trim(),
+        },
+      });
+      if (!committed) {
+        return false;
+      }
+
+      setNewItemAttempted(false);
+      setNewItemErrors({});
+      setNewItemDraft({
+        name: "",
+        quantity: "1",
+        unit: "",
+        amount: "",
+        category: "GENERAL",
+      });
+      toast.success(`${name} added to the list.`);
+      return true;
+    },
+    [commit],
+  );
 
   const addItem = useCallback(async (): Promise<boolean> => {
     const draftErrors = validateItemDraft(newItemDraft);
@@ -583,39 +639,41 @@ function ListPage() {
       return false;
     }
 
-    const name = newItemDraft.name.trim();
-    const quantity = Number(newItemDraft.quantity);
-    const unit = newItemDraft.unit.trim();
-    const amount = newItemDraft.amount.trim();
-    const category = newItemDraft.category.trim();
-
-    const committed = await commit({
-      type: "add-item",
-      item: {
-        id: uuidv7(),
-        name,
-        quantity,
-        unit,
-        amount,
-        category,
-      },
-    });
-    if (!committed) {
+    // `inventoryIndex` tracks the current snapshot, so this is checked against
+    // whatever the inventory holds now, not against a value cached at keystroke
+    // time.
+    const match = matchInventoryName(newItemDraft.name, inventoryIndex);
+    if (match.status !== "none") {
+      setPendingDuplicate({ draft: newItemDraft, match });
       return false;
     }
 
-    setNewItemAttempted(false);
-    setNewItemErrors({});
-    setNewItemDraft({
-      name: "",
-      quantity: "1",
-      unit: "",
-      amount: "",
-      category: "GENERAL",
-    });
-    toast.success(`${name} added to the list.`);
-    return true;
-  }, [commit, newItemDraft]);
+    return commitNewItem(newItemDraft);
+  }, [commitNewItem, inventoryIndex, newItemDraft]);
+
+  // Takes the pending draft as an argument rather than reading it from state, so
+  // the callback never closes over a stale value.
+  const confirmDuplicateAdd = useCallback(
+    async (pending: PendingDuplicate): Promise<void> => {
+      setIsAddingDuplicate(true);
+      try {
+        if (await commitNewItem(pending.draft)) {
+          setPendingDuplicate(undefined);
+        }
+      } finally {
+        setIsAddingDuplicate(false);
+      }
+    },
+    // commitNewItem is read inside the async body, which the rule does not
+    // track; dropping it would pin a stale commit and commit against an
+    // outdated base revision.
+    // oxlint-disable-next-line react/memo-dependencies -- read inside the async body
+    [commitNewItem],
+  );
+
+  const updateNewItemDraft = useCallback((field: keyof NewItemDraft, value: string): void => {
+    setNewItemDraft((current) => ({ ...current, [field]: value }));
+  }, []);
 
   const toggleItem = useCallback(
     (id: string, checked: boolean): void => {
@@ -664,10 +722,6 @@ function ListPage() {
     [commit, loadedList],
   );
 
-  const snapshot = loadedList?.snapshot;
-  const items = snapshot?.items ?? EMPTY_ITEMS;
-  const activeCount = items.filter((item) => !item.checked).length;
-  const completedCount = items.length - activeCount;
   const showPublishNudge = shouldShowPublishNudge({
     backend: loadedList?.backend,
     isFirstList,
@@ -753,6 +807,20 @@ function ListPage() {
         willCreateRemoteUser={Boolean(identity?.username && !identity.remoteUsername)}
       />
       <ItemEntryHelpDialog isOpen={isItemEntryHelpOpen} onOpenChange={setIsItemEntryHelpOpen} />
+      {pendingDuplicate ? (
+        <DuplicateItemDialog
+          draft={pendingDuplicate.draft}
+          isOpen
+          isAdding={isAddingDuplicate}
+          match={pendingDuplicate.match}
+          onAddAnyway={() => void confirmDuplicateAdd(pendingDuplicate)}
+          onOpenChange={(nextIsOpen) => {
+            if (!nextIsOpen) {
+              setPendingDuplicate(undefined);
+            }
+          }}
+        />
+      ) : null}
       {historyTarget ? (
         <ItemHistoryDialog
           isOpen
@@ -827,6 +895,7 @@ function ListPage() {
               key={view}
               newItem={newItemDraft}
               newItemErrors={displayedNewItemErrors}
+              newItemMatch={newItemMatch}
               onAdd={addItem}
               onAdjustQuantity={adjustQuantity}
               onNewItemChange={updateNewItemDraft}

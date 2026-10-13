@@ -26,4 +26,8 @@ export const kewekeDocs = {
   workingWithListSpreadsheet: kewekeDocsPath(
     "lists/working-with-the-list#search-and-spreadsheet-mode",
   ),
+  /** Already-in-inventory confirm dialog shown when adding a duplicate. */
+  duplicateItemDialog: kewekeDocsPath(
+    "lists/working-with-the-list#adding-items-and-the-inventory-check",
+  ),
 } as const;

@@ -28,6 +28,23 @@ A list page is more than its items. The header, list views, search bar, and hist
 
 The right side shows `02 open · 01 done` — a quick count so you know how much is left without scanning the table.
 
+## Adding items and the inventory check
+
+Type into the new-item row at the bottom of the **List** tab. Press <kbd>Enter</kbd> or the **+** button to add the item.
+
+Before you add, KEWEKE compares the name you typed against the items already in your **Inventory** for this list. If they look like the same thing, a small amber note appears under the name field, and the first add opens a confirm dialog instead of committing:
+
+- **Adding** — what you typed
+- **Inventory** — the item it looks like you already have, with its quantity
+
+Choose **Add anyway** if it really is a different product, or if you simply need more. Nothing is ever blocked; the check only makes you look once.
+
+The comparison is deterministic and runs entirely on your device — no account, no network call, and no model. It ignores capitalisation, accents and punctuation, folds plurals (`tomatoes` matches `tomato`), and allows small typos (`tomatos`, `Coffe`). A wider match is accepted when the extra words are qualifiers rather than a different product, so `milk` matches `whole milk 2%` and `bag of bread` matches `sliced bread`.
+
+It deliberately stays quiet when the two are different things: `milk` will not match `milk chocolate`, `chicken` will not match `chicken breast`, and `oat milk` will not match `whole milk 2%`. Short words like `ale` never match a longer word by typo.
+
+The check is local to the list you are looking at, and only the **add** path is checked — renaming an existing row into something that looks like an inventory item is left alone.
+
 ## Search and spreadsheet mode
 
 Below the view heading is a second bar:
@@ -72,4 +89,4 @@ Pages load 50 changes at a time; **Load older changes** fetches the next page. R
 
 When your list is ready to share beyond this browser, move it to the edge — see [Publishing a list](/docs/keweke/lists/publishing-a-list).
 
-> Live components here are built from the [list header](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-page-header.tsx), [alias switcher](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-header-controls.tsx), [deleted history](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/deleted-items-history.tsx), and [item history dialog](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/item-history-dialog.tsx). How revisions and history are stored is covered in [Architecture — Storage](/docs/keweke/architecture/storage).
+> Live components here are built from the [list header](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-page-header.tsx), [alias switcher](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/list-header-controls.tsx), [deleted history](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/deleted-items-history.tsx), and [item history dialog](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/components/item-history-dialog.tsx). The inventory check is described in the source of [inventory-match.ts](https://github.com/jfalava/jfa.dev/tree/main/web/keweke/src/features/lists/lib/inventory-match.ts). How revisions and history are stored is covered in [Architecture — Storage](/docs/keweke/architecture/storage).

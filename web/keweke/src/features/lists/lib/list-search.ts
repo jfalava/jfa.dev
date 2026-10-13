@@ -1,5 +1,8 @@
 import type { ListSummary } from "@jfa.dev/common/lists";
+import { distance } from "fastest-levenshtein";
 import Fuse, { type IFuseOptions } from "fuse.js";
+
+import { normalizeSearchText } from "@/features/lists/lib/normalize-text";
 
 export interface ListSearchResult {
   list: ListSummary;
@@ -31,15 +34,9 @@ const fuzzySearchOptions: IFuseOptions<ListSummary> = {
   threshold: fuzzyMatchThreshold,
 };
 
-export function normalizeSearchText(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, " ")
-    .trim();
-}
+export { normalizeSearchText } from "./normalize-text";
 
+/** Splits already-normalized text; every caller has run `normalizeSearchText`. */
 function tokenize(value: string): readonly string[] {
   return value ? value.split(" ") : [];
 }
@@ -78,46 +75,16 @@ function scoreField(field: SearchField, token: string): number {
   return 0;
 }
 
-function getEditDistance(left: string, right: string): number {
-  const distances = Array.from({ length: left.length + 1 }, (_leftValue, leftIndex) =>
-    Array.from({ length: right.length + 1 }, (_rightValue, rightIndex) =>
-      leftIndex === 0 ? rightIndex : rightIndex === 0 ? leftIndex : 0,
-    ),
-  );
-
-  for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
-    for (let rightIndex = 1; rightIndex <= right.length; rightIndex += 1) {
-      const substitutionCost = left[leftIndex - 1] === right[rightIndex - 1] ? 0 : 1;
-      distances[leftIndex][rightIndex] = Math.min(
-        distances[leftIndex - 1][rightIndex] + 1,
-        distances[leftIndex][rightIndex - 1] + 1,
-        distances[leftIndex - 1][rightIndex - 1] + substitutionCost,
-      );
-
-      if (
-        leftIndex > 1 &&
-        rightIndex > 1 &&
-        left[leftIndex - 1] === right[rightIndex - 2] &&
-        left[leftIndex - 2] === right[rightIndex - 1]
-      ) {
-        distances[leftIndex][rightIndex] = Math.min(
-          distances[leftIndex][rightIndex],
-          distances[leftIndex - 2][rightIndex - 2] + 1,
-        );
-      }
-    }
-  }
-
-  return distances[left.length][right.length];
-}
-
 function getFuzzyMatchQuality(token: string, normalizedText: string): number {
   const bestQuality = Math.max(
     ...tokenize(normalizedText).map((fieldToken) => {
-      const exactDistance = getEditDistance(token, fieldToken);
-      const substringDistance = getApproximateSubstringDistance(token, fieldToken);
-      const distance = Math.min(exactDistance, substringDistance);
-      const distanceRatio = distance / Math.max(token.length, fieldToken.length);
+      // Widened by one so the scan bound can never exclude a candidate the
+      // ratio test would have accepted.
+      const maximumDistance = Math.ceil(
+        maximumFuzzyDistanceRatio * Math.max(token.length, fieldToken.length),
+      );
+      const matchDistance = getBoundedSubstringDistance(token, fieldToken, maximumDistance);
+      const distanceRatio = matchDistance / Math.max(token.length, fieldToken.length);
 
       return distanceRatio <= maximumFuzzyDistanceRatio ? 1 - distanceRatio : 0;
     }),
@@ -127,13 +94,29 @@ function getFuzzyMatchQuality(token: string, normalizedText: string): number {
   return bestQuality;
 }
 
-/** Minimum edit distance between `token` and any substring of `text`. */
-function getApproximateSubstringDistance(token: string, text: string): number {
+/**
+ * Minimum edit distance between `token` and any substring of `text`.
+ *
+ * The whole string counts as one of its own substrings, so this already covers
+ * the plain token-to-token distance and needs no separate comparison.
+ *
+ * Levenshtein distance is at least the difference in lengths, so only
+ * substrings within `maximumDistance` of the token's length can beat that
+ * bound. Scanning just that band returns the same minimum as scanning every
+ * substring, without the cubic blow-up on long names.
+ */
+function getBoundedSubstringDistance(token: string, text: string, maximumDistance: number): number {
+  const minimumLength = Math.max(1, token.length - maximumDistance);
+  const maximumLength = Math.min(text.length, token.length + maximumDistance);
   let bestDistance = Number.POSITIVE_INFINITY;
 
-  for (let start = 0; start < text.length; start += 1) {
-    for (let end = start + 1; end <= text.length; end += 1) {
-      bestDistance = Math.min(bestDistance, getEditDistance(token, text.slice(start, end)));
+  for (let start = 0; start + minimumLength <= text.length; start += 1) {
+    const end = Math.min(text.length, start + maximumLength);
+    for (let nextEnd = Math.min(end, start + minimumLength); nextEnd <= end; nextEnd += 1) {
+      bestDistance = Math.min(bestDistance, distance(token, text.slice(start, nextEnd)));
+      if (bestDistance === 0) {
+        return 0;
+      }
     }
   }
 

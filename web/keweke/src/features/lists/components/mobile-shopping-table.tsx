@@ -3,8 +3,10 @@ import { Plus, Save, X } from "lucide-react";
 import type { KeyboardEvent } from "react";
 
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+import type { InventoryMatch } from "@/features/lists/lib/inventory-match";
 import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
 
+import { InventoryMatchNotice } from "./inventory-match-notice";
 import {
   ItemFieldError,
   MobileEditQuantityStepper,
@@ -21,6 +23,7 @@ export function MobileShoppingTable({
   isSaving,
   newItem,
   newItemErrors,
+  newItemMatch,
   table,
   onCancelEditing,
   onAdd,
@@ -37,6 +40,7 @@ export function MobileShoppingTable({
   isSaving: boolean;
   newItem: NewItemDraft;
   newItemErrors: ItemDraftErrors;
+  newItemMatch: InventoryMatch;
   table: ShoppingTableInstance;
   onCancelEditing: () => void;
   onAdd: () => void;
@@ -278,6 +282,7 @@ export function MobileShoppingTable({
             <MobileNewItemRow
               newItem={newItem}
               errors={newItemErrors}
+              inventoryMatch={newItemMatch}
               onAdd={onAdd}
               onChange={onNewItemChange}
               onKeyDown={onNewItemKeyDown}
@@ -292,12 +297,14 @@ export function MobileShoppingTable({
 function MobileNewItemRow({
   newItem,
   errors,
+  inventoryMatch,
   onAdd,
   onChange,
   onKeyDown,
 }: {
   newItem: NewItemDraft;
   errors: ItemDraftErrors;
+  inventoryMatch: InventoryMatch;
   onAdd: () => void;
   onChange: (field: keyof NewItemDraft, value: string) => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
@@ -328,6 +335,7 @@ function MobileNewItemRow({
             {errors.name ? (
               <ItemFieldError id="new-item-mobile-name-error" message={errors.name} />
             ) : null}
+            <InventoryMatchNotice id="new-item-mobile-inventory-match" match={inventoryMatch} />
           </label>
           <div className="flex min-w-0 flex-col gap-1">
             <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">

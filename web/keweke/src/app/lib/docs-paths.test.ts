@@ -24,6 +24,9 @@ describe("kewekeDocsPath", () => {
     expect(kewekeDocs.workingWithListSpreadsheet).toBe(
       "/docs/keweke/lists/working-with-the-list#search-and-spreadsheet-mode",
     );
+    expect(kewekeDocs.duplicateItemDialog).toBe(
+      "/docs/keweke/lists/working-with-the-list#adding-items-and-the-inventory-check",
+    );
   });
 
   test("preserves hash anchors on nested paths", () => {

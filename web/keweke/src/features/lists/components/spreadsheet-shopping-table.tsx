@@ -5,12 +5,14 @@ import { History, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent } from "react";
 
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
+import type { InventoryMatch } from "@/features/lists/lib/inventory-match";
 import {
   hasItemDraftErrors,
   validateItemDraft,
   type ItemDraftErrors,
 } from "@/features/lists/lib/item-draft";
 
+import { InventoryMatchNotice } from "./inventory-match-notice";
 import { ItemFieldError } from "./list-item-elements";
 import type { ItemEditDraft, NewItemDraft } from "./list-item-types";
 import {
@@ -31,6 +33,7 @@ export function SpreadsheetShoppingTable({
   items,
   newItem,
   newItemErrors,
+  newItemMatch,
   onAdd,
   onNewItemChange,
   onRemove,
@@ -45,6 +48,7 @@ export function SpreadsheetShoppingTable({
   items: readonly ListItem[];
   newItem: NewItemDraft;
   newItemErrors: ItemDraftErrors;
+  newItemMatch: InventoryMatch;
   onAdd: () => Promise<boolean>;
   onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
   onRemove: (id: string) => void;
@@ -462,6 +466,7 @@ export function SpreadsheetShoppingTable({
             {showNewItemRow ? (
               <SpreadsheetNewItemRow
                 errors={newItemErrors}
+                inventoryMatch={newItemMatch}
                 isAdding={isAdding}
                 newItem={newItem}
                 onAdd={() => void addNewItemAndFocus()}
@@ -607,12 +612,14 @@ function SpreadsheetItemRow({
 
 function SpreadsheetNewItemRow({
   errors,
+  inventoryMatch,
   isAdding,
   newItem,
   onAdd,
   onChange,
 }: {
   errors: ItemDraftErrors;
+  inventoryMatch: InventoryMatch;
   isAdding: boolean;
   newItem: NewItemDraft;
   onAdd: () => void;
@@ -638,6 +645,7 @@ function SpreadsheetNewItemRow({
           value={newItem.name}
           onChange={onChange}
         />
+        <InventoryMatchNotice id="new-item-spreadsheet-inventory-match" match={inventoryMatch} />
       </TableCell>
       <TableCell className="px-2 py-3">
         <SpreadsheetInput

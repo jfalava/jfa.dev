@@ -71,6 +71,17 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
               </FieldGuide>
             </ul>
 
+            <div className="space-y-2 border border-border bg-muted/40 p-3">
+              <p className="text-sm font-medium">Already in inventory</p>
+              <p className="text-[13px] leading-snug text-muted-foreground">
+                As you type, KEWEKE checks the name against the items already in this list&apos;s
+                Inventory. If they look like the same thing, a note appears under the field and the
+                first add asks before committing. Nothing is blocked — pick{" "}
+                <span className="text-foreground">Add anyway</span> if it&apos;s a different product
+                or you just need more.
+              </p>
+            </div>
+
             <div className="hidden space-y-2 border border-border bg-muted/40 p-3 md:block">
               <p className="text-sm font-medium">Spreadsheet</p>
               <p className="text-[13px] leading-snug text-muted-foreground">
@@ -97,6 +108,15 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
           <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3">
             <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               <DocsLink href={kewekeDocs.workingWithList}>Working with the list</DocsLink>
+              <span
+                aria-hidden="true"
+                className="hidden text-[10px] text-muted-foreground/50 sm:inline"
+              >
+                ·
+              </span>
+              <DocsLink className="hidden sm:inline-flex" href={kewekeDocs.duplicateItemDialog}>
+                Inventory check
+              </DocsLink>
               <span
                 aria-hidden="true"
                 className="hidden text-[10px] text-muted-foreground/50 sm:inline"

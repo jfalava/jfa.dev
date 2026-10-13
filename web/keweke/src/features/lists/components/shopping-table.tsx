@@ -4,6 +4,7 @@ import { useTable } from "@tanstack/react-table";
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 
 import type { LocalIdentity } from "@/features/auth/lib/local-identity";
+import type { InventoryMatch } from "@/features/lists/lib/inventory-match";
 import {
   hasItemDraftErrors,
   validateItemDraft,
@@ -28,6 +29,7 @@ export function ShoppingTable({
   items,
   newItem,
   newItemErrors,
+  newItemMatch,
   onAdd,
   onAdjustQuantity,
   onNewItemChange,
@@ -44,6 +46,7 @@ export function ShoppingTable({
   items: readonly ListItem[];
   newItem: NewItemDraft;
   newItemErrors: ItemDraftErrors;
+  newItemMatch: InventoryMatch;
   onAdd: () => Promise<boolean>;
   onAdjustQuantity: (itemId: string, nextQuantity: number) => void;
   onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
@@ -211,6 +214,7 @@ export function ShoppingTable({
         items={items}
         newItem={newItem}
         newItemErrors={newItemErrors}
+        newItemMatch={newItemMatch}
         onAdd={onAdd}
         onNewItemChange={onNewItemChange}
         onRemove={onRemove}
@@ -228,6 +232,7 @@ export function ShoppingTable({
           isSaving={isSaving}
           newItem={newItem}
           newItemErrors={newItemErrors}
+          newItemMatch={newItemMatch}
           emptyMessage={emptyMessage}
           table={mobileTable}
           onCancelEditing={cancelEditing}
@@ -294,6 +299,7 @@ export function ShoppingTable({
                 <DesktopNewItemRow
                   newItem={newItem}
                   errors={newItemErrors}
+                  inventoryMatch={newItemMatch}
                   onAdd={handleAdd}
                   onKeyDown={submitNewItemOnEnter}
                   onChange={onNewItemChange}

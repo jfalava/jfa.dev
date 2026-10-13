@@ -92,4 +92,30 @@ describe("list search", () => {
   test("normalizes punctuation and diacritics", () => {
     expect(normalizeSearchText("  Groceries–applé!  ")).toBe("groceries apple");
   });
+
+  test("fuzzy-matches a query token buried inside a longer name", () => {
+    const lists = [
+      createList({}),
+      createList({
+        id: "01900000-0000-7000-8000-000000000002",
+        alias: "honeycrisp-apples",
+        title: "Fruit",
+      }),
+    ];
+
+    expect(search("crisp", lists).map((list) => list.alias)).toEqual(["honeycrisp-apples"]);
+  });
+
+  test("fuzzy-matches a typo in the middle of a long name", () => {
+    const lists = [
+      createList({}),
+      createList({
+        id: "01900000-0000-7000-8000-000000000002",
+        alias: "chocolate-bars",
+        title: "Snacks",
+      }),
+    ];
+
+    expect(search("choclate", lists).map((list) => list.alias)).toEqual(["chocolate-bars"]);
+  });
 });
