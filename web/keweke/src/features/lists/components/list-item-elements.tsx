@@ -10,6 +10,16 @@ import { LOCAL_IDENTITY_PLACEHOLDER, type LocalIdentity } from "@/features/auth/
 
 import type { ItemEditDraft, NewItemDraft } from "./list-item-types";
 
+/**
+ * An item name as it appears inside a sentence the system speaks — a toast, for
+ * instance. Quoted and set in the serif face so it reads as text the user wrote
+ * rather than as part of the system's own message, matching how item names are
+ * set everywhere else.
+ */
+export function QuotedItemName({ name }: { name: string }) {
+  return <span className="font-serif">“{name}”</span>;
+}
+
 export function identityDisplayName(actor: ListIdentity, currentIdentity?: LocalIdentity): string {
   if (currentIdentity?.userId === actor.id) {
     const currentUsername = currentIdentity.remoteUsername ?? currentIdentity.username;

@@ -23,6 +23,7 @@ import { DeletedItemsHistory } from "@/features/lists/components/deleted-items-h
 import { DuplicateItemDialog } from "@/features/lists/components/duplicate-item-dialog";
 import { ItemEntryHelpDialog } from "@/features/lists/components/item-entry-help-dialog";
 import { ItemHistoryDialog } from "@/features/lists/components/item-history-dialog";
+import { QuotedItemName } from "@/features/lists/components/list-item-elements";
 import type { ItemEditDraft, NewItemDraft } from "@/features/lists/components/list-item-types";
 import { ListPageHeader } from "@/features/lists/components/list-page-header";
 import { LIST_VIEW_PANEL_ID } from "@/features/lists/components/list-view-tabs";
@@ -583,9 +584,18 @@ function ListPage() {
         const committed = await commit(command);
         if (committed && item) {
           if (command.type === "restore-item") {
-            toast.success(`${item.name} restored to ${item.checked ? "inventory" : "the list"}.`);
+            toast.success(
+              <>
+                <QuotedItemName name={item.name} /> restored to{" "}
+                {item.checked ? "inventory" : "the list"}.
+              </>,
+            );
           } else if (command.type === "purge-deleted-item") {
-            toast.success(`${item.name} permanently deleted.`);
+            toast.success(
+              <>
+                <QuotedItemName name={item.name} /> permanently deleted.
+              </>,
+            );
           }
         }
       } catch {
@@ -625,7 +635,11 @@ function ListPage() {
         amount: "",
         category: "GENERAL",
       });
-      toast.success(`${name} added to the list.`);
+      toast.success(
+        <>
+          <QuotedItemName name={name} /> added to the list.
+        </>,
+      );
       return true;
     },
     [commit],
@@ -683,9 +697,10 @@ function ListPage() {
           return undefined;
         }
         toast.success(
-          checked
-            ? `${item.name} purchased · moved to inventory.`
-            : `${item.name} restored to the list.`,
+          <>
+            <QuotedItemName name={item.name} />{" "}
+            {checked ? "purchased · moved to inventory." : "restored to the list."}
+          </>,
         );
         return undefined;
       });
@@ -714,7 +729,11 @@ function ListPage() {
       const item = loadedList?.snapshot.items.find((candidate) => candidate.id === id);
       void commit({ type: "remove-item", itemId: id }).then((committed) => {
         if (committed && item) {
-          toast.success(`${item.name} deleted.`);
+          toast.success(
+            <>
+              <QuotedItemName name={item.name} /> deleted.
+            </>,
+          );
         }
         return undefined;
       });
