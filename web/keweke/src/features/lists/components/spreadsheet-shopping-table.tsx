@@ -13,7 +13,7 @@ import {
 } from "@/features/lists/lib/item-draft";
 
 import { InventoryMatchNotice } from "./inventory-match-notice";
-import { ItemFieldError } from "./list-item-elements";
+import { ItemFieldError, itemNameClass } from "./list-item-elements";
 import type { ItemEditDraft, NewItemDraft } from "./list-item-types";
 import {
   areItemDraftsEqual,
@@ -524,11 +524,10 @@ function SpreadsheetItemRow({
         <SpreadsheetInput
           error={errors?.name}
           field="name"
-          inputClassName={
-            item.checked && item.quantity === 0
-              ? "min-w-44 font-serif text-muted-foreground line-through"
-              : "min-w-44 font-serif"
-          }
+          inputClassName={`min-w-44 ${itemNameClass({
+            muted: item.checked && item.quantity === 0,
+            struck: item.checked && item.quantity === 0,
+          })}`}
           label={`Edit ${item.name} name`}
           rowId={item.id}
           value={draft.name}
@@ -639,7 +638,7 @@ function SpreadsheetNewItemRow({
         <SpreadsheetInput
           error={errors.name}
           field="name"
-          inputClassName="min-w-44 font-serif"
+          inputClassName={`min-w-44 ${itemNameClass()}`}
           label="New item name"
           rowId={NEW_SPREADSHEET_ROW_ID}
           value={newItem.name}

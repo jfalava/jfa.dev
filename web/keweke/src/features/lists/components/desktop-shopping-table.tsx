@@ -7,7 +7,7 @@ import type { InventoryMatch } from "@/features/lists/lib/inventory-match";
 import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
 
 import { InventoryMatchNotice } from "./inventory-match-notice";
-import { ItemFieldError, NewQuantityStepper } from "./list-item-elements";
+import { ItemFieldError, itemNameClass, NewQuantityStepper } from "./list-item-elements";
 import type { NewItemDraft } from "./list-item-types";
 
 export function DesktopNewItemRow({
@@ -41,7 +41,7 @@ export function DesktopNewItemRow({
           aria-label="New item name"
           aria-describedby={errors.name ? "new-item-name-error" : undefined}
           aria-invalid={errors.name ? true : undefined}
-          className="h-9 min-w-32 font-serif text-base sm:text-xs"
+          className={`h-9 min-w-32 text-base sm:text-xs ${itemNameClass()}`}
           maxLength={200}
           onChange={(event) => onChange("name", event.target.value)}
           onKeyDown={onKeyDown}

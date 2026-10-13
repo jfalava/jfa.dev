@@ -19,6 +19,9 @@ type ToasterStyle = CSSProperties & {
 };
 
 const toastThemeStyle: ToasterStyle = {
+  // Sonner sets a system-ui stack on `[data-sonner-toaster]`. It is applied via
+  // the inline style so it wins over that rule regardless of stylesheet order.
+  fontFamily: "var(--font-sans)",
   "--normal-bg": "var(--popover)",
   "--normal-text": "var(--popover-foreground)",
   "--normal-border": "var(--border)",
