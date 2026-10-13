@@ -9,7 +9,6 @@ import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
 import { InventoryMatchNotice } from "./inventory-match-notice";
 import {
   ItemFieldError,
-  itemNameClass,
   MobileEditQuantityStepper,
   NewQuantityStepper,
 } from "./list-item-elements";
@@ -102,7 +101,7 @@ export function MobileShoppingTable({
                                 : undefined
                             }
                             aria-invalid={editErrors?.name ? true : undefined}
-                            className={`h-9 min-w-0 text-base ${itemNameClass()}`}
+                            className="h-9 min-w-0 font-serif text-base"
                             maxLength={200}
                             onChange={(event) => onEditDraftChange("name", event.target.value)}
                             value={editDraft?.name ?? row.original.name}
@@ -326,7 +325,7 @@ function MobileNewItemRow({
               aria-label="New item name"
               aria-describedby={errors.name ? "new-item-mobile-name-error" : undefined}
               aria-invalid={errors.name ? true : undefined}
-              className={`h-9 text-base ${itemNameClass()}`}
+              className="h-9 font-serif text-base"
               maxLength={200}
               onChange={(event) => onChange("name", event.target.value)}
               onKeyDown={onKeyDown}

@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import type { LocalIdentity } from "@/features/auth/lib/local-identity";
 
-import { identityDisplayName, ItemMeasure, itemNameClass } from "./list-item-elements";
+import { identityDisplayName, ItemMeasure } from "./list-item-elements";
 
 export function DeletedItemsHistory({
   busyArchiveId,
@@ -47,7 +47,7 @@ export function DeletedItemsHistory({
               key={item.archiveId}
             >
               <div className="min-w-0">
-                <p className={`truncate text-sm ${itemNameClass()}`}>{item.name}</p>
+                <p className="truncate font-serif text-sm font-medium">{item.name}</p>
                 <p className="mt-1 flex flex-wrap items-center gap-x-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
                   <ItemMeasure item={item} />
                   <span aria-hidden="true">·</span>

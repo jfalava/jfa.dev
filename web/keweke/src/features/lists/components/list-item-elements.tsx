@@ -10,25 +10,6 @@ import { LOCAL_IDENTITY_PLACEHOLDER, type LocalIdentity } from "@/features/auth/
 
 import type { ItemEditDraft, NewItemDraft } from "./list-item-types";
 
-/**
- * Type treatment for an item name. The sans face, uppercase and semibold make
- * the subject of a row read at a glance, and set it apart from the mono
- * metadata and the serif author name sitting beside it.
- *
- * Defined once here so every surface — table, mobile row, spreadsheet, and the
- * inputs they swap to while editing — shows a name identically.
- */
-export function itemNameClass(options: { muted?: boolean; struck?: boolean } = {}): string {
-  const classes = ["font-sans", "font-semibold", "uppercase"];
-  if (options.muted) {
-    classes.push("text-muted-foreground");
-  }
-  if (options.struck) {
-    classes.push("line-through");
-  }
-  return classes.join(" ");
-}
-
 export function identityDisplayName(actor: ListIdentity, currentIdentity?: LocalIdentity): string {
   if (currentIdentity?.userId === actor.id) {
     const currentUsername = currentIdentity.remoteUsername ?? currentIdentity.username;

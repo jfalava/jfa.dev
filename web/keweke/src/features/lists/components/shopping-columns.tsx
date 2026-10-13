@@ -10,7 +10,6 @@ import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
 import {
   ItemFieldError,
   ItemMeasure,
-  itemNameClass,
   QuantityStepper,
   SignedItemBadge,
 } from "./list-item-elements";
@@ -102,7 +101,7 @@ export function createShoppingColumns() {
                   editErrors?.name ? `desktop-edit-name-error-${row.original.id}` : undefined
                 }
                 aria-invalid={editErrors?.name ? true : undefined}
-                className={`min-w-32 ${itemNameClass()}`}
+                className="min-w-32 font-serif"
                 maxLength={200}
                 onChange={(event) => onEditDraftChange("name", event.target.value)}
                 value={editDraft?.name ?? getValue()}
@@ -119,10 +118,13 @@ export function createShoppingColumns() {
 
         return (
           <span
-            className={itemNameClass({
-              muted: isDepleted(row.original) || row.original.checked,
-              struck: isDepleted(row.original),
-            })}
+            className={
+              isDepleted(row.original)
+                ? "font-serif text-muted-foreground line-through"
+                : row.original.checked
+                  ? "font-serif text-muted-foreground"
+                  : "font-serif"
+            }
           >
             {getValue()}
           </span>
@@ -421,10 +423,13 @@ export function createMobileShoppingColumns({
       cell: ({ row }) => (
         <div className="min-w-0 py-1">
           <p
-            className={`truncate ${itemNameClass({
-              muted: isDepleted(row.original) || row.original.checked,
-              struck: isDepleted(row.original),
-            })}`}
+            className={
+              isDepleted(row.original)
+                ? "truncate font-serif font-medium text-muted-foreground line-through"
+                : row.original.checked
+                  ? "truncate font-serif font-medium text-muted-foreground"
+                  : "truncate font-serif font-medium"
+            }
           >
             {row.original.name}
           </p>
