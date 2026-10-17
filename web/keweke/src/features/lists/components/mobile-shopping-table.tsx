@@ -1,7 +1,7 @@
-import { Button, Input, TableCell } from "@jfa.dev/common/ui";
+import { Button, Input, TableCell, Toggle } from "@jfa.dev/common/ui";
 import { Plus, Save, X } from "lucide-react";
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { Dialog, DialogTrigger, Heading, Modal, ModalOverlay, Switch } from "react-aria-components";
+import { useState } from "react";
+import { Dialog, DialogTrigger, Modal, ModalOverlay } from "react-aria-components";
 
 import type { InventoryMatch } from "@/features/lists/lib/inventory-match";
 import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
@@ -270,66 +270,7 @@ export function MobileShoppingTable({
   );
 }
 
-function drawerViewportBounds(overlay?: HTMLElement) {
-  const viewport = window.visualViewport;
-  const origin = overlay?.getBoundingClientRect();
-  return {
-    top:
-      (viewport?.pageTop ?? window.scrollY) -
-      (origin ? origin.top + window.scrollY + (overlay?.clientTop ?? 0) : 0),
-    left:
-      (viewport?.pageLeft ?? window.scrollX) -
-      (origin ? origin.left + window.scrollX + (overlay?.clientLeft ?? 0) : 0),
-    width: viewport?.width ?? document.documentElement.clientWidth,
-    height: viewport?.height ?? document.documentElement.clientHeight,
-  };
-}
-
-/** Follow Safari's visible viewport, including keyboard-induced panning. */
-function MobileDrawerViewport({ children }: { children: ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
-  // This component mounts inside RAC's portal, so geometry exists before autofocus.
-  const [initialBounds] = useState(() => drawerViewportBounds());
-
-  useLayoutEffect(() => {
-    const stage = ref.current;
-    const overlay = stage?.parentElement;
-    if (!stage || !overlay) {
-      return undefined;
-    }
-    const viewport = window.visualViewport;
-    const update = (): void => {
-      const bounds = drawerViewportBounds(overlay);
-      // Apply keyboard geometry synchronously, without waiting for a React commit.
-      stage.style.top = `${bounds.top}px`;
-      stage.style.left = `${bounds.left}px`;
-      stage.style.width = `${bounds.width}px`;
-      stage.style.height = `${bounds.height}px`;
-      overlay.style.minHeight = `max(100dvh, ${bounds.top + bounds.height}px)`;
-      overlay.style.minWidth = `${bounds.left + bounds.width}px`;
-    };
-
-    update();
-    viewport?.addEventListener("resize", update);
-    viewport?.addEventListener("scroll", update);
-    window.addEventListener("resize", update);
-    window.addEventListener("scroll", update);
-    return () => {
-      viewport?.removeEventListener("resize", update);
-      viewport?.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-      window.removeEventListener("scroll", update);
-    };
-  }, []);
-
-  return (
-    <div className="absolute flex flex-col justify-end pt-4" ref={ref} style={initialBounds}>
-      {children}
-    </div>
-  );
-}
-
-export function MobileNewItemDrawer({
+export function MobileNewItemDialog({
   newItem,
   errors,
   inventoryMatch,
@@ -373,183 +314,172 @@ export function MobileNewItemDrawer({
         <Plus aria-hidden="true" className="size-6" />
       </Button>
       <ModalOverlay
-        className="absolute top-0 left-0 z-40 h-(--page-height) min-h-dvh w-full overflow-clip bg-black/40"
+        className="fixed inset-0 z-50 flex h-[var(--visual-viewport-height,100dvh)] items-center justify-center bg-black/40 p-4"
         isDismissable={!isAdding}
         isKeyboardDismissDisabled={isAdding}
       >
-        <MobileDrawerViewport>
-          <Modal className="flex max-h-full min-h-0 w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-background text-foreground shadow-xl outline-none">
-            <Dialog aria-label="New item" className="flex min-h-0 flex-auto flex-col outline-none">
-              <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
-                <Heading slot="title" className="text-xl font-semibold tracking-tight">
-                  New item
-                </Heading>
-                <Button
-                  aria-label="Close new item"
-                  className="size-11"
-                  isDisabled={isAdding}
-                  slot="close"
-                  variant="ghost"
+        <Modal className="relative flex max-h-full min-h-0 w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-background text-foreground shadow-xl outline-none">
+          <Dialog aria-label="New item" className="flex min-h-0 flex-auto flex-col outline-none">
+            <Button
+              aria-label="Close new item"
+              className="absolute top-1 right-1 z-10 size-7 rounded-full bg-background p-0 shadow-sm"
+              isDisabled={isAdding}
+              slot="close"
+              variant="ghost"
+            >
+              <X aria-hidden="true" className="size-4" />
+            </Button>
+            <form
+              autoComplete="off"
+              className="flex min-h-0 flex-auto flex-col"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void submit();
+              }}
+            >
+              <div className="min-h-0 flex-auto overflow-y-auto overscroll-contain p-4">
+                <fieldset
+                  className="flex min-w-0 flex-col gap-4 disabled:opacity-60"
+                  disabled={isAdding}
                 >
-                  <X aria-hidden="true" className="size-5" />
+                  <label className="flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
+                    <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                      item
+                    </span>
+                    <Input
+                      id="new-item-mobile"
+                      aria-label="New item"
+                      aria-describedby={errors.name ? "new-item-mobile-name-error" : undefined}
+                      aria-invalid={errors.name ? true : undefined}
+                      autoComplete="off"
+                      className="h-9 font-serif text-base"
+                      maxLength={200}
+                      name="shopping-item"
+                      onChange={(event) => onChange("name", event.target.value)}
+                      placeholder="microwave popcorn"
+                      value={newItem.name}
+                    />
+                    {errors.name ? (
+                      <ItemFieldError id="new-item-mobile-name-error" message={errors.name} />
+                    ) : null}
+                    <InventoryMatchNotice
+                      id="new-item-mobile-inventory-match"
+                      match={inventoryMatch}
+                    />
+                  </label>
+                  <div className="flex min-w-0 flex-col gap-1">
+                    <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                      qty · unit · amount each
+                    </span>
+                    <div className="flex min-w-0 items-center gap-1">
+                      <Input
+                        aria-label="New item quantity"
+                        aria-describedby={
+                          errors.quantity ? "new-item-mobile-quantity-error" : undefined
+                        }
+                        aria-invalid={errors.quantity ? true : undefined}
+                        className="h-9 w-16 shrink-0 text-right font-mono text-base"
+                        inputMode="numeric"
+                        maxLength={6}
+                        onChange={(event) => onChange("quantity", event.target.value)}
+                        value={newItem.quantity}
+                      />
+                      <span className="[&_button]:size-11">
+                        <NewQuantityStepper
+                          newItem={newItem}
+                          onAdjust={(nextQuantity) => onChange("quantity", String(nextQuantity))}
+                        />
+                      </span>
+                      <Input
+                        aria-label="New item unit"
+                        aria-describedby={errors.unit ? "new-item-mobile-unit-error" : undefined}
+                        aria-invalid={errors.unit ? true : undefined}
+                        className="h-9 min-w-0 flex-1 font-serif text-base"
+                        maxLength={32}
+                        onChange={(event) => onChange("unit", event.target.value)}
+                        placeholder="box"
+                        value={newItem.unit}
+                      />
+                      <Input
+                        aria-label="New item amount each"
+                        aria-describedby={
+                          errors.amount ? "new-item-mobile-amount-error" : undefined
+                        }
+                        aria-invalid={errors.amount ? true : undefined}
+                        className="h-9 min-w-0 flex-1 font-serif text-base"
+                        maxLength={64}
+                        onChange={(event) => onChange("amount", event.target.value)}
+                        placeholder="3 bags"
+                        value={newItem.amount}
+                      />
+                    </div>
+                    {errors.quantity || errors.unit || errors.amount ? (
+                      <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+                        {errors.quantity ? (
+                          <ItemFieldError
+                            id="new-item-mobile-quantity-error"
+                            message={errors.quantity}
+                          />
+                        ) : null}
+                        {errors.unit ? (
+                          <ItemFieldError id="new-item-mobile-unit-error" message={errors.unit} />
+                        ) : null}
+                        {errors.amount ? (
+                          <ItemFieldError
+                            id="new-item-mobile-amount-error"
+                            message={errors.amount}
+                          />
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                  <label className="flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
+                    <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                      category
+                    </span>
+                    <Input
+                      id="new-category-mobile"
+                      aria-label="New item category"
+                      aria-describedby={
+                        errors.category ? "new-item-mobile-category-error" : undefined
+                      }
+                      aria-invalid={errors.category ? true : undefined}
+                      className="h-9 font-serif text-base"
+                      maxLength={64}
+                      onChange={(event) => onChange("category", event.target.value)}
+                      value={newItem.category}
+                    />
+                    {errors.category ? (
+                      <ItemFieldError
+                        id="new-item-mobile-category-error"
+                        message={errors.category}
+                      />
+                    ) : null}
+                  </label>
+                </fieldset>
+              </div>
+              <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border p-4">
+                <Toggle
+                  className="keep-adding-toggle h-11 min-w-0 cursor-pointer border-2 px-2 text-xs active:scale-[0.98] data-[selected]:border-primary"
+                  isDisabled={isAdding}
+                  isSelected={keepAdding}
+                  onChange={onKeepAddingChange}
+                  variant="outline"
+                >
+                  Keep adding items
+                </Toggle>
+                <Button
+                  className="h-11 gap-1.5 px-3 text-xs active:scale-[0.98]"
+                  isDisabled={isAdding}
+                  type="submit"
+                >
+                  <Plus aria-hidden="true" />
+                  {isAdding ? "Adding…" : "Add item"}
                 </Button>
               </div>
-              <form
-                autoComplete="off"
-                className="flex min-h-0 flex-auto flex-col"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  void submit();
-                }}
-              >
-                <div className="min-h-0 flex-auto overflow-y-auto overscroll-contain p-4">
-                  <fieldset
-                    className="flex min-w-0 flex-col gap-4 disabled:opacity-60"
-                    disabled={isAdding}
-                  >
-                    <label className="flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
-                      <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                        item
-                      </span>
-                      <Input
-                        id="new-item-mobile"
-                        aria-label="New item"
-                        aria-describedby={errors.name ? "new-item-mobile-name-error" : undefined}
-                        aria-invalid={errors.name ? true : undefined}
-                        autoComplete="off"
-                        // oxlint-disable-next-line jsx-a11y/no-autofocus -- Focus the first field only after the user opens this modal.
-                        autoFocus
-                        className="h-9 font-serif text-base"
-                        maxLength={200}
-                        name="shopping-item"
-                        onChange={(event) => onChange("name", event.target.value)}
-                        placeholder="microwave popcorn"
-                        value={newItem.name}
-                      />
-                      {errors.name ? (
-                        <ItemFieldError id="new-item-mobile-name-error" message={errors.name} />
-                      ) : null}
-                      <InventoryMatchNotice
-                        id="new-item-mobile-inventory-match"
-                        match={inventoryMatch}
-                      />
-                    </label>
-                    <div className="flex min-w-0 flex-col gap-1">
-                      <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                        qty · unit · amount each
-                      </span>
-                      <div className="flex min-w-0 items-center gap-1">
-                        <Input
-                          aria-label="New item quantity"
-                          aria-describedby={
-                            errors.quantity ? "new-item-mobile-quantity-error" : undefined
-                          }
-                          aria-invalid={errors.quantity ? true : undefined}
-                          className="h-9 w-16 shrink-0 text-right font-mono text-base"
-                          inputMode="numeric"
-                          maxLength={6}
-                          onChange={(event) => onChange("quantity", event.target.value)}
-                          value={newItem.quantity}
-                        />
-                        <span className="[&_button]:size-11">
-                          <NewQuantityStepper
-                            newItem={newItem}
-                            onAdjust={(nextQuantity) => onChange("quantity", String(nextQuantity))}
-                          />
-                        </span>
-                        <Input
-                          aria-label="New item unit"
-                          aria-describedby={errors.unit ? "new-item-mobile-unit-error" : undefined}
-                          aria-invalid={errors.unit ? true : undefined}
-                          className="h-9 min-w-0 flex-1 font-serif text-base"
-                          maxLength={32}
-                          onChange={(event) => onChange("unit", event.target.value)}
-                          placeholder="box"
-                          value={newItem.unit}
-                        />
-                        <Input
-                          aria-label="New item amount each"
-                          aria-describedby={
-                            errors.amount ? "new-item-mobile-amount-error" : undefined
-                          }
-                          aria-invalid={errors.amount ? true : undefined}
-                          className="h-9 min-w-0 flex-1 font-serif text-base"
-                          maxLength={64}
-                          onChange={(event) => onChange("amount", event.target.value)}
-                          placeholder="3 bags"
-                          value={newItem.amount}
-                        />
-                      </div>
-                      {errors.quantity || errors.unit || errors.amount ? (
-                        <div className="flex flex-wrap gap-x-2 gap-y-0.5">
-                          {errors.quantity ? (
-                            <ItemFieldError
-                              id="new-item-mobile-quantity-error"
-                              message={errors.quantity}
-                            />
-                          ) : null}
-                          {errors.unit ? (
-                            <ItemFieldError id="new-item-mobile-unit-error" message={errors.unit} />
-                          ) : null}
-                          {errors.amount ? (
-                            <ItemFieldError
-                              id="new-item-mobile-amount-error"
-                              message={errors.amount}
-                            />
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </div>
-                    <label className="flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
-                      <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                        category
-                      </span>
-                      <Input
-                        id="new-category-mobile"
-                        aria-label="New item category"
-                        aria-describedby={
-                          errors.category ? "new-item-mobile-category-error" : undefined
-                        }
-                        aria-invalid={errors.category ? true : undefined}
-                        className="h-9 font-serif text-base"
-                        maxLength={64}
-                        onChange={(event) => onChange("category", event.target.value)}
-                        value={newItem.category}
-                      />
-                      {errors.category ? (
-                        <ItemFieldError
-                          id="new-item-mobile-category-error"
-                          message={errors.category}
-                        />
-                      ) : null}
-                    </label>
-                  </fieldset>
-                </div>
-                <div className="flex shrink-0 flex-col gap-2 border-t border-border px-4 pt-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-                  <Switch
-                    className="group flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-md outline-none"
-                    isDisabled={isAdding}
-                    isSelected={keepAdding}
-                    onChange={onKeepAddingChange}
-                  >
-                    <span className="text-sm">Keep adding items</span>
-                    <span className="flex h-6 w-10 shrink-0 items-center rounded-full bg-muted-foreground/30 p-0.5 transition-colors group-data-focus-visible:ring-2 group-data-focus-visible:ring-ring group-data-focus-visible:ring-offset-2 group-data-selected:bg-primary">
-                      <span className="size-5 rounded-full bg-background shadow-sm transition-transform duration-150 ease-out group-data-selected:translate-x-4 motion-reduce:transition-none" />
-                    </span>
-                  </Switch>
-                  <Button
-                    className="h-11 w-full gap-2 text-sm active:scale-[0.98]"
-                    isDisabled={isAdding}
-                    type="submit"
-                  >
-                    <Plus aria-hidden="true" />
-                    {isAdding ? "Adding…" : "Add item"}
-                  </Button>
-                </div>
-              </form>
-            </Dialog>
-          </Modal>
-        </MobileDrawerViewport>
+            </form>
+          </Dialog>
+        </Modal>
       </ModalOverlay>
     </DialogTrigger>
   );

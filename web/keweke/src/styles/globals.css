@@ -6,6 +6,23 @@
   .site-header {
     padding-top: env(safe-area-inset-top);
   }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .keep-adding-toggle[data-selected] {
+      animation: keep-adding-siren 2.4s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes keep-adding-siren {
+  0%,
+  100% {
+    border-color: #ef4444;
+  }
+
+  50% {
+    border-color: #3b82f6;
+  }
 }
 
 html,
