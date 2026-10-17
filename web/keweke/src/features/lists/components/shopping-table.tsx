@@ -53,7 +53,7 @@ export function ShoppingTable({
   onRemove: (id: string) => void;
   onShowHistory?: (item: ListItem) => void;
   onSpreadsheetModeChange: (isActive: boolean) => void;
-  onToggle: (id: string, checked: boolean) => void;
+  onToggle: (id: string, checked: boolean) => Promise<boolean>;
   onUpdate: (itemId: string, draft: ItemEditDraft) => Promise<boolean>;
   showNewItemRow: boolean;
 }) {
@@ -151,9 +151,8 @@ export function ShoppingTable({
         onRemove,
         onShowHistory,
         onStartEditing: startEditing,
-        onToggle,
       }),
-    [identity, isSaving, onAdjustQuantity, onRemove, onShowHistory, onToggle, startEditing],
+    [identity, isSaving, onAdjustQuantity, onRemove, onShowHistory, startEditing],
   );
   const tableMeta = useMemo<ShoppingTableMeta>(
     () => ({

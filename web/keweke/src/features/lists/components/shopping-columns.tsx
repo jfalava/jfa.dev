@@ -1,5 +1,5 @@
 import type { ListItem } from "@jfa.dev/common/lists";
-import { Button, Checkbox, Input } from "@jfa.dev/common/ui";
+import { Button, Input } from "@jfa.dev/common/ui";
 import NumberFlow from "@number-flow/react";
 import { createColumnHelper, tableFeatures, type ReactTable } from "@tanstack/react-table";
 import { Check, History, Pencil, Trash2, X } from "lucide-react";
@@ -8,6 +8,7 @@ import type { LocalIdentity } from "@/features/auth/lib/local-identity";
 import type { ItemDraftErrors } from "@/features/lists/lib/item-draft";
 
 import {
+  ItemCompletionCheckbox,
   ItemFieldError,
   ItemMeasure,
   QuantityStepper,
@@ -28,7 +29,7 @@ export type ShoppingTableMeta = {
   onSaveEditing: () => void;
   onShowHistory?: (item: ListItem) => void;
   onStartEditing: (item: ListItem) => void;
-  onToggle: (id: string, checked: boolean) => void;
+  onToggle: (id: string, checked: boolean) => Promise<boolean>;
 };
 
 export const shoppingTableFeatures = tableFeatures({
@@ -57,10 +58,6 @@ function itemStatus(item: ListItem): string {
   return isDepleted(item) ? "Out of stock" : "Purchased";
 }
 
-function itemToggleLabel(item: ListItem): string {
-  return item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`;
-}
-
 export function createShoppingColumns() {
   return shoppingColumnHelper.columns([
     shoppingColumnHelper.display({
@@ -77,13 +74,7 @@ export function createShoppingColumns() {
       header: "",
       cell: ({ row, table }) => {
         const { onToggle } = getShoppingTableMeta(table);
-        return (
-          <Checkbox
-            aria-label={itemToggleLabel(row.original)}
-            isSelected={row.original.checked}
-            onChange={(checked) => onToggle(row.original.id, checked)}
-          />
-        );
+        return <ItemCompletionCheckbox item={row.original} onToggle={onToggle} />;
       },
     }),
     shoppingColumnHelper.accessor("name", {
@@ -387,6 +378,19 @@ export function createShoppingColumns() {
   ]);
 }
 
+// Keep this cell component stable so another row's save cannot reset pending feedback.
+const mobileCompletionColumn = shoppingColumnHelper.display({
+  id: "done",
+  header: "Done",
+  cell: ({ row, table }) => (
+    <ItemCompletionCheckbox
+      className="size-11 shrink-0 justify-center rounded-md"
+      item={row.original}
+      onToggle={getShoppingTableMeta(table).onToggle}
+    />
+  ),
+});
+
 export function createMobileShoppingColumns({
   identity,
   isSaving,
@@ -394,7 +398,6 @@ export function createMobileShoppingColumns({
   onRemove,
   onShowHistory,
   onStartEditing,
-  onToggle,
 }: {
   identity?: LocalIdentity;
   isSaving: boolean;
@@ -402,21 +405,9 @@ export function createMobileShoppingColumns({
   onRemove: (id: string) => void;
   onShowHistory?: (item: ListItem) => void;
   onStartEditing: (item: ListItem) => void;
-  onToggle: (id: string, checked: boolean) => void;
 }) {
   return shoppingColumnHelper.columns([
-    shoppingColumnHelper.display({
-      id: "done",
-      header: "Done",
-      cell: ({ row }) => (
-        <Checkbox
-          aria-label={itemToggleLabel(row.original)}
-          className="size-11 shrink-0 justify-center rounded-md"
-          isSelected={row.original.checked}
-          onChange={(checked) => onToggle(row.original.id, checked)}
-        />
-      ),
-    }),
+    mobileCompletionColumn,
     shoppingColumnHelper.display({
       id: "item",
       header: "Item",

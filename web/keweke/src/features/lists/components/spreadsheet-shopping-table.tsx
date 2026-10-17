@@ -1,5 +1,5 @@
 import type { ListItem } from "@jfa.dev/common/lists";
-import { Button, Checkbox, Input, Kbd, KbdGroup, TableCell } from "@jfa.dev/common/ui";
+import { Button, Input, Kbd, KbdGroup, TableCell } from "@jfa.dev/common/ui";
 import { useHotkey, useHotkeys } from "@tanstack/react-hotkeys";
 import { History, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent } from "react";
@@ -13,7 +13,7 @@ import {
 } from "@/features/lists/lib/item-draft";
 
 import { InventoryMatchNotice } from "./inventory-match-notice";
-import { ItemFieldError } from "./list-item-elements";
+import { ItemCompletionCheckbox, ItemFieldError } from "./list-item-elements";
 import type { ItemEditDraft, NewItemDraft } from "./list-item-types";
 import {
   areItemDraftsEqual,
@@ -53,7 +53,7 @@ export function SpreadsheetShoppingTable({
   onNewItemChange: (field: keyof NewItemDraft, value: string) => void;
   onRemove: (id: string) => void;
   onShowHistory?: (item: ListItem) => void;
-  onToggle: (id: string, checked: boolean) => void;
+  onToggle: (id: string, checked: boolean) => Promise<boolean>;
   onUpdate: (itemId: string, draft: ItemEditDraft) => Promise<boolean>;
   onExit: () => void;
   showNewItemRow: boolean;
@@ -499,7 +499,7 @@ function SpreadsheetItemRow({
   onChange: (field: SpreadsheetField, value: string) => void;
   onRemove: (id: string) => void;
   onShowHistory?: (item: ListItem) => void;
-  onToggle: (id: string, checked: boolean) => void;
+  onToggle: (id: string, checked: boolean) => Promise<boolean>;
 }) {
   return (
     <tr
@@ -512,13 +512,7 @@ function SpreadsheetItemRow({
         </span>
       </TableCell>
       <TableCell className="px-3 py-2">
-        <Checkbox
-          aria-label={
-            item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`
-          }
-          isSelected={item.checked}
-          onChange={(checked) => onToggle(item.id, checked)}
-        />
+        <ItemCompletionCheckbox item={item} onToggle={onToggle} />
       </TableCell>
       <TableCell className="px-2 py-2 align-top">
         <SpreadsheetInput

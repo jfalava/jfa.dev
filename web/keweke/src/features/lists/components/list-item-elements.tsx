@@ -1,14 +1,112 @@
+import { cn } from "@jfa.dev/common";
 import type { ListIdentity } from "@jfa.dev/common/identities";
 import type { ListItem } from "@jfa.dev/common/lists";
 import { Button } from "@jfa.dev/common/ui";
 import NumberFlow from "@number-flow/react";
 import { Blobatar } from "blobatar/react";
-import { ChevronDown, ChevronUp, Pencil, Plus } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Pencil, Plus, X } from "lucide-react";
+import { useEffect, useId, useRef, useState } from "react";
+import { Checkbox as AriaCheckbox } from "react-aria-components";
 
 import { userAvatarSeed } from "@/features/auth/lib/blobatar";
 import { LOCAL_IDENTITY_PLACEHOLDER, type LocalIdentity } from "@/features/auth/lib/local-identity";
 
 import type { ItemEditDraft, NewItemDraft } from "./list-item-types";
+
+export function ItemCompletionCheckbox({
+  className,
+  item,
+  onToggle,
+}: {
+  className?: string;
+  item: ListItem;
+  onToggle: (id: string, checked: boolean) => Promise<boolean>;
+}) {
+  const [feedback, setFeedback] = useState<{ checked: boolean; failed: boolean }>();
+  const pendingRef = useRef<{
+    checked: boolean;
+    sending: boolean;
+    timer: ReturnType<typeof setTimeout>;
+  }>(undefined);
+  const onToggleRef = useRef(onToggle);
+  const errorId = useId();
+
+  useEffect(() => {
+    onToggleRef.current = onToggle;
+  }, [onToggle]);
+
+  useEffect(
+    () => () => {
+      // Filtering or leaving the view must not discard an already accepted tap.
+      pendingRef.current = undefined;
+    },
+    [],
+  );
+
+  const scheduleToggle = (checked: boolean): void => {
+    if (pendingRef.current?.sending) {
+      return;
+    }
+    // Repeated taps repeat the first intent instead of undoing the optimistic check.
+    const nextChecked = pendingRef.current?.checked ?? checked;
+    clearTimeout(pendingRef.current?.timer);
+    setFeedback({ checked: nextChecked, failed: false });
+    const timer = setTimeout(async () => {
+      if (pendingRef.current?.timer === timer) {
+        pendingRef.current = { checked: nextChecked, sending: true, timer };
+      }
+      const saved = await onToggleRef.current(item.id, nextChecked).catch(() => false);
+      if (pendingRef.current?.timer === timer) {
+        pendingRef.current = undefined;
+        setFeedback(saved ? undefined : { checked: nextChecked, failed: true });
+      }
+    }, 300);
+    pendingRef.current = { checked: nextChecked, sending: false, timer };
+  };
+
+  const failed = feedback?.failed === true;
+
+  return (
+    <AriaCheckbox
+      aria-describedby={failed ? errorId : undefined}
+      aria-label={
+        item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`
+      }
+      className={cn(
+        "group inline-flex min-w-0 items-center gap-2 rounded-sm text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+        className,
+      )}
+      isInvalid={failed}
+      isSelected={feedback && !failed ? feedback.checked : item.checked}
+      onChange={scheduleToggle}
+    >
+      {({ isSelected }) => (
+        <>
+          <span
+            aria-hidden="true"
+            className={cn(
+              "flex size-4 shrink-0 items-center justify-center rounded-none border border-input bg-background text-primary-foreground transition-colors",
+              failed
+                ? "border-destructive bg-destructive/10 text-destructive"
+                : isSelected && "border-primary bg-primary",
+            )}
+          >
+            {failed ? (
+              <X className="size-3.5" strokeWidth={3} />
+            ) : isSelected ? (
+              <Check className="size-3.5" strokeWidth={3} />
+            ) : null}
+          </span>
+          {failed ? (
+            <span className="sr-only" id={errorId} role="alert">
+              Could not save {item.name}. Activate the checkbox to retry.
+            </span>
+          ) : null}
+        </>
+      )}
+    </AriaCheckbox>
+  );
+}
 
 /**
  * An item name as it appears inside a sentence the system speaks — a toast, for

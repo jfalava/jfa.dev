@@ -41,6 +41,7 @@ import {
   validateItemDraft,
   type ItemDraftErrors,
 } from "@/features/lists/lib/item-draft";
+import { ListCommandQueue } from "@/features/lists/lib/list-command-queue";
 import { isListAddress } from "@/features/lists/lib/list-id";
 import {
   applyMutation,
@@ -122,6 +123,7 @@ function ListPage() {
   const [loadedList, setLoadedList] = useState<
     { backend: "local" | "remote"; snapshot: ListSnapshot } | undefined
   >();
+  const [commandQueue] = useState(() => new ListCommandQueue());
   const [loadedRequestId, setLoadedRequestId] = useState<string>();
   const [isMigrating, setIsMigrating] = useState(false);
   const [isPublishConfirmOpen, setIsPublishConfirmOpen] = useState(false);
@@ -398,10 +400,12 @@ function ListPage() {
 
       let result;
       try {
-        result = await applyMutation(
-          loadedList.snapshot.id,
-          loadedList.backend,
-          await createMutation(loadedList.snapshot, command, identity, loadedList.backend),
+        result = await commandQueue.commit(loadedList.snapshot, async (base) =>
+          applyMutation(
+            base.id,
+            loadedList.backend,
+            await createMutation(base, command, identity, loadedList.backend),
+          ),
         );
       } catch {
         if (loadedList.backend === "remote" && !identity.remoteUsername) {
@@ -409,7 +413,7 @@ function ListPage() {
           setUserDialogMessage(undefined);
           setIsUserDialogOpen(true);
         } else {
-          toast.error("Could not prepare this change.");
+          toast.error("Could not save this change. Please try again.");
         }
         return null;
       }
@@ -417,20 +421,25 @@ function ListPage() {
         toast.error("This list no longer exists.");
         return null;
       }
-      if (result.status === "conflict") {
-        setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
-        toast.error("This list changed elsewhere. Your view was refreshed.");
-        return null;
-      }
       if (result.status === "unauthorized") {
         toast.error("This user is not allowed to change the remote list.");
         return null;
       }
 
-      setLoadedList({ backend: loadedList.backend, snapshot: result.snapshot });
+      setLoadedList((current) =>
+        current?.backend === loadedList.backend &&
+        current.snapshot.id === result.snapshot.id &&
+        current.snapshot.revision <= result.snapshot.revision
+          ? { backend: loadedList.backend, snapshot: result.snapshot }
+          : current,
+      );
+      if (result.status === "conflict") {
+        toast.error("This list changed elsewhere. Your view was refreshed.");
+        return null;
+      }
       return result.snapshot;
     },
-    [identity, loadedList],
+    [commandQueue, identity, loadedList],
   );
 
   const migrate = useCallback(async (): Promise<void> => {
@@ -711,20 +720,18 @@ function ListPage() {
   }, []);
 
   const toggleItem = useCallback(
-    (id: string, checked: boolean): void => {
+    async (id: string, checked: boolean): Promise<boolean> => {
       const item = loadedList?.snapshot.items.find((candidate) => candidate.id === id);
-      void commit({ type: "set-item-checked", itemId: id, checked }).then((committed) => {
-        if (!committed || !item) {
-          return undefined;
-        }
+      const committed = await commit({ type: "set-item-checked", itemId: id, checked });
+      if (committed && item) {
         toast.success(
           <>
             <QuotedItemName name={item.name} />{" "}
             {checked ? "purchased · moved to inventory." : "restored to the list."}
           </>,
         );
-        return undefined;
-      });
+      }
+      return committed !== null;
     },
     [commit, loadedList],
   );
