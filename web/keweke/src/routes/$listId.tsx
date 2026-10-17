@@ -27,6 +27,7 @@ import { QuotedItemName } from "@/features/lists/components/list-item-elements";
 import type { ItemEditDraft, NewItemDraft } from "@/features/lists/components/list-item-types";
 import { ListPageHeader } from "@/features/lists/components/list-page-header";
 import { LIST_VIEW_PANEL_ID } from "@/features/lists/components/list-view-tabs";
+import { MobileNewItemDrawer } from "@/features/lists/components/mobile-shopping-table";
 import { PublishListDialog } from "@/features/lists/components/publish-list-dialog";
 import { ShoppingTable } from "@/features/lists/components/shopping-table";
 import { NEW_SPREADSHEET_ROW_ID } from "@/features/lists/components/spreadsheet-mode";
@@ -137,6 +138,8 @@ function ListPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isFirstList, setIsFirstList] = useState(false);
   const [filter, setFilter] = useState("");
+  const [isNewItemDrawerOpen, setIsNewItemDrawerOpen] = useState(false);
+  const [keepAddingItems, setKeepAddingItems] = useState(false);
   const [newItemDraft, setNewItemDraft] = useState<NewItemDraft>({
     name: "",
     quantity: "1",
@@ -149,6 +152,10 @@ function ListPage() {
   const [pendingDuplicate, setPendingDuplicate] = useState<PendingDuplicate>();
   const [isAddingDuplicate, setIsAddingDuplicate] = useState(false);
   const [identity, setIdentity] = useState<LocalIdentity>();
+
+  if (isDesktop && isNewItemDrawerOpen) {
+    setIsNewItemDrawerOpen(false);
+  }
 
   const isSpreadsheetModeActive = isDesktop && isSpreadsheetMode;
   const handleSpreadsheetModeChange = useCallback(
@@ -167,6 +174,7 @@ function ListPage() {
         return;
       }
       setFilter("");
+      setIsNewItemDrawerOpen(false);
       void navigate({
         to: "/$listId",
         params: { listId },
@@ -186,6 +194,12 @@ function ListPage() {
   }, []);
 
   const focusNewItemInput = useCallback((): void => {
+    if (!isDesktop) {
+      if (view === "list") {
+        setIsNewItemDrawerOpen(true);
+      }
+      return;
+    }
     const spreadsheetElement = document.querySelector<HTMLInputElement>(
       `[data-spreadsheet-row-id="${NEW_SPREADSHEET_ROW_ID}"][data-spreadsheet-field="name"]`,
     );
@@ -201,7 +215,7 @@ function ListPage() {
       target.focus();
       target.select();
     }
-  }, []);
+  }, [isDesktop, view]);
 
   useHotkeys(
     [
@@ -635,6 +649,13 @@ function ListPage() {
         amount: "",
         category: "GENERAL",
       });
+      if (isNewItemDrawerOpen) {
+        if (keepAddingItems) {
+          requestAnimationFrame(() => document.getElementById("new-item-mobile")?.focus());
+        } else {
+          setIsNewItemDrawerOpen(false);
+        }
+      }
       toast.success(
         <>
           <QuotedItemName name={name} /> added to the list.
@@ -642,7 +663,7 @@ function ListPage() {
       );
       return true;
     },
-    [commit],
+    [commit, isNewItemDrawerOpen, keepAddingItems],
   );
 
   const addItem = useCallback(async (): Promise<boolean> => {
@@ -886,6 +907,9 @@ function ListPage() {
           />
           <section
             aria-labelledby={`list-view-tab-${view}`}
+            className={
+              view === "list" ? "pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0" : undefined
+            }
             id={LIST_VIEW_PANEL_ID}
             role="tabpanel"
             tabIndex={-1}
@@ -942,6 +966,19 @@ function ListPage() {
           </section>
         </main>
       </div>
+      {!isDesktop && view === "list" ? (
+        <MobileNewItemDrawer
+          newItem={newItemDraft}
+          errors={displayedNewItemErrors}
+          inventoryMatch={newItemMatch}
+          isOpen={isNewItemDrawerOpen}
+          keepAdding={keepAddingItems}
+          onAdd={addItem}
+          onChange={updateNewItemDraft}
+          onKeepAddingChange={setKeepAddingItems}
+          onOpenChange={setIsNewItemDrawerOpen}
+        />
+      ) : null}
     </div>
   );
 }

@@ -230,18 +230,11 @@ export function ShoppingTable({
           editErrors={displayedEditErrors}
           editingItemId={editingItemId}
           isSaving={isSaving}
-          newItem={newItem}
-          newItemErrors={newItemErrors}
-          newItemMatch={newItemMatch}
           emptyMessage={emptyMessage}
           table={mobileTable}
           onCancelEditing={cancelEditing}
-          onAdd={handleAdd}
           onEditDraftChange={updateDraft}
-          onNewItemChange={onNewItemChange}
           onSaveEditing={saveEditing}
-          onNewItemKeyDown={submitNewItemOnEnter}
-          showNewItemRow={showNewItemRow}
         />
         <div className="hidden w-full overflow-x-auto md:block">
           <table className="w-full min-w-190 border-collapse [&_td:first-child]:pl-4 sm:[&_td:first-child]:pl-6 lg:[&_td:first-child]:pl-8 [&_td:last-child]:pr-4 sm:[&_td:last-child]:pr-6 lg:[&_td:last-child]:pr-8 [&_th:first-child]:pl-4 sm:[&_th:first-child]:pl-6 lg:[&_th:first-child]:pl-8 [&_th:last-child]:pr-4 sm:[&_th:last-child]:pr-6 lg:[&_th:last-child]:pr-8">
