@@ -1,6 +1,6 @@
 import { Button, Input, TableCell } from "@jfa.dev/common/ui";
 import { Plus, Save, X } from "lucide-react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Dialog, DialogTrigger, Heading, Modal, ModalOverlay, Switch } from "react-aria-components";
 
 import type { InventoryMatch } from "@/features/lists/lib/inventory-match";
@@ -270,6 +270,65 @@ export function MobileShoppingTable({
   );
 }
 
+function drawerViewportBounds(overlay?: HTMLElement) {
+  const viewport = window.visualViewport;
+  const origin = overlay?.getBoundingClientRect();
+  return {
+    top:
+      (viewport?.pageTop ?? window.scrollY) -
+      (origin ? origin.top + window.scrollY + (overlay?.clientTop ?? 0) : 0),
+    left:
+      (viewport?.pageLeft ?? window.scrollX) -
+      (origin ? origin.left + window.scrollX + (overlay?.clientLeft ?? 0) : 0),
+    width: viewport?.width ?? document.documentElement.clientWidth,
+    height: viewport?.height ?? document.documentElement.clientHeight,
+  };
+}
+
+/** Follow Safari's visible viewport, including keyboard-induced panning. */
+function MobileDrawerViewport({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // This component mounts inside RAC's portal, so geometry exists before autofocus.
+  const [initialBounds] = useState(() => drawerViewportBounds());
+
+  useLayoutEffect(() => {
+    const stage = ref.current;
+    const overlay = stage?.parentElement;
+    if (!stage || !overlay) {
+      return undefined;
+    }
+    const viewport = window.visualViewport;
+    const update = (): void => {
+      const bounds = drawerViewportBounds(overlay);
+      // Apply keyboard geometry synchronously, without waiting for a React commit.
+      stage.style.top = `${bounds.top}px`;
+      stage.style.left = `${bounds.left}px`;
+      stage.style.width = `${bounds.width}px`;
+      stage.style.height = `${bounds.height}px`;
+      overlay.style.minHeight = `max(100dvh, ${bounds.top + bounds.height}px)`;
+      overlay.style.minWidth = `${bounds.left + bounds.width}px`;
+    };
+
+    update();
+    viewport?.addEventListener("resize", update);
+    viewport?.addEventListener("scroll", update);
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update);
+    return () => {
+      viewport?.removeEventListener("resize", update);
+      viewport?.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update);
+    };
+  }, []);
+
+  return (
+    <div className="absolute flex flex-col justify-end pt-4" ref={ref} style={initialBounds}>
+      {children}
+    </div>
+  );
+}
+
 export function MobileNewItemDrawer({
   newItem,
   errors,
@@ -318,9 +377,9 @@ export function MobileNewItemDrawer({
         isDismissable={!isAdding}
         isKeyboardDismissDisabled={isAdding}
       >
-        <div className="sticky top-0 flex h-(--visual-viewport-height) w-full items-end pt-4">
-          <Modal className="flex max-h-full w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-background text-foreground shadow-xl outline-none">
-            <Dialog aria-label="New item" className="flex min-h-0 flex-col outline-none">
+        <MobileDrawerViewport>
+          <Modal className="flex max-h-full min-h-0 w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-background text-foreground shadow-xl outline-none">
+            <Dialog aria-label="New item" className="flex min-h-0 flex-auto flex-col outline-none">
               <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
                 <Heading slot="title" className="text-xl font-semibold tracking-tight">
                   New item
@@ -337,13 +396,13 @@ export function MobileNewItemDrawer({
               </div>
               <form
                 autoComplete="off"
-                className="flex min-h-0 flex-col"
+                className="flex min-h-0 flex-auto flex-col"
                 onSubmit={(event) => {
                   event.preventDefault();
                   void submit();
                 }}
               >
-                <div className="min-h-0 overflow-y-auto overscroll-contain p-4">
+                <div className="min-h-0 flex-auto overflow-y-auto overscroll-contain p-4">
                   <fieldset
                     className="flex min-w-0 flex-col gap-4 disabled:opacity-60"
                     disabled={isAdding}
@@ -490,7 +549,7 @@ export function MobileNewItemDrawer({
               </form>
             </Dialog>
           </Modal>
-        </div>
+        </MobileDrawerViewport>
       </ModalOverlay>
     </DialogTrigger>
   );
