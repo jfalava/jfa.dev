@@ -2,26 +2,54 @@
 @import "tw-animate-css";
 @import "@jfa.dev/common/styles.css";
 
+@property --keep-adding-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
 @layer components {
   .site-header {
     padding-top: env(safe-area-inset-top);
   }
 
+  .keep-adding-toggle[data-selected]::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    pointer-events: none;
+    /* Ultrathink's rainbow palette trails a bright clockwise-moving tip. */
+    background: conic-gradient(
+      from var(--keep-adding-angle),
+      transparent 0deg 230deg,
+      #eb5f57 245deg,
+      #f58b57 260deg,
+      #fac35f 275deg,
+      #91c882 290deg,
+      #82aadc 305deg,
+      #9b82c8 320deg,
+      #c882b4 335deg,
+      #fff1e8 350deg,
+      transparent 360deg
+    );
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
-    .keep-adding-toggle[data-selected] {
-      animation: keep-adding-siren 2.4s ease-in-out infinite;
+    .keep-adding-toggle[data-selected]::before {
+      animation: keep-adding-orbit 2.4s linear infinite;
     }
   }
 }
 
-@keyframes keep-adding-siren {
-  0%,
-  100% {
-    border-color: #ef4444;
-  }
-
-  50% {
-    border-color: #3b82f6;
+@keyframes keep-adding-orbit {
+  to {
+    --keep-adding-angle: 360deg;
   }
 }
 

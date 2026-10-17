@@ -322,7 +322,7 @@ export function MobileNewItemDialog({
           <Dialog aria-label="New item" className="flex min-h-0 flex-auto flex-col outline-none">
             <Button
               aria-label="Close new item"
-              className="absolute top-1 right-1 z-10 size-7 rounded-full bg-background p-0 shadow-sm"
+              className="absolute top-1 right-1 z-10 size-6 rounded-full bg-background p-0 shadow-sm"
               isDisabled={isAdding}
               slot="close"
               variant="ghost"
@@ -384,7 +384,7 @@ export function MobileNewItemDialog({
                         onChange={(event) => onChange("quantity", event.target.value)}
                         value={newItem.quantity}
                       />
-                      <span className="[&_button]:size-11">
+                      <span className="[&_button]:size-6">
                         <NewQuantityStepper
                           newItem={newItem}
                           onAdjust={(nextQuantity) => onChange("quantity", String(nextQuantity))}
@@ -458,9 +458,9 @@ export function MobileNewItemDialog({
                   </label>
                 </fieldset>
               </div>
-              <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border p-4">
+              <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-4 py-3">
                 <Toggle
-                  className="keep-adding-toggle h-11 min-w-0 cursor-pointer border-2 px-2 text-xs active:scale-[0.98] data-[selected]:border-primary"
+                  className="keep-adding-toggle relative h-8 min-w-0 cursor-pointer border-2 bg-muted px-2 text-[11px] text-muted-foreground grayscale active:scale-[0.98] data-[selected]:border-primary/40 data-[selected]:grayscale-0"
                   isDisabled={isAdding}
                   isSelected={keepAdding}
                   onChange={onKeepAddingChange}
@@ -469,7 +469,7 @@ export function MobileNewItemDialog({
                   Keep adding items
                 </Toggle>
                 <Button
-                  className="h-11 gap-1.5 px-3 text-xs active:scale-[0.98]"
+                  className="h-8 gap-1 px-2 text-[11px] active:scale-[0.98]"
                   isDisabled={isAdding}
                   type="submit"
                 >
