@@ -56,8 +56,10 @@ export function NowPlayingBar() {
           playingColumn,
         )}
       >
-        <div className="flex h-full items-center justify-between gap-3 overflow-hidden px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
-          {/* Mobile: badge left, track right. sm+: mirror SiteHeader icon gutter + brand widths. */}
+        <div className="relative flex h-full items-center justify-between gap-3 overflow-hidden px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
+          {/* Mobile: badge left, track right. sm..2xl: label left, track flush right.
+              2xl+: the content shell becomes a bounded center column (side gutters
+              visible), so the track centers on the column's true middle. */}
           <div className="flex min-w-0 shrink-0 items-center gap-1">
             <span className="hidden size-8 shrink-0 sm:inline-flex" aria-hidden />
             <div className="flex min-w-0 items-center gap-2 sm:w-84 md:w-120 lg:w-xl">
@@ -89,9 +91,9 @@ export function NowPlayingBar() {
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-1 items-center justify-end sm:justify-start">
+          <div className="flex min-w-0 flex-1 items-center justify-end 2xl:absolute 2xl:inset-y-0 2xl:left-1/2 2xl:w-max 2xl:max-w-[calc(100%-24rem)] 2xl:-translate-x-1/2">
             {isLoading && !nowPlaying ? (
-              <div className="flex max-w-full min-w-0 items-center gap-2 sm:w-full sm:gap-3">
+              <div className="flex max-w-full min-w-0 items-center gap-2 sm:gap-3">
                 <div className="size-7 shrink-0 animate-pulse rounded-md bg-muted" aria-hidden />
                 <div className="min-w-0 flex-1">
                   <div className="h-2.5 w-48 max-w-full animate-pulse rounded bg-muted sm:hidden" />
@@ -106,7 +108,7 @@ export function NowPlayingBar() {
                 Not scrobbling anything atm
               </span>
             ) : (
-              <div className="flex max-w-full min-w-0 flex-1 items-center gap-2 sm:gap-3">
+              <div className="flex max-w-full min-w-0 items-center gap-2 sm:gap-3">
                 {artwork ? (
                   <TitleLink
                     {...(trackUrl ? { href: trackUrl, target: "_blank", rel: "noreferrer" } : {})}
