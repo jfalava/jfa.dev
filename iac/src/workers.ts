@@ -1,12 +1,11 @@
 import { resolve } from "node:path";
 
-import { Stack } from "alchemy";
+import { remote, Stack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import type { Output } from "alchemy/Output";
 import { State } from "alchemy/State";
 import { Stage } from "alchemy/Stage";
-import * as Config from "effect/Config";
 import * as Effect from "effect/Effect";
 
 import type { StageConfig, WorkerConfig } from "./config";
@@ -64,10 +63,10 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
       ),
     );
   }
-  // This is a non-secret identifier; secret values never enter the deployment.
-  const playlistsSecretsStoreId = yield* Config.NonEmptyString(
-    "JFA_DEV_SECRETS_STORE_ID",
-  );
+  // The Store provider adopts the account store without managing secret values.
+  // Keep it live in dev so bindings read existing secrets, not an empty simulator.
+  const secretsStore =
+    yield* Cloudflare.SecretsStore.Store("SharedSecretsStore").pipe(remote());
 
   const landingOptions = {
     ...workerDefaults(config.workers.landing),
@@ -323,13 +322,13 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
       {
         type: "secrets_store_secret",
         name: "LASTFM_API_KEY",
-        storeId: playlistsSecretsStoreId,
+        storeId: secretsStore.storeId,
         secretName: "JFA_DEV_LASTFM_API_KEY",
       },
       {
         type: "secrets_store_secret",
         name: "LASTFM_USER",
-        storeId: playlistsSecretsStoreId,
+        storeId: secretsStore.storeId,
         secretName: "JFA_DEV_LASTFM_USER",
       },
     ],

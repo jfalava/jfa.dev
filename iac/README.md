@@ -1,9 +1,11 @@
 # Secrets Store bindings
 
 Playlists reads Last.fm credentials exclusively through Secrets Store bindings.
-Alchemy deploys references to existing secrets, never their values. Set the
-non-secret `JFA_DEV_SECRETS_STORE_ID` in the deployment environment or `iac/.env`.
-The store must contain active secrets with the Workers scope:
+Alchemy discovers and adopts the account Secrets Store as `SharedSecretsStore`
+and deploys references to existing secrets, never their values. No store-ID
+environment variable is needed. The Store provider creates the account store
+if none exists, but does not create secret records or delete the shared store
+on teardown. The store must contain active secrets with the Workers scope:
 
 | Worker binding   | Existing secret name     |
 | ---------------- | ------------------------ |
@@ -25,8 +27,8 @@ protect an existing record: retention must have been persisted previously.
 
 With explicit operator approval, pause concurrent deployments and, from `iac/`:
 
-1. In Cloudflare, verify the store ID, the two secret names above, their active
-   status and Workers scope. Set `JFA_DEV_SECRETS_STORE_ID` to that ID.
+1. In Cloudflare, verify the account store contains the two secret names above
+   with active status and Workers scope. Alchemy discovers its ID automatically.
 2. List state using the same Cloudflare account/profile as deployment. Use the
    **actual Alchemy stage**, which defaults to `production` for the deploy script.
    `--backend cloudflare` avoids evaluating the guarded stack during migration:
@@ -57,8 +59,10 @@ With explicit operator approval, pause concurrent deployments and, from `iac/`:
 
 ## Local development
 
-`bun run dev` uses Alchemy's remote Secrets Store proxy for the configured real
-store ID. It requires Cloudflare authentication and access to those secrets;
+`bun run dev` pins `SharedSecretsStore` to Alchemy's remote provider so it
+discovers the real account store instead of creating a local simulator store.
+Worker bindings use Alchemy's remote Secrets Store proxy. This requires
+Cloudflare authentication and access to those secrets;
 use a separate development store/account if production credentials must not be
 read locally. Alchemy does not create or seed secrets in this mode.
 

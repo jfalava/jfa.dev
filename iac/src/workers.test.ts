@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
+import { evaluate } from "alchemy/Output";
 import { InMemoryService, State, StateStoreError } from "alchemy/State";
 import * as ConfigProvider from "effect/ConfigProvider";
 import * as Effect from "effect/Effect";
@@ -13,7 +14,6 @@ import { defineWorkers } from "./workers";
 const compile = async (
   stage: string,
   resources: string[] = [],
-  storeId = "existing-store-id",
   unavailable = false,
 ) => {
   const service = await Effect.runPromise(InMemoryService());
@@ -46,42 +46,45 @@ const compile = async (
         providers: {},
         get: () => undefined,
       }),
-      Effect.provide(
-        ConfigProvider.layer(
-          ConfigProvider.fromUnknown({ JFA_DEV_SECRETS_STORE_ID: storeId }),
-        ),
-      ),
+      Effect.provide(ConfigProvider.layer(ConfigProvider.fromUnknown({}))),
     ),
   );
-  return stack;
+  const bindings = await Effect.runPromise(
+    evaluate(
+      stack.bindings.PlaylistsMountedWorker.flatMap(
+        (entry) => entry.data.bindings ?? [],
+      ),
+      { SharedSecretsStore: { storeId: "discovered-account-store" } },
+    ).pipe(Effect.provide(state)),
+  );
+  return { stack, bindings };
 };
 
 describe("Secrets Store ownership", () => {
   test.each(["local", "development", "production"])(
-    "%s binds existing secrets without declaring secret resources or values",
+    "%s discovers the account store without CI configuration or secret values",
     async (stage) => {
-      const stack = await compile(stage, ["RouterWorker"]);
-      expect(
-        Object.values(stack.resources).filter((resource) =>
-          resource.Type.startsWith("Cloudflare.SecretsStore."),
-        ),
-      ).toEqual([]);
-      const bindings = stack.bindings.PlaylistsMountedWorker.flatMap(
-        (entry) => entry.data.bindings ?? [],
+      const { stack, bindings } = await compile(stage, ["RouterWorker"]);
+      const stores = Object.values(stack.resources).filter((resource) =>
+        resource.Type.startsWith("Cloudflare.SecretsStore"),
       );
+      expect(stores).toHaveLength(1);
+      expect(stores[0].Type).toBe("Cloudflare.SecretsStore");
+      // A local simulator store cannot read the existing account secrets.
+      expect(stores[0].Mode).toBe("live");
       expect(
         bindings.filter((binding) => binding.name.startsWith("LASTFM_")),
       ).toEqual([
         {
           type: "secrets_store_secret",
           name: "LASTFM_API_KEY",
-          storeId: "existing-store-id",
+          storeId: "discovered-account-store",
           secretName: "JFA_DEV_LASTFM_API_KEY",
         },
         {
           type: "secrets_store_secret",
           name: "LASTFM_USER",
-          storeId: "existing-store-id",
+          storeId: "discovered-account-store",
           secretName: "JFA_DEV_LASTFM_USER",
         },
       ]);
@@ -107,14 +110,8 @@ describe("Secrets Store ownership", () => {
   });
 
   test("does not treat a state backend failure as completed migration", async () => {
-    await expect(
-      compile("production", [], "existing-store-id", true),
-    ).rejects.toThrow("state unavailable");
-  });
-
-  test("requires a nonempty store identifier", async () => {
-    await expect(compile("production", [], "")).rejects.toThrow(
-      "JFA_DEV_SECRETS_STORE_ID",
+    await expect(compile("production", [], true)).rejects.toThrow(
+      "state unavailable",
     );
   });
 });
