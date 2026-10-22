@@ -8,6 +8,7 @@
     "format": "oxfmt",
     "lint": "oxlint src alchemy.run.ts",
     "plan": "alchemy deploy --stage ${ALCHEMY_STAGE:-production} --dry-run",
+    "test": "bun test src",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

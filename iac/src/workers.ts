@@ -1,48 +1,17 @@
-import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+import { Stack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import type { Output } from "alchemy/Output";
+import { State } from "alchemy/State";
+import { Stage } from "alchemy/Stage";
 import * as Config from "effect/Config";
 import * as Effect from "effect/Effect";
-import * as Redacted from "effect/Redacted";
 
 import type { StageConfig, WorkerConfig } from "./config";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
-
-function loadDevVarsForLocal(): void {
-  // Alchemy's `effect/Config` reads from `process.env`, but `alchemy dev`
-  // doesn't auto-load `web/playlists/.dev.vars`. Load it here so editing
-  // that file is enough for local dev (matches your request).
-  const candidates = [
-    resolve(repositoryRoot, "web/playlists/.dev.vars"),
-    resolve(repositoryRoot, ".dev.vars"),
-  ];
-  for (const file of candidates) {
-    if (!existsSync(file)) continue;
-    const raw = readFileSync(file, "utf8");
-    for (const line of raw.split("\n")) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith("#")) continue;
-      const eq = trimmed.indexOf("=");
-      if (eq === -1) continue;
-      const key = trimmed.slice(0, eq).trim();
-      let value = trimmed.slice(eq + 1).trim();
-      // strip surrounding quotes if present
-      if (
-        (value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))
-      ) {
-        value = value.slice(1, -1);
-      }
-      if (!(key in process.env) || process.env[key] === "") {
-        process.env[key] = value;
-      }
-    }
-  }
-}
 
 type HyperscalerEnvironment = {
   VITE_BASE_PATH: string;
@@ -73,9 +42,32 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
   config: StageConfig,
 ) {
   const isLocal = config.stage === "local";
-  if (isLocal) {
-    loadDevVarsForLocal();
+  const stack = yield* Stack;
+  const stage = yield* Stage;
+  const state = yield* yield* State;
+  const resources = yield* state
+    .list({ stack: stack.name, stage })
+    .pipe(Effect.orDie);
+  // Removing managed Secret declarations otherwise schedules their deletion.
+  // Fail before planning until an operator explicitly forgets only these rows.
+  const managedSecrets = resources.filter((fqn) =>
+    [
+      "PlaylistsSecretsStore",
+      "PlaylistsLastfmApiKey",
+      "PlaylistsLastfmUser",
+    ].includes(fqn),
+  );
+  if (managedSecrets.length > 0) {
+    return yield* Effect.die(
+      new Error(
+        `Secrets Store migration required for ${stack.name}/${stage}: ${managedSecrets.join(", ")}. See iac/README.md before deploying; do not delete the cloud secrets.`,
+      ),
+    );
   }
+  // This is a non-secret identifier; secret values never enter the deployment.
+  const playlistsSecretsStoreId = yield* Config.NonEmptyString(
+    "JFA_DEV_SECRETS_STORE_ID",
+  );
 
   const landingOptions = {
     ...workerDefaults(config.workers.landing),
@@ -291,66 +283,11 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     docsOptions,
   ).pipe(adopt(true));
 
-  // Playlists: 20tracks + Last.fm now-playing.
-  // Prod/sync: Secrets Store (env.LASTFM_*.get(), never exposed to client).
-  // Local: plain `secret_text` from `effect/Config` (`JFA_DEV_LASTFM_*`), seeded by
-  // `web/playlists/.dev.vars` / `iac/.env` (via loadDevVarsForLocal above) — avoids
-  // LocalSecretsStore emulation flakiness that was causing `Invalid server function ID`
-  // in `alchemy dev`. Worker binding names stay `LASTFM_*`.
-  let playlistsSecretsStore: Cloudflare.SecretsStore.Store | undefined;
-  let lastfmApiKeySecret: Cloudflare.SecretsStore.Secret | undefined;
-  let lastfmUserSecret: Cloudflare.SecretsStore.Secret | undefined;
-
-  const lastfmApiKeyValue = yield* Config.Redacted(
-    "JFA_DEV_LASTFM_API_KEY",
-  ).pipe(Config.withDefault(Redacted.make("")));
-  const lastfmUserValue = yield* Config.Redacted("JFA_DEV_LASTFM_USER").pipe(
-    Config.withDefault(Redacted.make("")),
-  );
-
   type PlaylistsEnvironment = {
-    LASTFM_API_KEY:
-      | ReturnType<typeof Redacted.make>
-      | Cloudflare.SecretsStore.Secret;
-    LASTFM_USER:
-      | ReturnType<typeof Redacted.make>
-      | Cloudflare.SecretsStore.Secret;
     VITE_BASE_PATH?: string;
     VITE_ASSET_BASE_PATH?: string;
   };
-  let playlistsEnv: PlaylistsEnvironment;
-
-  if (isLocal) {
-    playlistsEnv = {
-      LASTFM_API_KEY: lastfmApiKeyValue,
-      LASTFM_USER: lastfmUserValue,
-    };
-  } else {
-    playlistsSecretsStore = yield* Cloudflare.SecretsStore.Store(
-      "PlaylistsSecretsStore",
-    ).pipe(adopt(true));
-
-    lastfmApiKeySecret = yield* Cloudflare.SecretsStore.Secret(
-      "PlaylistsLastfmApiKey",
-      {
-        store: playlistsSecretsStore,
-        value: lastfmApiKeyValue,
-      },
-    ).pipe(adopt(true));
-
-    lastfmUserSecret = yield* Cloudflare.SecretsStore.Secret(
-      "PlaylistsLastfmUser",
-      {
-        store: playlistsSecretsStore,
-        value: lastfmUserValue,
-      },
-    ).pipe(adopt(true));
-
-    playlistsEnv = {
-      LASTFM_API_KEY: lastfmApiKeySecret,
-      LASTFM_USER: lastfmUserSecret,
-    };
-  }
+  const playlistsEnv: PlaylistsEnvironment = {};
   if (config.workers.playlistsMounted.basePath !== undefined) {
     playlistsEnv.VITE_BASE_PATH = config.workers.playlistsMounted.basePath;
     if (config.workers.playlistsMounted.assetBasePath !== undefined) {
@@ -379,6 +316,24 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     "PlaylistsMountedWorker",
     playlistsOptions,
   ).pipe(adopt(true));
+  // Bind existing secrets without managing their lifecycle or values. Real store
+  // IDs also use Alchemy's remote bindings proxy during local development.
+  yield* playlistsMounted.bind("LastfmSecrets", {
+    bindings: [
+      {
+        type: "secrets_store_secret",
+        name: "LASTFM_API_KEY",
+        storeId: playlistsSecretsStoreId,
+        secretName: "JFA_DEV_LASTFM_API_KEY",
+      },
+      {
+        type: "secrets_store_secret",
+        name: "LASTFM_USER",
+        storeId: playlistsSecretsStoreId,
+        secretName: "JFA_DEV_LASTFM_USER",
+      },
+    ],
+  });
 
   const countryBlocklist =
     config.stage === "production" && config.router.countryBlocklistName

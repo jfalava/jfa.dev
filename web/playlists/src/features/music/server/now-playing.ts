@@ -61,14 +61,6 @@ function toTrack(track: LastfmTrack): NowPlayingTrack {
   };
 }
 
-/** Plain string binding; the value is trimmed on decode. */
-const trimmedString = Schema.String.pipe(
-  Schema.decode({
-    decode: SchemaGetter.transform((value: string) => value.trim()),
-    encode: SchemaGetter.transform((value: string) => value),
-  }),
-);
-
 /**
  * Secrets Store binding (`env.*.get()`), resolved to a trimmed string.
  * workerd exposes `.get` on the `SecretsStoreSecret` class prototype, so an
@@ -100,45 +92,24 @@ const secretFromBinding = Schema.decodeTo<typeof Schema.String, typeof secretBin
   },
 )(secretBinding);
 
-/**
- * Secrets are injected via Alchemy Secrets Store. At runtime Cloudflare
- * exposes them as `SecretsStoreSecret` with an async `.get()` — but for
- * `alchemy dev` the values are seeded from `web/playlists/.dev.vars`
- * (`JFA_DEV_LASTFM_*` → worker bindings `LASTFM_*`) via `effect/Config`, and may
- * appear as plain strings. The environment record
- * is the I/O boundary: `secretValueSchema` below decodes both shapes into
- * plain trimmed strings, and anything else (e.g. an unmaterialized Effect
- * `Redacted`) fails to decode and is treated as unavailable, so no secret
- * ever leaks to the client.
- */
-const secretValueSchema = Schema.Union([trimmedString, secretFromBinding]);
-
 const lastfmEnvSchema = Schema.Struct({
-  LASTFM_API_KEY: Schema.optional(secretValueSchema),
-  LASTFM_USER: Schema.optional(secretValueSchema),
+  LASTFM_API_KEY: Schema.optional(secretFromBinding),
+  LASTFM_USER: Schema.optional(secretFromBinding),
 });
 
 async function loadServerEnv() {
-  // Workerd (alchemy dev / prod): the real `cloudflare:workers` env, whose
-  // secrets are Secrets Store bindings.
   try {
     // @vite-ignore — `cloudflare:workers` only exists in workerd, not in plain Vite dev (5173)
     return (await import("cloudflare:workers")).env;
   } catch {
-    // Vite dev (5173) or any Node fallback: `process.env`, populated from
-    // `web/playlists/.dev.vars` (`JFA_DEV_LASTFM_*`, mirrored to `LASTFM_*`) via
-    // `iac/src/workers.ts:loadDevVarsForLocal` (alchemy dev) or Vite's own
-    // `web/playlists/vite.config.ts` dev-vars loader.
-    return globalThis.process?.env ?? null;
+    // Outside workerd, Last.fm is unavailable; never read process.env secrets.
+    return null;
   }
 }
 
 /**
- * Reads server-only Last.fm bindings and decodes them to plain strings.
- * Both values are secrets — nothing is exposed to the client
- * (`createServerFn` runs only on the server). Supports Secrets Store
- * (`env.*.get()`) in prod and plain strings from `.dev.vars` in
- * `alchemy dev` / Vite dev.
+ * Reads only server-side Secrets Store bindings, including in Alchemy dev.
+ * Plain strings are rejected; resolved secrets never reach the client.
  */
 async function readLastfmBindings(): Promise<{ apiKey: string; user: string }> {
   const env = await loadServerEnv();
@@ -148,8 +119,7 @@ async function readLastfmBindings(): Promise<{ apiKey: string; user: string }> {
   // The bindings are untyped on `Env` (Secrets Store keys are not declared);
   // `lastfmEnvSchema` is the narrowing boundary and strips every other key
   // before the values reach the handler. A failed decode means the values
-  // are unavailable (e.g. an unmaterialized Effect `Redacted`) — report
-  // that instead of throwing a 500 from the server function.
+  // are unavailable — report that instead of throwing a 500.
   try {
     const { LASTFM_API_KEY, LASTFM_USER } = await Schema.decodeUnknownPromise(lastfmEnvSchema)(env);
     return { apiKey: LASTFM_API_KEY ?? "", user: LASTFM_USER ?? "" };

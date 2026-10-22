@@ -91,7 +91,7 @@
     "iac:plan": "bun run --filter @jfa.dev/iac plan",
     "lint:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlists --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects --filter @jfa.dev/playlists lint",
     "predeploy": "bun run lint:global && bun run test:global",
-    "test:global": "bun run --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router test"
+    "test:global": "bun run --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/iac test"
   },
   "devDependencies": {
     "@oxlint/plugins": "catalog:build",

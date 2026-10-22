@@ -1,4 +1,3 @@
-import { existsSync, readFileSync } from "node:fs";
 import path from "path";
 
 import { siteMeta } from "@jfa.dev/common/vite/site-meta";
@@ -7,49 +6,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
-
-function loadDevVars(): void {
-  const file = path.resolve(import.meta.dirname, "./.dev.vars");
-  if (!existsSync(file)) {
-    return;
-  }
-  const raw = readFileSync(file, "utf8");
-  for (const line of raw.split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) {
-      continue;
-    }
-    const eq = trimmed.indexOf("=");
-    if (eq === -1) {
-      continue;
-    }
-    const key = trimmed.slice(0, eq).trim();
-    let value = trimmed.slice(eq + 1).trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
-    }
-    if (!(key in process.env) || !process.env[key]) {
-      process.env[key] = value;
-    }
-  }
-}
-
-loadDevVars();
-
-// Alchemy deploy/dev Config uses `JFA_DEV_*`; Vite/Node fallback still reads
-// unprefixed `LASTFM_*` via `now-playing.ts` → `process.env`.
-for (const [from, to] of [
-  ["JFA_DEV_LASTFM_API_KEY", "LASTFM_API_KEY"],
-  ["JFA_DEV_LASTFM_USER", "LASTFM_USER"],
-] as const) {
-  const value = process.env[from];
-  if (value && (!(to in process.env) || !process.env[to])) {
-    process.env[to] = value;
-  }
-}
 
 const MOUNT_PATH = "/playlists/";
 

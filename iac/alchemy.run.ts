@@ -5,11 +5,13 @@ import * as Effect from "effect/Effect";
 import { getStageConfig } from "./src/config";
 import { defineWorkers } from "./src/workers";
 
+const state = Cloudflare.state();
+
 export default Alchemy.Stack(
   "jfa-dev",
   {
     providers: Cloudflare.providers(),
-    state: Cloudflare.state(),
+    state,
   },
   Effect.gen(function* () {
     const stage = yield* Alchemy.Stage;
@@ -27,5 +29,5 @@ export default Alchemy.Stack(
         redirects: workers.redirects.workerName,
       },
     };
-  }),
+  }).pipe(Effect.provide(state)),
 );
