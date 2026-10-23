@@ -81,6 +81,10 @@ const routeDefinitions = {
 
 const assetPrefixes = [
   "/assets/",
+  // TanStack Start server-function RPC endpoint. Root-relative for the root
+  // app ("/_serverFn/...") but scoped under each mounted app's basePath
+  // ("/<mount>/_serverFn/..."), so it must follow the mounted-asset rules.
+  "/_serverFn/",
   "/icons/",
   "/github.svg",
   "/manifest.json",

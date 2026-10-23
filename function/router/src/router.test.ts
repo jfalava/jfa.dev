@@ -77,6 +77,88 @@ describe("router configuration", () => {
     expect(findMatchingRoute("/wp-admin.php", routes, ["/assets/"])).toBeNull();
   });
 
+  test("routes the root app server-function endpoint to the root route", () => {
+    const routes = [
+      { binding: "LANDING", path: "/" },
+      { binding: "OPENGRAPH", path: "/opengraph" },
+      { binding: "PLAYLISTS", path: "/playlists" },
+    ];
+
+    expect(
+      findMatchingRoute("/_serverFn/getRepositoryLinks_a1b2c3", routes, ["/_serverFn/"]),
+    ).toEqual({
+      route: routes[0],
+      mount: "/",
+    });
+    expect(findMatchingRoute("/_serverFn/x", routes, [])).toBeNull();
+  });
+
+  test("routes mount-scoped server-function requests under their mount", () => {
+    const routes = [
+      { binding: "LANDING", path: "/" },
+      { binding: "PLAYLISTS", path: "/playlists" },
+    ];
+
+    expect(
+      findMatchingRoute("/playlists/_serverFn/getNowPlaying_a1b2c3", routes, ["/_serverFn/"]),
+    ).toEqual({
+      route: routes[1],
+      mount: "/playlists",
+    });
+  });
+
+  test("forwards the root app server-function request with its original path", async () => {
+    let forwardedUrl: string | undefined;
+    const response = await router.fetch(
+      new Request("https://jfa.dev/_serverFn/getRepositoryLinks_a1b2c3?payload=%5B0%5D"),
+      {
+        ROUTES: JSON.stringify({ routes: [{ binding: "LANDING", path: "/" }] }),
+        ASSET_PREFIXES: JSON.stringify(["/_serverFn/"]),
+        LANDING: {
+          fetch: async (request: Request) => {
+            forwardedUrl = request.url;
+            return new Response("[]", {
+              headers: { "content-type": "application/json" },
+            });
+          },
+        },
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("[]");
+    expect(forwardedUrl).toBe("https://jfa.dev/_serverFn/getRepositoryLinks_a1b2c3?payload=%5B0%5D");
+  });
+
+  test("forwards mount-scoped server-function requests without stripping the mount", async () => {
+    let forwardedUrl: string | undefined;
+    const response = await router.fetch(
+      new Request("https://jfa.dev/playlists/_serverFn/getNowPlaying_a1b2c3"),
+      {
+        ROUTES: JSON.stringify({
+          routes: [
+            { binding: "LANDING", path: "/" },
+            { binding: "PLAYLISTS", path: "/playlists" },
+          ],
+        }),
+        ASSET_PREFIXES: JSON.stringify(["/_serverFn/"]),
+        LANDING: { fetch: async () => new Response("landing") },
+        PLAYLISTS: {
+          fetch: async (request: Request) => {
+            forwardedUrl = request.url;
+            return new Response("[]", {
+              headers: { "content-type": "application/json" },
+            });
+          },
+        },
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("[]");
+    expect(forwardedUrl).toBe("https://jfa.dev/playlists/_serverFn/getNowPlaying_a1b2c3");
+  });
+
   test("returns 418 for requests outside the configured route mounts", async () => {
     const response = await router.fetch(new Request("https://jfa.dev/wp-admin.php"), {
       ROUTES: JSON.stringify({
