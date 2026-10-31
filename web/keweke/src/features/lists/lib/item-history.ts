@@ -98,6 +98,11 @@ export function buildHistoryTableRows(events: readonly ListItemHistoryEvent[]): 
           rows.push(createRow(CHANGE_FIELD_LABELS[field], state[field], nextValue));
           state[field] = nextValue;
         }
+        // Emptying an inventory item moves it back to the list.
+        if (state.checked === "done" && event.command.changes.quantity === 0) {
+          rows.push(createRow("status", "done", "open"));
+          state.checked = "open";
+        }
         if (rows.length === 0) {
           rows.push(createRow("item", undefined, "updated"));
         }

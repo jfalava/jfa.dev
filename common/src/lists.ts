@@ -140,8 +140,14 @@ export const listCommandSchema = Schema.Union([
     checked: Schema.Boolean,
   }),
   Schema.Struct({ type: Schema.Literal("remove-item"), itemId: itemIdSchema }),
-  Schema.Struct({ type: Schema.Literal("restore-item"), archiveId: archiveIdSchema }),
-  Schema.Struct({ type: Schema.Literal("purge-deleted-item"), archiveId: archiveIdSchema }),
+  Schema.Struct({
+    type: Schema.Literal("restore-item"),
+    archiveId: archiveIdSchema,
+  }),
+  Schema.Struct({
+    type: Schema.Literal("purge-deleted-item"),
+    archiveId: archiveIdSchema,
+  }),
   Schema.Struct({ type: Schema.Literal("rename-list"), title: titleField }),
 ]);
 
@@ -164,7 +170,10 @@ export const liveListMutationSchema = Schema.Struct({
 });
 
 export const listLiveMessageSchema = Schema.Union([
-  Schema.Struct({ type: Schema.Literal("snapshot"), snapshot: listSnapshotSchema }),
+  Schema.Struct({
+    type: Schema.Literal("snapshot"),
+    snapshot: listSnapshotSchema,
+  }),
   Schema.Struct({
     type: Schema.Literal("mutation"),
     mutation: liveListMutationSchema,
@@ -605,14 +614,24 @@ function getItemChanges(
 ): Schema.Schema.Type<typeof itemChangesSchema> &
   Partial<Pick<ListItem, "checked" | "inventoryQuantity">> {
   if (command.type === "update-item") {
-    return command.changes;
+    // Running out in Inventory puts the item back on the list.
+    return current.checked && command.changes.quantity === 0
+      ? { ...command.changes, ...restoredToListChanges(current) }
+      : command.changes;
   }
   if (command.checked) {
     return { checked: true, inventoryQuantity: current.quantity };
   }
+  return restoredToListChanges(current);
+}
+
+/** Items inventoried before inventoryQuantity existed have null, so never restore below 1. */
+function restoredToListChanges(
+  current: ListItem,
+): Pick<ListItem, "checked" | "quantity" | "inventoryQuantity"> {
   return {
     checked: false,
-    quantity: current.inventoryQuantity ?? current.quantity,
+    quantity: Math.max(1, current.inventoryQuantity ?? current.quantity),
     inventoryQuantity: null,
   };
 }
@@ -657,10 +676,13 @@ function buildRestoredItem(
   return {
     id: deletedItem.id,
     name: deletedItem.name,
-    quantity:
+    // Legacy archives can hold a zero-quantity inventory row with no captured quantity.
+    quantity: Math.max(
+      1,
       deletedItem.checked && deletedItem.inventoryQuantity !== null
         ? deletedItem.inventoryQuantity
         : deletedItem.quantity,
+    ),
     unit: deletedItem.unit,
     amount: deletedItem.amount,
     category: deletedItem.category,

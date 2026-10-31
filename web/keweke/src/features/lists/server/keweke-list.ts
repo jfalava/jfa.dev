@@ -614,6 +614,21 @@ export class KewekeList extends DurableObject {
         INSERT INTO _sql_schema_migrations (id) VALUES (7);
       `);
     }
+
+    if (currentVersion < 8) {
+      // Inventory no longer keeps zero-quantity rows: they move back to the list.
+      // Bump the revision first so cached clients refetch instead of trusting stale rows.
+      this.ctx.storage.sql.exec(`
+        UPDATE metadata SET revision = revision + 1
+          WHERE EXISTS (SELECT 1 FROM items WHERE checked = 1 AND quantity = 0);
+        UPDATE items
+          SET checked = 0,
+              quantity = MAX(1, COALESCE(inventory_quantity, 1)),
+              inventory_quantity = NULL
+          WHERE checked = 1 AND quantity = 0;
+        INSERT INTO _sql_schema_migrations (id) VALUES (8);
+      `);
+    }
   }
 
   private readSnapshot(): ListSnapshot | null {

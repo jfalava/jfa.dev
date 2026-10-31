@@ -440,40 +440,53 @@ describe("list mutation diff", () => {
     expect(applied.snapshot.revision).toBe(snapshot.revision);
   });
 
-  test("remembers the quantity entering inventory and restores it from zero", () => {
+  test("moves an inventory item back to the list with its purchased quantity when it runs out", () => {
     const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
     const inventoried = applyWithDiff(snapshot, {
       type: "set-item-checked",
       itemId: "starter-tomatoes",
       checked: true,
     });
-    expect(inventoried.snapshot.items.find((item) => item.id === "starter-tomatoes")).toMatchObject(
-      {
-        checked: true,
-        quantity: 6,
-        inventoryQuantity: 6,
-      },
-    );
+    const used = applyWithDiff(inventoried.snapshot, {
+      type: "update-item",
+      itemId: "starter-tomatoes",
+      changes: { quantity: 2 },
+    });
+    expect(used.snapshot.items.find((item) => item.id === "starter-tomatoes")).toMatchObject({
+      checked: true,
+      quantity: 2,
+      inventoryQuantity: 6,
+    });
 
-    const depleted = applyWithDiff(inventoried.snapshot, {
+    const depleted = applyWithDiff(used.snapshot, {
       type: "update-item",
       itemId: "starter-tomatoes",
       changes: { quantity: 0 },
     });
     expect(depleted.snapshot.items.find((item) => item.id === "starter-tomatoes")).toMatchObject({
-      checked: true,
-      quantity: 0,
-      inventoryQuantity: 6,
-    });
-
-    const restored = applyWithDiff(depleted.snapshot, {
-      type: "set-item-checked",
-      itemId: "starter-tomatoes",
-      checked: false,
-    });
-    expect(restored.snapshot.items.find((item) => item.id === "starter-tomatoes")).toMatchObject({
       checked: false,
       quantity: 6,
+      inventoryQuantity: null,
+    });
+  });
+
+  test("restores legacy zero-quantity inventory items to the list with quantity 1", () => {
+    const snapshot = createStarterListSnapshot(LIST_ID, { now: NOW });
+    // Inventoried before inventoryQuantity existed, then emptied under the old rules.
+    const legacy: ListSnapshot = {
+      ...snapshot,
+      items: snapshot.items.map((item) =>
+        item.id === "starter-coffee" ? { ...item, quantity: 0, inventoryQuantity: null } : item,
+      ),
+    };
+    const restored = applyWithDiff(legacy, {
+      type: "set-item-checked",
+      itemId: "starter-coffee",
+      checked: false,
+    });
+    expect(restored.snapshot.items.find((item) => item.id === "starter-coffee")).toMatchObject({
+      checked: false,
+      quantity: 1,
       inventoryQuantity: null,
     });
   });
@@ -503,7 +516,7 @@ describe("list mutation diff", () => {
     const depleted = applyWithDiff(inventoried.snapshot, {
       type: "update-item",
       itemId: "starter-tomatoes",
-      changes: { quantity: 0 },
+      changes: { quantity: 2 },
     });
     const removed = applyWithDiff(depleted.snapshot, {
       type: "remove-item",

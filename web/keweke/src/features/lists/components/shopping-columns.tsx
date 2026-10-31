@@ -47,15 +47,8 @@ function getShoppingTableMeta(table: { options: { meta?: ShoppingTableMeta } }):
   return table.options.meta;
 }
 
-function isDepleted(item: ListItem): boolean {
-  return item.checked && item.quantity === 0;
-}
-
 function itemStatus(item: ListItem): string {
-  if (!item.checked) {
-    return "Open";
-  }
-  return isDepleted(item) ? "Out of stock" : "Purchased";
+  return item.checked ? "Purchased" : "Open";
 }
 
 export function createShoppingColumns() {
@@ -109,13 +102,7 @@ export function createShoppingColumns() {
 
         return (
           <span
-            className={
-              isDepleted(row.original)
-                ? "font-serif text-muted-foreground line-through"
-                : row.original.checked
-                  ? "font-serif text-muted-foreground"
-                  : "font-serif"
-            }
+            className={row.original.checked ? "font-serif text-muted-foreground" : "font-serif"}
           >
             {getValue()}
           </span>
@@ -415,11 +402,9 @@ export function createMobileShoppingColumns({
         <div className="min-w-0 py-1">
           <p
             className={
-              isDepleted(row.original)
-                ? "truncate font-serif font-medium text-muted-foreground line-through"
-                : row.original.checked
-                  ? "truncate font-serif font-medium text-muted-foreground"
-                  : "truncate font-serif font-medium"
+              row.original.checked
+                ? "truncate font-serif font-medium text-muted-foreground"
+                : "truncate font-serif font-medium"
             }
           >
             {row.original.name}

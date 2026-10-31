@@ -518,11 +518,7 @@ function SpreadsheetItemRow({
         <SpreadsheetInput
           error={errors?.name}
           field="name"
-          inputClassName={
-            item.checked && item.quantity === 0
-              ? "min-w-44 font-serif text-muted-foreground line-through"
-              : "min-w-44 font-serif"
-          }
+          inputClassName="min-w-44 font-serif"
           label={`Edit ${item.name} name`}
           rowId={item.id}
           value={draft.name}

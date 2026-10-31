@@ -114,6 +114,18 @@ export const Route = createFileRoute("/$listId")({
   component: ListPage,
 });
 
+/** Emptying an inventory item moves it back to the list; tell the user it moved. */
+function announceMovedToList(before: ListItem | undefined, committed: ListSnapshot | null): void {
+  const after = committed?.items.find((item) => item.id === before?.id);
+  if (before?.checked && after && !after.checked) {
+    toast.success(
+      <>
+        <QuotedItemName name={before.name} /> ran out · moved to the list.
+      </>,
+    );
+  }
+}
+
 function ListPage() {
   const { listId } = Route.useParams();
   const { tab } = Route.useSearch();
@@ -574,13 +586,13 @@ function ListPage() {
       const category = draft.category.trim();
 
       try {
-        return (
-          (await commit({
-            type: "update-item",
-            itemId,
-            changes: { name, quantity, unit, amount, category },
-          })) !== null
-        );
+        const committed = await commit({
+          type: "update-item",
+          itemId,
+          changes: { name, quantity, unit, amount, category },
+        });
+        announceMovedToList(item, committed);
+        return committed !== null;
       } catch {
         toast.error("Could not save the item right now.");
         return false;
@@ -747,7 +759,9 @@ function ListPage() {
       ) {
         return;
       }
-      void commit({ type: "update-item", itemId: id, changes: { quantity: nextQuantity } });
+      void commit({ type: "update-item", itemId: id, changes: { quantity: nextQuantity } }).then(
+        (committed) => announceMovedToList(item, committed),
+      );
     },
     [commit, loadedList],
   );
