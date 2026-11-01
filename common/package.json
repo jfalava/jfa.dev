@@ -31,6 +31,13 @@
       "import": "./src/identities.ts",
       "default": "./src/identities.ts"
     },
+    "./secrets": {
+      "workerd": "./src/secrets.ts",
+      "worker": "./src/secrets.ts",
+      "browser": "./src/secrets.ts",
+      "import": "./src/secrets.ts",
+      "default": "./src/secrets.ts"
+    },
     "./site-head": {
       "workerd": "./src/site-head.ts",
       "worker": "./src/site-head.ts",
