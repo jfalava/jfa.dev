@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import type { RepositoryLink } from "../links";
 
 interface RepoLinksProps {
-  repositories: RepositoryLink[];
+  repositories: readonly RepositoryLink[];
 }
 
 /** A compact, responsive shelf of the projects being actively pushed. */

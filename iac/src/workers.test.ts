@@ -51,9 +51,10 @@ const compile = async (
   );
   const bindings = await Effect.runPromise(
     evaluate(
-      stack.bindings.PlaylistsMountedWorker.flatMap(
-        (entry) => entry.data.bindings ?? [],
-      ),
+      [
+        ...stack.bindings.LandingWorker,
+        ...stack.bindings.PlaylistsMountedWorker,
+      ].flatMap((entry) => entry.data.bindings ?? []),
       { SharedSecretsStore: { storeId: "discovered-account-store" } },
     ).pipe(Effect.provide(state)),
   );
@@ -86,6 +87,16 @@ describe("Secrets Store ownership", () => {
           name: "LASTFM_USER",
           storeId: "discovered-account-store",
           secretName: "JFA_DEV_LASTFM_USER",
+        },
+      ]);
+      expect(
+        bindings.filter((binding) => binding.name === "GITHUB_TOKEN"),
+      ).toEqual([
+        {
+          type: "secrets_store_secret",
+          name: "GITHUB_TOKEN",
+          storeId: "discovered-account-store",
+          secretName: "JFA_DEV_GITHUB_TOKEN",
         },
       ]);
     },

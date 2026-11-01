@@ -1,6 +1,7 @@
 # Secrets Store bindings
 
-Playlists reads Last.fm credentials exclusively through Secrets Store bindings.
+Playlists reads Last.fm credentials and landing reads its GitHub API token
+exclusively through Secrets Store bindings.
 Alchemy discovers and adopts the account Secrets Store as `SharedSecretsStore`
 and deploys references to existing secrets, never their values. No store-ID
 environment variable is needed. The Store provider creates the account store
@@ -11,6 +12,11 @@ on teardown. The store must contain active secrets with the Workers scope:
 | ---------------- | ------------------------ |
 | `LASTFM_API_KEY` | `JFA_DEV_LASTFM_API_KEY` |
 | `LASTFM_USER`    | `JFA_DEV_LASTFM_USER`    |
+| `GITHUB_TOKEN`   | `JFA_DEV_GITHUB_TOKEN`   |
+
+`JFA_DEV_GITHUB_TOKEN` is a fine-grained personal access token with public
+repository read access and no extra permissions; landing uses it to list
+recently pushed repositories without hitting GitHub's anonymous rate limit.
 
 Create and rotate values in Cloudflare Secrets Store outside this deployment.
 CI needs permission to bind the secrets (Secrets Store Deployer), not their

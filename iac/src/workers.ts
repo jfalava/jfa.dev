@@ -86,6 +86,17 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     "LandingWorker",
     landingOptions,
   ).pipe(adopt(true));
+  // Authenticated GitHub API calls avoid the shared per-IP anonymous limit.
+  yield* landing.bind("GithubSecrets", {
+    bindings: [
+      {
+        type: "secrets_store_secret",
+        name: "GITHUB_TOKEN",
+        storeId: secretsStore.storeId,
+        secretName: "JFA_DEV_GITHUB_TOKEN",
+      },
+    ],
+  });
 
   const opengraphOptions = {
     ...workerDefaults(config.workers.opengraph),
