@@ -1,6 +1,6 @@
 import { ThemeProvider, useTheme } from "@jfa.dev/common/hooks/use-theme";
 import { siteHead } from "@jfa.dev/common/site-head";
-import { SiteHeader, Toaster, ThemeToggle } from "@jfa.dev/common/ui";
+import { SiteHeader, Toaster } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
@@ -55,7 +55,6 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/playlists"
             >
               <PlaylistSearchPalette />
-              <ThemeToggle />
             </SiteHeader>
             <NowPlayingBar />
             <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col overflow-hidden border-x border-border bg-background">

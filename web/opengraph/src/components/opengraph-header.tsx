@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger,
   Kbd,
   SiteHeader,
-  ThemeToggle,
 } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { ArrowUpRight, Download, FileDown, FileUp, Info, Keyboard } from "lucide-react";
@@ -190,7 +189,6 @@ export function OpengraphHeader() {
             </DropdownMenu>
           </DropdownMenuTrigger>
         </div>
-        <ThemeToggle />
       </SiteHeader>
       <input
         ref={projectInputRef}

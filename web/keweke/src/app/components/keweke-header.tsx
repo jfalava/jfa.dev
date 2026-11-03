@@ -1,5 +1,5 @@
 import type { ListBackend } from "@jfa.dev/common/lists";
-import { Button, SiteHeader, buttonVariants, ThemeToggle } from "@jfa.dev/common/ui";
+import { Button, SiteHeader, buttonVariants } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -130,7 +130,6 @@ export function KewekeHeader({
           showTrigger={false}
         />
       ) : null}
-      <ThemeToggle />
       <Link
         to="/user"
         aria-label="User"

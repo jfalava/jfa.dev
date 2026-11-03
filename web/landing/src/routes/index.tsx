@@ -1,4 +1,4 @@
-import { SiteHeader, ThemeToggle } from "@jfa.dev/common/ui";
+import { SiteHeader } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -24,9 +24,7 @@ function App() {
         activePackagePath="/"
         navLabel="Ego page"
         githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/landing"
-      >
-        <ThemeToggle />
-      </SiteHeader>
+      ></SiteHeader>
       <main className="relative flex-1 overflow-hidden overscroll-none bg-[#0e1116]">
         {/* Every stop is dark enough for white display type (≥4.5:1 on the lightest). */}
         <Grainient

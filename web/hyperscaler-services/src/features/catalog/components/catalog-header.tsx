@@ -1,4 +1,4 @@
-import { SiteHeader, ThemeToggle } from "@jfa.dev/common/ui";
+import { SiteHeader } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { X } from "lucide-react";
 
@@ -48,7 +48,6 @@ export function CatalogHeader({
           <X className="size-4 shrink-0" />
         </button>
       ) : null}
-      <ThemeToggle />
     </SiteHeader>
   );
 }

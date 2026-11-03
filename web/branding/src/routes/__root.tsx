@@ -1,6 +1,6 @@
 import { ThemeProvider, useTheme } from "@jfa.dev/common/hooks/use-theme";
 import { siteHead } from "@jfa.dev/common/site-head";
-import { SiteHeader, Toaster, ThemeToggle } from "@jfa.dev/common/ui";
+import { SiteHeader, Toaster } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
@@ -40,9 +40,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             activePackagePath="/branding"
             navLabel="Branding navigation"
             githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/branding"
-          >
-            <ThemeToggle />
-          </SiteHeader>
+          ></SiteHeader>
           <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
             {children}
           </div>

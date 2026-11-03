@@ -17,13 +17,13 @@ export function ThemeToggle() {
   const getThemeIcon = () => {
     switch (theme) {
       case "light":
-        return <Sun className="h-5 w-5" />;
+        return <Sun className="size-4" />;
       case "dark":
-        return <Moon className="h-5 w-5" />;
+        return <Moon className="size-4" />;
       case "system":
-        return <Monitor className="h-5 w-5" />;
+        return <Monitor className="size-4" />;
       default:
-        return <Monitor className="h-5 w-5" />;
+        return <Monitor className="size-4" />;
     }
   };
 
@@ -36,7 +36,7 @@ export function ThemeToggle() {
         variant="ghost"
       >
         <span className="flex items-center justify-center">{getThemeIcon()}</span>
-        <span className="hidden sm:inline">{themeLabels[theme]}</span>
+        <span className="hidden lg:inline">{themeLabels[theme]}</span>
       </Button>
       <DropdownMenu placement="bottom end">
         <DropdownMenuItem onAction={() => setTheme("light")}>
