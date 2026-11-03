@@ -20,6 +20,7 @@ function App() {
     <div className="flex h-dvh min-h-svh flex-col">
       <SiteHeader
         title="Landing"
+        subtitle=""
         packages={webPackages}
         activePackagePath="/"
         navLabel="Ego page"
@@ -28,19 +29,21 @@ function App() {
         <ThemeToggle />
       </SiteHeader>
       <main className="relative flex-1 overflow-hidden overscroll-none bg-[#0e1116]">
+        {/* Every stop is dark enough for white display type (≥4.5:1 on the lightest). */}
         <Grainient
           className="pointer-events-none absolute inset-0 size-full"
-          color1="#f2f6ff"
-          color2="#8ca4ff"
-          color3="#1c2642"
+          color1="#6d5cff"
+          color2="#2b2f8f"
+          color3="#0e1116"
           grainAmount={0.1}
           saturation={1}
         />
         <div className="relative z-10 flex h-full items-center justify-center px-6 py-12">
-          <div className="h-36 w-full max-w-5xl sm:h-44">
+          <h1 className="sr-only">Jorge Fernando Álava</h1>
+          <div className="h-36 w-full max-w-5xl sm:h-44" aria-hidden="true">
             <TextPressure
               text="jorge fernando álava"
-              textColor="#000000"
+              textColor="#ffffff"
               stroke={false}
               flex={false}
               scale={false}
@@ -48,7 +51,7 @@ function App() {
               weight
               italic={false}
               useWebkitFallback
-              webkitFallbackClassName="font-sans text-black text-5xl md:text-7xl drop-shadow-none text-shadow-none"
+              webkitFallbackClassName="font-sans text-white text-5xl md:text-7xl drop-shadow-none text-shadow-none"
               minFontSize={30}
               className="cursor-default font-sans leading-[0.95] font-medium tracking-tight drop-shadow-none select-none text-shadow-none"
             />
