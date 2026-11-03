@@ -8,10 +8,8 @@ export function ViewportGuard({ children }: Readonly<{ children: ReactNode }>) {
         <div className="max-w-md text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Your screen is too small</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            This editor needs a laptop-sized window. Phones and small tablets are out.
-          </p>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            Minimum: a ten-year-old laptop.
+            The editor needs a window at least 1180 × 820 pixels. Make the window bigger or zoom the
+            page out.
           </p>
         </div>
       </div>
