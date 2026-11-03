@@ -2,6 +2,7 @@ import path from "path";
 
 import { siteMeta } from "@jfa.dev/common/vite/site-meta";
 import { sitemap } from "@jfa.dev/common/vite/sitemap";
+import { packageTagline } from "@jfa.dev/common/web-packages";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -18,7 +19,7 @@ export default defineConfig({
     sitemap(),
     siteMeta({
       title: "OpenGraph by JFA",
-      description: "Create OpenGraph images from scratch with a layer-based editor.",
+      description: packageTagline("/opengraph"),
       viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
     }),
   ],

@@ -1,10 +1,14 @@
 # jfa.dev
 
-the toolbox: webapps showcase
+Small web tools I build and use.
 
-## currently
+## Apps
 
-1. [OpenGraph Image Generator](https://jfa.dev/opengraph/) - generate OpenGraph-ready images and banners from stratch
-2. [Hyperscaler Services](https://jfa.dev/hyperscaler-services/) - compare names of similar services offered by cloud providers
-3. [KEWEKE](https://jfa.dev/keweke/) - a collaborative shopping list
-4. [PLAYLISTS](https://jfa.dev/playlists/) - Playlists showcase with last.fm scrobble
+- [OpenGraph](https://jfa.dev/opengraph/): design OpenGraph images and social banners in a layer editor
+- [Hyperscaler Services](https://jfa.dev/hyperscaler-services/): find the equivalent service on AWS, Azure, GCP, Oracle Cloud and Cloudflare
+- [KEWEKE](https://jfa.dev/keweke/): yet another collaborative shopping list
+- [PLAYLISTS](https://jfa.dev/playlists/): Apple Music playlists and what I'm playing on Last.fm
+- [DOCS](https://jfa.dev/docs/): how the jfa.dev apps work
+- [Branding](https://jfa.dev/branding/): the shared UI kit behind every jfa.dev app
+
+Taglines live in `common/src/web-packages.ts`; keep this list in sync with it.

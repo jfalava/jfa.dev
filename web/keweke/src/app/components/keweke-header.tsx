@@ -111,7 +111,6 @@ export function KewekeHeader({
   return (
     <SiteHeader
       title="KEWEKE"
-      subtitle="Yet another collaborative shopping list"
       titleHref={appPath("/")}
       packages={webPackages}
       activePackagePath="/keweke"

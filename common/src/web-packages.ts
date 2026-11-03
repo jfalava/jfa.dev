@@ -1,19 +1,15 @@
-/** A route mounted inside a web package, with the title its header presents. */
-export interface WebPackageRoute {
-  /** Mount-relative path of the route. */
-  path: string;
-  /** Title presented by the route's header. */
-  title: string;
-}
-
 /** A web package mounted by the router worker. */
 export interface WebPackage {
   /** Public mount path of the package. */
   path: string;
   /** Display title of the package. */
   title: string;
-  /** Routes mounted under the package with their header titles. */
-  routes: WebPackageRoute[];
+  /**
+   * One plain sentence saying what the package is. The single source for the
+   * header subtitle, the brand switcher row, the meta description and the
+   * landing page's tool list, so every surface describes the app the same way.
+   */
+  tagline: string;
   /** Mount-relative route prefixes omitted from the shared sitemap. */
   sitemapExclude?: string[];
   /** Directory of content pages, relative to the package root. */
@@ -31,56 +27,61 @@ export interface WebPackage {
 /**
  * Registry of every web package mounted on jfa.dev, mirroring the route
  * definitions in `iac/src/config.ts`. Consumed by the shared `SiteHeader`
- * brand switcher; keep both in sync when adding or moving mounts.
+ * brand switcher, each app's `siteMeta` description and the landing page;
+ * keep both in sync when adding or moving mounts.
  */
 export const webPackages: WebPackage[] = [
   {
     path: "/",
     title: "Landing",
-    routes: [{ path: "/", title: "Ego page" }],
+    tagline: "Ego page",
   },
   {
     path: "/opengraph",
     title: "OpenGraph",
-    routes: [{ path: "/", title: "OpenGraph Image Generator" }],
+    tagline: "Design OpenGraph images and social banners in a layer editor",
   },
   {
     path: "/hyperscaler-services",
     title: "Hyperscaler Services",
-    routes: [{ path: "/", title: "A directory of similar cloud services" }],
+    tagline: "Find the equivalent service on AWS, Azure, GCP, Oracle Cloud and Cloudflare",
   },
   {
     path: "/keweke",
     title: "KEWEKE",
+    tagline: "Yet another collaborative shopping list",
     showHomeLink: true,
     sitemapExclude: ["/admin"],
     robotsDisallow: ["/user"],
-    routes: [
-      { path: "/", title: "Yet another collaborative shopping list" },
-      { path: "/:listId", title: "List · KEWEKE" },
-      { path: "/admin", title: "Admin · KEWEKE" },
-      { path: "/user", title: "User · KEWEKE" },
-    ],
   },
   {
     path: "/docs",
     title: "DOCS",
+    tagline: "How the jfa.dev apps work",
     sitemapContentDir: "content/docs",
-    routes: [{ path: "/", title: "The Knowledge Base" }],
   },
   {
     path: "/playlists",
     title: "PLAYLISTS",
-    routes: [{ path: "/", title: "My music taste is better than yours" }],
+    tagline: "Apple Music playlists and what I'm playing on Last.fm",
   },
   {
     path: "/branding",
     title: "Branding",
-    routes: [
-      {
-        path: "/",
-        title: "Branding",
-      },
-    ],
+    tagline: "The shared UI kit behind every jfa.dev app",
   },
 ];
+
+/**
+ * Returns the tagline of the package mounted at `path`.
+ *
+ * @param path - Mount path as listed in `webPackages`, such as `/keweke`.
+ * @returns The package's tagline.
+ */
+export function packageTagline(path: string): string {
+  const webPackage = webPackages.find((candidate) => candidate.path === path);
+  if (!webPackage) {
+    throw new Error(`No web package is mounted at ${path}`);
+  }
+  return webPackage.tagline;
+}

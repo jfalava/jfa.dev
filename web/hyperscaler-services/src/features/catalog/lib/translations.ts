@@ -3,7 +3,6 @@ import type { ServiceSearchScope } from "@/lib/service-search";
 export interface PageTranslations {
   title: string;
   titleSmol: string;
-  subtitle: string;
   services: string;
   providers: string;
   categories: string;
@@ -29,7 +28,6 @@ export interface PageTranslations {
 export const translations: PageTranslations = {
   title: "HYPERSCALER SERVICES",
   titleSmol: "HYPERSCALERS",
-  subtitle: "A directory of equivalent cloud services",
   services: "Services",
   providers: "Providers",
   categories: "Categories",

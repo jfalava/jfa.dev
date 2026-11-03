@@ -119,7 +119,6 @@ export function OpengraphHeader() {
       <SiteHeader
         title="OpenGraph"
         titleSmol="OpenGraph"
-        subtitle="Create OpenGraph images from scratch"
         titleHref={appPath("/")}
         packages={webPackages}
         activePackagePath="/opengraph"

@@ -23,11 +23,11 @@ export default defineConfig({
     pwaManifest({
       name: "Jorge Fernando Álava",
       shortName: "JFA",
-      description: "personal webpage",
+      description: "Small web tools I build and use",
     }),
     siteMeta({
       title: "Jorge Fernando Álava",
-      description: "personal webpage",
+      description: "Small web tools I build and use",
       pwa: true,
     }),
     sitemap(),

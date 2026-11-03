@@ -3,6 +3,7 @@ import path from "path";
 import { pwaManifest } from "@jfa.dev/common/vite/pwa-manifest";
 import { siteMeta } from "@jfa.dev/common/vite/site-meta";
 import { sitemap } from "@jfa.dev/common/vite/sitemap";
+import { packageTagline } from "@jfa.dev/common/web-packages";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -23,11 +24,11 @@ export default defineConfig({
     pwaManifest({
       name: "KEWEKE by JFA",
       shortName: "KEWEKE",
-      description: "Yet another collaborative shopping list",
+      description: packageTagline("/keweke"),
     }),
     siteMeta({
       title: "KEWEKE by JFA",
-      description: "Yet another collaborative shopping list",
+      description: packageTagline("/keweke"),
       viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
       pwa: true,
     }),

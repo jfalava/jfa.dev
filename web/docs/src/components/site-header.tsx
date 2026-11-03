@@ -40,7 +40,6 @@ export function DocsSiteHeader() {
   return (
     <SiteHeader
       title="DOCS"
-      subtitle="The Knowledge Base"
       titleHref="/"
       packages={webPackages}
       activePackagePath="/docs"

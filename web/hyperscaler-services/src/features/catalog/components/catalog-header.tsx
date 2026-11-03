@@ -26,7 +26,6 @@ export function CatalogHeader({
     <SiteHeader
       title={t.title}
       titleSmol={t.titleSmol}
-      subtitle={t.subtitle}
       packages={webPackages}
       activePackagePath="/hyperscaler-services"
       navLabel="Catalog navigation"

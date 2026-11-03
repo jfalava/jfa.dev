@@ -14,7 +14,10 @@ export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title">
   title: string;
   /** The shorter title displayed on small screens. Defaults to `title`. */
   titleSmol?: string;
-  /** The descriptive text displayed beside the title on larger screens. */
+  /**
+   * The descriptive text displayed beside the title on larger screens.
+   * Defaults to the active package's tagline from `packages`.
+   */
   subtitle?: ReactNode;
   /** An optional URL for making the brand link back to the application. */
   titleHref?: string;
@@ -36,6 +39,11 @@ export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "title">
   children?: ReactNode;
 }
 
+/** Home URL of the package mounted at `path`, with a trailing slash. */
+function packageHomeHref(path?: string): string {
+  return path && path !== "/" ? `${path.replace(/\/+$/, "")}/` : "/";
+}
+
 /** Shared shell for the headers used by the web applications. */
 export function SiteHeader({
   activePackagePath,
@@ -44,19 +52,16 @@ export function SiteHeader({
   githubHref,
   navLabel,
   packages,
-  subtitle,
+  subtitle: subtitleProp,
   title,
   titleHref,
   titleSmol = title,
   ...props
 }: SiteHeaderProps) {
-  const homeHref = activePackagePath
-    ? activePackagePath === "/"
-      ? "/"
-      : `${activePackagePath.replace(/\/+$/, "")}/`
-    : "/";
-  const showHomeLink =
-    packages?.find((pkg) => pkg.path === activePackagePath)?.showHomeLink ?? false;
+  const activePackage = packages?.find((pkg) => pkg.path === activePackagePath);
+  const subtitle = subtitleProp ?? activePackage?.tagline;
+  const homeHref = packageHomeHref(activePackagePath);
+  const showHomeLink = activePackage?.showHomeLink ?? false;
 
   const brandBody = (
     <>
@@ -170,7 +175,7 @@ interface PackageSwitcherProps {
 /**
  * Brand typography shared by the switcher trigger and its menu items so both
  * render at the same size, kerning, and weight. "by JFA" stays on the trigger
- * only; dropdown rows show the package title and route subtitle alone.
+ * only; dropdown rows show the package title and tagline alone.
  *
  * When `viewportAware`, the trigger drops the slash and subtitle below `lg` so
  * a fixed-width trigger never ellipsizes those extras. "by JFA" stays visible.
@@ -279,19 +284,15 @@ function PackageSwitcher({
         )}
       >
         <MenuPrimitive className="max-h-[inherit] overflow-x-hidden overflow-y-auto outline-hidden">
-          {packages.map((pkg) => {
-            const routeSubtitle =
-              pkg.routes.find((route) => route.path === "/")?.title ?? pkg.routes[0]?.title;
-            return (
-              <DropdownMenuItem
-                key={pkg.path}
-                href={pkg.path === "/" ? "/" : `${pkg.path}/`}
-                textValue={`${pkg.title} ${routeSubtitle ?? ""}`}
-              >
-                <PackageBrand subtitle={routeSubtitle} title={pkg.title} />
-              </DropdownMenuItem>
-            );
-          })}
+          {packages.map((pkg) => (
+            <DropdownMenuItem
+              key={pkg.path}
+              href={pkg.path === "/" ? "/" : `${pkg.path}/`}
+              textValue={`${pkg.title} ${pkg.tagline}`}
+            >
+              <PackageBrand subtitle={pkg.tagline} title={pkg.title} />
+            </DropdownMenuItem>
+          ))}
         </MenuPrimitive>
       </PopoverPrimitive>
     </DropdownMenuTrigger>
