@@ -7,7 +7,6 @@ import { Check, CloudUpload, Copy, Plus, UserRound } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { DocsLink } from "@/app/components/docs-link";
-import { HotkeyKbd } from "@/app/components/hotkey-kbd";
 import { kewekeDocs } from "@/app/lib/docs-paths";
 import { appPath } from "@/app/lib/site-paths";
 import { UserDialog } from "@/features/auth/components/user-dialog";
@@ -156,9 +155,6 @@ export function KewekeHeader({
           >
             <CloudUpload className="size-4" />
             <span className="hidden sm:inline">{isMigrating ? "Publishing" : "Publish"}</span>
-            {!isMigrating ? (
-              <HotkeyKbd className="hidden sm:inline-flex" hotkey={PUBLISH_HOTKEY} />
-            ) : null}
           </Button>
           {isPublishNudgeVisible ? (
             <div
@@ -206,9 +202,6 @@ export function KewekeHeader({
         >
           <Plus className="size-4" />
           <span className="hidden sm:inline">New list</span>
-          {!isCreating ? (
-            <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />
-          ) : null}
         </Button>
       ) : null}
     </SiteHeader>
