@@ -52,6 +52,7 @@
       "import": "./src/preferences.ts",
       "default": "./src/preferences.ts"
     },
+    "./pretendard.css": "./src/pretendard.css",
     "./styles.css": "./src/styles.css",
     "./vite/pwa-manifest": {
       "workerd": "./src/vite/pwa-manifest.ts",
@@ -66,6 +67,13 @@
       "browser": "./src/vite/site-meta.ts",
       "import": "./src/vite/site-meta.ts",
       "default": "./src/vite/site-meta.ts"
+    },
+    "./vite/shared-fonts": {
+      "workerd": "./src/vite/shared-fonts.ts",
+      "worker": "./src/vite/shared-fonts.ts",
+      "browser": "./src/vite/shared-fonts.ts",
+      "import": "./src/vite/shared-fonts.ts",
+      "default": "./src/vite/shared-fonts.ts"
     },
     "./vite/sitemap": {
       "workerd": "./src/vite/sitemap.ts",
@@ -119,9 +127,6 @@
   },
   "dependencies": {
     "@base-ui/react": "catalog:react",
-    "@fontsource/google-sans-code": "catalog:fonts",
-    "@fontsource/ibm-plex-sans": "catalog:fonts",
-    "@fontsource/zilla-slab": "catalog:fonts",
     "class-variance-authority": "catalog:styling",
     "cn": "catalog:styling",
     "effect": "catalog:iac",

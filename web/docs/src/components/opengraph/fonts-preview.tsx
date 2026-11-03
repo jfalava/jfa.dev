@@ -5,7 +5,7 @@ export function FontsPreview() {
     <>
       <PreviewShell
         label="Families"
-        caption="Pretendard for UI. Zilla Slab for display. Google Sans Code for shortcuts and tokens. Loaded from @fontsource in common."
+        caption="Pretendard for UI. Zilla Slab for display. Google Sans Code for shortcuts and tokens. Served once for every app from /shared/fonts/."
       >
         <div className="grid w-full gap-6 p-6 text-left sm:grid-cols-3">
           <div className="space-y-1">

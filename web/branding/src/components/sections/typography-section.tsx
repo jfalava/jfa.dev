@@ -6,7 +6,7 @@ import { Section } from "@/components/section";
 export function TypographySection() {
   return (
     <Section
-      description="IBM Plex Sans for UI. Zilla Slab for user-editable titles. Google Sans Code for shortcuts and tokens. Loaded from @fontsource in common."
+      description="IBM Plex Sans for UI. Zilla Slab for user-editable titles. Google Sans Code for shortcuts and tokens. Served once for every app from /shared/fonts/."
       id="typography"
       title="Typography"
     >

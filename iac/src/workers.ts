@@ -31,7 +31,8 @@ function workerDefaults(config: WorkerConfig) {
 }
 
 /**
- * Asset-layer `_headers` rule for a directory of content-hashed build output.
+ * Asset-layer `_headers` rule for a directory of content-hashed files: an
+ * app's Vite build output or the router's shared fonts.
  * Cloudflare's asset default is `max-age=0, must-revalidate`, which re-checks
  * every hashed file on each page view. Rules match the served path, so mounted
  * apps pass their mount (for example `/docs/assets`).
@@ -399,6 +400,13 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     ...workerDefaults(config.workers.router),
     name: config.workers.router.name,
     main: resolve(repositoryRoot, "function/router/src/router.ts"),
+    // Fonts every app shares, at one URL each (common/src/fonts.css). The asset
+    // layer answers /shared/fonts/ before the router runs; every other path has
+    // no file and reaches the router.
+    assets: {
+      directory: resolve(repositoryRoot, "function/router/public"),
+      headers: immutableAssetHeaders("/shared/fonts"),
+    },
     env: routerEnv,
   };
   if (config.workers.router.domain !== undefined) {

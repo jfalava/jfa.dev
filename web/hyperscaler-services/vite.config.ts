@@ -1,6 +1,7 @@
 import path from "path";
 
 import { pwaManifest } from "@jfa.dev/common/vite/pwa-manifest";
+import { sharedFonts } from "@jfa.dev/common/vite/shared-fonts";
 import { siteMeta } from "@jfa.dev/common/vite/site-meta";
 import { sitemap } from "@jfa.dev/common/vite/sitemap";
 import { packageTagline } from "@jfa.dev/common/web-packages";
@@ -24,6 +25,7 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact({ compiler: true }),
+    sharedFonts(),
     pwaManifest({
       name: "Hyperscaler Services by JFA",
       shortName: "Hyperscaler Services",
