@@ -11,6 +11,65 @@ function createUpstream(fetch: (request: Request) => Promise<Response>): Fetcher
   };
 }
 
+function matchesAny(patterns: string[], url: string): boolean {
+  return patterns.some((pattern) => new URLPattern(pattern, "https://jfa.dev/").test(url));
+}
+
+describe("speculation rules", () => {
+  test("prerenders links into other mounts on intent, for every browser", async () => {
+    const upstream = createUpstream(
+      async () =>
+        new Response("<html><head></head><body></body></html>", {
+          headers: { "content-type": "text/html" },
+        }),
+    );
+
+    const response = await handleMountedApp(
+      new Request("https://jfa.dev/docs/", { headers: { "user-agent": "Firefox/140.0" } }),
+      upstream,
+      "/docs",
+      ["/assets/"],
+      {
+        preserveMount: true,
+        preloadRoutes: [
+          { binding: "LANDING", path: "/", preload: true },
+          {
+            binding: "KEWEKE",
+            path: "/keweke",
+            preload: true,
+            preloadExclude: ["/keweke/:path+"],
+          },
+        ],
+      },
+    );
+    const html = await response.text();
+    const json = /<script type="speculationrules">(.*?)<\/script>/.exec(html)?.[1];
+    type Rules = {
+      prerender: {
+        eagerness: string;
+        where: { and: [{ href_matches: string[] }, { not: { href_matches: string[] } }] };
+      }[];
+    };
+    // SAFETY: The router serializes this shape; the assertions below fail if it changes.
+    const rules = JSON.parse(json ?? "{}") as Rules;
+    const [rule] = rules.prerender;
+    const [included, excluded] = rule?.where.and ?? [
+      { href_matches: [] },
+      { not: { href_matches: [] } },
+    ];
+    const prerenders = (url: string) =>
+      matchesAny(included.href_matches, url) && !matchesAny(excluded.not.href_matches, url);
+
+    expect(rule?.eagerness).toBe("moderate");
+    expect(html).not.toContain("__mf-preload");
+    expect(prerenders("https://jfa.dev/")).toBe(true);
+    expect(prerenders("https://jfa.dev/keweke/")).toBe(true);
+    // Keweke lists open a live WebSocket, and the current app navigates client-side.
+    expect(prerenders("https://jfa.dev/keweke/list-1")).toBe(false);
+    expect(prerenders("https://jfa.dev/docs/keweke")).toBe(false);
+  });
+});
+
 describe("mounted app forwarding", () => {
   test("strips the mount and forwards the mount header", async () => {
     let forwardedRequest: Request | undefined;

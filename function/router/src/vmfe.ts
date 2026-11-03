@@ -8,7 +8,10 @@
 export type RouteConfig = {
   binding: string;
   path: string;
+  /** Prerender same-origin links into this mount when a visitor shows intent. */
   preload?: boolean;
+  /** URL patterns under this mount that must never prerender. */
+  preloadExclude?: string[];
   preserveMount?: boolean;
 };
 
@@ -225,8 +228,16 @@ class SpeculationRulesInjector {
   private injected = false;
   private json: string;
 
-  constructor(mounts: string[]) {
-    this.json = JSON.stringify({ prefetch: [{ urls: mounts }] });
+  constructor(routes: RouteConfig[]) {
+    // Each app navigates within itself client-side, so only links into other
+    // mounts are full navigations worth prerendering. "moderate" starts on
+    // hover or pointerdown, so a page view no longer fetches every app.
+    const targets = routes.map((route) => (route.path === "/" ? "/" : `${route.path}/*`));
+    const excludes = routes.flatMap((route) => route.preloadExclude ?? []);
+    const where = excludes.length
+      ? { and: [{ href_matches: targets }, { not: { href_matches: excludes } }] }
+      : { href_matches: targets };
+    this.json = JSON.stringify({ prerender: [{ where, eagerness: "moderate" }] });
   }
 
   element(el: Element): void {
@@ -235,23 +246,6 @@ class SpeculationRulesInjector {
     }
     this.injected = true;
     el.append(`<script type="speculationrules">${this.json}</script>`, { html: true });
-  }
-}
-
-class PreloadScriptInjector {
-  private injected = false;
-  private path: string;
-
-  constructor(mount: string) {
-    this.path = mount === "/" ? "/__mf-preload.js" : `${mount}/__mf-preload.js`;
-  }
-
-  element(el: Element): void {
-    if (this.injected) {
-      return;
-    }
-    this.injected = true;
-    el.append(`<script src="${this.path}" defer></script>`, { html: true });
   }
 }
 
@@ -339,42 +333,6 @@ function rootScopePreferenceCookie(cookie: string): string {
   return `${cookie}; Path=/`;
 }
 
-/* ----------------------- preload script ----------------------- */
-
-function preloadScriptResponse(mounts: string[]): Response {
-  const json = JSON.stringify(mounts);
-  const js =
-    `(()=>{const routes=${json};` +
-    `const run=()=>{for(const p of routes){fetch(p,{method:"GET",credentials:"same-origin",cache:"default"}).catch(()=>{});}};` +
-    `if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",run,{once:true});}else{run();}` +
-    `})();`;
-
-  return new Response(js, {
-    status: 200,
-    headers: {
-      "content-type": "application/javascript; charset=utf-8",
-      "cache-control": "public, max-age=300",
-    },
-  });
-}
-
-/* ----------------------- browser detection ----------------------- */
-
-function isChromium(ua: string): boolean {
-  if (!ua) {
-    return false;
-  }
-  const lower = ua.toLowerCase();
-  const hasChrome =
-    lower.includes("chrome") ||
-    lower.includes("edg/") ||
-    lower.includes("opr/") ||
-    lower.includes("brave");
-  const isFirefox = lower.includes("firefox");
-  const isSafari = lower.includes("safari") && !lower.includes("chrome");
-  return hasChrome && !isFirefox && !isSafari;
-}
-
 /* ----------------------- URL handling ----------------------- */
 
 function buildForwardUrl(requestUrl: string, mount: string, preserveMount: boolean): URL {
@@ -413,26 +371,14 @@ interface HtmlResponseContext {
   headers: Headers;
   mount: string;
   assetPrefixes: string[];
-  request: Request;
   smoothTransitions?: boolean;
-  preloadStaticMounts?: string[];
+  preloadRoutes?: RouteConfig[];
 }
 
 function handleHtmlResponse(ctx: HtmlResponseContext): Response {
-  const {
-    upstreamResp,
-    headers,
-    mount,
-    assetPrefixes,
-    request,
-    smoothTransitions,
-    preloadStaticMounts,
-  } = ctx;
+  const { upstreamResp, headers, mount, assetPrefixes, smoothTransitions, preloadRoutes } = ctx;
   const headersOut = cloneHeadersForTransform(headers);
   rewriteSetCookie(headersOut, mount);
-
-  const ua = request.headers.get("user-agent") || "";
-  const chromium = isChromium(ua);
 
   const rewriter = new HTMLRewriter().on("*", new AssetAttributeRewriter(mount, assetPrefixes));
 
@@ -440,12 +386,8 @@ function handleHtmlResponse(ctx: HtmlResponseContext): Response {
     rewriter.on("head", new SmoothTransitionsInjector());
   }
 
-  if (preloadStaticMounts?.length) {
-    if (chromium) {
-      rewriter.on("head", new SpeculationRulesInjector(preloadStaticMounts));
-    } else {
-      rewriter.on("body", new PreloadScriptInjector(mount));
-    }
+  if (preloadRoutes?.length) {
+    rewriter.on("head", new SpeculationRulesInjector(preloadRoutes));
   }
 
   return rewriter.transform(
@@ -547,7 +489,7 @@ export async function handleMountedApp(
   assetPrefixes: string[],
   options?: {
     smoothTransitions?: boolean;
-    preloadStaticMounts?: string[];
+    preloadRoutes?: RouteConfig[];
     preserveMount?: boolean;
   },
 ): Promise<Response> {
@@ -555,14 +497,6 @@ export async function handleMountedApp(
   const preserveMount =
     options?.preserveMount ?? isMountedAssetRequest(requestURL.pathname, mount, assetPrefixes);
   const forwardUrl = buildForwardUrl(request.url, mount, preserveMount);
-
-  const relativePath = mountedRelativePath(requestURL.pathname, mount);
-  if (
-    options?.preloadStaticMounts?.length &&
-    (forwardUrl.pathname === "/__mf-preload.js" || relativePath === "/__mf-preload.js")
-  ) {
-    return preloadScriptResponse(options.preloadStaticMounts);
-  }
 
   const upstreamRequest = new Request(forwardUrl.toString(), request);
   const normalizedMount = normalizePath(mount);
@@ -590,9 +524,8 @@ export async function handleMountedApp(
       headers,
       mount,
       assetPrefixes,
-      request,
       smoothTransitions: options?.smoothTransitions,
-      preloadStaticMounts: options?.preloadStaticMounts,
+      preloadRoutes: options?.preloadRoutes,
     });
   }
 

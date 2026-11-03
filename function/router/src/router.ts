@@ -169,10 +169,8 @@ export function findMatchingRoute(
   return matched;
 }
 
-function getPreloadMounts(routeDefs: RouteConfig[], currentMount: string): string[] {
-  return routeDefs
-    .filter((r) => r.preload && !r.path.includes(":") && r.path !== currentMount)
-    .map((r) => r.path);
+function getPreloadRoutes(routeDefs: RouteConfig[], currentMount: string): RouteConfig[] {
+  return routeDefs.filter((r) => r.preload && !r.path.includes(":") && r.path !== currentMount);
 }
 
 export function redirectLegacyPlaylistPath(url: URL): Response | null {
@@ -196,6 +194,17 @@ function normalizeRoutePath(path: string): string {
   return withLeadingSlash.length > 1 ? withLeadingSlash.replace(/\/+$/, "") : withLeadingSlash;
 }
 
+function isPatternList(value: JsonValue): value is string[] {
+  return Array.isArray(value) && value.every((pattern) => isString(pattern) && pattern !== "");
+}
+
+function isOptional<T extends JsonValue>(
+  value: JsonValue | undefined,
+  guard: (candidate: JsonValue) => candidate is T,
+): value is T | undefined {
+  return value === undefined || guard(value);
+}
+
 function parseRoute(value: JsonValue): RouteConfig | null {
   if (!isRecord(value)) {
     return null;
@@ -204,13 +213,15 @@ function parseRoute(value: JsonValue): RouteConfig | null {
   const binding = isString(value.binding) ? value.binding.trim() : "";
   const path = isString(value.path) ? value.path.trim() : "";
   const preload = value.preload;
+  const preloadExclude = value.preloadExclude;
   const preserveMount = value.preserveMount;
 
   if (
     !binding ||
     !path ||
-    (preload !== undefined && !isBoolean(preload)) ||
-    (preserveMount !== undefined && !isBoolean(preserveMount))
+    !isOptional(preload, isBoolean) ||
+    !isOptional(preloadExclude, isPatternList) ||
+    !isOptional(preserveMount, isBoolean)
   ) {
     return null;
   }
@@ -221,6 +232,9 @@ function parseRoute(value: JsonValue): RouteConfig | null {
   };
   if (preload !== undefined) {
     route.preload = preload;
+  }
+  if (preloadExclude !== undefined) {
+    route.preloadExclude = preloadExclude;
   }
   if (preserveMount !== undefined) {
     route.preserveMount = preserveMount;
@@ -336,11 +350,11 @@ app.all("*", async (c) => {
     return c.text(`Service binding "${matched.route.binding}" not found`, 502);
   }
 
-  const preloadMounts = getPreloadMounts(routeDefs, matched.mount);
+  const preloadRoutes = getPreloadRoutes(routeDefs, matched.mount);
 
   return handleMountedApp(c.req.raw, binding, matched.mount, assetPrefixes, {
     smoothTransitions: !Array.isArray(config) ? config.smoothTransitions : undefined,
-    preloadStaticMounts: preloadMounts.length ? preloadMounts : undefined,
+    preloadRoutes: preloadRoutes.length ? preloadRoutes : undefined,
     preserveMount: matched.route.preserveMount,
   });
 });

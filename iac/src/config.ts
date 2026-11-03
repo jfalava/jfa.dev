@@ -56,6 +56,8 @@ const routeDefinitions = {
       binding: "KEWEKE",
       path: "/keweke",
       preload: true,
+      // Lists open a live WebSocket and /admin sits behind Access: prerender only the home.
+      preloadExclude: ["/keweke/:path+"],
       preserveMount: true,
     },
     {
