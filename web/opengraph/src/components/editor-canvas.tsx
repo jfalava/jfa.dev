@@ -279,6 +279,11 @@ async function createFabricObject(
   };
 
   if (isTextLayer(layer)) {
+    // Canvas text does not wait for web fonts: draw only once this face and the
+    // unicode-range subsets the text needs have loaded, or it renders a fallback.
+    await document.fonts
+      .load(`${layer.fontWeight} ${layer.fontSize}px "${layer.fontFamily}"`, layer.text)
+      .catch(() => undefined);
     return new fabric.Textbox(layer.text, {
       ...baseOptions,
       fill: layer.fill,
