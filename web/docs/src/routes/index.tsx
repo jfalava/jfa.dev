@@ -1,6 +1,5 @@
+import { packageTagline } from "@jfa.dev/common/web-packages";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { gifs } from "virtual:landing-gifs";
 
 import { DocsLandingView, loadLanding } from "@/components/docs-page";
 
@@ -14,45 +13,44 @@ export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
-function RouteComponent() {
-  // Build-time list from `public/gifs/{1,2,...}.gif` via the `landingGifs`
-  // Vite plugin. Adding `3.gif` (etc.) is picked up on next build/dev restart.
-  // SSR renders a deterministic fallback (first gif) so hydration matches;
-  // the client then picks a random one after mount.
-  const base = import.meta.env.BASE_URL;
-  const fallback = gifs[0] ? `${base}${gifs[0]}` : `${base}court-jester-dancing.gif`;
-  const [src, setSrc] = useState(fallback);
+/** Apps with a docs section, in sidebar order. */
+const sections = [
+  { slug: "keweke", title: "KEWEKE", path: "/keweke" },
+  { slug: "opengraph", title: "OpenGraph", path: "/opengraph" },
+] as const;
 
-  // Randomize client-side after hydration so SSR stays deterministic.
-  // `setState` in an effect is intentional here — the value is non-deterministic
-  // and must not run during SSR/hydration.
-  // oxlint-disable-next-line react/set-state-in-effect, react/exhaustive-effect-dependencies -- client-only randomization after mount
-  useEffect(() => {
-    if (gifs.length <= 1) {
-      return;
-    }
-    const next = gifs[Math.floor(Math.random() * gifs.length)];
-    setSrc(`${base}${next}`);
-    // `base` is static for the build (Vite `base`); `gifs` is build-time constant.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional mount-only effect
-  }, []);
+function RouteComponent() {
+  const base = import.meta.env.BASE_URL;
 
   return (
     <DocsLandingView data={Route.useLoaderData()}>
-      <main className="flex flex-col items-center justify-center gap-8 px-6 py-16 text-center [grid-area:main]">
-        <img
-          src={src}
-          alt="A court jester dancing"
-          width={350}
-          height={320}
-          className="w-56 sm:w-64"
-        />
-        <div className="space-y-2">
-          <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter sm:text-6xl">
-            The Knowledge Base: DOCS by JFA
+      <main className="flex flex-col gap-10 px-6 py-16 [grid-area:main] sm:px-10">
+        <div className="max-w-2xl space-y-3">
+          <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
+            DOCS
           </h1>
-          <p className="text-sm text-muted-foreground">why do u need this lmao</p>
+          <p className="text-base text-muted-foreground">
+            {packageTagline("/docs")}: what each screen does, how lists sync, and every keyboard
+            shortcut. Pick an app to start.
+          </p>
         </div>
+        <ul className="grid max-w-2xl gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2">
+          {sections.map((section) => (
+            <li key={section.slug} className="bg-background">
+              <a
+                href={`${base}${section.slug}`}
+                className="flex h-full flex-col gap-1 p-5 no-underline transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+              >
+                <span className="text-sm font-bold tracking-tight text-primary">
+                  /{section.title}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {packageTagline(section.path)}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </main>
     </DocsLandingView>
   );

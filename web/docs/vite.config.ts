@@ -2,13 +2,12 @@ import path from "path";
 
 import { siteMeta } from "@jfa.dev/common/vite/site-meta";
 import { sitemap } from "@jfa.dev/common/vite/sitemap";
+import { packageTagline } from "@jfa.dev/common/web-packages";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { fumadocsMdx } from "fumadocs-mdx/vite";
 import { defineConfig } from "vite-plus";
-
-import { landingGifs } from "./src/vite/landing-gifs.ts";
 
 /**
  * Vite configuration for the hyperscaler services application.
@@ -22,7 +21,6 @@ const MOUNT_PATH = "/docs/";
 export default defineConfig({
   base: MOUNT_PATH,
   plugins: [
-    landingGifs(),
     fumadocsMdx(),
     tailwindcss(),
     tanstackStart(),
@@ -30,7 +28,7 @@ export default defineConfig({
     sitemap(),
     siteMeta({
       title: "DOCS by JFA",
-      description: "The Knowledge Base for the JFA's apps",
+      description: packageTagline("/docs"),
     }),
   ],
   optimizeDeps: {
