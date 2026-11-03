@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@jfa.dev/common/hooks/use-theme";
 import { siteHead } from "@jfa.dev/common/site-head";
 import type { QueryClient } from "@tanstack/react-query";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
@@ -5,7 +6,6 @@ import type { ReactNode } from "react";
 
 import { OpengraphHeader } from "@/components/opengraph-header";
 import { ViewportGuard } from "@/components/viewport-guard";
-import { ThemeProvider } from "@/hooks/use-theme";
 import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles.css?url";
 

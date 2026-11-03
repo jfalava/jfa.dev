@@ -1,9 +1,9 @@
+import { ThemeProvider } from "@jfa.dev/common/hooks/use-theme";
 import { siteHead } from "@jfa.dev/common/site-head";
 import appCss from "@styles/globals.css?url";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 
 import { NotFoundPage, RouteErrorBoundary } from "@/components/error-boundary";
-import { ThemeProvider } from "@/hooks/use-theme";
 import { appPath } from "@/lib/site-paths";
 
 export const Route = createRootRoute({

@@ -1,14 +1,13 @@
+import { ThemeProvider, useTheme } from "@jfa.dev/common/hooks/use-theme";
 import { siteHead } from "@jfa.dev/common/site-head";
-import { SiteHeader, Toaster } from "@jfa.dev/common/ui";
+import { SiteHeader, Toaster, ThemeToggle } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { ThemeToggle } from "@/components/theme-toggle";
 import { NowPlayingBar } from "@/features/music/components/now-playing-bar";
 import { PlaylistSearchPalette } from "@/features/music/components/playlist-search-palette";
-import { ThemeProvider, useTheme } from "@/hooks/use-theme";
 import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 

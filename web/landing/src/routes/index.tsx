@@ -1,8 +1,7 @@
-import { SiteHeader } from "@jfa.dev/common/ui";
+import { SiteHeader, ThemeToggle } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { ThemeToggle } from "@/components/theme-toggle";
 import Grainient from "@/features/hero/components/grainient";
 import TextPressure from "@/features/hero/components/text-pressure";
 import { RepoLinks } from "@/features/links/components/repo-links";

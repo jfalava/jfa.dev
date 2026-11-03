@@ -1,5 +1,5 @@
 import type { ListBackend } from "@jfa.dev/common/lists";
-import { Button, SiteHeader, buttonVariants } from "@jfa.dev/common/ui";
+import { Button, SiteHeader, buttonVariants, ThemeToggle } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -8,7 +8,6 @@ import { useCallback, useEffect, useState } from "react";
 
 import { DocsLink } from "@/app/components/docs-link";
 import { HotkeyKbd } from "@/app/components/hotkey-kbd";
-import { ThemeToggle } from "@/app/components/theme-toggle";
 import { kewekeDocs } from "@/app/lib/docs-paths";
 import { appPath } from "@/app/lib/site-paths";
 import { UserDialog } from "@/features/auth/components/user-dialog";

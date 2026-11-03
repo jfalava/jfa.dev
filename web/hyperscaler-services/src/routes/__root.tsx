@@ -1,10 +1,10 @@
+import { ThemeProvider } from "@jfa.dev/common/hooks/use-theme";
 import { siteHead } from "@jfa.dev/common/site-head";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 /// <reference types="vite/client" />
 import type { ReactNode } from "react";
 
-import { ThemeProvider } from "@/hooks/use-theme";
 import { appPath } from "@/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 

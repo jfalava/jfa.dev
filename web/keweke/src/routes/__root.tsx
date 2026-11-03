@@ -1,9 +1,9 @@
+import { ThemeProvider, useTheme } from "@jfa.dev/common/hooks/use-theme";
 import { siteHead } from "@jfa.dev/common/site-head";
 import { Toaster } from "@jfa.dev/common/ui";
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { ThemeProvider, useTheme } from "@/app/hooks/use-theme";
 import { appPath } from "@/app/lib/site-paths";
 import appCss from "@/styles/globals.css?url";
 

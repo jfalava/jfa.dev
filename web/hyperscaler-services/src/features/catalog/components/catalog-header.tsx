@@ -1,9 +1,8 @@
-import { SiteHeader } from "@jfa.dev/common/ui";
+import { SiteHeader, ThemeToggle } from "@jfa.dev/common/ui";
 import { webPackages } from "@jfa.dev/common/web-packages";
 import { X } from "lucide-react";
 
 import { ServiceSearchPalette } from "@/components/service-search-palette";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { importServices } from "@/data/services";
 import type { PageTranslations } from "@/features/catalog/lib/translations";
 import type { ServiceSearchIndex } from "@/lib/service-search";
