@@ -30,6 +30,16 @@ function workerDefaults(config: WorkerConfig) {
   };
 }
 
+/**
+ * Asset-layer `_headers` rule for a directory of content-hashed build output.
+ * Cloudflare's asset default is `max-age=0, must-revalidate`, which re-checks
+ * every hashed file on each page view. Rules match the served path, so mounted
+ * apps pass their mount (for example `/docs/assets`).
+ */
+function immutableAssetHeaders(directory: string): string {
+  return `${directory}/*\n  Cache-Control: public, max-age=31536000, immutable\n`;
+}
+
 function localDev(port: number) {
   return {
     host: "0.0.0.0",
@@ -74,6 +84,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     rootDir: resolve(repositoryRoot, "web/landing"),
     assets: {
       runWorkerFirst: false,
+      headers: immutableAssetHeaders("/assets"),
     },
   };
   if (config.workers.landing.domain !== undefined) {
@@ -104,6 +115,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     rootDir: resolve(repositoryRoot, "web/opengraph"),
     assets: {
       runWorkerFirst: false,
+      headers: immutableAssetHeaders("/opengraph/assets"),
     },
   };
   if (config.workers.opengraph.domain !== undefined) {
@@ -125,6 +137,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     rootDir: resolve(repositoryRoot, "web/hyperscaler-services"),
     assets: {
       runWorkerFirst: false,
+      headers: immutableAssetHeaders("/hyperscaler-services/assets"),
     },
   };
   if (config.workers.hyperscalerMounted.basePath !== undefined) {
@@ -217,6 +230,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     main: resolve(repositoryRoot, "web/keweke/src/server-entry.ts"),
     assets: {
       runWorkerFirst: false,
+      headers: immutableAssetHeaders("/keweke/assets"),
     },
     env: kewekeEnv,
   };
@@ -239,6 +253,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     rootDir: resolve(repositoryRoot, "web/branding"),
     assets: {
       runWorkerFirst: false,
+      headers: immutableAssetHeaders("/branding/assets"),
     },
   };
   if (config.workers.brandingMounted.basePath !== undefined) {
@@ -269,6 +284,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     rootDir: resolve(repositoryRoot, "web/docs"),
     assets: {
       runWorkerFirst: false,
+      headers: immutableAssetHeaders("/docs/assets"),
     },
   };
   if (config.workers.docsMounted.basePath !== undefined) {
@@ -311,6 +327,7 @@ export const defineWorkers = Effect.fn("defineWorkers")(function* (
     rootDir: resolve(repositoryRoot, "web/playlists"),
     assets: {
       runWorkerFirst: false,
+      headers: immutableAssetHeaders("/playlists/assets"),
     },
     env: playlistsEnv,
   };
