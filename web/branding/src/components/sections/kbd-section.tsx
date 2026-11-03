@@ -6,7 +6,7 @@ import { Section } from "@/components/section";
 export function KbdSection() {
   return (
     <Section
-      description="Kbd and KbdGroup from react-aria-components. Muted by default. Adapts inside tooltips via data-slot."
+      description="Kbd and KbdGroup from react-aria-components. Muted chip by default for hints beside controls; keycap for prose where the key is the subject. Adapts inside tooltips via data-slot."
       id="kbd"
       title="Kbd"
     >
@@ -38,13 +38,13 @@ export function KbdSection() {
           </KbdGroup>
         </div>
       </Specimen>
-      <Specimen label="In a sentence">
+      <Specimen label="Keycap, in a sentence">
         <Row>
           <span className="text-sm text-muted-foreground">Press</span>
           <KbdGroup>
-            <Kbd>⌘</Kbd>
-            <Kbd>⇧</Kbd>
-            <Kbd>U</Kbd>
+            <Kbd variant="keycap">⌘</Kbd>
+            <Kbd variant="keycap">⇧</Kbd>
+            <Kbd variant="keycap">U</Kbd>
           </KbdGroup>
           <span className="text-sm text-muted-foreground">to switch apps.</span>
         </Row>

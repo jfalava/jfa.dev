@@ -8,8 +8,11 @@ const kbdVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "border-zinc-200 bg-gradient-to-b from-white to-zinc-50 text-zinc-700 shadow-[0_3px_0_0_var(--primary)] hover:translate-y-[1px] hover:shadow-[0_2px_0_0_var(--primary)] dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-200 dark:shadow-[0_3px_0_0_var(--primary)] dark:hover:shadow-[0_2px_0_0_var(--primary)]",
+        // Quiet grey chip for hints beside UI controls.
+        default: "border-border bg-muted text-muted-foreground shadow-none",
+        // Indigo key cap for prose where the key is the subject, such as docs.
+        keycap:
+          "border-zinc-200 bg-gradient-to-b from-white to-zinc-50 text-zinc-700 shadow-[0_3px_0_0_var(--primary)] hover:translate-y-[1px] hover:shadow-[0_2px_0_0_var(--primary)] dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-200",
         embedded:
           "border-zinc-200 bg-zinc-50 text-zinc-600 shadow-none hover:translate-y-0 hover:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:shadow-none",
       },
@@ -29,29 +32,18 @@ const kbdVariants = cva(
 type KbdProps = React.ComponentProps<"kbd"> & VariantProps<typeof kbdVariants>;
 
 function Kbd({ className, variant, size, ...props }: KbdProps) {
-  // Compact sizing is shared; shadow inside Button must preserve variant behavior:
-  // default keeps brand shadow in both light + dark (previously light hid via shadow-none without dark: counterpart),
-  // embedded stays shadow-none. Keep hover shadow constant (no lift) inside buttons.
-  const isEmbedded = variant === "embedded";
-  const buttonShadow = isEmbedded
-    ? "in-data-[slot=button]:shadow-none dark:in-data-[slot=button]:shadow-none in-data-[slot=button]:hover:shadow-none dark:in-data-[slot=button]:hover:shadow-none"
-    : "in-data-[slot=button]:shadow-[0_3px_0_0_var(--primary)] dark:in-data-[slot=button]:shadow-[0_3px_0_0_var(--primary)] in-data-[slot=button]:hover:shadow-[0_3px_0_0_var(--primary)] dark:in-data-[slot=button]:hover:shadow-[0_3px_0_0_var(--primary)]";
-  const groupShadow = isEmbedded
-    ? "in-[.group\\/button]:shadow-none dark:in-[.group\\/button]:shadow-none in-[.group\\/button]:hover:shadow-none dark:in-[.group\\/button]:hover:shadow-none"
-    : "in-[.group\\/button]:shadow-[0_3px_0_0_var(--primary)] dark:in-[.group\\/button]:shadow-[0_3px_0_0_var(--primary)] in-[.group\\/button]:hover:shadow-[0_3px_0_0_var(--primary)] dark:in-[.group\\/button]:hover:shadow-[0_3px_0_0_var(--primary)]";
+  // Auto-compact when nested inside a Button / .group/button.
   const buttonCompact =
-    "in-data-[slot=button]:h-4 in-data-[slot=button]:min-w-4 in-data-[slot=button]:px-1 in-data-[slot=button]:text-[10px] in-data-[slot=button]:leading-none in-data-[slot=button]:hover:translate-y-0 in-data-[slot=button]:border-zinc-300 dark:in-data-[slot=button]:border-zinc-600";
+    "in-data-[slot=button]:h-4 in-data-[slot=button]:min-w-4 in-data-[slot=button]:px-1 in-data-[slot=button]:text-[10px] in-data-[slot=button]:leading-none";
   const groupCompact =
-    "in-[.group\\/button]:h-4 in-[.group\\/button]:min-w-4 in-[.group\\/button]:px-1 in-[.group\\/button]:text-[10px] in-[.group\\/button]:leading-none in-[.group\\/button]:hover:translate-y-0 in-[.group\\/button]:border-zinc-300 dark:in-[.group\\/button]:border-zinc-600";
+    "in-[.group\\/button]:h-4 in-[.group\\/button]:min-w-4 in-[.group\\/button]:px-1 in-[.group\\/button]:text-[10px] in-[.group\\/button]:leading-none";
   return (
     <KbdPrimitive
       data-slot="kbd"
       className={cn(
         kbdVariants({ variant, size }),
-        // Auto-compact when nested inside a Button / .group/button (covers Button and <a> with buttonVariants)
-        // Base already nudged -top-px for optical alignment (standalone + button)
-        `${buttonCompact} ${buttonShadow}`,
-        `${groupCompact} ${groupShadow}`,
+        buttonCompact,
+        groupCompact,
         // Preserve tooltip override (reset nudge inside tooltip)
         "in-data-[slot=tooltip-content]:top-0 in-data-[slot=tooltip-content]:h-auto in-data-[slot=tooltip-content]:min-w-0 in-data-[slot=tooltip-content]:border-white/15 in-data-[slot=tooltip-content]:bg-white/10 in-data-[slot=tooltip-content]:from-transparent in-data-[slot=tooltip-content]:to-transparent in-data-[slot=tooltip-content]:px-1 in-data-[slot=tooltip-content]:text-white in-data-[slot=tooltip-content]:shadow-none hover:in-data-[slot=tooltip-content]:translate-y-0 hover:in-data-[slot=tooltip-content]:shadow-none",
         className,

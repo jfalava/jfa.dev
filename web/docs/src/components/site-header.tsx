@@ -56,10 +56,8 @@ export function DocsSiteHeader() {
         <Search aria-hidden="true" className="size-4" />
         <span className="hidden sm:inline">Search</span>
         <KbdGroup className="hidden shrink-0 gap-1 sm:inline-flex">
-          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">
-            {isMac ? "⌘" : "Ctrl"}
-          </Kbd>
-          <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">K</Kbd>
+          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">{isMac ? "⌘" : "Ctrl"}</Kbd>
+          <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">K</Kbd>
         </KbdGroup>
       </Button>
       <Button

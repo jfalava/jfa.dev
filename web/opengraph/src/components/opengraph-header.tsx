@@ -136,7 +136,7 @@ export function OpengraphHeader() {
             <span className="hidden sm:inline">Shortcuts</span>
             <Kbd
               aria-hidden="true"
-              className="hidden h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none sm:inline-flex"
+              className="hidden h-4 min-w-4 px-0.5 text-[10px] leading-none sm:inline-flex"
             >
               ?
             </Kbd>

@@ -166,15 +166,7 @@ function HeaderActions({
   navLabel: string;
 }) {
   return (
-    <nav
-      className={cn(
-        "flex shrink-0 items-center gap-1",
-        // Key hints in the bar are quiet grey chips so they don't compete with
-        // the brand; the indigo key caps stay in page bodies.
-        "[&_[data-slot=kbd]]:translate-y-0! [&_[data-slot=kbd]]:border-border! [&_[data-slot=kbd]]:bg-muted! [&_[data-slot=kbd]]:bg-none! [&_[data-slot=kbd]]:text-muted-foreground! [&_[data-slot=kbd]]:shadow-none!",
-      )}
-      aria-label={navLabel}
-    >
+    <nav className="flex shrink-0 items-center gap-1" aria-label={navLabel}>
       {children}
       {githubHref ? (
         <a
