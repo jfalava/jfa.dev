@@ -12,6 +12,7 @@
     "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
+    "@alchemy.run/cloudflare": "catalog:iac",
     "@effect/platform-bun": "catalog:iac",
     "@effect/platform-node": "catalog:iac",
     "alchemy": "catalog:iac",

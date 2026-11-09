@@ -2,7 +2,7 @@ import { resolve } from "node:path";
 
 import { remote, Stack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
-import * as Cloudflare from "alchemy/Cloudflare";
+import * as Cloudflare from "@alchemy.run/cloudflare";
 import type { Output } from "alchemy/Output";
 import { State } from "alchemy/State";
 import { Stage } from "alchemy/Stage";

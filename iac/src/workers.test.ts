@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import * as Alchemy from "alchemy";
-import * as Cloudflare from "alchemy/Cloudflare";
+import * as Cloudflare from "@alchemy.run/cloudflare";
 import { evaluate } from "alchemy/Output";
 import { InMemoryService, State, StateStoreError } from "alchemy/State";
 import * as ConfigProvider from "effect/ConfigProvider";
