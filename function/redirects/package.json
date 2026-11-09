@@ -7,7 +7,7 @@
     "dev:app": "bun run --cwd ../../iac dev",
     "format": "vp fmt",
     "lint": "vp lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "hono": "catalog:backend"
@@ -16,6 +16,7 @@
     "@cloudflare/workers-types": "catalog:types",
     "@types/node": "catalog:types",
     "bun-types": "catalog:types",
+    "tsrs": "catalog:build",
     "typescript": "catalog:build",
     "vite-plus": "catalog:build"
   }

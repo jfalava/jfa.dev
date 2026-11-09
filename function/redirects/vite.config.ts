@@ -39,7 +39,6 @@ export default defineConfig({
     ignorePatterns: ["**/*.d.ts"],
     options: {
       typeAware: true,
-      typeCheck: true,
     },
     overrides: [
       {

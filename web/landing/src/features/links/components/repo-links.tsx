@@ -1,5 +1,4 @@
 import { buttonVariants } from "@jfa.dev/common/ui";
-
 import { useEffect, useRef, useState } from "react";
 
 import { appPath } from "@/lib/site-paths";

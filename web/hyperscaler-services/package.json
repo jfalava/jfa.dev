@@ -13,7 +13,7 @@
     "prebuild": "bun run generate:search-index",
     "predev": "bun run generate:search-index",
     "preview": "vp preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@jfa.dev/common": "workspace:*",
@@ -41,6 +41,7 @@
     "oxc-transform-react": "catalog:build",
     "oxlint": "catalog:build",
     "tailwindcss": "catalog:styling",
+    "tsrs": "catalog:build",
     "tw-animate-css": "catalog:styling",
     "typescript": "catalog:build",
     "vite": "catalog:build",

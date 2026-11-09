@@ -123,7 +123,7 @@
     "format": "vp fmt",
     "lint": "vp lint",
     "test": "bun test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "catalog:react",
@@ -145,6 +145,7 @@
     "@types/react-dom": "catalog:types",
     "oxlint": "catalog:build",
     "oxlint-tsgolint": "catalog:build",
+    "tsrs": "catalog:build",
     "typescript": "catalog:build",
     "vite": "catalog:build",
     "vite-plus": "catalog:build"

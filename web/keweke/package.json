@@ -12,8 +12,8 @@
     "preview": "vp preview",
     "test": "bun test src/app src/features",
     "test:workers": "vitest run --config vitest.workers.config.ts",
-    "typecheck": "tsc --noEmit",
-    "typecheck:workers": "tsc --noEmit -p tsconfig.workers.json"
+    "typecheck": "tsrs --noEmit",
+    "typecheck:workers": "tsrs --noEmit -p tsrsonfig.workers.json"
   },
   "dependencies": {
     "@jfa.dev/common": "workspace:*",
@@ -52,6 +52,7 @@
     "fake-indexeddb": "6.2.7",
     "oxc-transform-react": "catalog:build",
     "oxlint": "catalog:build",
+    "tsrs": "catalog:build",
     "typescript": "catalog:build",
     "vite": "catalog:build",
     "vite-plus": "catalog:build",

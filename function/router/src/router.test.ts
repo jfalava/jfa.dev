@@ -127,7 +127,9 @@ describe("router configuration", () => {
 
     expect(response.status).toBe(200);
     expect(await response.text()).toBe("[]");
-    expect(forwardedUrl).toBe("https://jfa.dev/_serverFn/getRepositoryLinks_a1b2c3?payload=%5B0%5D");
+    expect(forwardedUrl).toBe(
+      "https://jfa.dev/_serverFn/getRepositoryLinks_a1b2c3?payload=%5B0%5D",
+    );
   });
 
   test("forwards mount-scoped server-function requests without stripping the mount", async () => {

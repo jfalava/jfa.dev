@@ -12,7 +12,7 @@
     "preview": "vp preview",
     "serve": "vp preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "catalog:react",
@@ -43,6 +43,7 @@
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
     "oxc-transform-react": "catalog:build",
+    "tsrs": "catalog:build",
     "typescript": "catalog:build",
     "vite": "catalog:build",
     "vite-plus": "catalog:build",
