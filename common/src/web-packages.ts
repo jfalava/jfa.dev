@@ -57,18 +57,18 @@ export const webPackages: WebPackage[] = [
   {
     path: "/docs",
     title: "DOCS",
-    tagline: "How the jfa.dev apps work",
+    tagline: "How (some of) the web apps work",
     sitemapContentDir: "content/docs",
   },
   {
     path: "/playlists",
     title: "PLAYLISTS",
-    tagline: "Apple Music playlists and what I'm playing on Last.fm",
+    tagline: "My music taste is SO much better than yours",
   },
   {
     path: "/branding",
     title: "Branding",
-    tagline: "The shared UI kit behind every jfa.dev app",
+    tagline: "The shared UI kit behind every app",
   },
 ];
 

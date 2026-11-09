@@ -49,7 +49,7 @@
     "@types/react-dom": "catalog:types",
     "@vitejs/plugin-react": "catalog:build",
     "bun-types": "catalog:types",
-    "fake-indexeddb": "6.2.6",
+    "fake-indexeddb": "6.2.7",
     "oxc-transform-react": "catalog:build",
     "oxlint": "catalog:build",
     "typescript": "catalog:build",
