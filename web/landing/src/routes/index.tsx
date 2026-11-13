@@ -25,7 +25,7 @@ function App() {
         navLabel="Ego page"
         githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/landing"
       ></SiteHeader>
-      <main className="relative flex-1 overflow-hidden overscroll-none bg-[#0e1116]">
+      <main className="landing-hero relative flex-1 overflow-hidden overscroll-none bg-[#0e1116]">
         {/* Every stop is dark enough for white display type (≥4.5:1 on the lightest). */}
         <Grainient
           className="pointer-events-none absolute inset-0 size-full"

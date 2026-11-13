@@ -5,12 +5,17 @@ export function FontsPreview() {
     <>
       <PreviewShell
         label="Families"
-        caption="Pretendard for UI. Zilla Slab for display. Google Sans Code for shortcuts and tokens. Served once for every app from /shared/fonts/."
+        caption="These are the built-in canvas text families. The editor controls and Docs use IBM Plex Sans."
       >
         <div className="grid w-full gap-6 p-6 text-left sm:grid-cols-3">
           <div className="space-y-1">
-            <p className="font-sans text-lg font-semibold tracking-tight">Pretendard</p>
-            <p className="text-sm text-muted-foreground">UI, body, and headings.</p>
+            <p
+              className="text-lg font-semibold tracking-tight"
+              style={{ fontFamily: "Pretendard, sans-serif" }}
+            >
+              Pretendard
+            </p>
+            <p className="text-sm text-muted-foreground">Default for new canvas text layers.</p>
           </div>
           <div className="space-y-1">
             <p className="font-serif text-lg font-semibold tracking-tighter uppercase">
@@ -20,20 +25,28 @@ export function FontsPreview() {
           </div>
           <div className="space-y-1">
             <p className="font-mono text-lg font-semibold">Google Sans Code</p>
-            <p className="text-sm text-muted-foreground">Kbd, class names, token names.</p>
+            <p className="text-sm text-muted-foreground">Code and labels in artwork.</p>
           </div>
         </div>
       </PreviewShell>
 
-      <PreviewShell label="Scale" caption="Type scale used in the editor.">
+      <PreviewShell
+        label="Canvas examples"
+        caption="Illustrative artwork sizes, not the editor UI type scale. Text layers have their own size and weight controls."
+      >
         <div className="w-full space-y-2 p-6 text-left">
-          <p className="font-sans text-3xl leading-[0.95] font-semibold tracking-tighter uppercase">
+          <p
+            className="text-3xl leading-[0.95] font-semibold tracking-tighter uppercase"
+            style={{ fontFamily: "Pretendard, sans-serif" }}
+          >
             OpenGraph
           </p>
           <p className="font-serif text-3xl leading-[0.95] font-semibold tracking-tighter uppercase">
             Weekend groceries
           </p>
-          <p className="text-base">Body in Pretendard.</p>
+          <p className="text-base" style={{ fontFamily: "Pretendard, sans-serif" }}>
+            Canvas copy in Pretendard.
+          </p>
           <p className="text-sm text-muted-foreground">Muted copy stays on the same measure.</p>
         </div>
       </PreviewShell>

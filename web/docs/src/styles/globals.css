@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "@jfa.dev/common/styles.css";
+/* Font faces for OpenGraph artwork specimens; does not change the UI font. */
+@import "@jfa.dev/common/pretendard.css";
 @import "shadcn/tailwind.css";
 
 @import "fumadocs-ui/css/neutral.css";
