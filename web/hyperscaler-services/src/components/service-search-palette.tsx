@@ -8,7 +8,13 @@ import {
   Kbd,
   KbdGroup,
 } from "@jfa.dev/common/ui";
-import { detectPlatform, formatForDisplay, useHotkey, useHotkeys } from "@tanstack/react-hotkeys";
+import {
+  detectPlatform,
+  formatForDisplay,
+  parseHotkey,
+  useHotkey,
+  useHotkeys,
+} from "@tanstack/react-hotkeys";
 import { useNavigate } from "@tanstack/react-router";
 import { CornerDownLeft, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
@@ -100,7 +106,7 @@ function HotkeyKbd({
 
   return (
     <KbdGroup className={className}>
-      {formatForDisplay(hotkey, { platform, separatorToken: " " })
+      {formatForDisplay(parseHotkey(hotkey, platform), { platform, separatorToken: " " })
         .split(" ")
         .map((token) => (
           <Kbd key={token} className={kbdClassName}>

@@ -1,5 +1,5 @@
 import { Kbd, KbdGroup, kbdVariants } from "@jfa.dev/common/ui";
-import { detectPlatform, formatForDisplay } from "@tanstack/react-hotkeys";
+import { detectPlatform, formatForDisplay, parseHotkey } from "@tanstack/react-hotkeys";
 import type { VariantProps } from "class-variance-authority";
 import { useSyncExternalStore } from "react";
 
@@ -19,7 +19,7 @@ export function HotkeyKbd({ className, hotkey, size, variant }: HotkeyKbdProps) 
 
   return (
     <KbdGroup className={className}>
-      {formatForDisplay(hotkey, { platform, separatorToken: " " })
+      {formatForDisplay(parseHotkey(hotkey, platform), { platform, separatorToken: " " })
         .split(" ")
         .map((token) => (
           <Kbd key={token} size={size} variant={variant}>
