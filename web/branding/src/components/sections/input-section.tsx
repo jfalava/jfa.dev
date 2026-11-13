@@ -29,8 +29,11 @@ export function InputSection() {
         </div>
       </Specimen>
       <Specimen label="File">
-        <div className="w-full max-w-sm">
-          <Input type="file" />
+        <div className="grid w-full max-w-sm gap-1.5">
+          <label className="text-xs font-medium" htmlFor="branding-file">
+            Upload file
+          </label>
+          <Input id="branding-file" type="file" />
         </div>
       </Specimen>
     </Section>
