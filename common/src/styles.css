@@ -5,7 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Keyboard notation is the one documented sub-12px type role: text-kbd, text-kbd-xs. */
+  /* The only sub-12px sizes: keyboard notation (text-kbd, text-kbd-xs) and uppercase mono
+     labels (type-label), whose capitals read larger than lowercase text of the same size. */
+  --text-label: 0.6875rem;
   --text-kbd: 0.6875rem;
   --text-kbd--line-height: 1;
   --text-kbd-xs: 0.625rem;
@@ -40,6 +42,7 @@
   --destructive-foreground: oklch(0.985 0 0);
   --success: oklch(0.51 0.145 163.225);
   --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.555 0.163 48.998);
   --border: oklch(0.925 0 0);
   --input: oklch(0.925 0 0);
   --ring: oklch(0.55 0 0);
@@ -80,6 +83,7 @@
   --destructive-foreground: oklch(0.15 0 0);
   --success: oklch(0.696 0.17 162.48);
   --success-foreground: oklch(0.32 0.095 152.535);
+  --warning: oklch(0.769 0.188 70.08);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.7 0 0);
@@ -114,6 +118,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -162,6 +167,11 @@
 
 @utility type-meta {
   @apply text-xs leading-relaxed text-muted-foreground;
+}
+
+/* Field captions, column headers and status tags; callers choose the color. */
+@utility type-label {
+  @apply font-mono text-label tracking-[0.08em] uppercase;
 }
 
 @utility app-frame {
