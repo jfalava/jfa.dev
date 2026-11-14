@@ -1,4 +1,4 @@
-import { Button, Kbd } from "@jfa.dev/common/ui";
+import { Button, Input, Kbd, Toggle, buttonVariants } from "@jfa.dev/common/ui";
 import { Plus, Search } from "lucide-react";
 
 import { Row, Specimen } from "@/components/preview";
@@ -7,7 +7,7 @@ import { Section } from "@/components/section";
 export function ButtonSection() {
   return (
     <Section
-      description="Variants and sizes from buttonVariants. Focus uses the ring token. data-icon tightens padding around inline icons."
+      description="Button, Toggle and Input default to auto density: compact on desktop, at least 44px targets below md (768px), with 16px entry text. Size controls the visual scale; density controls the touch minimum. Focus uses the ring token."
       id="button"
       title="Button"
     >
@@ -53,6 +53,36 @@ export function ButtonSection() {
             <Kbd className="ml-1">⌘K</Kbd>
           </Button>
         </Row>
+      </Specimen>
+      <Specimen label="Density">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {(["auto", "compact", "comfortable"] as const).map((density) => (
+            <div key={density} className="space-y-3" data-density-example={density}>
+              <p className="type-ui font-medium">{density}</p>
+              <Row>
+                <Button density={density}>Save</Button>
+                <Button density={density} size="icon" aria-label={`Add (${density})`}>
+                  <Plus />
+                </Button>
+                <a href="#input" className={buttonVariants({ density, variant: "outline" })}>
+                  Inputs
+                </a>
+                <Toggle density={density} aria-label={`Pin (${density})`}>
+                  Pin
+                </Toggle>
+              </Row>
+              <label className="grid gap-2 type-ui">
+                List name ({density})
+                <Input density={density} defaultValue="Weekend groceries" />
+              </label>
+            </div>
+          ))}
+        </div>
+        <p className="reading-measure type-ui text-muted-foreground">
+          Comfortable keeps 44px targets at every width. Compact is an explicit exception for
+          desktop editors and miniature specimens. Keep auto for ordinary forms. Custom typography
+          can exceed the default entry size; do not shrink mobile text below 16px.
+        </p>
       </Specimen>
       <Specimen label="States">
         <Row>

@@ -19,9 +19,7 @@ export function ListTitleEditor({
   if (!isEditing) {
     return (
       <div className="mt-1 flex items-center gap-1">
-        <h1 className="font-serif text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-          {title}
-        </h1>
+        <h1 className="type-page-title font-serif">{title}</h1>
         <Button
           aria-label="Edit list title"
           onPress={() => {
@@ -61,7 +59,7 @@ export function ListTitleEditor({
       <Input
         id="list-title"
         aria-label="List title"
-        className="h-auto min-h-14 min-w-0 flex-1 py-1 font-serif text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:min-h-20 sm:min-w-64 sm:text-6xl md:text-6xl"
+        className="h-auto min-h-14 min-w-0 flex-1 py-1 type-page-title font-serif sm:min-h-20 sm:min-w-64"
         disabled={isSaving}
         maxLength={160}
         onChange={(event) => setValue(event.target.value)}
@@ -104,11 +102,11 @@ export function ListAlias({ alias, listId }: { alias: string | null; listId: str
   };
 
   return (
-    <div className="mt-2 flex max-w-full min-w-0 items-center gap-1 overflow-hidden font-mono text-[10px] tracking-[0.08em] uppercase">
+    <div className="mt-2 flex max-w-full min-w-0 items-center gap-1 overflow-hidden font-mono type-compact tracking-[0.08em] uppercase">
       {alias ? (
         <Button
           aria-label={`Show ${showListId ? "Alias" : "ID"}`}
-          className="h-7 gap-1 px-1 text-[10px] tracking-[0.08em] text-muted-foreground uppercase"
+          className="h-7 gap-1 px-1 text-xs tracking-[0.08em] text-muted-foreground uppercase"
           onPress={() => {
             setShowListId((current) => !current);
             setIsCopied(false);

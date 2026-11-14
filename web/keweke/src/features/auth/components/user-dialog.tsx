@@ -139,7 +139,7 @@ export function UserDialog({
                 <div className="min-w-0 flex-1">
                   <Input
                     autoComplete="nickname"
-                    className="mt-1.5 h-8 font-serif text-sm"
+                    className="mt-1.5 h-8 font-serif md:text-sm"
                     disabled={!identity || isSaving}
                     id="user-username"
                     maxLength={48}

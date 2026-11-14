@@ -41,9 +41,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             navLabel="Branding navigation"
             githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/branding"
           ></SiteHeader>
-          <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
-            {children}
-          </div>
+          <div className="app-frame flex min-h-0 flex-1 flex-col bg-background">{children}</div>
           <ToastBridge />
         </ThemeProvider>
         <Scripts />

@@ -84,7 +84,7 @@ export function ListPageHeader({
             <Input
               id="filter-items"
               aria-label="Search items"
-              className="h-8 w-full max-w-none pr-10 pl-10 font-serif text-base sm:text-[11px]"
+              className="h-8 w-full max-w-none pr-10 pl-10 font-serif"
               onChange={(event) => onFilterChange(event.target.value)}
               placeholder="Search items"
               value={filter}

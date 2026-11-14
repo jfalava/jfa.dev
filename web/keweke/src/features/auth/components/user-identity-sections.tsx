@@ -19,7 +19,7 @@ export function createUsernameSection(manager: UserManager): SettingsSectionRow 
         <form id="username-form" onSubmit={(event) => void manager.save(event)}>
           <Input
             autoComplete="nickname"
-            className="mt-1.5 h-10 font-serif text-base sm:text-sm"
+            className="mt-1.5 h-10 font-serif text-base md:text-sm"
             disabled={!manager.identity || manager.isSaving || manager.isCreatingRemoteUser}
             id="user-username"
             maxLength={48}

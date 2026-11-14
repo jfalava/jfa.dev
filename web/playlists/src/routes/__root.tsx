@@ -57,7 +57,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               <PlaylistSearchPalette />
             </SiteHeader>
             <NowPlayingBar />
-            <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col overflow-hidden border-x border-border bg-background">
+            <div className="app-frame flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
               {children}
             </div>
             <ToastBridge />

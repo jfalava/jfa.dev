@@ -134,6 +134,90 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
+/* Roles preserve the existing display hierarchy; artwork and Docs keep their own scales. */
+@utility type-page-title {
+  @apply font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl;
+}
+
+@utility type-section-title {
+  @apply font-sans text-2xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-3xl;
+}
+
+@utility type-body {
+  @apply text-base leading-relaxed;
+}
+
+@utility type-ui {
+  @apply text-sm leading-normal;
+}
+
+@utility type-compact {
+  @apply text-xs leading-relaxed;
+}
+
+@utility type-meta {
+  @apply text-xs leading-relaxed text-muted-foreground;
+}
+
+@utility app-frame {
+  @apply mx-auto w-full max-w-screen-2xl border-x border-border;
+}
+
+@utility page-gutters {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+@utility header-gutters {
+  @apply px-2 sm:px-3 lg:px-4;
+}
+
+@utility reading-measure {
+  max-width: 65ch;
+}
+
+/* Component-layer defaults let intentional title typography and larger minimums win. */
+@layer components {
+  .ui-input {
+    @apply text-sm;
+  }
+
+  @media (width >= 48rem) {
+    .ui-input {
+      @apply text-xs/relaxed;
+    }
+  }
+
+  .ui-button.density-comfortable,
+  .ui-input.density-comfortable {
+    min-height: 2.75rem;
+  }
+
+  .ui-button.density-comfortable {
+    min-width: 2.75rem;
+    touch-action: manipulation;
+  }
+
+  .ui-input.density-comfortable {
+    @apply text-base;
+  }
+
+  @media (width < 48rem) {
+    .ui-button.density-auto,
+    .ui-input.density-auto {
+      min-height: 2.75rem;
+    }
+
+    .ui-button.density-auto {
+      min-width: 2.75rem;
+      touch-action: manipulation;
+    }
+
+    .ui-input.density-auto {
+      @apply text-base;
+    }
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

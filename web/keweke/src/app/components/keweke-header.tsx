@@ -114,6 +114,7 @@ export function KewekeHeader({
       activePackagePath="/keweke"
       navLabel="General navigation"
       githubHref="https://github.com/jfalava/jfa.dev/tree/main/web/keweke"
+      className="max-md:[&_nav]:ml-auto max-md:[&>.header-gutters]:flex-wrap max-md:[&>.header-gutters]:gap-y-0"
     >
       <OpenListCommand />
 

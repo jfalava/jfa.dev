@@ -34,12 +34,10 @@ const NAV = [
 
 function BrandingPage() {
   return (
-    <main className="flex w-full flex-1 flex-col px-4 py-10 sm:px-6 lg:px-8">
+    <main className="flex w-full flex-1 flex-col page-gutters py-10">
       <header className="max-w-3xl space-y-8 pb-10">
         <div className="space-y-6">
-          <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-            Branding
-          </h1>
+          <h1 className="type-page-title">Branding</h1>
           <div className="space-y-1">
             <p className="font-sans text-2xl font-semibold tracking-tight sm:text-4xl">jfa.dev</p>
             <p className="font-serif text-2xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-4xl">
@@ -47,7 +45,7 @@ function BrandingPage() {
             </p>
             <p className="font-mono text-lg sm:text-2xl">⌘⇧U</p>
           </div>
-          <p className="max-w-prose text-sm leading-relaxed text-muted-foreground">
+          <p className="reading-measure type-body text-muted-foreground">
             Shared components for the toolbox. Theme toggle is in the header.
           </p>
         </div>

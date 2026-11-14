@@ -16,11 +16,6 @@ import { useNowPlaying } from "@/features/music/hooks/use-now-playing";
 
 import { PlaylistTable } from "./playlist-table";
 
-const DISPLAY_TITLE_CLASS_NAME =
-  "font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl";
-const ACCORDION_TITLE_CLASS_NAME =
-  "font-sans text-2xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-3xl";
-
 function PlaylistMeta({
   playlist,
   headingLevel,
@@ -41,7 +36,7 @@ function PlaylistMeta({
     <Root className="min-w-0 flex-1 text-left">
       <Heading
         id={`${playlistAnchorId(playlist.id)}-heading`}
-        className={`block ${headingLevel === "h1" ? DISPLAY_TITLE_CLASS_NAME : ACCORDION_TITLE_CLASS_NAME}`}
+        className={`block ${headingLevel === "h1" ? "type-page-title" : "type-section-title"}`}
       >
         <a
           href={snapshot.sourceUrl}
@@ -72,7 +67,7 @@ function DefaultPlaylistSection({ playlist }: { playlist: PlaylistDefinition }) 
       aria-labelledby={`${playlistAnchorId(playlist.id)}-heading`}
       className="min-h-0"
     >
-      <header className="shrink-0 border-b border-border bg-background px-4 py-6 sm:px-6 lg:px-8">
+      <header className="shrink-0 border-b border-border bg-background page-gutters py-6">
         <PlaylistMeta playlist={playlist} headingLevel="h1" />
       </header>
       <div className="min-h-0">
@@ -93,7 +88,7 @@ function AccordionPlaylistItem({ playlist }: { playlist: PlaylistDefinition }) {
   return (
     <AccordionItem id={playlist.id} className="border-border">
       <div id={playlistAnchorId(playlist.id)} className="scroll-mt-24">
-        <AccordionHeader className="items-start gap-3 px-4 py-5 sm:px-6 lg:px-8">
+        <AccordionHeader className="items-start gap-3 page-gutters py-5">
           {/*
             Title link is a sibling of the expand button, not nested inside it,
             so the Apple Music URL stays a real hyperlink while the chevron toggles.

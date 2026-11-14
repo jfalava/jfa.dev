@@ -164,7 +164,7 @@ export function PlaylistSearchPalette() {
             }}
             placeholder="Search playlists…"
             aria-label="Search playlists"
-            className="h-12 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0"
+            className="h-12 border-0 bg-transparent px-0 shadow-none focus-visible:border-0 focus-visible:ring-0 md:text-sm"
           />
           <kbd className="hidden shrink-0 items-center gap-1 text-[10px] text-muted-foreground sm:inline-flex">
             <CornerDownLeft className="size-3" />

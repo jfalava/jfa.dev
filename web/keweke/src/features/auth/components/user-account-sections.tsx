@@ -80,7 +80,7 @@ export function createAccountDeletionSection(manager: UserManager): SettingsSect
             </label>
             <Input
               autoComplete="off"
-              className="h-10 font-serif text-base sm:text-sm"
+              className="h-10 font-serif text-base md:text-sm"
               disabled={manager.isDeletingAccount}
               id="delete-remote-user-confirmation"
               onChange={(event) => {

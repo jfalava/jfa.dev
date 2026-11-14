@@ -75,12 +75,10 @@ export function SiteHeader({
         <span className="hidden pl-0.5 text-xs tracking-tight sm:inline">by JFA</span>
       </span>
       {subtitle ? (
-        <span className="hidden text-[11px] text-muted-foreground/75 sm:inline">/</span>
+        <span className="hidden text-xs text-muted-foreground/75 sm:inline">/</span>
       ) : null}
       {subtitle ? (
-        <span className="hidden truncate text-[11px] text-muted-foreground sm:inline">
-          {subtitle}
-        </span>
+        <span className="hidden truncate text-xs text-muted-foreground sm:inline">{subtitle}</span>
       ) : null}
     </>
   );
@@ -126,7 +124,7 @@ export function SiteHeader({
       )}
       {...props}
     >
-      <div className="flex min-h-11 items-center justify-between gap-4 px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
+      <div className="header-gutters flex min-h-11 items-center justify-between gap-4 sm:gap-6 lg:gap-8">
         <div className="flex min-w-0 items-center gap-1">
           {showHomeLink ? (
             <a
@@ -240,7 +238,7 @@ function PackageBrand({
       {subtitle ? (
         <span
           className={cn(
-            "shrink-0 text-[11px] font-normal tracking-normal text-muted-foreground/75",
+            "shrink-0 text-xs font-normal tracking-normal text-muted-foreground/75",
             subtitleClass,
           )}
         >
@@ -250,7 +248,7 @@ function PackageBrand({
       {subtitle ? (
         <span
           className={cn(
-            "truncate text-[11px] font-normal tracking-normal text-muted-foreground",
+            "truncate text-xs font-normal tracking-normal text-muted-foreground",
             subtitleClass,
           )}
         >
