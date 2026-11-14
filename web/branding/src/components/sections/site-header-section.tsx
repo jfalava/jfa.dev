@@ -22,8 +22,8 @@ export function SiteHeaderSection() {
             <Search className="size-4" />
             <span>Search</span>
             <KbdGroup className="hidden gap-1 sm:inline-flex">
-              <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">⌘</Kbd>
-              <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">K</Kbd>
+              <Kbd>⌘</Kbd>
+              <Kbd>K</Kbd>
             </KbdGroup>
           </Button>
           <Button
@@ -35,8 +35,8 @@ export function SiteHeaderSection() {
             <PanelLeft className="size-4" />
             <span>Toggle</span>
             <KbdGroup className="hidden gap-1 sm:inline-flex">
-              <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">⌘</Kbd>
-              <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">B</Kbd>
+              <Kbd>⌘</Kbd>
+              <Kbd>B</Kbd>
             </KbdGroup>
           </Button>
           <Button
@@ -77,8 +77,8 @@ export function SiteHeaderSection() {
             <Plus className="size-4" />
             <span>New list</span>
             <KbdGroup className="hidden gap-1 sm:inline-flex">
-              <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">⌘</Kbd>
-              <Kbd className="h-4 min-w-4 px-0.5 text-[10px] leading-none">E</Kbd>
+              <Kbd>⌘</Kbd>
+              <Kbd>E</Kbd>
             </KbdGroup>
           </Button>
         </Row>

@@ -26,7 +26,6 @@
     "web/docs/src/components/opengraph/tools-preview.tsx": 1
   },
   "text-size": {
-    "web/branding/src/components/sections/site-header-section.tsx": 6,
     "web/docs/src/components/keweke/after-create-preview.tsx": 8,
     "web/docs/src/components/keweke/docs-link.tsx": 2,
     "web/docs/src/components/keweke/empty-lists-preview.tsx": 2,
