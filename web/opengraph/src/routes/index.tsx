@@ -358,7 +358,7 @@ function EditorPage() {
     }
 
     const saveTimer = window.setTimeout(() => {
-      async function persistTabs(): Promise<void> {
+      void (async (): Promise<void> => {
         try {
           const projects = tabs.map((t) => t.project);
           await saveAllProjects(projects);
@@ -381,9 +381,7 @@ function EditorPage() {
         } catch {
           setNotice("Could not save locally; your canvas is still in memory");
         }
-      }
-
-      void persistTabs();
+      })();
     }, 300);
 
     return () => {
