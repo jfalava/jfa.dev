@@ -35,7 +35,6 @@
     "react": "catalog:react",
     "react-aria-components": "catalog:react",
     "react-dom": "catalog:react",
-    "shadcn": "catalog:ui",
     "sonner": "catalog:ui",
     "tailwindcss": "catalog:styling",
     "tw-animate-css": "catalog:styling",

@@ -15,7 +15,6 @@
     "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
-    "@base-ui/react": "catalog:react",
     "@jfa.dev/common": "workspace:*",
     "@tailwindcss/vite": "catalog:styling",
     "@tanstack/react-router": "catalog:tanstack",

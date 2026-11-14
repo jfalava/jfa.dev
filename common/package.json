@@ -126,7 +126,6 @@
     "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
-    "@base-ui/react": "catalog:react",
     "class-variance-authority": "catalog:styling",
     "cn": "catalog:styling",
     "effect": "catalog:iac",

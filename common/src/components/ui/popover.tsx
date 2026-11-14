@@ -26,7 +26,7 @@ export function Popover(props: any) {
   );
 }
 
-// oxlint-disable-next-line typescript/no-explicit-any -- trigger mirrors base-ui PopoverTrigger API for compat
+// oxlint-disable-next-line typescript/no-explicit-any -- PopoverTrigger passes props through to the React Aria Button
 export function PopoverTrigger({ className, children, ...props }: any) {
   return (
     <AriaButton
@@ -40,10 +40,6 @@ export function PopoverTrigger({ className, children, ...props }: any) {
       {children}
     </AriaButton>
   );
-}
-
-export function PopoverPositioner({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
 }
 
 // oxlint-disable-next-line typescript/no-explicit-any -- PopoverContent wraps AriaPopover with passthrough props
@@ -68,8 +64,4 @@ export function PopoverContent({
       </AriaDialog>
     </AriaPopover>
   );
-}
-
-export function PopoverAnchor(props: React.ComponentProps<"div">) {
-  return <div data-slot="popover-anchor" {...props} />;
 }
