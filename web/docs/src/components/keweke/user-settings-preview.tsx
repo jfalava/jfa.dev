@@ -179,15 +179,13 @@ export function UserSettingsPreview({
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b bg-background px-3 py-2">
           <span className="font-sans text-sm font-black tracking-tighter text-primary">KEWEKE</span>
-          <span className="font-mono text-[10px] tracking-wide text-muted-foreground">
+          <span className="font-mono text-xs tracking-wide text-muted-foreground">
             /keweke/user
           </span>
         </div>
-        <div className="flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6">
+        <div className="flex flex-col gap-4 border-b page-gutters py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <div>
-            <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
-              User settings
-            </h1>
+            <h1 className="type-page-title">User settings</h1>
             <div className="mt-3">
               <DocsLink href="/docs/keweke/users" variant="info">
                 How identity works
@@ -254,15 +252,11 @@ export function UserStateBadgePreview() {
               width={40}
             />
             <div>
-              <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                {state.label}
-              </p>
+              <p className="type-label text-muted-foreground">{state.label}</p>
               <p className="font-serif text-sm font-medium">{state.name}</p>
             </div>
           </div>
-          <p className="font-mono text-[10px] leading-relaxed text-muted-foreground">
-            {state.desc}
-          </p>
+          <p className="font-mono text-xs leading-relaxed text-muted-foreground">{state.desc}</p>
         </div>
       ))}
     </div>

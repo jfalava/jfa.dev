@@ -34,7 +34,7 @@ export function UserDialogPreview() {
             <div className="flex items-end gap-2">
               <div className="min-w-0 flex-1">
                 <Input
-                  className="mt-1.5 h-10 font-serif text-base sm:text-sm"
+                  className="mt-1.5 h-10 font-serif text-base md:text-sm"
                   placeholder="Your name"
                 />
               </div>

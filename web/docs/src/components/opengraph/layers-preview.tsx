@@ -1,4 +1,4 @@
-import { Button, ColorPicker, Input } from "@jfa.dev/common/ui";
+import { Button, ColorField, ColorPicker, Input } from "@jfa.dev/common/ui";
 import { Eye, EyeOff, LockKeyhole, Search, Square, Type, Unlock } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -92,7 +92,7 @@ export function LayersPreview() {
       caption="Search, reorder by dragging, toggle visibility/lock, double-click to rename. The + and ⋯ menus are the same dropdowns as in the editor."
     >
       <div className="mx-auto max-w-sm border bg-background">
-        <div className="flex h-10 items-center justify-between border-b px-3">
+        <div className="flex h-10 shrink-0 items-center justify-between border-b border-border px-3">
           <div className="flex items-center gap-2 text-xs font-medium">
             <span className="size-3.5 text-primary">▦</span> Layers
           </div>
@@ -175,7 +175,7 @@ export function LayersPreview() {
                     >
                       <Icon className="size-3.5 shrink-0" />
                       <span className="truncate">{l.name}</span>
-                      <span className="ml-auto text-[10px] text-muted-foreground">
+                      <span className="ml-auto text-xs text-muted-foreground">
                         {l.type === "text" ? "Text" : "Shape"}
                       </span>
                     </button>
@@ -206,7 +206,7 @@ export function LayersPreview() {
             })
           )}
         </div>
-        <div className="flex items-center justify-between border-t px-3 py-2 text-[10px] text-muted-foreground">
+        <div className="flex items-center justify-between border-t px-3 py-2 text-xs text-muted-foreground">
           <span>{layers.length} layers</span>
           <span>1200 × 630</span>
         </div>
@@ -225,26 +225,8 @@ export function ColorPickerPreview() {
       caption="Click any swatch to open the picker. The same picker appears in the toolbox and in Properties. Drag the field or type a hex."
     >
       <div className="flex flex-col gap-3 p-4">
-        {/* Compact field as used in Properties → Fill (real ColorField) */}
-        <div className="flex flex-col gap-1 text-[10px]">
-          <span className="font-medium text-muted-foreground">Color</span>
-          <div className="flex items-center gap-2 rounded-md border bg-input/20 px-2 py-1.5">
-            <ColorPicker
-              compact
-              color={color}
-              onChange={setColor}
-              ariaLabel="Color"
-              className="size-7! p-0.5!"
-            />
-            <Input
-              aria-label="Color hex"
-              className="h-7 flex-1 bg-transparent px-0 text-right font-mono text-xs shadow-none"
-              value={color}
-              onChange={(event) => setColor(event.target.value)}
-              placeholder="#E91AE7"
-            />
-          </div>
-        </div>
+        {/* The real ColorField from Properties → Fill */}
+        <ColorField label="Color" value={color} onChange={setColor} />
         {/* Full picker preview — standalone demo of the same ColorPicker component */}
         <div className="mx-auto w-56 rounded-xl border bg-popover p-3 shadow-lg">
           <ColorPicker color={color} onChange={setColor} ariaLabel="Color picker demo" />
@@ -256,7 +238,7 @@ export function ColorPickerPreview() {
               onChange={(event) => setColor(event.target.value)}
               placeholder="#E91AE7"
             />
-            <span className="font-mono text-[10px] text-muted-foreground">live stub — no save</span>
+            <span className="font-mono text-xs text-muted-foreground">live stub — no save</span>
           </div>
         </div>
       </div>

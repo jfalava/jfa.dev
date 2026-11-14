@@ -69,14 +69,14 @@ export function CanvasPreview() {
       <div className="p-4">
         <details
           open
-          className="group/canvas border-b border-border py-4 first:pt-0 last:border-b-0"
+          className="group/section border-b border-border py-4 first:pt-0 last:border-b-0"
         >
-          <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] font-medium select-none marker:hidden [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center gap-2 text-xs font-medium select-none marker:hidden [&::-webkit-details-marker]:hidden">
             <Frame className="size-3.5 text-primary" />
             Canvas
-            <span className="ml-auto flex items-center gap-2 text-[10px] font-normal text-muted-foreground">
+            <span className="ml-auto flex items-center gap-2 text-xs font-normal text-muted-foreground">
               {displaySize}
-              <span className="text-[11px]">▾</span>
+              <span className="text-xs">▾</span>
             </span>
           </summary>
           <div className="mt-3 space-y-3">
@@ -92,14 +92,14 @@ export function CanvasPreview() {
                     className={`rounded-md border px-2 py-2 text-left transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:outline-none ${
                       isSelected
                         ? "border-primary bg-primary/10 text-primary"
-                        : "border-border bg-muted/20 text-foreground hover:border-border/80 hover:bg-muted/40"
+                        : "border-border bg-muted/20 text-foreground hover:border-primary/30 hover:bg-muted/40"
                     }`}
                   >
                     <span className="block text-xs leading-none font-medium">{p.label}</span>
-                    <span className="block text-[10px] leading-none text-muted-foreground">
+                    <span className="block text-xs leading-none text-muted-foreground">
                       {p.sub}
                     </span>
-                    <span className="block truncate text-[9px] leading-none text-muted-foreground/70">
+                    <span className="block truncate text-xs leading-none text-muted-foreground/70">
                       {p.hint}
                     </span>
                   </button>
@@ -109,7 +109,7 @@ export function CanvasPreview() {
             <div
               className={`rounded-md border p-2 transition-colors ${isCustom ? "border-primary/20 bg-primary/[0.04]" : "border-border bg-muted/20"}`}
             >
-              <p className="mb-2 text-[10px] font-medium text-muted-foreground">
+              <p className="mb-2 text-xs font-medium text-muted-foreground">
                 Custom{" "}
                 {isCustom ? (
                   <span className="text-primary">• active</span>
@@ -118,7 +118,7 @@ export function CanvasPreview() {
                 )}
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <label className="flex flex-col gap-1 text-[10px] leading-none">
+                <label className="flex flex-col gap-1 text-xs leading-none">
                   <span className="font-medium text-muted-foreground">W</span>
                   <input
                     aria-label="Custom canvas width"
@@ -129,7 +129,7 @@ export function CanvasPreview() {
                     value={width}
                   />
                 </label>
-                <label className="flex flex-col gap-1 text-[10px] leading-none">
+                <label className="flex flex-col gap-1 text-xs leading-none">
                   <span className="font-medium text-muted-foreground">H</span>
                   <input
                     aria-label="Custom canvas height"
@@ -141,7 +141,7 @@ export function CanvasPreview() {
                   />
                 </label>
               </div>
-              <p className="mt-2 text-[9px] leading-relaxed text-muted-foreground">
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                 Any size from 100 to 8000 px. Background fills automatically.
               </p>
             </div>
@@ -222,7 +222,7 @@ export function TabsPreview() {
       label="Tabs"
       caption="Each tab is a separate canvas with its own layers, size, and history. Tabs live above the canvas."
     >
-      <div className="flex h-8 shrink-0 items-center gap-2 border-b border-border bg-background px-2 text-[11px]">
+      <div className="flex h-8 shrink-0 items-center gap-2 border-b border-border bg-background px-2 text-xs">
         <Save className="size-3 shrink-0 text-muted-foreground" aria-hidden="true" />
         <div className="flex min-w-0 flex-1 scrollbar-thin items-center gap-1 overflow-x-auto">
           {tabs.map((tab) => {
@@ -242,7 +242,7 @@ export function TabsPreview() {
                     aria-label={`Rename ${tab.name}`}
                     // oxlint-disable-next-line jsx-a11y/no-autofocus -- stub rename: focus is intentional for double-click edit
                     autoFocus
-                    className="h-5 w-32 border-0 bg-transparent px-1 text-[11px] shadow-none"
+                    className="h-5 w-32 border-0 bg-transparent px-1 text-xs shadow-none"
                     value={editingName}
                     onChange={(event) => setEditingName(event.target.value)}
                     onBlur={commitEdit}
@@ -258,7 +258,7 @@ export function TabsPreview() {
                 ) : (
                   <button
                     type="button"
-                    className="max-w-28 truncate text-left text-[11px] font-medium focus-visible:outline-none"
+                    className="max-w-28 truncate text-left text-xs font-medium focus-visible:outline-none"
                     onClick={() => switchTab(tab.id)}
                     onDoubleClick={() => startEdit(tab.id, tab.name)}
                     title={`${tab.name} — double-click to rename`}
@@ -288,7 +288,7 @@ export function TabsPreview() {
           </Button>
         </div>
         <span
-          className="hidden max-w-40 truncate text-[10px] text-muted-foreground sm:block"
+          className="hidden max-w-40 truncate text-xs text-muted-foreground sm:block"
           title="Saved locally in this browser"
         >
           Saved locally in this browser

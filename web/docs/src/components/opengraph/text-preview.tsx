@@ -1,4 +1,4 @@
-import { ColorPicker, Input } from "@jfa.dev/common/ui";
+import { ColorField } from "@jfa.dev/common/ui";
 import { useState } from "react";
 
 import { PreviewShell } from "./preview-shell";
@@ -25,48 +25,44 @@ export function TextPreview() {
   const [align, setAlign] = useState<"left" | "center" | "right">("left");
   const [color, setColor] = useState("#2F302C");
 
-  const normalizedColor = color.startsWith("#") ? color : `#${color}`;
-  const isValidColor = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(normalizedColor);
-  const swatchColor = isValidColor ? normalizedColor : "#2F302C";
-
   return (
     <PreviewShell
       label="Typography — live controls"
       caption="Size and Weight share a line. Alignment shows Left, Center, and Right — the active choice is highlighted."
     >
-      <div className="space-y-3 p-4">
-        <label className="block text-[10px] text-muted-foreground" htmlFor="preview-text">
+      <div className="space-y-2 p-4">
+        <label className="block text-xs text-muted-foreground" htmlFor="preview-text">
           Text
         </label>
         <textarea
           id="preview-text"
           value={text}
           onChange={(event) => setText(event.target.value)}
-          className="mt-1 min-h-20 w-full resize-y rounded-md border border-input bg-input/20 px-2 py-1.5 text-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+          className="min-h-20 w-full resize-y rounded-md border border-input bg-input/20 px-2 py-1.5 text-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
           placeholder="Make it unmistakable."
         />
-        <label className="block text-[10px] text-muted-foreground" htmlFor="preview-font">
-          <span className="block">Font family</span>
-          <select
-            id="preview-font"
-            value={fontFamily}
-            onChange={(event) => {
-              const value = event.target.value;
-              if (isFontFamily(value)) {
-                setFontFamily(value);
-              }
-            }}
-            className="mt-1 flex h-7 w-full items-center rounded-md border border-input bg-input/20 px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
-          >
-            {FONT_FAMILIES.map((family) => (
-              <option key={family} value={family}>
-                {family}
-              </option>
-            ))}
-          </select>
+        <label className="block text-xs text-muted-foreground" htmlFor="preview-font">
+          Font family
         </label>
+        <select
+          id="preview-font"
+          value={fontFamily}
+          onChange={(event) => {
+            const value = event.target.value;
+            if (isFontFamily(value)) {
+              setFontFamily(value);
+            }
+          }}
+          className="h-7 w-full rounded-md border border-input bg-input/20 px-2 text-xs text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+        >
+          {FONT_FAMILIES.map((family) => (
+            <option key={family} value={family}>
+              {family}
+            </option>
+          ))}
+        </select>
         <div className="grid grid-cols-2 gap-2">
-          <label className="flex flex-col gap-1 text-[10px] leading-none">
+          <label className="flex flex-col gap-1 text-xs leading-none">
             <span className="font-medium text-muted-foreground">Size</span>
             <span className="flex h-7 items-center gap-1 rounded-md border border-input bg-input/20 px-2 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
               <input
@@ -80,19 +76,19 @@ export function TextPreview() {
                   }
                   setSize(next);
                 }}
-                className="w-full min-w-0 bg-transparent text-right text-xs outline-none"
+                className="w-full min-w-0 bg-transparent text-right text-xs text-foreground outline-none"
                 placeholder="56"
               />
               <span className="shrink-0 text-xs text-muted-foreground">px</span>
             </span>
           </label>
-          <label className="flex flex-col gap-1 text-[10px] leading-none">
+          <label className="flex flex-col gap-1 text-xs leading-none">
             <span className="font-medium text-muted-foreground">Weight</span>
             <select
               aria-label="Font weight"
               value={weight}
               onChange={(event) => setWeight(event.target.value)}
-              className="flex h-7 w-full items-center rounded-md border border-input bg-input/20 px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
             >
               {WEIGHT_OPTIONS.map(([value, label]) => (
                 <option key={value} value={String(value)}>
@@ -123,37 +119,7 @@ export function TextPreview() {
             );
           })}
         </div>
-        <div className="flex items-center gap-2 rounded-md border bg-input/20 px-2 py-1.5 text-[10px] focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
-          <label className="font-medium text-muted-foreground" htmlFor="preview-color">
-            Color
-          </label>
-          <span className="ml-auto flex items-center gap-2">
-            <ColorPicker
-              compact
-              color={swatchColor}
-              onChange={setColor}
-              ariaLabel="Text color"
-              className="size-5! rounded-sm! p-0.5!"
-            />
-            <Input
-              id="preview-color"
-              aria-label="Text color"
-              className="h-7 w-24 bg-transparent px-1 text-right font-mono text-xs shadow-none"
-              value={color}
-              onChange={(event) => {
-                const next = event.target.value;
-                if (next.length > 7) {
-                  return;
-                }
-                if (next !== "" && !/^#?[0-9a-fA-F]*$/.test(next)) {
-                  return;
-                }
-                setColor(next);
-              }}
-              placeholder="#2F302C"
-            />
-          </span>
-        </div>
+        <ColorField label="Color" value={color} onChange={setColor} />
       </div>
     </PreviewShell>
   );
@@ -176,15 +142,15 @@ export function PositionPreview() {
     >
       <div className="grid grid-cols-2 gap-2 p-4">
         {(["x", "y", "w", "h"] as const).map((key) => (
-          <label key={key} className="flex flex-col gap-1 text-[10px] leading-none">
+          <label key={key} className="flex flex-col gap-1 text-xs leading-none">
             <span className="font-medium text-muted-foreground">{key.toUpperCase()}</span>
-            <span className="flex h-7 items-center justify-end rounded-md border border-input bg-input/20 px-2 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+            <span className="flex h-7 items-center gap-1 rounded-md border border-input bg-input/20 px-2 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
               <input
                 aria-label={key.toUpperCase()}
                 inputMode="decimal"
                 value={pos[key]}
                 onChange={(event) => handleChange(key, event.target.value)}
-                className="w-full min-w-0 bg-transparent text-right text-xs outline-none"
+                className="w-full min-w-0 bg-transparent text-right text-xs text-foreground outline-none"
                 placeholder="0"
               />
             </span>

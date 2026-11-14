@@ -20,7 +20,7 @@ export function AfterCreatePreview() {
       </div>
 
       {/* Header mimics ListPageHeader */}
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b px-4 py-5">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b page-gutters py-5">
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-3xl font-semibold tracking-tighter uppercase sm:text-4xl">
             New list
@@ -78,12 +78,10 @@ export function AfterCreatePreview() {
             </tr>
             <tr className="border-b-2 border-primary/20 bg-primary/5 align-top">
               <TableCell className="px-4 py-3">
-                <span className="font-mono text-[11px] font-semibold text-primary">+</span>
+                <span className="font-mono text-xs font-semibold text-primary">+</span>
               </TableCell>
               <TableCell className="px-3 py-3">
-                <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                  new
-                </span>
+                <span className="type-label text-muted-foreground">new</span>
               </TableCell>
               <TableCell className="px-3 py-3">
                 <Input
@@ -106,7 +104,7 @@ export function AfterCreatePreview() {
                       variant="ghost"
                       className="size-6 p-0"
                     >
-                      <span className="text-[10px]">▲</span>
+                      <span className="text-xs">▲</span>
                     </Button>
                     <Button
                       aria-label="Decrease quantity"
@@ -114,7 +112,7 @@ export function AfterCreatePreview() {
                       variant="ghost"
                       className="size-6 p-0"
                     >
-                      <span className="text-[10px]">▼</span>
+                      <span className="text-xs">▼</span>
                     </Button>
                   </span>
                 </div>
@@ -136,19 +134,15 @@ export function AfterCreatePreview() {
               <TableCell className="px-3 py-3">
                 <Input
                   aria-label="New item category"
-                  className="h-9 w-28 font-serif text-base sm:text-[10px]"
+                  className="h-9 w-28 font-serif text-base sm:text-xs"
                   defaultValue="GENERAL"
                 />
               </TableCell>
               <TableCell className="px-3 py-3">
-                <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                  draft
-                </span>
+                <span className="type-label text-muted-foreground">draft</span>
               </TableCell>
               <TableCell className="px-3 py-3">
-                <span className="font-mono text-[10px] tracking-[0.08em] text-primary uppercase">
-                  open
-                </span>
+                <span className="type-label text-primary">open</span>
               </TableCell>
               <TableCell className="px-3 py-3">
                 <Button aria-label="Add item" size="icon-sm">
@@ -163,9 +157,7 @@ export function AfterCreatePreview() {
       {/* Mobile fallback */}
       <div className="px-4 py-6 md:hidden">
         <div className="rounded-md border border-primary/20 bg-primary/5 p-4">
-          <p className="font-mono text-[10px] font-semibold tracking-[0.08em] text-primary uppercase">
-            new
-          </p>
+          <p className="type-label font-semibold text-primary">new</p>
           <div className="mt-3 flex flex-col gap-2">
             <Input placeholder="microwave popcorn" aria-label="New item name" />
             <div className="flex gap-1">

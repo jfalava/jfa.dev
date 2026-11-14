@@ -74,11 +74,11 @@ export function ListHeaderPreview() {
                 <Pencil className="size-4" />
               </Button>
             </div>
-            <div className="mt-2 flex max-w-full min-w-0 items-center gap-1 overflow-hidden font-mono text-[10px] tracking-[0.08em] uppercase">
+            <div className="mt-2 flex max-w-full min-w-0 items-center gap-1 overflow-hidden type-label">
               <Button
                 aria-label={showId ? "Show alias" : "Show ID"}
                 aria-pressed={showId}
-                className="h-7 gap-1 px-1 text-[10px] tracking-[0.08em] text-muted-foreground uppercase"
+                className="h-7 gap-1 px-1 text-xs tracking-[0.08em] text-muted-foreground uppercase"
                 onClick={() => setShowId((v) => !v)}
                 size="sm"
                 variant="ghost"
@@ -152,7 +152,7 @@ export function ListHeaderPreview() {
               />
               <Input
                 aria-label="Search items"
-                className="w-full max-w-none pl-10 font-serif text-base sm:text-[11px]"
+                className="w-full max-w-none pl-10 font-serif text-base sm:text-xs"
                 placeholder="Search items"
               />
             </div>
@@ -179,23 +179,19 @@ export function ListAliasIdPreview() {
   return (
     <div className="not-prose my-4 grid gap-3 sm:grid-cols-2">
       <div className="rounded-lg border bg-card p-3">
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-          alias
-        </p>
+        <p className="type-label text-muted-foreground">alias</p>
         <p className="mt-1 font-mono text-sm font-medium text-primary">weekend-groceries-a3k</p>
-        <p className="mt-2 font-mono text-[10px] leading-relaxed text-muted-foreground">
+        <p className="mt-2 font-mono text-xs leading-relaxed text-muted-foreground">
           Friendly short code minted after you rename a local list. Used for pretty URLs like{" "}
           <span className="text-foreground">/keweke/weekend-groceries-a3k</span>.
         </p>
       </div>
       <div className="rounded-lg border bg-card p-3">
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-          id (UUIDv7)
-        </p>
+        <p className="type-label text-muted-foreground">id (UUIDv7)</p>
         <p className="mt-1 font-mono text-sm font-medium break-all text-primary">
           0199c2f0-8a1b-7c3d-9e4f-2a1b3c4d5e6f
         </p>
-        <p className="mt-2 font-mono text-[10px] leading-relaxed text-muted-foreground">
+        <p className="mt-2 font-mono text-xs leading-relaxed text-muted-foreground">
           Time-sorted, globally unique. The only address the service needs — copy the URL from the
           alias/ID row.
         </p>
@@ -227,7 +223,7 @@ export function DeletedItemsPreview() {
             <div className="flex flex-wrap items-center justify-between gap-3 py-4" key={row.name}>
               <div className="min-w-0">
                 <p className="truncate font-serif text-sm font-medium">{row.name}</p>
-                <p className="mt-1 flex flex-wrap items-center gap-x-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                <p className="mt-1 flex flex-wrap items-center gap-x-1 font-mono text-xs tracking-[0.08em] text-muted-foreground">
                   {row.meta} · {row.archived}
                 </p>
               </div>
@@ -255,7 +251,7 @@ export function ItemHistoryPreview() {
   return (
     <PreviewShell>
       <div className="flex max-h-128 flex-col overflow-hidden rounded-lg border bg-popover text-popover-foreground">
-        <div className="flex items-start justify-between gap-4 border-b px-5 py-4">
+        <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
           <div className="min-w-0">
             <h2 className="truncate font-serif text-base font-semibold tracking-tight">
               Coffee · 1 BAG
@@ -266,7 +262,7 @@ export function ItemHistoryPreview() {
                 Changed
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <span aria-hidden="true" className="size-1.5 rounded-full bg-green-600" />
+                <span aria-hidden="true" className="size-1.5 rounded-full bg-success" />
                 New value
               </span>
             </div>
@@ -284,18 +280,10 @@ export function ItemHistoryPreview() {
           <table className="w-full min-w-160 text-xs">
             <thead>
               <tr className="border-b">
-                <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                  field
-                </th>
-                <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                  changed
-                </th>
-                <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                  new value
-                </th>
-                <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                  updated
-                </th>
+                <th className="px-3 py-2 type-label text-muted-foreground">field</th>
+                <th className="px-3 py-2 type-label text-muted-foreground">changed</th>
+                <th className="px-3 py-2 type-label text-muted-foreground">new value</th>
+                <th className="px-3 py-2 type-label text-muted-foreground">updated</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -323,18 +311,16 @@ export function ItemHistoryPreview() {
                 },
               ].map((r) => (
                 <tr className="hover:bg-muted/30" key={r.field + r.after}>
-                  <td className="px-3 py-3 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-                    {r.field}
-                  </td>
+                  <td className="px-3 py-3 type-label text-muted-foreground">{r.field}</td>
                   {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label */}
                   <td className="px-3 py-3">
-                    <span className="inline-flex max-w-32 items-center gap-1 rounded-sm bg-destructive/10 px-2 py-1 font-mono text-[11px] text-destructive">
+                    <span className="inline-flex max-w-52 items-center gap-1 rounded-sm bg-destructive/10 px-2 py-1 font-mono text-xs text-destructive">
                       <span className="truncate line-through">{r.before}</span>
                     </span>
                   </td>
                   {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label */}
                   <td className="px-3 py-3">
-                    <span className="inline-flex max-w-32 items-center gap-1 rounded-sm bg-green-600/10 px-2 py-1 font-mono text-[11px] text-green-700">
+                    <span className="inline-flex max-w-52 items-center gap-1 rounded-sm bg-success/10 px-2 py-1 font-mono text-xs text-success">
                       <span className="truncate">{r.after}</span>
                     </span>
                   </td>
@@ -345,7 +331,7 @@ export function ItemHistoryPreview() {
                         <AvatarMock username={r.actor} />
                         {r.actor}
                       </p>
-                      <p className="mt-0.5 font-mono text-[10px] tracking-[0.06em] whitespace-nowrap text-muted-foreground uppercase">
+                      <p className="mt-0.5 type-label whitespace-nowrap text-muted-foreground">
                         {r.when}
                       </p>
                     </div>
@@ -360,7 +346,7 @@ export function ItemHistoryPreview() {
             <History aria-hidden="true" className="size-3.5" />
             Load older changes
           </Button>
-          <p className="mt-2 text-center font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+          <p className="mt-2 text-center type-label text-muted-foreground">
             showing 3 of ~100 revisions
           </p>
         </div>
@@ -371,16 +357,14 @@ export function ItemHistoryPreview() {
 
 export function LiveDroppedPreview() {
   return (
-    <div className="not-prose my-4 flex items-center gap-2 rounded-md border bg-amber-500/10 px-3 py-2.5">
-      <RefreshCw aria-hidden="true" className="size-4 text-amber-600" />
-      <span className="font-mono text-[11px] tracking-wide text-amber-900">
-        Live updates dropped —
-      </span>
+    <div className="not-prose my-4 flex items-center gap-2 rounded-md border bg-warning/10 px-3 py-2.5">
+      <RefreshCw aria-hidden="true" className="size-4 text-warning" />
+      <span className="font-mono text-xs tracking-wide text-warning">Live updates dropped —</span>
       <Button size="sm" variant="outline" className="h-7 gap-1">
         <RefreshCw aria-hidden="true" className="size-3.5" />
         Reconnect
       </Button>
-      <span className="font-mono text-[11px] tracking-wide text-muted-foreground">
+      <span className="font-mono text-xs tracking-wide text-muted-foreground">
         appears next to search when the WebSocket disconnects (remote lists only).
       </span>
     </div>

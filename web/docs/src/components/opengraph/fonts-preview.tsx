@@ -41,6 +41,7 @@ export function FontsPreview() {
           >
             OpenGraph
           </p>
+          {/* ui-lint-allow reference-drift: font specimen scaled to the card, not a page title */}
           <p className="font-serif text-3xl leading-[0.95] font-semibold tracking-tighter uppercase">
             Weekend groceries
           </p>

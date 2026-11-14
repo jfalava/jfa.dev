@@ -21,7 +21,7 @@ export function ToolsPreview() {
   const [bgColor, setBgColor] = useState("#f5f1ea");
 
   const btnBase =
-    "flex size-8 items-center justify-center rounded-[4px] border text-zinc-400 transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none";
+    "flex size-8 items-center justify-center rounded-[4px] border text-(--rail-muted) transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none";
   const activeCls = "border-white/20 bg-white/15 text-white shadow-inner";
   const idleCls =
     "border-transparent bg-transparent hover:border-white/10 hover:bg-white/10 hover:text-white";
@@ -32,7 +32,7 @@ export function ToolsPreview() {
       caption="V Move, H Hand (hold Space), T Text, U Shape, P Image, I Eyedropper, G Fill. Single keys, no Mod."
     >
       <div className="flex justify-center bg-muted/20 p-6">
-        <div className="flex w-14 flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 dark:bg-[#1e1e1e]">
+        <div className="tool-rail flex w-14 flex-col items-center gap-1 border-r border-(--rail-border) bg-(--rail-surface) py-3">
           <button
             aria-label="Move tool (V)"
             aria-pressed={active === "move"}
@@ -113,9 +113,9 @@ export function ToolsPreview() {
               ariaLabel="Foreground color"
               className="absolute right-1 bottom-1 size-5! rounded-sm! border-white! p-0! shadow-sm"
             />
-            <span className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-zinc-700" />
+            <span className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-(--rail-swatch)" />
           </div>
-          <span className="px-1 text-center text-[7px] leading-none tracking-wide text-zinc-400">
+          <span className="px-1 text-center type-label leading-none text-(--rail-muted)">
             FG/BG
           </span>
         </div>
@@ -131,6 +131,7 @@ export function ShortcutsPreview() {
         <div className="rounded-lg border bg-popover p-4 text-popover-foreground">
           <div className="flex items-baseline gap-2 border-b pb-2">
             <h2 className="text-lg font-semibold tracking-tight">Keyboard shortcuts</h2>
+            {/* ui-lint-allow reference-drift: right-aligned in the preview header row */}
             <span className="ml-auto hidden items-center gap-1.5 text-xs text-muted-foreground sm:flex">
               Hold <Kbd>?</Kbd> to preview
             </span>

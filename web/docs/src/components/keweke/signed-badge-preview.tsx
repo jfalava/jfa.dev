@@ -22,15 +22,9 @@ export function SignedBadgePreview() {
         <table className="w-full border-collapse text-left">
           <thead>
             <tr className="border-b">
-              <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                item
-              </th>
-              <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                qty
-              </th>
-              <th className="px-3 py-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-                signed
-              </th>
+              <th className="px-3 py-2 type-label text-muted-foreground">item</th>
+              <th className="px-3 py-2 type-label text-muted-foreground">qty</th>
+              <th className="px-3 py-2 type-label text-muted-foreground">signed</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -38,9 +32,7 @@ export function SignedBadgePreview() {
               <td className="px-3 py-3 font-serif text-sm">Bread</td>
               <td className="px-3 py-3 font-mono text-xs">1 EA</td>
               <td className="px-3 py-3">
-                <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-                  unsigned
-                </span>
+                <span className="type-label text-muted-foreground">unsigned</span>
               </td>
             </tr>
             <tr>
@@ -48,7 +40,7 @@ export function SignedBadgePreview() {
               <td className="px-3 py-3 font-mono text-xs">2 EA</td>
               <td className="px-3 py-3">
                 <span
-                  className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
+                  className="inline-flex max-w-full items-center gap-1 truncate text-xs tracking-[0.06em] text-muted-foreground"
                   title="Added by alice"
                 >
                   <Plus aria-hidden="true" className="size-3 shrink-0" />
@@ -68,7 +60,7 @@ export function SignedBadgePreview() {
               <td className="px-3 py-3 font-mono text-xs">1 BAG</td>
               <td className="px-3 py-3">
                 <span
-                  className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
+                  className="inline-flex max-w-full items-center gap-1 truncate text-xs tracking-[0.06em] text-muted-foreground"
                   title="Added by alice · Last edited by bob"
                 >
                   <Pencil aria-hidden="true" className="size-3 shrink-0" />
@@ -88,7 +80,7 @@ export function SignedBadgePreview() {
               <td className="px-3 py-3 font-mono text-xs">6 EA</td>
               <td className="px-3 py-3">
                 <span
-                  className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
+                  className="inline-flex max-w-full items-center gap-1 truncate text-xs tracking-[0.06em] text-muted-foreground"
                   title="Added by Your username"
                 >
                   <Plus aria-hidden="true" className="size-3 shrink-0" />
@@ -123,9 +115,9 @@ export function HeaderUserButtonPreview() {
           width={20}
           src={blobatarUri(userAvatarSeed("preview-user-jorge", "Jorge"), { size: 20 })}
         />
-        <span className="font-mono text-[11px] tracking-wide">User</span>
+        <span className="font-mono text-xs tracking-wide">User</span>
       </div>
-      <span className="font-mono text-[11px] tracking-wide text-muted-foreground">
+      <span className="font-mono text-xs tracking-wide text-muted-foreground">
         in KEWEKE?S — opens the device identity dialog.
       </span>
     </div>

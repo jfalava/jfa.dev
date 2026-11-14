@@ -14,7 +14,7 @@ export function PublishButtonPreview() {
           <span className="font-sans text-sm font-black tracking-tighter text-primary">
             /KEWEKE
           </span>
-          <span className="hidden font-sans text-[10px] tracking-wide text-muted-foreground sm:inline">
+          <span className="hidden font-sans text-xs tracking-wide text-muted-foreground sm:inline">
             Yet another collaborative shopping list
           </span>
         </div>
@@ -28,12 +28,12 @@ export function PublishButtonPreview() {
             <CloudUpload className="size-4" />
             <span className="hidden sm:inline">Publish</span>
             <KbdGroup className="hidden sm:inline-flex">
-              <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">⌘</Kbd>
-              <Kbd className="h-4 min-w-4 bg-transparent px-0.5 text-[10px] leading-none">U</Kbd>
+              <Kbd>⌘</Kbd>
+              <Kbd>U</Kbd>
             </KbdGroup>
           </Button>
           <div className="hidden h-8 items-center gap-1.5 sm:flex">
-            <span className="font-mono text-[10px] tracking-wide text-muted-foreground">vs</span>
+            <span className="font-mono text-xs tracking-wide text-muted-foreground">vs</span>
             <Button
               aria-label="Copy share link"
               size="lg"
@@ -51,7 +51,7 @@ export function PublishButtonPreview() {
 }
 
 const NUDGE_TOOLTIP_CLASSES =
-  "absolute z-50 w-64 rounded-md border border-border bg-popover px-3 py-2 text-left text-xs leading-relaxed text-popover-foreground shadow-lg before:absolute before:-top-1 before:right-3 before:size-2 before:rotate-45 before:border-t before:border-l before:border-border before:bg-popover before:content-[''] sm:before:right-10";
+  "absolute z-50 w-64 rounded-md border border-border bg-popover px-3 py-2 text-left text-xs leading-relaxed text-popover-foreground shadow-lg before:absolute before:-top-1 before:right-3 before:size-2 before:rotate-45 before:border-t before:border-l before:border-border before:bg-popover before:content-[''] sm:before:right-10"; // ui-lint-allow reference-drift: static mock, placed by the preview instead of anchored to the header
 
 function PublishNudgeTooltip({
   anchorRef,
@@ -153,7 +153,7 @@ export function PublishNudgePreview() {
 export function PublishDialogPreview() {
   return (
     <PreviewShell>
-      <div className="overflow-hidden rounded-lg border bg-popover text-popover-foreground">
+      <div className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none">
         <div className="border-b px-4 py-4">
           <h2 className="text-lg font-semibold tracking-tight">Publish this list?</h2>
         </div>
@@ -170,7 +170,7 @@ export function PublishDialogPreview() {
           <p className="border border-primary/30 bg-primary/5 p-3 text-sm leading-5 text-foreground">
             This list will be available on other devices, and you’ll be able to edit it there.
           </p>
-          <div className="space-y-2 border bg-muted/40 p-3 text-sm">
+          <div className="space-y-2 border border-border bg-muted/40 p-3 text-sm">
             <div className="flex gap-3">
               <span className="w-12 shrink-0 text-muted-foreground">ID</span>
               <span className="min-w-0 font-mono break-all">
@@ -198,13 +198,14 @@ export function RemoteListPreview() {
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b bg-background px-3 py-2 sm:px-4">
           <span className="text-xs text-muted-foreground">Remote · public</span>
-          <span className="font-mono text-[10px] tracking-wide text-muted-foreground">
+          <span className="font-mono text-xs tracking-wide text-muted-foreground">
             Anyone with the link can open it
           </span>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-background px-3 py-2 sm:px-4">
+          {/* ui-lint-allow reference-drift: status row, unrelated to the OpenGraph row it resembles */}
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="size-2 rounded-full bg-emerald-500" />
+            <span className="size-2 rounded-full bg-success" />
             Live
             <span className="hidden sm:inline">· WebSocket connected</span>
           </div>
@@ -218,7 +219,7 @@ export function RemoteListPreview() {
               <Copy className="size-4" />
               Share
             </Button>
-            <span className="font-mono text-[10px] tracking-wide text-muted-foreground">vs</span>
+            <span className="font-mono text-xs tracking-wide text-muted-foreground">vs</span>
             <Button
               aria-label="Publish list to a remote list"
               size="lg"
@@ -232,13 +233,13 @@ export function RemoteListPreview() {
         </div>
         <div className="flex items-center justify-between border-b bg-muted/20 px-4 py-3">
           <span className="font-serif text-sm font-medium">Weekend groceries</span>
-          <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+          <span className="inline-flex items-center gap-1.5 type-label text-muted-foreground">
             <Copy className="size-3" /> Share
-            <Check className="size-3 text-emerald-600" />
+            <Check className="size-3 text-success" />
             Copied
           </span>
         </div>
-        <p className="bg-background px-4 py-3 font-mono text-[11px] leading-relaxed text-muted-foreground">
+        <p className="bg-background px-4 py-3 font-mono text-xs leading-relaxed text-muted-foreground">
           Your browser keeps a cached copy in IndexedDB — offline opens still work, and reconnecting
           replays mutations. If the owner deletes the list, your cached copy is removed on next
           sync.
