@@ -1514,7 +1514,7 @@ function TextProperties({
           Font family
         </label>
         <select
-          className="h-7 w-full rounded-md border border-input bg-input/20 px-2 text-xs"
+          className="h-7 w-full rounded-md border border-input bg-input/20 px-2 text-xs text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
           id="font-family"
           onChange={(event) => onUpdate({ fontFamily: event.target.value })}
           value={layer.fontFamily}
@@ -1793,7 +1793,7 @@ function NumberField({
   return (
     <label className="flex flex-col gap-1 text-xs leading-none">
       <span className="font-medium text-muted-foreground">{label}</span>
-      <span className="flex h-7 items-center gap-1 rounded-md border border-input bg-input/20 px-2">
+      <span className="flex h-7 items-center gap-1 rounded-md border border-input bg-input/20 px-2 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
         <input
           className="w-full min-w-0 bg-transparent text-right text-xs text-foreground outline-none"
           max={max}

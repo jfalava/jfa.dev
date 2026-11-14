@@ -15,7 +15,7 @@
     "web/docs/src/components/opengraph/canvas-preview.tsx": 4,
     "web/docs/src/components/opengraph/fonts-preview.tsx": 1,
     "web/docs/src/components/opengraph/layers-preview.tsx": 2,
-    "web/docs/src/components/opengraph/text-preview.tsx": 11,
+    "web/docs/src/components/opengraph/text-preview.tsx": 10,
     "web/docs/src/components/opengraph/tools-preview.tsx": 1
   },
   "text-size": {
