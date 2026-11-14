@@ -67,15 +67,3 @@
     padding: 1.5rem;
   }
 }
-
-/* The Photoshop-style tool rail stays dark in both themes, like the frame around artwork. */
-.tool-rail {
-  --rail-surface: #2b2b2b;
-  --rail-border: oklch(0.274 0.006 286.033);
-  --rail-muted: oklch(0.705 0.015 286.067);
-  --rail-swatch: oklch(0.37 0.013 285.805);
-}
-
-.dark .tool-rail {
-  --rail-surface: #1e1e1e;
-}
