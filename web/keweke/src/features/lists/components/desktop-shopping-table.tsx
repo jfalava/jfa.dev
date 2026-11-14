@@ -28,10 +28,10 @@ export function DesktopNewItemRow({
   return (
     <tr className="border-b-2 border-primary/20 bg-primary/5 align-top">
       <TableCell className="px-4 py-3">
-        <span className="font-mono text-[11px] font-semibold text-primary">+</span>
+        <span className="font-mono text-xs font-semibold text-primary">+</span>
       </TableCell>
       <TableCell className="px-3 py-3">
-        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+        <span className="inline-flex items-center gap-1.5 type-label text-muted-foreground">
           new <HotkeyKbd className="hidden sm:inline-flex" hotkey="N" />
         </span>
       </TableCell>
@@ -116,12 +116,10 @@ export function DesktopNewItemRow({
         ) : null}
       </TableCell>
       <TableCell className="px-3 py-3">
-        <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-          draft
-        </span>
+        <span className="type-label text-muted-foreground">draft</span>
       </TableCell>
       <TableCell className="px-3 py-3">
-        <span className="font-mono text-[10px] tracking-[0.08em] text-primary uppercase">open</span>
+        <span className="type-label text-primary">open</span>
       </TableCell>
       <TableCell className="px-3 py-3">
         <Button aria-label="Add item" onPress={onAdd} size="icon-sm">

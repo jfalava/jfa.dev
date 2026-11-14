@@ -17,9 +17,7 @@ export function createLogoutSection(manager: UserManager): SettingsSectionRow {
       <div>
         {manager.isConfirmingLogOut ? (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
-              log out of this browser?
-            </span>
+            <span className="type-label text-destructive">log out of this browser?</span>
             <Button
               className="h-8 px-4 text-sm"
               isDisabled={manager.isLoggingOut}
@@ -140,9 +138,7 @@ export function createLocalDataSection(manager: UserManager): SettingsSectionRow
       <div>
         {manager.isConfirmingClearData ? (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
-              clear all local data?
-            </span>
+            <span className="type-label text-destructive">clear all local data?</span>
             <Button
               className="h-8 px-4 text-sm"
               isDisabled={manager.isClearingData}

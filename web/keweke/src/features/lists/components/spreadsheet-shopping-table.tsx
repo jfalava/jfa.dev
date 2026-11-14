@@ -507,7 +507,7 @@ function SpreadsheetItemRow({
       onBlur={onBlur}
     >
       <TableCell className="px-4 py-2">
-        <span className="font-mono text-[11px] text-muted-foreground">
+        <span className="font-mono text-xs text-muted-foreground">
           {String(index + 1).padStart(2, "0")}
         </span>
       </TableCell>
@@ -542,7 +542,7 @@ function SpreadsheetItemRow({
         <SpreadsheetInput
           error={errors?.unit}
           field="unit"
-          inputClassName="w-20 font-serif text-[11px]"
+          inputClassName="w-20 font-serif text-xs"
           label={`Edit ${item.name} unit`}
           maxLength={32}
           rowId={item.id}
@@ -554,7 +554,7 @@ function SpreadsheetItemRow({
         <SpreadsheetInput
           error={errors?.amount}
           field="amount"
-          inputClassName="w-32 font-serif text-[11px]"
+          inputClassName="w-32 font-serif text-xs"
           label={`Edit ${item.name} amount each`}
           maxLength={64}
           rowId={item.id}
@@ -566,7 +566,7 @@ function SpreadsheetItemRow({
         <SpreadsheetInput
           error={errors?.category}
           field="category"
-          inputClassName="w-32 font-serif text-[10px]"
+          inputClassName="w-32 font-serif text-xs"
           label={`Edit ${item.name} category`}
           maxLength={64}
           rowId={item.id}
@@ -618,10 +618,10 @@ function SpreadsheetNewItemRow({
   return (
     <tr className="border-b-2 border-primary/20 bg-primary/5 align-top">
       <TableCell className="px-4 py-3">
-        <span className="font-mono text-[11px] font-semibold text-primary">+</span>
+        <span className="font-mono text-xs font-semibold text-primary">+</span>
       </TableCell>
       <TableCell className="px-3 py-3">
-        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+        <span className="inline-flex items-center gap-1.5 type-label text-muted-foreground">
           new <HotkeyKbd hotkey="N" />
         </span>
       </TableCell>
@@ -654,7 +654,7 @@ function SpreadsheetNewItemRow({
         <SpreadsheetInput
           error={errors.unit}
           field="unit"
-          inputClassName="w-20 font-serif text-[11px]"
+          inputClassName="w-20 font-serif text-xs"
           label="New item unit"
           maxLength={32}
           rowId={NEW_SPREADSHEET_ROW_ID}
@@ -666,7 +666,7 @@ function SpreadsheetNewItemRow({
         <SpreadsheetInput
           error={errors.amount}
           field="amount"
-          inputClassName="w-32 font-serif text-[11px]"
+          inputClassName="w-32 font-serif text-xs"
           label="New item amount each"
           maxLength={64}
           rowId={NEW_SPREADSHEET_ROW_ID}
@@ -678,7 +678,7 @@ function SpreadsheetNewItemRow({
         <SpreadsheetInput
           error={errors.category}
           field="category"
-          inputClassName="w-32 font-serif text-[10px]"
+          inputClassName="w-32 font-serif text-xs"
           label="New item category"
           maxLength={64}
           rowId={NEW_SPREADSHEET_ROW_ID}

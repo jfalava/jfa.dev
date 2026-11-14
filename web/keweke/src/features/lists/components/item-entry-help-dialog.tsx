@@ -53,7 +53,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
               </p>
             </div>
 
-            <ul className="space-y-2.5 text-[13px] leading-snug">
+            <ul className="space-y-2.5 text-sm leading-snug">
               <FieldGuide term="item" note="what you're buying — required">
                 e.g. microwave popcorn
               </FieldGuide>
@@ -73,7 +73,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
 
             <div className="space-y-2 border border-border bg-muted/40 p-3">
               <p className="text-sm font-medium">Already in inventory</p>
-              <p className="text-[13px] leading-snug text-muted-foreground">
+              <p className="text-sm leading-snug text-muted-foreground">
                 As you type, KEWEKE checks the name against the items already in this list&apos;s
                 Inventory. If they look like the same thing, a note appears under the field and the
                 first add asks before committing. Nothing is blocked — pick{" "}
@@ -84,11 +84,11 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
 
             <div className="hidden space-y-2 border border-border bg-muted/40 p-3 md:block">
               <p className="text-sm font-medium">Spreadsheet</p>
-              <p className="text-[13px] leading-snug text-muted-foreground">
+              <p className="text-sm leading-snug text-muted-foreground">
                 On desktop, use the grid button or <HotkeyKbd hotkey="Mod+Shift+E" /> to edit every
                 row with the keyboard.
               </p>
-              <p className="text-[13px] leading-snug text-muted-foreground">
+              <p className="text-sm leading-snug text-muted-foreground">
                 <span className="text-foreground">Tab</span> moves across fields, arrows move
                 between cells, Enter moves down, and <HotkeyKbd hotkey="Mod+Backspace" /> removes
                 the current row. Escape exits.
@@ -97,7 +97,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
 
             <div className="space-y-2 border border-border bg-muted/40 p-3">
               <p className="text-sm font-medium">Shortcuts</p>
-              <p className="text-[13px] leading-snug text-muted-foreground">
+              <p className="text-sm leading-snug text-muted-foreground">
                 <HotkeyKbd hotkey="F" /> focuses search, <HotkeyKbd hotkey="N" /> jumps to the new
                 item name. Both work in list and spreadsheet mode and avoid browser shortcuts like
                 new tab or new window.
@@ -110,7 +110,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
               <DocsLink href={kewekeDocs.workingWithList}>Working with the list</DocsLink>
               <span
                 aria-hidden="true"
-                className="hidden text-[10px] text-muted-foreground/50 sm:inline"
+                className="hidden text-xs text-muted-foreground/50 sm:inline"
               >
                 ·
               </span>
@@ -119,7 +119,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
               </DocsLink>
               <span
                 aria-hidden="true"
-                className="hidden text-[10px] text-muted-foreground/50 sm:inline"
+                className="hidden text-xs text-muted-foreground/50 sm:inline"
               >
                 ·
               </span>
@@ -143,9 +143,7 @@ export function ItemEntryHelpDialog({ isOpen, onOpenChange }: ItemEntryHelpDialo
 function ExampleField({ label, value }: { label: string; value: string }) {
   return (
     <p className="min-w-0">
-      <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-        {label}
-      </span>
+      <span className="type-label text-muted-foreground">{label}</span>
       <span className="ml-2 font-serif wrap-break-word text-primary">{value}</span>
     </p>
   );
@@ -154,9 +152,7 @@ function ExampleField({ label, value }: { label: string; value: string }) {
 function FieldGuide({ children, note, term }: { children: ReactNode; note: string; term: string }) {
   return (
     <li className="flex gap-2">
-      <span className="w-14 shrink-0 font-mono text-[10px] tracking-[0.08em] text-primary uppercase">
-        {term}
-      </span>
+      <span className="w-14 shrink-0 type-label text-primary">{term}</span>
       <span className="min-w-0 text-muted-foreground">
         {note}. <span className="text-foreground">{children}</span>
       </span>

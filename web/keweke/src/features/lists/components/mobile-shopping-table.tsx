@@ -48,7 +48,7 @@ export function MobileShoppingTable({
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={`h-8 bg-muted/50 px-2 text-left font-mono text-[10px] tracking-widest text-muted-foreground uppercase first:pl-3 last:pr-3 ${header.column.id === "done" ? "w-12" : header.column.id === "actions" ? "w-32 text-right" : ""}`}
+                  className={`h-8 bg-muted/50 px-2 text-left type-label text-muted-foreground first:pl-3 last:pr-3${header.column.id === "done" ? "w-12" : header.column.id === "actions" ? "w-32 text-right" : ""}`}
                   scope="col"
                 >
                   {header.isPlaceholder ? null : <table.FlexRender header={header} />}
@@ -75,9 +75,7 @@ export function MobileShoppingTable({
                           className="flex min-w-0 flex-col gap-1"
                           htmlFor={`mobile-edit-name-${row.original.id}`}
                         >
-                          <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                            item
-                          </span>
+                          <span className="type-label text-muted-foreground">item</span>
                           <Input
                             id={`mobile-edit-name-${row.original.id}`}
                             aria-label={`Edit ${row.original.name} name`}
@@ -100,7 +98,7 @@ export function MobileShoppingTable({
                           ) : null}
                         </label>
                         <div className="flex min-w-0 flex-col gap-1">
-                          <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                          <span className="type-label text-muted-foreground">
                             qty · unit · amount each
                           </span>
                           <div className="flex min-w-0 items-center gap-1">
@@ -183,9 +181,7 @@ export function MobileShoppingTable({
                           className="flex min-w-0 flex-col gap-1"
                           htmlFor={`mobile-edit-category-${row.original.id}`}
                         >
-                          <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                            category
-                          </span>
+                          <span className="type-label text-muted-foreground">category</span>
                           <Input
                             id={`mobile-edit-category-${row.original.id}`}
                             aria-label={`Edit ${row.original.name} category`}
@@ -346,9 +342,7 @@ export function MobileNewItemDialog({
                   disabled={isAdding}
                 >
                   <label className="flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
-                    <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                      item
-                    </span>
+                    <span className="type-label text-muted-foreground">item</span>
                     <Input
                       id="new-item-mobile"
                       aria-label="New item"
@@ -371,7 +365,7 @@ export function MobileNewItemDialog({
                     />
                   </label>
                   <div className="flex min-w-0 flex-col gap-1">
-                    <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
+                    <span className="type-label text-muted-foreground">
                       qty · unit · amount each
                     </span>
                     <div className="flex min-w-0 items-center gap-1">
@@ -437,9 +431,7 @@ export function MobileNewItemDialog({
                     ) : null}
                   </div>
                   <label className="flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
-                    <span className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">
-                      category
-                    </span>
+                    <span className="type-label text-muted-foreground">category</span>
                     <Input
                       id="new-category-mobile"
                       aria-label="New item category"

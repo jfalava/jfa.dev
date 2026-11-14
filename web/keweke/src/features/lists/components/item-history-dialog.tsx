@@ -30,9 +30,7 @@ const historyColumns = historyColumnHelper.columns([
     id: "field",
     header: "field",
     cell: ({ row }) => (
-      <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-        {row.original.field}
-      </span>
+      <span className="type-label text-muted-foreground">{row.original.field}</span>
     ),
   }),
   historyColumnHelper.display({
@@ -57,7 +55,7 @@ const historyColumns = historyColumnHelper.columns([
       return (
         <div className="min-w-28" title={absoluteTime}>
           <p className="truncate font-serif text-xs font-medium">{row.original.actorName}</p>
-          <p className="mt-0.5 font-mono text-[10px] tracking-[0.06em] whitespace-nowrap text-muted-foreground uppercase">
+          <p className="mt-0.5 type-label whitespace-nowrap text-muted-foreground">
             {formatRelativeTime(row.original.appliedAt)} · rev {row.original.revision}
           </p>
         </div>
@@ -209,7 +207,7 @@ export function ItemHistoryDialog({
                   {isLoading ? "Loading" : "Load older changes"}
                 </Button>
               ) : (
-                <p className="text-center font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
+                <p className="text-center type-label text-muted-foreground">
                   beginning of recorded history
                 </p>
               )}
@@ -237,7 +235,7 @@ function HistoryTable({ events }: { events: readonly ListItemHistoryEvent[] }) {
           <TableRow className="hover:bg-transparent" key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <TableHead
-                className="h-9 bg-popover px-3 font-mono text-[10px] tracking-widest text-muted-foreground uppercase"
+                className="h-9 bg-popover px-3 type-label text-muted-foreground"
                 key={header.id}
               >
                 {header.isPlaceholder ? null : <table.FlexRender header={header} />}
@@ -267,8 +265,8 @@ function HistoryValue({ tone, value }: { tone: "new" | "old"; value: string }) {
     <span
       className={
         isNewValue
-          ? "inline-flex max-w-52 items-center gap-1 rounded-sm bg-success/10 px-2 py-1 font-mono text-[11px] text-success"
-          : "inline-flex max-w-52 items-center gap-1 rounded-sm bg-destructive/10 px-2 py-1 font-mono text-[11px] text-destructive"
+          ? "inline-flex max-w-52 items-center gap-1 rounded-sm bg-success/10 px-2 py-1 font-mono text-xs text-success"
+          : "inline-flex max-w-52 items-center gap-1 rounded-sm bg-destructive/10 px-2 py-1 font-mono text-xs text-destructive"
       }
     >
       {isNewValue ? (

@@ -13,10 +13,7 @@ export function InventoryMatchNotice({ id, match }: { id: string; match: Invento
   }
 
   return (
-    <output
-      className="mt-1 flex items-start gap-1 font-mono text-[9px] leading-tight tracking-widest text-amber-700 uppercase dark:text-amber-500"
-      id={id}
-    >
+    <output className="mt-1 flex items-start gap-1 type-label leading-tight text-warning" id={id}>
       <TriangleAlert aria-hidden="true" className="mt-px size-3 shrink-0" />
       <span className="min-w-0 truncate normal-case">{inventoryMatchMessage(match)}</span>
     </output>

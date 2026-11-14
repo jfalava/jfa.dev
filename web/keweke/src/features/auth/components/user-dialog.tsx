@@ -19,7 +19,7 @@ function OrDivider({ size = "default" }: { size?: "default" | "small" }) {
       <span
         className={
           size === "small"
-            ? "absolute left-1/2 -translate-x-1/2 bg-popover px-1.5 text-[11px] text-muted-foreground"
+            ? "absolute left-1/2 -translate-x-1/2 bg-popover px-1.5 text-xs text-muted-foreground"
             : "absolute left-1/2 -translate-x-1/2 bg-popover px-2 text-xs text-muted-foreground"
         }
       >

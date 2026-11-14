@@ -48,7 +48,7 @@ export function DeletedItemsHistory({
             >
               <div className="min-w-0">
                 <p className="truncate font-serif text-sm font-medium">{item.name}</p>
-                <p className="mt-1 flex flex-wrap items-center gap-x-1 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                <p className="mt-1 flex flex-wrap items-center gap-x-1 font-mono text-xs tracking-[0.08em] text-muted-foreground">
                   <ItemMeasure item={item} />
                   <span aria-hidden="true">·</span>
                   <span className="font-serif">{item.category}</span>

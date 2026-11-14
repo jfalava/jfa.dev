@@ -153,7 +153,7 @@ function createDevicesColumns({
       cell: ({ row }) => (
         <div className="min-w-0">
           <DeviceLabel isCurrent={row.original.isCurrent} />
-          <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+          <p className="mt-0.5 font-mono text-xs text-muted-foreground">
             {row.original.deviceId.slice(0, 16)}… ·{" "}
             {row.original.isRevoked ? (
               <span className="text-destructive">Revoked</span>
@@ -173,9 +173,7 @@ function createDevicesColumns({
       id: "deviceId",
       header: "Device ID",
       cell: ({ row }) => (
-        <p className="font-mono text-[11px] break-all text-muted-foreground">
-          {row.original.deviceId}
-        </p>
+        <p className="font-mono text-xs break-all text-muted-foreground">{row.original.deviceId}</p>
       ),
     }),
     devicesColumnHelper.display({

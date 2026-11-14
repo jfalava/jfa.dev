@@ -141,11 +141,7 @@ export function SignedItemBadge({
     (item.createdBy !== null && item.updatedBy !== null && item.createdBy.id !== item.updatedBy.id);
   const actor = (wasEdited ? item.updatedBy : item.createdBy) ?? item.updatedBy ?? item.createdBy;
   if (!actor) {
-    return (
-      <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase">
-        unsigned
-      </span>
-    );
+    return <span className="type-label text-muted-foreground">unsigned</span>;
   }
 
   const action = wasEdited ? "edited by" : "added by";
@@ -161,7 +157,7 @@ export function SignedItemBadge({
   return (
     <span
       aria-label={`${action} ${actorName}`}
-      className="inline-flex max-w-full items-center gap-1 truncate text-[10px] tracking-[0.06em] text-muted-foreground"
+      className="inline-flex max-w-full items-center gap-1 truncate text-xs tracking-[0.06em] text-muted-foreground"
       title={title}
     >
       {wasEdited ? (
@@ -245,10 +241,7 @@ export function ItemMeasure({ item }: { item: Pick<ListItem, "quantity" | "unit"
 
 export function ItemFieldError({ id, message }: { id?: string; message: string }) {
   return (
-    <span
-      className="mt-1 block font-mono text-[9px] leading-tight tracking-widest text-destructive uppercase"
-      id={id}
-    >
+    <span className="mt-1 block type-label leading-tight text-destructive" id={id}>
       {message}
     </span>
   );

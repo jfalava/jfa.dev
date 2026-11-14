@@ -56,9 +56,7 @@ export function createPasskeysSection(manager: UserManager): SettingsSectionRow 
         <FeedbackMessage feedback={manager.feedback} section="passkeys" />
 
         {manager.isLoadingPasskeys ? (
-          <p className="mt-4 font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
-            Loading passkeys…
-          </p>
+          <p className="mt-4 type-label text-muted-foreground">Loading passkeys…</p>
         ) : manager.passkeys.length > 0 ? (
           <div className="mt-4">
             <PasskeysTable passkeys={manager.passkeys} />

@@ -36,7 +36,7 @@ const passkeysColumns = passkeysColumnHelper.columns([
     id: "added",
     header: "Added",
     cell: ({ row }) => (
-      <span className="text-[11px] text-muted-foreground">
+      <span className="text-xs text-muted-foreground">
         {formatPasskeyDate(row.original.createdAt)}
       </span>
     ),
@@ -45,7 +45,7 @@ const passkeysColumns = passkeysColumnHelper.columns([
     id: "sync",
     header: "Sync",
     cell: ({ row }) => (
-      <span className="text-[11px] text-muted-foreground">
+      <span className="text-xs text-muted-foreground">
         {row.original.synced ? "Available to sync" : "Device-bound"}
         {row.original.transports.length > 0 ? ` · ${row.original.transports.join(", ")}` : ""}
       </span>

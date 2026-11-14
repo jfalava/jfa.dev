@@ -76,9 +76,7 @@ function AdminDeleteAction({
   if (isConfirming) {
     return (
       <div className="flex items-center justify-end gap-1.5">
-        <span className="font-mono text-[10px] tracking-[0.08em] text-destructive uppercase">
-          {confirmationLabel}
-        </span>
+        <span className="type-label text-destructive">{confirmationLabel}</span>
         <Button
           aria-label={`Confirm ${ariaLabel}`}
           isDisabled={isDeleting}
@@ -158,10 +156,10 @@ const usersColumns = usersColumnHelper.columns([
     cell: ({ row }) => (
       <div className="min-w-0">
         <p className="font-serif text-base font-semibold tracking-tight">{row.original.username}</p>
-        <p className="mt-0.5 font-mono text-[11px] break-all text-muted-foreground">
+        <p className="mt-0.5 font-mono text-xs break-all text-muted-foreground">
           {row.original.userId}
         </p>
-        <p className="mt-1 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+        <p className="mt-1 type-label text-muted-foreground">
           {row.original.activeDeviceCount} active · {row.original.deviceCount} devices ·{" "}
           {dateFormatter.format(new Date(row.original.createdAt))}
         </p>
@@ -174,7 +172,7 @@ const usersColumns = usersColumnHelper.columns([
     cell: ({ row }) => (
       <div className="min-w-0">
         <p className="font-serif text-base font-semibold tracking-tight">{row.original.username}</p>
-        <p className="mt-0.5 font-mono text-[11px] break-all text-muted-foreground">
+        <p className="mt-0.5 font-mono text-xs break-all text-muted-foreground">
           {row.original.userId}
         </p>
       </div>
@@ -184,7 +182,7 @@ const usersColumns = usersColumnHelper.columns([
     id: "devices",
     header: "Devices",
     cell: ({ row }) => (
-      <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+      <span className="type-label text-muted-foreground">
         {row.original.activeDeviceCount} active · {row.original.deviceCount} total
       </span>
     ),
@@ -193,7 +191,7 @@ const usersColumns = usersColumnHelper.columns([
     id: "created",
     header: "Created",
     cell: ({ row }) => (
-      <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+      <span className="type-label text-muted-foreground">
         {dateFormatter.format(new Date(row.original.createdAt))}
       </span>
     ),
@@ -287,11 +285,11 @@ const listsColumns = listsColumnHelper.columns([
         <p className="truncate font-serif text-base font-semibold tracking-tight">
           {row.original.title}
         </p>
-        <p className="mt-0.5 font-mono text-[11px] break-all text-muted-foreground">
+        <p className="mt-0.5 font-mono text-xs break-all text-muted-foreground">
           {row.original.alias ? `${row.original.alias} · ` : ""}
           {row.original.listId}
         </p>
-        <p className="mt-1 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+        <p className="mt-1 type-label text-muted-foreground">
           {row.original.itemCount} lines · {row.original.completedCount} done · rev{" "}
           {row.original.revision} · {dateTimeFormatter.format(new Date(row.original.updatedAt))}
         </p>
@@ -310,7 +308,7 @@ const listsColumns = listsColumnHelper.columns([
         <p className="truncate font-serif text-base font-semibold tracking-tight group-hover:text-primary">
           {row.original.title}
         </p>
-        <p className="mt-0.5 font-mono text-[11px] break-all text-muted-foreground">
+        <p className="mt-0.5 font-mono text-xs break-all text-muted-foreground">
           {row.original.alias ? `${row.original.alias} · ` : ""}
           {row.original.listId}
         </p>
@@ -321,7 +319,7 @@ const listsColumns = listsColumnHelper.columns([
     id: "items",
     header: "Progress",
     cell: ({ row }) => (
-      <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+      <span className="type-label text-muted-foreground">
         {row.original.itemCount} lines · {row.original.completedCount} done
       </span>
     ),
@@ -330,16 +328,14 @@ const listsColumns = listsColumnHelper.columns([
     id: "revision",
     header: "Revision",
     cell: ({ row }) => (
-      <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-        {row.original.revision}
-      </span>
+      <span className="type-label text-muted-foreground">{row.original.revision}</span>
     ),
   }),
   listsColumnHelper.display({
     id: "updated",
     header: "Updated",
     cell: ({ row }) => (
-      <span className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+      <span className="type-label text-muted-foreground">
         {dateTimeFormatter.format(new Date(row.original.updatedAt))}
       </span>
     ),

@@ -57,7 +57,7 @@ export function createShoppingColumns() {
       id: "line",
       header: "No.",
       cell: ({ row }) => (
-        <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+        <span className="font-mono text-xs text-muted-foreground tabular-nums">
           {row.index + 1}
         </span>
       ),
@@ -160,7 +160,7 @@ export function createShoppingColumns() {
         return (
           <span className="flex items-center justify-between gap-0.5">
             <NumberFlow
-              className="font-mono text-[12px]"
+              className="font-mono text-xs"
               format={{ useGrouping: false }}
               value={getValue()}
             />
@@ -204,7 +204,7 @@ export function createShoppingColumns() {
           );
         }
 
-        return <span className="font-serif text-[11px]">{getValue()}</span>;
+        return <span className="font-serif text-xs">{getValue()}</span>;
       },
     }),
     shoppingColumnHelper.accessor("amount", {
@@ -237,7 +237,7 @@ export function createShoppingColumns() {
           );
         }
 
-        return <span className="font-serif text-[11px]">{getValue() || "—"}</span>;
+        return <span className="font-serif text-xs">{getValue() || "—"}</span>;
       },
     }),
     shoppingColumnHelper.accessor("category", {
@@ -271,7 +271,7 @@ export function createShoppingColumns() {
           );
         }
 
-        return <span className="font-serif text-[10px] text-muted-foreground">{getValue()}</span>;
+        return <span className="font-serif text-xs text-muted-foreground">{getValue()}</span>;
       },
     }),
     shoppingColumnHelper.display({

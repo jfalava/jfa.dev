@@ -46,10 +46,7 @@ export function DuplicateItemDialog({
           className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
         >
           <div className="flex items-center gap-2 border-b border-border px-4 py-4">
-            <PackageCheck
-              aria-hidden="true"
-              className="size-4 shrink-0 text-amber-600 dark:text-amber-500"
-            />
+            <PackageCheck aria-hidden="true" className="size-4 shrink-0 text-warning" />
             <h2 className="text-lg font-semibold tracking-tight">Already in inventory?</h2>
           </div>
 

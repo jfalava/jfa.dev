@@ -56,14 +56,14 @@ function createListsColumns({
         const index = row.index;
         if (index >= 9) {
           return (
-            <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+            <span className="font-mono text-xs text-muted-foreground tabular-nums">
               {index + 1}
             </span>
           );
         }
         return (
           <span className="inline-flex items-center gap-1.5">
-            <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+            <span className="font-mono text-xs text-muted-foreground tabular-nums">
               {index + 1}
             </span>
             <HotkeyKbd hotkey={`Mod+Shift+${index + 1}`} />
@@ -149,7 +149,7 @@ function createListsColumns({
             ) : null}
             <Link
               aria-label={`Open ${list.title}`}
-              className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary"
+              className="font-mono text-xs tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary"
               params={{ listId: list.alias ?? list.id }}
               to="/$listId"
             >
@@ -242,7 +242,7 @@ function MobileListsList({
                 params={{ listId: list.alias ?? list.id }}
                 to="/$listId"
               >
-                <span className="hidden items-center gap-1.5 font-mono text-[10px] text-muted-foreground tabular-nums sm:inline-flex">
+                <span className="hidden items-center gap-1.5 font-mono text-xs text-muted-foreground tabular-nums sm:inline-flex">
                   <span>{index + 1}</span>
                   {index < 9 ? <HotkeyKbd hotkey={`Mod+Shift+${index + 1}`} /> : null}
                 </span>
