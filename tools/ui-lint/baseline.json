@@ -57,9 +57,6 @@
     "web/opengraph/src/components/editor-tabs.tsx": 4,
     "web/opengraph/src/components/opengraph-header.tsx": 1,
     "web/opengraph/src/components/shortcut-guide.tsx": 3,
-    "web/opengraph/src/routes/index.tsx": 24,
-    "web/playlists/src/features/music/components/now-playing-bar.tsx": 1,
-    "web/playlists/src/features/music/components/playlist-search-palette.tsx": 2,
-    "web/playlists/src/features/music/components/playlist-table.tsx": 2
+    "web/opengraph/src/routes/index.tsx": 24
   }
 }

@@ -135,7 +135,7 @@ export function NowPlayingBar() {
                       {displayAlbum ? ` · ${displayAlbum}` : ""}
                     </span>
                   </TitleLink>
-                  <div className="mt-0.5 hidden truncate text-[11px] leading-none text-muted-foreground sm:block">
+                  <div className="mt-0.5 hidden truncate text-xs leading-none text-muted-foreground sm:block">
                     {displayArtist}
                     {displayAlbum ? ` · ${displayAlbum}` : ""}
                   </div>

@@ -333,7 +333,7 @@ export function PlaylistTable({
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        "max-w-65 px-3 py-2.5 align-middle text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
+                        "max-w-65 px-3 py-2.5 align-middle text-sm leading-5 whitespace-normal text-foreground sm:px-4",
                         cell.column.id === "cover" && "w-14 pl-4 sm:pl-6 lg:pl-8",
                         // Same title-cell scroll pattern as mobile: bound width, scroll the title.
                         cell.column.id === "title" && "max-w-0 overflow-hidden whitespace-nowrap",
@@ -393,7 +393,7 @@ export function PlaylistTable({
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        "px-3 py-3 align-middle text-[15px] leading-5 whitespace-normal text-foreground",
+                        "px-3 py-3 align-middle text-sm leading-5 whitespace-normal text-foreground",
                         cell.column.id === "track" && "max-w-0 overflow-hidden pr-2 pl-4",
                         cell.column.id === "links" && "w-[20%] px-2 text-center",
                       )}

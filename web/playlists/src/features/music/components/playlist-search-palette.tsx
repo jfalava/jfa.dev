@@ -123,7 +123,7 @@ export function PlaylistSearchPalette() {
         <HotkeyKbd
           hotkey="Mod+K"
           className="hidden md:inline-flex"
-          kbdClassName="h-5 min-h-0 px-1 text-[10px]"
+          kbdClassName="h-5 min-h-0 px-1 text-kbd-xs"
         />
       </Button>
       <Dialog
@@ -166,7 +166,7 @@ export function PlaylistSearchPalette() {
             aria-label="Search playlists"
             className="h-12 border-0 bg-transparent px-0 shadow-none focus-visible:border-0 focus-visible:ring-0 md:text-sm"
           />
-          <kbd className="hidden shrink-0 items-center gap-1 text-[10px] text-muted-foreground sm:inline-flex">
+          <kbd className="hidden shrink-0 items-center gap-1 text-kbd-xs text-muted-foreground sm:inline-flex">
             <CornerDownLeft className="size-3" />
             Open
           </kbd>
