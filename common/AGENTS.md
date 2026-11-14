@@ -4,7 +4,7 @@
 
 ## `ui-lint` is the judge
 
-`bun run lint:ui` (`tools/ui-lint`) decides whether a change follows these rules. It runs in `predeploy`, and only violations not recorded in `tools/ui-lint/baseline.json` fail. This file explains the rules; if this file and the linter disagree, the linter is right and this file needs fixing. When a rule can be checked mechanically, add it to `tools/ui-lint` with a test instead of writing more prose here.
+`bun run lint:ui` (`tools/ui-lint`) decides whether a change follows these rules. It runs in `bun run check`, which `predeploy` and Cloudflare CI run, and only violations not recorded in `tools/ui-lint/baseline.json` fail. This file explains the rules; if this file and the linter disagree, the linter is right and this file needs fixing. When a rule can be checked mechanically, add it to `tools/ui-lint` with a test instead of writing more prose here.
 
 | Rule                         | What it enforces                                                                                                        |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -33,6 +33,6 @@ Add one when a product needs it, never ahead of time, and never the whole catalo
 2. If the dry run lists an `overwrite` (for example, `dialog` overwrites `button.tsx`), do not apply it. Copy the new file from `--view` and adapt it by hand. Never pass `--overwrite` or `--all`.
 3. Adapt the file until `ui-lint`, `lint` and `typecheck` pass: relative imports, `cn` from `../../lib/utils`, type roles and tokens, no `any`, accessible names passed through. Give interactive controls the `density` prop that Button, Input and Toggle use.
 4. Export it from `index.ts`, add a Branding section that exercises its real states, move the product code onto it and delete the app's own copy.
-5. Check: `bun run lint:global`, `bun run lint:ui`, `bun run typecheck:global`, `bun run test:global`, then Branding and the consuming app in light and dark at mobile and desktop widths.
+5. Check: `bun run check` (lint, `lint:ui`, typecheck and tests), then Branding and the consuming app in light and dark at mobile and desktop widths.
 
 There is no upstream tracking. Diff against upstream with `--diff` only when fixing a bug in a component.

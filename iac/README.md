@@ -75,3 +75,17 @@ read locally. Alchemy does not create or seed secrets in this mode.
 `.dev.vars`, plaintext Worker secrets and `process.env.LASTFM_*` are not fallback
 sources. Plain Vite/Node preview without Worker bindings reports Last.fm as
 unavailable. Other Playlists features continue to work.
+
+## Cloudflare CI
+
+Workers Builds is attached to `jfa-dev-router` and deploys the whole stack:
+
+| Setting                              | Command            |
+| ------------------------------------ | ------------------ |
+| Build command                        | `bun run iac:plan` |
+| Deploy command (`main`)              | `bun run deploy`   |
+| Non-production branch deploy command | `bun run check`    |
+
+`bun run deploy` runs `predeploy`, which is `bun run check`: lint, `lint:ui`,
+typecheck and tests, before Alchemy uploads anything. Branch builds run the same
+checks after a dry-run plan against production and never deploy.
