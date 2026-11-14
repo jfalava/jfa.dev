@@ -23,7 +23,7 @@ export default defineConfig({
     ignorePatterns: ["*.d.ts", "node_modules/**"],
   },
   lint: {
-    plugins: ["eslint", "react", "typescript", "unicorn", "oxc", "import", "promise"],
+    plugins: ["eslint", "react", "typescript", "jsx-a11y", "unicorn", "oxc", "import", "promise"],
     jsPlugins: [{ name: "anti-slop", specifier: "../tools/oxlint/anti-slop/index.ts" }],
     categories: {
       correctness: "error",
