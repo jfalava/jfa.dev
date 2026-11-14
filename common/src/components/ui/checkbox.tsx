@@ -1,6 +1,6 @@
 import { cn } from "../../lib/utils";
 
-import { Check, Minus } from "lucide-react";
+import { Check, Minus, X } from "lucide-react";
 import type { ReactNode } from "react";
 import {
   Checkbox as AriaCheckbox,
@@ -21,16 +21,21 @@ function Checkbox({ children, className, ...props }: CheckboxProps) {
         className,
       )}
     >
-      {({ isSelected, isIndeterminate }) => (
+      {({ isSelected, isIndeterminate, isInvalid }) => (
         <>
           <span
             aria-hidden="true"
             className={cn(
               "flex size-4 shrink-0 items-center justify-center rounded-none border border-input bg-background text-primary-foreground transition-colors",
-              (isSelected || isIndeterminate) && "border-primary bg-primary",
+              isInvalid
+                ? "border-destructive bg-destructive/10 text-destructive"
+                : (isSelected || isIndeterminate) && "border-primary bg-primary",
             )}
           >
-            {isIndeterminate ? (
+            {/* Invalid shows a cross so the error does not rely on color alone. */}
+            {isInvalid ? (
+              <X className="size-3.5" strokeWidth={3} />
+            ) : isIndeterminate ? (
               <Minus className="size-3.5" strokeWidth={3} />
             ) : (
               isSelected && <Check className="size-3.5" strokeWidth={3} />

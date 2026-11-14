@@ -6,7 +6,7 @@ import { Section } from "@/components/section";
 export function CheckboxSection() {
   return (
     <Section
-      description="Aria Checkbox. Supports selected, indeterminate, and disabled. Used for shopping list items."
+      description="Aria Checkbox. Supports selected, indeterminate, invalid and disabled. Invalid shows a cross, as when Keweke fails to save an item."
       id="checkbox"
       title="Checkbox"
     >
@@ -15,6 +15,7 @@ export function CheckboxSection() {
           <Checkbox>Sourdough</Checkbox>
           <Checkbox defaultSelected>Oat milk</Checkbox>
           <Checkbox isIndeterminate>Produce</Checkbox>
+          <Checkbox isInvalid>Could not save</Checkbox>
           <Checkbox isDisabled>Out of season</Checkbox>
           <Checkbox defaultSelected isDisabled>
             Already bought
