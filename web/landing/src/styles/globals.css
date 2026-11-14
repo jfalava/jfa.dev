@@ -14,8 +14,10 @@ body {
   @apply m-0 overflow-hidden;
 }
 
-/* Shared chrome inherits common/styles.css. Pretendard belongs to the hero only. */
+/* Shared chrome inherits common/styles.css. Pretendard and the fixed dark surface belong to
+   the hero artwork only, in both themes. */
 .landing-hero {
+  --hero-surface: #0e1116;
   font-family:
     "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
     "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",

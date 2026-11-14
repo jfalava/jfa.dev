@@ -5,8 +5,6 @@
     "web/docs/src/components/opengraph/tools-preview.tsx": 6,
     "web/keweke/src/features/lists/components/duplicate-item-dialog.tsx": 2,
     "web/keweke/src/features/lists/components/inventory-match-notice.tsx": 2,
-    "web/landing/src/features/links/components/repo-links.tsx": 2,
-    "web/landing/src/routes/index.tsx": 1,
     "web/opengraph/src/routes/index.tsx": 7
   },
   "reference-drift": {
