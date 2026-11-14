@@ -1,12 +1,10 @@
-import { cn } from "@jfa.dev/common";
 import type { ListIdentity } from "@jfa.dev/common/identities";
 import type { ListItem } from "@jfa.dev/common/lists";
-import { Button } from "@jfa.dev/common/ui";
+import { Button, Checkbox } from "@jfa.dev/common/ui";
 import NumberFlow from "@number-flow/react";
 import { Blobatar } from "blobatar/react";
-import { Check, ChevronDown, ChevronUp, Pencil, Plus, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Pencil, Plus } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
-import { Checkbox as AriaCheckbox } from "react-aria-components";
 
 import { userAvatarSeed } from "@/features/auth/lib/blobatar";
 import { LOCAL_IDENTITY_PLACEHOLDER, type LocalIdentity } from "@/features/auth/lib/local-identity";
@@ -67,44 +65,22 @@ export function ItemCompletionCheckbox({
   const failed = feedback?.failed === true;
 
   return (
-    <AriaCheckbox
+    <Checkbox
       aria-describedby={failed ? errorId : undefined}
       aria-label={
         item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`
       }
-      className={cn(
-        "group inline-flex min-w-0 items-center gap-2 rounded-sm text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-        className,
-      )}
+      className={className}
       isInvalid={failed}
       isSelected={feedback && !failed ? feedback.checked : item.checked}
       onChange={scheduleToggle}
     >
-      {({ isSelected }) => (
-        <>
-          <span
-            aria-hidden="true"
-            className={cn(
-              "flex size-4 shrink-0 items-center justify-center rounded-none border border-input bg-background text-primary-foreground transition-colors",
-              failed
-                ? "border-destructive bg-destructive/10 text-destructive"
-                : isSelected && "border-primary bg-primary",
-            )}
-          >
-            {failed ? (
-              <X className="size-3.5" strokeWidth={3} />
-            ) : isSelected ? (
-              <Check className="size-3.5" strokeWidth={3} />
-            ) : null}
-          </span>
-          {failed ? (
-            <span className="sr-only" id={errorId} role="alert">
-              Could not save {item.name}. Activate the checkbox to retry.
-            </span>
-          ) : null}
-        </>
-      )}
-    </AriaCheckbox>
+      {failed ? (
+        <span className="sr-only" id={errorId} role="alert">
+          Could not save {item.name}. Activate the checkbox to retry.
+        </span>
+      ) : null}
+    </Checkbox>
   );
 }
 

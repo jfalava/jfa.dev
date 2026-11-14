@@ -1,6 +1,7 @@
 /* oxlint-disable react-hooks/exhaustive-deps */
 import {
   Button,
+  Checkbox,
   ColorField,
   ColorPicker,
   ContextMenu,
@@ -1577,20 +1578,18 @@ function TextProperties({
                   value={fontFamily}
                 />
               </label>
-              <label className="flex items-start gap-2 text-xs text-muted-foreground">
-                <input
-                  checked={fontVariable}
-                  className="mt-0.5"
-                  onChange={(event) => setFontVariable(event.target.checked)}
-                  type="checkbox"
-                />
+              <Checkbox
+                className="items-start text-xs text-muted-foreground"
+                isSelected={fontVariable}
+                onChange={setFontVariable}
+              >
                 <span>
                   Variable font
                   <span className="block opacity-75">
                     Recommended for flexible weight selection.
                   </span>
                 </span>
-              </label>
+              </Checkbox>
               {!fontVariable ? (
                 <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                   Fixed weight
