@@ -12,14 +12,14 @@ const kbdVariants = cva(
         default: "border-border bg-muted text-muted-foreground shadow-none",
         // Indigo key cap for prose where the key is the subject, such as docs.
         keycap:
-          "border-zinc-200 bg-gradient-to-b from-white to-zinc-50 text-zinc-700 shadow-[0_3px_0_0_var(--primary)] hover:translate-y-[1px] hover:shadow-[0_2px_0_0_var(--primary)] dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-200",
+          "border-border bg-gradient-to-b from-background to-muted text-foreground shadow-[0_3px_0_0_var(--primary)] hover:translate-y-[1px] hover:shadow-[0_2px_0_0_var(--primary)] dark:border-input dark:from-muted dark:to-card",
         embedded:
-          "border-zinc-200 bg-zinc-50 text-zinc-600 shadow-none hover:translate-y-0 hover:shadow-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:shadow-none",
+          "border-border bg-muted text-muted-foreground shadow-none hover:translate-y-0 hover:shadow-none dark:border-input",
       },
       size: {
-        default: "h-6 min-w-6 px-1.5 text-[11px] leading-none",
-        sm: "h-5 min-w-5 px-1 text-[10px] leading-none",
-        xs: "h-4 min-w-4 px-1 text-[10px] leading-none",
+        default: "h-6 min-w-6 px-1.5 text-kbd",
+        sm: "h-5 min-w-5 px-1 text-kbd-xs",
+        xs: "h-4 min-w-4 px-1 text-kbd-xs",
       },
     },
     defaultVariants: {
@@ -34,9 +34,9 @@ type KbdProps = React.ComponentProps<"kbd"> & VariantProps<typeof kbdVariants>;
 function Kbd({ className, variant, size, ...props }: KbdProps) {
   // Auto-compact when nested inside a Button / .group/button.
   const buttonCompact =
-    "in-data-[slot=button]:h-4 in-data-[slot=button]:min-w-4 in-data-[slot=button]:px-1 in-data-[slot=button]:text-[10px] in-data-[slot=button]:leading-none";
+    "in-data-[slot=button]:h-4 in-data-[slot=button]:min-w-4 in-data-[slot=button]:px-1 in-data-[slot=button]:text-kbd-xs";
   const groupCompact =
-    "in-[.group\\/button]:h-4 in-[.group\\/button]:min-w-4 in-[.group\\/button]:px-1 in-[.group\\/button]:text-[10px] in-[.group\\/button]:leading-none";
+    "in-[.group\\/button]:h-4 in-[.group\\/button]:min-w-4 in-[.group\\/button]:px-1 in-[.group\\/button]:text-kbd-xs";
   return (
     <KbdPrimitive
       data-slot="kbd"

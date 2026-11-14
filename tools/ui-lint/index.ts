@@ -92,7 +92,7 @@ export function checkClassTokens({ file, text }: SourceFile) {
     ARBITRARY_TEXT_SIZE,
     "text-size",
     (token) =>
-      `${token}: use a type role (type-ui, type-compact, type-meta…) or text-xs and up; sub-12px text needs a documented exception`,
+      `${token}: use a type role (type-ui, type-compact, type-meta…), text-xs and up, or text-kbd for keyboard notation`,
   );
   scan(
     PALETTE_COLOR,

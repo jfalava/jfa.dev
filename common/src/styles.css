@@ -5,6 +5,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  /* Keyboard notation is the one documented sub-12px type role: text-kbd, text-kbd-xs. */
+  --text-kbd: 0.6875rem;
+  --text-kbd--line-height: 1;
+  --text-kbd-xs: 0.625rem;
+  --text-kbd-xs--line-height: 1;
   --font-sans:
     "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
