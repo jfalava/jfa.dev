@@ -87,8 +87,9 @@
     "format:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlists --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects --filter @jfa.dev/playlists format",
     "iac:plan": "bun run --filter @jfa.dev/iac plan",
     "lint:global": "bun run --filter @jfa.dev/landing --filter @jfa.dev/opengraph --filter @jfa.dev/hyperscaler-services --filter @jfa.dev/keweke --filter @jfa.dev/docs --filter @jfa.dev/branding --filter @jfa.dev/playlists --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/redirects --filter @jfa.dev/playlists lint",
-    "predeploy": "bun run lint:global && bun run test:global",
-    "test:global": "bun run --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/iac test"
+    "lint:ui": "bun tools/ui-lint/index.ts",
+    "predeploy": "bun run lint:global && bun run lint:ui && bun run test:global",
+    "test:global": "bun run --filter @jfa.dev/keweke --filter @jfa.dev/common --filter @jfa.dev/router --filter @jfa.dev/iac test && bun test tools/ui-lint"
   },
   "devDependencies": {
     "@oxlint/plugins": "catalog:build",
