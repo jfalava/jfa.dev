@@ -98,6 +98,7 @@
         "@tanstack/react-start": "catalog:tanstack",
         "lucide-react": "catalog:ui",
         "react": "catalog:react",
+        "react-aria-components": "catalog:react",
         "react-dom": "catalog:react",
         "sonner": "catalog:ui",
         "tailwindcss": "catalog:styling",

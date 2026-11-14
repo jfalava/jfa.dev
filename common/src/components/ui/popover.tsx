@@ -47,7 +47,13 @@ export function PopoverPositioner({ children }: { children: React.ReactNode }) {
 }
 
 // oxlint-disable-next-line typescript/no-explicit-any -- PopoverContent wraps AriaPopover with passthrough props
-export function PopoverContent({ className, children, ...props }: any) {
+export function PopoverContent({
+  className,
+  children,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  ...props
+}: any) {
   return (
     <AriaPopover
       data-slot="popover-content"
@@ -57,7 +63,9 @@ export function PopoverContent({ className, children, ...props }: any) {
       )}
       {...props}
     >
-      <AriaDialog className="outline-none">{children}</AriaDialog>
+      <AriaDialog aria-label={ariaLabel} aria-labelledby={ariaLabelledBy} className="outline-none">
+        {children}
+      </AriaDialog>
     </AriaPopover>
   );
 }

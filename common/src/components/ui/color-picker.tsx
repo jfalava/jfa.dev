@@ -15,7 +15,8 @@ export function ColorPicker({
   id,
   compact,
   className,
-  ariaLabel,
+  ariaLabel = "Open color picker",
+  disabled,
 }: {
   color: string;
   onChange: (color: string) => void;
@@ -24,6 +25,7 @@ export function ColorPicker({
   compact?: boolean;
   className?: string;
   ariaLabel?: string;
+  disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [colorDraft, setColorDraft] = useState({ source: color, value: color });
@@ -49,7 +51,8 @@ export function ColorPicker({
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger
             id={id}
-            aria-label={ariaLabel ?? "Open color picker"}
+            isDisabled={disabled}
+            aria-label={ariaLabel}
             className={
               compact
                 ? `flex size-7 items-center justify-center rounded-md border border-border bg-background p-0.5 shadow-xs outline-none transition-colors hover:border-primary/30 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 ${className ?? ""}`
@@ -67,10 +70,11 @@ export function ColorPicker({
               <span className="sr-only">Open color picker</span>
             )}
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent aria-label={ariaLabel} className="w-auto p-0">
             <HexColorPicker color={internalColor} onChange={setInternalColor} />
             <div className="flex items-center gap-2 p-3">
               <Input
+                aria-label="Hex color"
                 value={internalColor}
                 onChange={(event) => setInternalColor(event.target.value)}
                 className="h-8 w-24 font-mono"
@@ -88,6 +92,7 @@ export function ColorPicker({
         </Popover>
         <button
           type="button"
+          disabled={disabled}
           aria-label="Remove color"
           title="Remove color"
           onClick={onRemove}
@@ -103,7 +108,8 @@ export function ColorPicker({
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger
         id={id}
-        aria-label={ariaLabel ?? "Open color picker"}
+        isDisabled={disabled}
+        aria-label={ariaLabel}
         className={
           compact
             ? `flex size-7 items-center justify-center rounded-md border border-border bg-background p-0.5 shadow-xs outline-none transition-colors hover:border-primary/30 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 ${className ?? ""}`
@@ -121,10 +127,11 @@ export function ColorPicker({
           <span className="sr-only">Open color picker</span>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent aria-label={ariaLabel} className="w-auto p-0">
         <HexColorPicker color={internalColor} onChange={setInternalColor} />
         <div className="flex items-center gap-2 p-3">
           <Input
+            aria-label="Hex color"
             value={internalColor}
             onChange={(event) => setInternalColor(event.target.value)}
             className="h-8 w-24 font-mono"
@@ -150,13 +157,19 @@ interface ColorFieldProps {
   disabled?: boolean;
 }
 
-export function ColorField({ label, value, onChange }: ColorFieldProps) {
+export function ColorField({ label, value, onChange, disabled }: ColorFieldProps) {
   const normalized = value.startsWith("#") ? value : `#${value}`;
   return (
-    <div className="flex flex-col gap-1 text-[10px] leading-none">
+    <div className={`flex flex-col gap-1 text-xs leading-none ${disabled ? "opacity-50" : ""}`}>
       <span className="font-medium text-muted-foreground">{label}</span>
       <div className="flex items-center gap-2 rounded-md border border-input bg-input/20 px-2 py-1.5">
-        <ColorPicker compact color={normalized} onChange={onChange} ariaLabel={label} />
+        <ColorPicker
+          compact
+          color={normalized}
+          onChange={onChange}
+          ariaLabel={label}
+          disabled={disabled}
+        />
         <span className="flex-1 text-right font-mono text-xs text-foreground">
           {normalized.toUpperCase()}
         </span>

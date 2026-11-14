@@ -1,17 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { AccordionSection } from "@/components/sections/accordion-section";
 import { ButtonSection } from "@/components/sections/button-section";
 import { CheckboxSection } from "@/components/sections/checkbox-section";
+import { ColorPickerSection } from "@/components/sections/color-picker-section";
 import { ColorsSection } from "@/components/sections/colors-section";
+import { ContextMenuSection } from "@/components/sections/context-menu-section";
 import { DialogSection } from "@/components/sections/dialog-section";
 import { DropdownMenuSection } from "@/components/sections/dropdown-menu-section";
 import { InputSection } from "@/components/sections/input-section";
 import { KbdSection } from "@/components/sections/kbd-section";
 import { LayoutSection } from "@/components/sections/layout-section";
+import { PopoverSection } from "@/components/sections/popover-section";
+import { ResizableSection } from "@/components/sections/resizable-section";
 import { SiteHeaderSection } from "@/components/sections/site-header-section";
 import { SonnerSection } from "@/components/sections/sonner-section";
 import { TableSection } from "@/components/sections/table-section";
 import { TitlesSection } from "@/components/sections/titles-section";
+import { ToggleSection } from "@/components/sections/toggle-section";
 import { TypographySection } from "@/components/sections/typography-section";
 
 export const Route = createFileRoute("/")({ component: BrandingPage });
@@ -24,6 +30,12 @@ const NAV = [
   { id: "button", label: "Button" },
   { id: "input", label: "Input" },
   { id: "checkbox", label: "Checkbox" },
+  { id: "accordion", label: "Accordion" },
+  { id: "color-picker", label: "Color picker" },
+  { id: "context-menu", label: "Context menu" },
+  { id: "popover", label: "Popover" },
+  { id: "resizable", label: "Resizable" },
+  { id: "toggle", label: "Toggle" },
   { id: "dropdown-menu", label: "Dropdown" },
   { id: "dialog", label: "Dialog" },
   { id: "table", label: "Table" },
@@ -66,6 +78,12 @@ function BrandingPage() {
         <ButtonSection />
         <InputSection />
         <CheckboxSection />
+        <AccordionSection />
+        <ColorPickerSection />
+        <ContextMenuSection />
+        <PopoverSection />
+        <ResizableSection />
+        <ToggleSection />
         <DropdownMenuSection />
         <DialogSection />
         <TableSection />
