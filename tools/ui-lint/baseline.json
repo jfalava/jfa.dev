@@ -1,1 +1,5 @@
-{}
+{
+  "shared-module-use": {
+    "common/src/components/ui/checkbox.tsx": 1
+  }
+}

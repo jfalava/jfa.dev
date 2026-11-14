@@ -1,7 +1,11 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  checkAliasImports,
   checkBrandingCoverage,
+  checkCnImports,
+  checkForeignPrimitives,
+  checkSharedModules,
   checkClassTokens,
   checkReferenceDrift,
   checkThemeTokens,
@@ -100,4 +104,102 @@ test("baseline comparison fails only where a file gained violations", () => {
   expect(grown).toEqual([]);
   expect(shrunk.map((entry) => entry.file)).toEqual(["b", "c"]);
   expect(compareWithBaseline([violation("a")], {}).grown).toHaveLength(1);
+});
+
+test("alias-import flags @/ imports in Common, not scoped packages or relative paths", () => {
+  const text = `import { cn } from "@/lib/utils";
+import { Button } from "./button";
+import { secret } from "@jfa.dev/common/secrets";
+const lazy = import("@/hooks/use-thing");`;
+  const found = checkAliasImports([
+    { file: "common/src/components/ui/x.tsx", text },
+  ]);
+  expect(found.map((v) => v.line)).toEqual([1, 4]);
+});
+
+test("foreign-primitive flags Radix, Base UI and Vaul in code and manifests only", () => {
+  const code = {
+    file: "web/x/src/a.tsx",
+    text: `import * as Dialog from "@radix-ui/react-dialog";
+import { Popover } from "@base-ui/react/popover";
+import { Drawer } from "vaul";
+import { Vaulted } from "vaulted";
+import { Button } from "react-aria-components";`,
+  };
+  const manifest = {
+    file: "web/x/package.json",
+    text: `{
+  "dependencies": {
+    "@base-ui/react": "catalog:react",
+    "react-aria-components": "catalog:react",
+    "notes": "vaul"
+  }
+}`,
+  };
+  const found = checkForeignPrimitives([code], [manifest]).map(
+    (v) => `${v.file}:${v.line}`,
+  );
+  expect(found).toEqual([
+    "web/x/src/a.tsx:1",
+    "web/x/src/a.tsx:2",
+    "web/x/src/a.tsx:3",
+    "web/x/package.json:3",
+  ]);
+});
+
+test("shared modules must be exported and used by a product or another shared module", () => {
+  const index = `export { Button, buttonVariants } from "./button";
+export { ThemeToggle } from "./theme-toggle";
+export {
+  Dialog,
+  DialogTitle,
+} from "./dialog";
+export { Kbd } from "./kbd";`;
+  const ui = (name: string, text = "") => ({
+    file: `common/src/components/ui/${name}.tsx`,
+    text,
+  });
+  const modules = [
+    ui("button"),
+    ui("theme-toggle"),
+    ui("site-header", `import { ThemeToggle } from "./theme-toggle";`),
+    ui("dialog"),
+    ui(
+      "kbd",
+      "// ui-lint-allow shared-module-use: kept for an upcoming consumer",
+    ),
+    ui("orphan"),
+  ];
+  // Branding is not a product, so the dialog example does not count as use.
+  const products = [
+    {
+      file: "web/keweke/src/a.tsx",
+      text: `import {\n  buttonVariants,\n} from "@jfa.dev/common/ui";`,
+    },
+  ];
+  const found = checkSharedModules(index, modules, products).map(
+    (v) => `${v.rule} ${v.file}`,
+  );
+  expect(found).toEqual([
+    "shared-module-export common/src/components/ui/site-header.tsx",
+    "shared-module-export common/src/components/ui/orphan.tsx",
+    "shared-module-use common/src/components/ui/dialog.tsx",
+  ]);
+});
+
+test("cn-import allows only Common's configured cn to import the bare package", () => {
+  const generated = {
+    file: "common/src/components/ui/separator.tsx",
+    text: `import { cn } from "cn"`,
+  };
+  const configured = {
+    file: "common/src/lib/utils.ts",
+    text: `import { createCn } from "cn/config";`,
+  };
+  const app = {
+    file: "web/x/src/lib/utils.ts",
+    text: `export { cn } from "@jfa.dev/common";`,
+  };
+  const found = checkCnImports([generated, configured, app]).map((v) => v.file);
+  expect(found).toEqual(["common/src/components/ui/separator.tsx"]);
 });

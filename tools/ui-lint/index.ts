@@ -16,7 +16,12 @@ export type Rule =
   | "palette-color"
   | "theme-token"
   | "branding-coverage"
-  | "reference-drift";
+  | "reference-drift"
+  | "alias-import"
+  | "cn-import"
+  | "foreign-primitive"
+  | "shared-module-export"
+  | "shared-module-use";
 
 export type Violation = {
   rule: Rule;
@@ -219,13 +224,23 @@ export function checkReferenceDrift(
   return violations;
 }
 
-/** Every shared UI module needs an executable Branding example or a listed exclusion. */
-export function checkBrandingCoverage(
-  indexSource: string,
-  branding: SourceFile[],
-) {
-  const imported = new Set(
-    branding.flatMap(({ text }) =>
+/** Modules re-exported by common/src/components/ui/index.ts, with their export names. */
+export function sharedModules(indexSource: string) {
+  return [
+    ...indexSource.matchAll(/export\s*\{([^}]*)\}\s*from\s*"\.\/([\w-]+)"/g),
+  ].map(([, names, module]) => ({
+    module,
+    exports: names
+      .split(",")
+      .map((name) => name.replace(/^\s*type\s+/, "").trim())
+      .filter(Boolean),
+  }));
+}
+
+/** Names imported from @jfa.dev/common/ui across the given files. */
+function sharedUiImports(files: SourceFile[]) {
+  return new Set(
+    files.flatMap(({ text }) =>
       [
         ...text.matchAll(
           /import\s*\{([^}]*)\}\s*from\s*"@jfa\.dev\/common\/ui"/g,
@@ -237,22 +252,146 @@ export function checkBrandingCoverage(
       ),
     ),
   );
+}
+
+/** Every shared UI module needs an executable Branding example or a listed exclusion. */
+export function checkBrandingCoverage(
+  indexSource: string,
+  branding: SourceFile[],
+) {
+  const imported = sharedUiImports(branding);
   const violations: Violation[] = [];
-  for (const match of indexSource.matchAll(
-    /export\s*\{([^}]*)\}\s*from\s*"\.\/([\w-]+)"/g,
-  )) {
-    const [, names, module] = match;
+  for (const { module, exports } of sharedModules(indexSource)) {
     if (module in COVERAGE_EXCLUSIONS) continue;
-    const exports = names
-      .split(",")
-      .map((name) => name.replace(/^\s*type\s+/, "").trim())
-      .filter(Boolean);
     if (!exports.some((name) => imported.has(name))) {
       violations.push({
         rule: "branding-coverage",
         file: `common/src/components/ui/${module}.tsx`,
         line: 1,
         message: `no Branding section imports ${exports.join(", ")}; add an example or a COVERAGE_EXCLUSIONS entry`,
+      });
+    }
+  }
+  return violations;
+}
+
+/**
+ * Shared components exist because something needs them: every file in components/ui is
+ * exported, and every exported module is used by product code or another shared module.
+ * Branding and Docs examples do not count as use.
+ */
+export function checkSharedModules(
+  indexSource: string,
+  uiModules: SourceFile[],
+  products: SourceFile[],
+) {
+  const modules = sharedModules(indexSource);
+  const exported = new Set(modules.map(({ module }) => module));
+  const imported = sharedUiImports(products);
+  const violations: Violation[] = [];
+  for (const { file } of uiModules) {
+    const module = path.basename(file, ".tsx");
+    if (!exported.has(module)) {
+      violations.push({
+        rule: "shared-module-export",
+        file,
+        line: 1,
+        message: `${module} is not exported from common/src/components/ui/index.ts`,
+      });
+    }
+  }
+  for (const { module, exports } of modules) {
+    const usedInternally = uiModules.some(
+      ({ file, text }) =>
+        path.basename(file, ".tsx") !== module &&
+        text.includes(`from "./${module}"`),
+    );
+    if (usedInternally || exports.some((name) => imported.has(name))) continue;
+    const source = uiModules.find(
+      ({ file }) => path.basename(file, ".tsx") === module,
+    );
+    if (source?.text.includes("ui-lint-allow shared-module-use")) continue;
+    violations.push({
+      rule: "shared-module-use",
+      file: `common/src/components/ui/${module}.tsx`,
+      line: 1,
+      message: `no app uses ${module}; add shared components only when a product needs them`,
+    });
+  }
+  return violations;
+}
+
+const FOREIGN_PRIMITIVE = /^(?:@radix-ui\/.+|@base-ui\/.+|vaul)$/;
+
+/** Shared behavior comes from React Aria Components; other primitive libraries are not allowed. */
+export function checkForeignPrimitives(
+  sources: SourceFile[],
+  manifests: SourceFile[],
+) {
+  const violations: Violation[] = [];
+  for (const { file, text } of sources) {
+    for (const match of text.matchAll(/(?:from|import)\s*\(?\s*"([^"]+)"/g)) {
+      if (!FOREIGN_PRIMITIVE.test(match[1])) continue;
+      const line = lineAt(text, match.index);
+      if (isAllowed(text, line, "foreign-primitive")) continue;
+      violations.push({
+        rule: "foreign-primitive",
+        file,
+        line,
+        message: `${match[1]}: use react-aria-components through @jfa.dev/common/ui`,
+      });
+    }
+  }
+  for (const { file, text } of manifests) {
+    for (const match of text.matchAll(/^\s*"([^"]+)"\s*:/gm)) {
+      if (!FOREIGN_PRIMITIVE.test(match[1])) continue;
+      violations.push({
+        rule: "foreign-primitive",
+        file,
+        line: lineAt(text, match.index),
+        message: `${match[1]} dependency: use react-aria-components through @jfa.dev/common/ui`,
+      });
+    }
+  }
+  return violations;
+}
+
+/**
+ * common/src/lib/utils.ts configures cn with the custom font sizes; the bare package treats
+ * text-kbd and text-label as colors and drops them. shadcn CLI output imports the bare package.
+ */
+export function checkCnImports(sources: SourceFile[]) {
+  const violations: Violation[] = [];
+  for (const { file, text } of sources) {
+    if (file === "common/src/lib/utils.ts") continue;
+    for (const match of text.matchAll(/from\s*"cn(?:\/[^"]*)?"/g)) {
+      const line = lineAt(text, match.index);
+      if (isAllowed(text, line, "cn-import")) continue;
+      violations.push({
+        rule: "cn-import",
+        file,
+        line,
+        message: `import cn from @jfa.dev/common (or ../../lib/utils inside Common), not the bare cn package`,
+      });
+    }
+  }
+  return violations;
+}
+
+/** Apps alias @/ to their own src, so an @/ import inside Common resolves into the importing app. */
+export function checkAliasImports(common: SourceFile[]) {
+  const violations: Violation[] = [];
+  for (const { file, text } of common) {
+    for (const match of text.matchAll(
+      /(?:from|import)\s*\(?\s*"(@\/[^"]*)"/g,
+    )) {
+      const line = lineAt(text, match.index);
+      if (isAllowed(text, line, "alias-import")) continue;
+      violations.push({
+        rule: "alias-import",
+        file,
+        line,
+        message: `${match[1]}: use a relative import inside common/src (shadcn CLI output uses @/)`,
       });
     }
   }
@@ -320,7 +459,9 @@ export function lintRepository(root: string) {
       "--exclude-standard",
       "--",
       ":(glob)web/*/src/**",
+      ":(glob)web/*/package.json",
       "common/src",
+      "common/package.json",
     ],
     { cwd: root, encoding: "utf8" },
   )
@@ -340,12 +481,31 @@ export function lintRepository(root: string) {
     .filter((file) => file.startsWith("web/") && file.endsWith(".css"))
     .map(read);
   const sharedTokens = declaredTokens(read("common/src/styles.css").text);
+  const indexSource = read("common/src/components/ui/index.ts").text;
+  const uiModules = scripts.filter(({ file }) =>
+    /^common\/src\/components\/ui\/[\w-]+\.tsx$/.test(file),
+  );
+  const products = scripts.filter(
+    ({ file }) =>
+      file.startsWith("web/") &&
+      !file.startsWith("web/branding/") &&
+      !isReference(file),
+  );
 
   return [
     ...scripts.flatMap(checkClassTokens),
     ...appStyles.flatMap((file) => checkThemeTokens(file, sharedTokens)),
+    ...checkAliasImports(
+      scripts.filter(({ file }) => file.startsWith("common/src/")),
+    ),
+    ...checkCnImports(scripts),
+    ...checkForeignPrimitives(
+      scripts,
+      listed.filter((file) => file.endsWith("package.json")).map(read),
+    ),
+    ...checkSharedModules(indexSource, uiModules, products),
     ...checkBrandingCoverage(
-      read("common/src/components/ui/index.ts").text,
+      indexSource,
       scripts.filter(({ file }) => file.startsWith("web/branding/src/")),
     ),
     ...checkReferenceDrift(
