@@ -43,6 +43,12 @@
   --success: oklch(0.51 0.145 163.225);
   --success-foreground: oklch(0.985 0 0);
   --warning: oklch(0.555 0.163 48.998);
+  /* Fixed dark surfaces for artwork and editor chrome. Stage never changes with the theme. */
+  --stage: #0e1116;
+  --rail: #2b2b2b;
+  --rail-border: oklch(0.274 0.006 286.033);
+  --rail-foreground: oklch(0.705 0.015 286.067);
+  --rail-swatch: oklch(0.37 0.013 285.805);
   --border: oklch(0.925 0 0);
   --input: oklch(0.925 0 0);
   --ring: oklch(0.55 0 0);
@@ -84,6 +90,7 @@
   --success: oklch(0.696 0.17 162.48);
   --success-foreground: oklch(0.32 0.095 152.535);
   --warning: oklch(0.769 0.188 70.08);
+  --rail: #1e1e1e;
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.7 0 0);
@@ -119,6 +126,11 @@
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
+  --color-stage: var(--stage);
+  --color-rail: var(--rail);
+  --color-rail-border: var(--rail-border);
+  --color-rail-foreground: var(--rail-foreground);
+  --color-rail-swatch: var(--rail-swatch);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -266,16 +278,4 @@
   [contenteditable="true"] {
     @apply font-serif;
   }
-}
-
-/* OpenGraph's Photoshop-style tool rail, also shown in Docs. It stays dark in both themes. */
-.tool-rail {
-  --rail-surface: #2b2b2b;
-  --rail-border: oklch(0.274 0.006 286.033);
-  --rail-muted: oklch(0.705 0.015 286.067);
-  --rail-swatch: oklch(0.37 0.013 285.805);
-}
-
-.dark .tool-rail {
-  --rail-surface: #1e1e1e;
 }

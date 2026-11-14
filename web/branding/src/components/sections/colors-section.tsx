@@ -1,6 +1,15 @@
 import { Specimen } from "@/components/preview";
 import { Section } from "@/components/section";
 
+/** Dark surfaces that stay dark in both themes, for artwork and editor chrome. */
+const FIXED_SURFACES: Array<{ bg: string; name: string; use: string }> = [
+  { bg: "bg-stage", name: "stage", use: "Landing hero" },
+  { bg: "bg-rail", name: "rail", use: "OpenGraph tool rail" },
+  { bg: "bg-rail-border", name: "rail-border", use: "Rail edge" },
+  { bg: "bg-rail-swatch", name: "rail-swatch", use: "Rail swatch hint" },
+  { bg: "bg-rail-foreground", name: "rail-foreground", use: "Rail icons and captions" },
+];
+
 const TOKENS: Array<{ bg: string; name: string }> = [
   { bg: "bg-background", name: "background" },
   { bg: "bg-foreground", name: "foreground" },
@@ -12,6 +21,7 @@ const TOKENS: Array<{ bg: string; name: string }> = [
   { bg: "bg-accent", name: "accent" },
   { bg: "bg-destructive", name: "destructive" },
   { bg: "bg-success", name: "success" },
+  { bg: "bg-warning", name: "warning" },
   { bg: "bg-border", name: "border" },
   { bg: "bg-input", name: "input" },
   { bg: "bg-ring", name: "ring" },
@@ -20,7 +30,7 @@ const TOKENS: Array<{ bg: string; name: string }> = [
 export function ColorsSection() {
   return (
     <Section
-      description="CSS variables in common/src/styles.css. Toggle the header theme to see light and dark."
+      description="CSS variables in common/src/styles.css. Toggle the header theme to see light and dark; fixed surfaces stay dark in both."
       id="colors"
       title="Colors"
     >
@@ -57,6 +67,35 @@ export function ColorsSection() {
           <span className="rounded-md bg-success px-3 py-1.5 text-sm text-success-foreground">
             success
           </span>
+          <span className="rounded-md border border-warning/40 bg-warning/10 px-3 py-1.5 text-sm text-warning">
+            warning
+          </span>
+        </div>
+      </Specimen>
+      <Specimen label="Fixed surfaces">
+        <div className="flex w-full flex-col gap-3">
+          <ul className="grid w-full grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
+            {FIXED_SURFACES.map((token) => (
+              <li className="flex items-center gap-3" key={token.name}>
+                <span
+                  aria-hidden="true"
+                  className={`size-8 shrink-0 rounded-md border border-border ${token.bg}`}
+                />
+                <span className="flex min-w-0 flex-col">
+                  <span className="font-mono text-xs">{token.name}</span>
+                  <span className="type-meta">{token.use}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-md bg-stage px-3 py-1.5 text-sm text-white">
+              white on stage
+            </span>
+            <span className="rounded-md border border-rail-border bg-rail px-3 py-1.5 text-sm text-rail-foreground">
+              rail-foreground on rail
+            </span>
+          </div>
         </div>
       </Specimen>
     </Section>

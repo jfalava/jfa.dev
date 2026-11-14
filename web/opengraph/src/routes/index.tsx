@@ -757,7 +757,7 @@ function PhotoshopToolbox({
   return (
     <aside
       aria-label="Tools"
-      className="tool-rail hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-(--rail-border) bg-(--rail-surface) py-3 lg:flex"
+      className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-rail-border bg-rail py-3 lg:flex"
     >
       {/* Move / Select */}
       <ToolboxButton
@@ -816,9 +816,9 @@ function PhotoshopToolbox({
           className="absolute right-1 bottom-1 size-5! rounded-sm! border-white! p-0! shadow-sm"
         />
         {/* Swap icon hint */}
-        <div className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-(--rail-swatch)" />
+        <div className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-rail-swatch" />
       </div>
-      <span className="px-1 text-center type-label leading-none text-(--rail-muted)">FG/BG</span>
+      <span className="px-1 text-center type-label leading-none text-rail-foreground">FG/BG</span>
 
       <ToolboxSeparator />
 
@@ -862,7 +862,7 @@ function ToolboxButton({
       disabled={isDisabled}
       onClick={onPress}
       type="button"
-      className={`flex size-8 items-center justify-center rounded-lg border text-(--rail-muted) transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
+      className={`flex size-8 items-center justify-center rounded-lg border text-rail-foreground transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
         active
           ? "border-white/20 bg-white/15 text-white shadow-inner"
           : "border-transparent bg-transparent hover:border-white/10 hover:bg-white/10 hover:text-white"

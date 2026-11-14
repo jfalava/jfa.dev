@@ -21,7 +21,7 @@ export function ToolsPreview() {
   const [bgColor, setBgColor] = useState("#f5f1ea");
 
   const btnBase =
-    "flex size-8 items-center justify-center rounded-[4px] border text-(--rail-muted) transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none";
+    "flex size-8 items-center justify-center rounded-[4px] border text-rail-foreground transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none";
   const activeCls = "border-white/20 bg-white/15 text-white shadow-inner";
   const idleCls =
     "border-transparent bg-transparent hover:border-white/10 hover:bg-white/10 hover:text-white";
@@ -32,7 +32,7 @@ export function ToolsPreview() {
       caption="V Move, H Hand (hold Space), T Text, U Shape, P Image, I Eyedropper, G Fill. Single keys, no Mod."
     >
       <div className="flex justify-center bg-muted/20 p-6">
-        <div className="tool-rail flex w-14 flex-col items-center gap-1 border-r border-(--rail-border) bg-(--rail-surface) py-3">
+        <div className="flex w-14 flex-col items-center gap-1 border-r border-rail-border bg-rail py-3">
           <button
             aria-label="Move tool (V)"
             aria-pressed={active === "move"}
@@ -113,9 +113,9 @@ export function ToolsPreview() {
               ariaLabel="Foreground color"
               className="absolute right-1 bottom-1 size-5! rounded-sm! border-white! p-0! shadow-sm"
             />
-            <span className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-(--rail-swatch)" />
+            <span className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-rail-swatch" />
           </div>
-          <span className="px-1 text-center type-label leading-none text-(--rail-muted)">
+          <span className="px-1 text-center type-label leading-none text-rail-foreground">
             FG/BG
           </span>
         </div>

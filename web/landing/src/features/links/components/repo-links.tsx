@@ -41,7 +41,7 @@ export function RepoLinks({ repositories }: RepoLinksProps) {
 
   return (
     <section className="w-full max-w-5xl" aria-label="Working on">
-      <div className="flex min-w-0 items-center gap-3 rounded-lg border border-white/15 bg-(--hero-surface)/60 p-2 shadow-2xl shadow-(color:--hero-surface)/20 backdrop-blur-md sm:gap-4 sm:px-3">
+      <div className="flex min-w-0 items-center gap-3 rounded-lg border border-white/15 bg-stage/60 p-2 shadow-2xl shadow-stage/20 backdrop-blur-md sm:gap-4 sm:px-3">
         <h2 className="shrink-0 px-1 text-sm text-white/65">Working on</h2>
         <span className="h-4 w-px shrink-0 bg-white/15" aria-hidden="true" />
         <ul
