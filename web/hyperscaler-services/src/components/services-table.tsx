@@ -236,7 +236,7 @@ export function ServicesTable({ translations, searchQuery = "", searchIndex }: S
                 <TableCell
                   key={cell.id}
                   className={cn(
-                    "max-w-65 px-3 py-2.5 align-top text-[15px] leading-5 whitespace-normal text-foreground sm:px-4",
+                    "max-w-65 px-3 py-2.5 align-top text-sm leading-5 whitespace-normal text-foreground sm:px-4",
                     cell.column.id === "category" && "pl-4 sm:pl-6 lg:pl-8",
                     cell.column.id === "description" && "pr-4 sm:pr-6 lg:pr-8",
                   )}

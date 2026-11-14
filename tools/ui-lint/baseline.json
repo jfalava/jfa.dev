@@ -7,15 +7,14 @@
     "web/keweke/src/features/lists/components/inventory-match-notice.tsx": 2,
     "web/landing/src/features/links/components/repo-links.tsx": 2,
     "web/landing/src/routes/index.tsx": 1,
-    "web/opengraph/src/routes/index.tsx": 7,
-    "web/playlists/src/features/music/components/now-playing-bar.tsx": 1
+    "web/opengraph/src/routes/index.tsx": 7
   },
   "reference-drift": {
     "web/docs/src/components/keweke/after-create-preview.tsx": 3,
-    "web/docs/src/components/keweke/empty-lists-preview.tsx": 3,
-    "web/docs/src/components/keweke/header-new-list-preview.tsx": 2,
+    "web/docs/src/components/keweke/empty-lists-preview.tsx": 5,
+    "web/docs/src/components/keweke/header-new-list-preview.tsx": 4,
     "web/docs/src/components/keweke/list-details-preview.tsx": 8,
-    "web/docs/src/components/keweke/publish-preview.tsx": 5,
+    "web/docs/src/components/keweke/publish-preview.tsx": 7,
     "web/docs/src/components/keweke/signed-badge-preview.tsx": 3,
     "web/docs/src/components/keweke/user-dialog-preview.tsx": 1,
     "web/docs/src/components/keweke/user-settings-preview.tsx": 2,
@@ -39,8 +38,6 @@
     "web/docs/src/components/opengraph/text-preview.tsx": 6,
     "web/docs/src/components/opengraph/tools-preview.tsx": 1,
     "web/docs/src/components/site-header.tsx": 2,
-    "web/hyperscaler-services/src/components/service-search-palette.tsx": 3,
-    "web/hyperscaler-services/src/components/services-table.tsx": 1,
     "web/keweke/src/features/auth/components/devices-table.tsx": 2,
     "web/keweke/src/features/auth/components/passkeys-table.tsx": 2,
     "web/keweke/src/features/auth/components/user-account-sections.tsx": 2,
