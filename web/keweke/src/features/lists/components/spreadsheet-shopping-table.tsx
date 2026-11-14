@@ -379,7 +379,7 @@ export function SpreadsheetShoppingTable({
 
   return (
     <div aria-hidden={!isActive} className={isActive ? "w-full" : "hidden"} ref={gridRef}>
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-muted/40 px-4 py-2 sm:px-6 lg:px-8">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-muted/40 page-gutters py-2">
         <p className="text-sm text-foreground">Spreadsheet. Edits save when you leave a row.</p>
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">

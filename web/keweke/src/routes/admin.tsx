@@ -350,7 +350,7 @@ const listsColumns = listsColumnHelper.columns([
     cell: ({ row }) => (
       <Link
         aria-label={`Open ${row.original.title}`}
-        className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary"
+        className="inline-flex min-h-11 items-center font-mono text-xs tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary md:min-h-0"
         params={{ listId: row.original.alias ?? row.original.listId }}
         to="/$listId"
       >
@@ -429,12 +429,10 @@ function AdminRoutePage() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
       <KewekeHeader />
-      <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-        <div className="flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
+      <main className="app-frame min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+        <div className="flex flex-col gap-4 border-b page-gutters py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <div>
-            <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-5xl">
-              Admin
-            </h1>
+            <h1 className="type-page-title">Admin</h1>
           </div>
           <div className="flex items-center gap-3 sm:justify-end">
             <p className="text-sm text-muted-foreground">{countsLabel}</p>
@@ -450,7 +448,7 @@ function AdminRoutePage() {
         </div>
 
         {overview === null ? (
-          <p className="border-b border-destructive/40 px-4 py-3 text-sm text-destructive sm:px-6 lg:px-8">
+          <p className="border-b border-destructive/40 page-gutters py-3 text-sm text-destructive">
             Could not read the directory.
           </p>
         ) : null}
@@ -458,7 +456,7 @@ function AdminRoutePage() {
         {overview === null ? null : (
           <>
             <section aria-label="Users">
-              <div className="flex items-baseline justify-between gap-4 px-4 pt-8 pb-3 sm:px-6 lg:px-8">
+              <div className="flex items-baseline justify-between gap-4 page-gutters pt-8 pb-3">
                 <h2 className="text-sm font-medium">Users</h2>
                 <p className="text-sm text-muted-foreground">{users.length} registered</p>
               </div>
@@ -467,14 +465,14 @@ function AdminRoutePage() {
                   <UsersTable onDelete={deleteRemoteUserFromAdmin} users={users} />
                 </div>
               ) : (
-                <p className="px-4 pb-6 text-sm text-muted-foreground sm:px-6 lg:px-8">
+                <p className="page-gutters pb-6 text-sm text-muted-foreground">
                   No remote users yet.
                 </p>
               )}
             </section>
 
             <section aria-label="Lists">
-              <div className="flex items-baseline justify-between gap-4 border-t border-border px-4 pt-8 pb-3 sm:px-6 lg:px-8">
+              <div className="flex items-baseline justify-between gap-4 border-t border-border page-gutters pt-8 pb-3">
                 <h2 className="text-sm font-medium">Lists</h2>
                 <p className="text-sm text-muted-foreground">{lists.length} published</p>
               </div>
@@ -483,7 +481,7 @@ function AdminRoutePage() {
                   <ListsTable lists={lists} onDelete={deleteRemoteListFromAdmin} />
                 </div>
               ) : (
-                <p className="px-4 pb-6 text-sm text-muted-foreground sm:px-6 lg:px-8">
+                <p className="page-gutters pb-6 text-sm text-muted-foreground">
                   No remote lists yet.
                 </p>
               )}

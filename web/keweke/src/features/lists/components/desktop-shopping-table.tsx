@@ -105,7 +105,7 @@ export function DesktopNewItemRow({
           aria-label="New item category"
           aria-describedby={errors.category ? "new-item-category-error" : undefined}
           aria-invalid={errors.category ? true : undefined}
-          className="h-9 w-28 font-serif text-base sm:text-[10px]"
+          className="h-9 w-28 font-serif md:text-xs"
           maxLength={64}
           onChange={(event) => onChange("category", event.target.value)}
           onKeyDown={onKeyDown}

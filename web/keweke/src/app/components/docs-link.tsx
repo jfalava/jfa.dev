@@ -19,7 +19,7 @@ export function DocsLink({ children, className, href, variant = "inline" }: Docs
     return (
       <a
         className={buttonVariants({
-          className: `h-auto gap-1 px-0 font-mono text-[10px] tracking-[0.08em] text-muted-foreground uppercase hover:text-foreground${className ? ` ${className}` : ""}`,
+          className: `h-auto gap-1 px-0 font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase hover:text-foreground${className ? ` ${className}` : ""}`,
           size: "xs",
           variant: "link",
         })}
@@ -37,7 +37,7 @@ export function DocsLink({ children, className, href, variant = "inline" }: Docs
   return (
     <a
       className={buttonVariants({
-        className: `h-auto gap-0.5 px-0 font-mono text-[10px] tracking-[0.08em] uppercase${className ? ` ${className}` : ""}`,
+        className: `h-auto gap-0.5 px-0 font-mono text-xs tracking-[0.08em] uppercase${className ? ` ${className}` : ""}`,
         size: "xs",
         variant: "link",
       })}

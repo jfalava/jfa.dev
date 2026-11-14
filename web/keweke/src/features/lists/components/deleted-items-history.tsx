@@ -34,9 +34,9 @@ export function DeletedItemsHistory({
   }, []);
 
   return (
-    <section className="border-t px-4 py-6 sm:px-6 lg:px-8">
+    <section className="border-t page-gutters py-6">
       <div className="border-b border-border pb-3">
-        <h2 className="text-xl leading-none font-semibold tracking-tight">Deleted items</h2>
+        <h2 className="type-section-title">Deleted items</h2>
       </div>
       <div className="divide-y divide-border">
         {historyItems.map((item) => {

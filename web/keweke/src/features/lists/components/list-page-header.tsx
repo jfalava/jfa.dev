@@ -62,7 +62,7 @@ export function ListPageHeader({
 
   return (
     <>
-      <div className="flex flex-col gap-5 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-5 border-b page-gutters py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
         <div className="min-w-0 flex-1">
           <ListTitleEditor isSaving={isRenaming} onSave={onRename} title={title} />
           <ListAlias key={`${listId}:${alias ?? ""}`} alias={alias} listId={listId} />
@@ -74,7 +74,7 @@ export function ListPageHeader({
 
       <ListViewTabs onChange={onViewChange} view={view} />
 
-      <div className="border-b px-4 py-3 sm:px-6 lg:px-8">
+      <div className="border-b page-gutters py-3">
         <div className="flex items-center justify-between gap-1.5">
           <div className="relative min-w-0 flex-1 lg:max-w-5xl">
             <Search

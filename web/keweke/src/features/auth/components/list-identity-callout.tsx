@@ -14,7 +14,7 @@ export function ListIdentityCallout({
   return (
     <section
       aria-labelledby="list-identity-callout-heading"
-      className="border-b border-border bg-muted/30 px-4 py-4 sm:px-6 lg:px-8"
+      className="border-b border-border bg-muted/30 page-gutters py-4"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <div className="flex min-w-0 items-start gap-3">

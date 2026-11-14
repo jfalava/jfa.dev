@@ -812,8 +812,8 @@ function ListPage() {
     return (
       <div className="flex h-full min-h-0 w-full flex-col bg-background text-foreground">
         <KewekeHeader listId={listId} />
-        <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
-          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
+        <div className="app-frame flex min-h-0 flex-1 flex-col bg-background">
+          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain page-gutters py-6">
             <p className="text-sm text-muted-foreground">Loading list…</p>
           </main>
         </div>
@@ -825,12 +825,10 @@ function ListPage() {
     return (
       <div className="flex h-full min-h-0 w-full flex-col bg-background text-foreground">
         <KewekeHeader listId={listId} />
-        <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
-          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 lg:px-8">
+        <div className="app-frame flex min-h-0 flex-1 flex-col bg-background">
+          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain page-gutters py-6">
             <section className="max-w-prose">
-              <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-                This list isn&apos;t here
-              </h1>
+              <h1 className="type-page-title">This list isn&apos;t here</h1>
               <p className="mt-4 text-sm text-muted-foreground">
                 {currentUnavailableReason ??
                   "This list is not available in local or remote storage."}
@@ -896,7 +894,7 @@ function ListPage() {
           }}
         />
       ) : null}
-      <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
+      <div className="app-frame flex min-h-0 flex-1 flex-col bg-background">
         <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
           {!identity ? (
             <ListIdentityCallout kind="loading" />
@@ -935,10 +933,8 @@ function ListPage() {
             role="tabpanel"
             tabIndex={-1}
           >
-            <div className="border-b px-4 py-5 sm:px-6 lg:px-8">
-              <h2 className="text-xl leading-none font-semibold tracking-tight">
-                {view === "inventory" ? "Inventory" : "List"}
-              </h2>
+            <div className="border-b page-gutters py-5">
+              <h2 className="type-section-title">{view === "inventory" ? "Inventory" : "List"}</h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 {view === "inventory"
                   ? `${viewItems.length} purchased ${viewItems.length === 1 ? "item" : "items"}`

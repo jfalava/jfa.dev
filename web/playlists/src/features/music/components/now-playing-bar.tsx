@@ -50,13 +50,8 @@ export function NowPlayingBar() {
       className="now-playing-bar sticky top-11 z-20 shrink-0 bg-background"
     >
       {/* Borders + paint stay on the playlist column only — no full-bleed wash past the sides. */}
-      <div
-        className={cn(
-          "mx-auto h-11 w-full max-w-screen-2xl border-x border-b border-border bg-background",
-          playingColumn,
-        )}
-      >
-        <div className="relative flex h-full items-center justify-between gap-3 overflow-hidden px-2 sm:gap-6 sm:px-3 lg:gap-8 lg:px-4">
+      <div className={cn("app-frame h-11 border-b bg-background", playingColumn)}>
+        <div className="relative flex h-full items-center justify-between gap-3 overflow-hidden header-gutters sm:gap-6 lg:gap-8">
           {/* Mobile: badge left, track right. sm..2xl: label left, track flush right.
               2xl+: the content shell becomes a bounded center column (side gutters
               visible), so the track centers on the column's true middle. */}

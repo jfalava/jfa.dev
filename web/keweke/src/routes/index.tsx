@@ -136,9 +136,7 @@ function EmptyState() {
           <ListsPageHeader listCount={lists.length} />
 
           {isLoading ? (
-            <p className="px-4 py-10 text-sm text-muted-foreground sm:px-6 lg:px-8">
-              Loading lists…
-            </p>
+            <p className="page-gutters py-10 text-sm text-muted-foreground">Loading lists…</p>
           ) : lists.length > 0 ? (
             <>
               <ListsCatalog

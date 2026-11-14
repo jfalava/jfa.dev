@@ -13,7 +13,7 @@ export function EmptyListsState({
   onCreate: () => void;
 }) {
   return (
-    <div className="flex flex-col items-start gap-4 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="flex flex-col items-start gap-4 page-gutters py-8">
       <p className="text-sm text-muted-foreground">No lists yet. Create one when you need it.</p>
       <Button isDisabled={isCreating} onPress={onCreate}>
         {isCreating ? "Creating…" : "New list"}

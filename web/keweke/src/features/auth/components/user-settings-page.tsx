@@ -17,13 +17,11 @@ export function UserSettingsPage() {
   return (
     <div className="flex h-full min-h-0 w-full flex-col bg-background text-foreground">
       <KewekeHeader />
-      <div className="mx-auto flex min-h-0 w-full max-w-screen-2xl flex-1 flex-col border-x border-border bg-background">
+      <div className="app-frame flex min-h-0 flex-1 flex-col bg-background">
         <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-          <div className="flex flex-col gap-4 border-b px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 border-b page-gutters py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div className="min-w-0 flex-1">
-              <h1 className="font-sans text-4xl leading-[0.95] font-semibold tracking-tighter uppercase sm:text-6xl">
-                User settings
-              </h1>
+              <h1 className="type-page-title">User settings</h1>
               <div className="mt-3">
                 <DocsLink href={kewekeDocs.users} variant="info">
                   How identity works

@@ -189,7 +189,7 @@ export function createShoppingColumns() {
                   editErrors?.unit ? `desktop-edit-unit-error-${row.original.id}` : undefined
                 }
                 aria-invalid={editErrors?.unit ? true : undefined}
-                className="w-20 font-serif text-[11px]"
+                className="w-20 font-serif md:text-xs"
                 maxLength={32}
                 onChange={(event) => onEditDraftChange("unit", event.target.value)}
                 value={editDraft?.unit ?? getValue()}
@@ -221,7 +221,7 @@ export function createShoppingColumns() {
                   editErrors?.amount ? `desktop-edit-amount-error-${row.original.id}` : undefined
                 }
                 aria-invalid={editErrors?.amount ? true : undefined}
-                className="w-28 font-serif text-[11px]"
+                className="w-28 font-serif md:text-xs"
                 maxLength={64}
                 onChange={(event) => onEditDraftChange("amount", event.target.value)}
                 placeholder="optional"
@@ -256,7 +256,7 @@ export function createShoppingColumns() {
                     : undefined
                 }
                 aria-invalid={editErrors?.category ? true : undefined}
-                className="w-28 font-serif text-[10px]"
+                className="w-28 font-serif md:text-xs"
                 maxLength={64}
                 onChange={(event) => onEditDraftChange("category", event.target.value)}
                 value={editDraft?.category ?? getValue()}

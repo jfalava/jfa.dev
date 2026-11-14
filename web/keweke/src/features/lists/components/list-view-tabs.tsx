@@ -23,7 +23,7 @@ export function ListViewTabs({
   };
 
   return (
-    <div className="border-b px-4 sm:px-6 lg:px-8">
+    <div className="border-b page-gutters">
       <div aria-label="List views" className="flex items-center gap-1" role="tablist">
         {tabs.map((tab, index) => {
           const isActive = tab.id === view;
@@ -31,7 +31,7 @@ export function ListViewTabs({
             <button
               aria-controls={LIST_VIEW_PANEL_ID}
               aria-selected={isActive}
-              className={`relative h-9 rounded-none px-2 text-xs font-medium ${
+              className={`ui-button density-auto relative h-9 rounded-none px-2 text-xs font-medium ${
                 isActive
                   ? "text-foreground after:absolute after:right-0 after:bottom-[-1px] after:left-0 after:h-0.5 after:bg-primary"
                   : "text-muted-foreground hover:text-foreground"

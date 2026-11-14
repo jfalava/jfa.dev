@@ -320,15 +320,18 @@ export function MobileNewItemDialog({
       >
         <Modal className="relative flex max-h-full min-h-0 w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-background text-foreground shadow-xl outline-none">
           <Dialog aria-label="New item" className="flex min-h-0 flex-auto flex-col outline-none">
-            <Button
-              aria-label="Close new item"
-              className="absolute top-1 right-1 z-10 size-6 rounded-full bg-background p-0 shadow-sm"
-              isDisabled={isAdding}
-              slot="close"
-              variant="ghost"
-            >
-              <X aria-hidden="true" className="size-4" />
-            </Button>
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border py-1 pr-1 pl-4">
+              <span className="type-compact font-medium">New item</span>
+              <Button
+                aria-label="Close new item"
+                className="size-8 rounded-full p-0"
+                isDisabled={isAdding}
+                slot="close"
+                variant="ghost"
+              >
+                <X aria-hidden="true" className="size-4" />
+              </Button>
+            </div>
             <form
               autoComplete="off"
               className="flex min-h-0 flex-auto flex-col"
@@ -460,7 +463,7 @@ export function MobileNewItemDialog({
               </div>
               <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-4 py-3">
                 <Toggle
-                  className="keep-adding-toggle relative h-8 min-w-0 cursor-pointer border-2 bg-muted px-2 text-[11px] text-muted-foreground grayscale active:scale-[0.98] data-[selected]:border-primary/40 data-[selected]:grayscale-0"
+                  className="keep-adding-toggle relative h-8 min-w-0 cursor-pointer border-2 bg-muted px-2 text-xs text-muted-foreground grayscale active:scale-[0.98] data-[selected]:border-primary/40 data-[selected]:grayscale-0"
                   isDisabled={isAdding}
                   isSelected={keepAdding}
                   onChange={onKeepAddingChange}
@@ -469,7 +472,7 @@ export function MobileNewItemDialog({
                   Keep adding items
                 </Toggle>
                 <Button
-                  className="h-8 gap-1 px-2 text-[11px] active:scale-[0.98]"
+                  className="h-8 gap-1 px-2 text-xs active:scale-[0.98]"
                   isDisabled={isAdding}
                   type="submit"
                 >

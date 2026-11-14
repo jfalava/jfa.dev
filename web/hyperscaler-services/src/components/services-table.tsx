@@ -186,7 +186,7 @@ export function ServicesTable({ translations, searchQuery = "", searchIndex }: S
   return (
     <div className="catalog-scroll">
       {searchQuery.trim() ? (
-        <output className="block border-b border-border bg-muted/20 px-4 py-2 text-xs text-muted-foreground sm:px-6 lg:px-8">
+        <output className="block border-b border-border bg-muted/20 page-gutters py-2 text-xs text-muted-foreground">
           {translations.filteredResults(visibleServices.length)}
         </output>
       ) : null}
