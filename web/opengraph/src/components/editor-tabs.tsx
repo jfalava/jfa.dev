@@ -43,7 +43,7 @@ export function EditorTabsBar() {
   }
 
   return (
-    <div className="flex h-8 shrink-0 items-center gap-2 border-b border-border bg-background px-2 text-[11px]">
+    <div className="flex h-8 shrink-0 items-center gap-2 border-b border-border bg-background px-2 text-xs">
       <Save className="size-3 shrink-0 text-muted-foreground" aria-hidden="true" />
       <div className="flex min-w-0 flex-1 scrollbar-thin items-center gap-1 overflow-x-auto">
         {tabs.map((tab) => {
@@ -63,7 +63,7 @@ export function EditorTabsBar() {
                   aria-label={`Rename ${tab.project.name}`}
                   // oxlint-disable-next-line jsx-a11y/no-autofocus -- Krita-style inline rename: focus is intentional for double-click edit
                   autoFocus
-                  className="h-5 w-32 border-0 bg-transparent px-1 text-[11px] shadow-none"
+                  className="h-5 w-32 border-0 bg-transparent px-1 text-xs shadow-none"
                   value={editingName}
                   onChange={(event) => setEditingName(event.target.value)}
                   onBlur={commitEdit}
@@ -79,7 +79,7 @@ export function EditorTabsBar() {
               ) : (
                 <button
                   type="button"
-                  className="max-w-28 truncate text-left text-[11px] font-medium focus-visible:outline-none"
+                  className="max-w-28 truncate text-left text-xs font-medium focus-visible:outline-none"
                   onClick={() => switchTab(tab.id)}
                   onDoubleClick={() => startEdit(tab.id, tab.project.name)}
                   title={`${tab.project.name}. Double-click to rename.`}
@@ -109,7 +109,7 @@ export function EditorTabsBar() {
         </Button>
       </div>
       <span
-        className="hidden max-w-40 truncate text-[10px] text-muted-foreground sm:block"
+        className="hidden max-w-40 truncate text-xs text-muted-foreground sm:block"
         title={notice}
       >
         {notice}

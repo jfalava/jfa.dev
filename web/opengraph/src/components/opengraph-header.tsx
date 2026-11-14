@@ -134,10 +134,7 @@ export function OpengraphHeader() {
           >
             <Keyboard />
             <span className="hidden sm:inline">Shortcuts</span>
-            <Kbd
-              aria-hidden="true"
-              className="hidden h-4 min-w-4 px-0.5 text-[10px] leading-none sm:inline-flex"
-            >
+            <Kbd aria-hidden="true" className="hidden sm:inline-flex">
               ?
             </Kbd>
           </Button>

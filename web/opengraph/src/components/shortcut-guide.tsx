@@ -51,7 +51,7 @@ export function ShortcutGuide({ isOpen, onOpenChange }: ShortcutGuideProps) {
                   <section key={category} className="space-y-3">
                     <h3 className="flex items-center gap-2 border-b border-border pb-2 text-xs font-medium">
                       {category}
-                      <span className="ml-auto text-[10px] font-normal text-muted-foreground">
+                      <span className="ml-auto text-xs font-normal text-muted-foreground">
                         {shortcuts.length}
                       </span>
                     </h3>
@@ -86,10 +86,10 @@ function ShortcutRow({ shortcut }: { shortcut: PhotoshopShortcut }) {
         <Icon className="size-3.5" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[13px] leading-none font-medium text-foreground">
+        <span className="block text-sm leading-none font-medium text-foreground">
           {shortcut.label}
         </span>
-        <span className="block truncate text-[11px] leading-none text-muted-foreground">
+        <span className="block truncate text-xs leading-none text-muted-foreground">
           {shortcut.description}
         </span>
       </span>

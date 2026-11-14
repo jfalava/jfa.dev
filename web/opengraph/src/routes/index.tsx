@@ -631,7 +631,7 @@ function EditorPage() {
               >
                 <ZoomOut />
               </Button>
-              <span className="min-w-12 text-center text-[10px] font-medium text-muted-foreground">
+              <span className="min-w-12 text-center text-xs font-medium text-muted-foreground">
                 {Math.round(zoom * 100)}%
               </span>
               <Button
@@ -759,7 +759,7 @@ function PhotoshopToolbox({
   return (
     <aside
       aria-label="Tools"
-      className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-zinc-800 bg-[#2b2b2b] py-3 lg:flex dark:border-zinc-800 dark:bg-[#1e1e1e]"
+      className="tool-rail hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-(--rail-border) bg-(--rail-surface) py-3 lg:flex"
     >
       {/* Move / Select */}
       <ToolboxButton
@@ -818,11 +818,9 @@ function PhotoshopToolbox({
           className="absolute right-1 bottom-1 size-5! rounded-sm! border-white! p-0! shadow-sm"
         />
         {/* Swap icon hint */}
-        <div className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-zinc-700" />
+        <div className="pointer-events-none absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white/20 bg-(--rail-swatch)" />
       </div>
-      <span className="px-1 text-center text-[7px] leading-none tracking-wide text-zinc-400">
-        FG/BG
-      </span>
+      <span className="px-1 text-center type-label leading-none text-(--rail-muted)">FG/BG</span>
 
       <ToolboxSeparator />
 
@@ -866,7 +864,7 @@ function ToolboxButton({
       disabled={isDisabled}
       onClick={onPress}
       type="button"
-      className={`flex size-8 items-center justify-center rounded-lg border text-zinc-400 transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
+      className={`flex size-8 items-center justify-center rounded-lg border text-(--rail-muted) transition-colors focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 ${
         active
           ? "border-white/20 bg-white/15 text-white shadow-inner"
           : "border-transparent bg-transparent hover:border-white/10 hover:bg-white/10 hover:text-white"
@@ -1073,7 +1071,7 @@ function LayersPanel({
           ))
         )}
       </div>
-      <div className="flex items-center justify-between gap-2 border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
+      <div className="flex items-center justify-between gap-2 border-t border-border px-3 py-2 text-xs text-muted-foreground">
         <span className="shrink-0">
           {project.layers.length} layers · {project.width} × {project.height}
         </span>
@@ -1164,7 +1162,7 @@ function LayerRow({
             >
               <Icon className="size-3.5 shrink-0" />
               <span className="min-w-0 flex-1 truncate text-left">{layer.name}</span>
-              <span className="text-[10px] text-muted-foreground">{detail}</span>
+              <span className="text-xs text-muted-foreground">{detail}</span>
             </Button>
           )}
           <Button
@@ -1272,10 +1270,10 @@ function CanvasSection() {
 
   return (
     <details open className="group/canvas border-b border-border py-4 first:pt-0 last:border-b-0">
-      <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] font-medium marker:hidden [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-2 text-xs font-medium marker:hidden [&::-webkit-details-marker]:hidden">
         <Frame className="size-3.5 text-primary" />
         Canvas
-        <span className="ml-auto flex items-center gap-2 text-[10px] font-normal text-muted-foreground">
+        <span className="ml-auto flex items-center gap-2 text-xs font-normal text-muted-foreground">
           {project.width}×{project.height}
           <ChevronDown className="size-3.5 transition-transform group-open/canvas:rotate-180" />
         </span>
@@ -1296,10 +1294,10 @@ function CanvasSection() {
                 }`}
               >
                 <span className="block text-xs leading-none font-medium">{preset.label}</span>
-                <span className="block text-[10px] leading-none text-muted-foreground">
+                <span className="block text-xs leading-none text-muted-foreground">
                   {preset.sub}
                 </span>
-                <span className="block truncate text-[9px] leading-none text-muted-foreground/70">
+                <span className="block truncate text-xs leading-none text-muted-foreground/70">
                   {preset.hint}
                 </span>
               </button>
@@ -1309,7 +1307,7 @@ function CanvasSection() {
         <div
           className={`rounded-md border p-2 ${isCustom ? "border-primary/20 bg-primary/4" : "border-dashed"}`}
         >
-          <p className="mb-2 text-[10px] font-medium text-muted-foreground">
+          <p className="mb-2 text-xs font-medium text-muted-foreground">
             Custom {isCustom ? <span className="text-primary">• active</span> : null}
           </p>
           <div className="grid grid-cols-2 gap-2">
@@ -1328,7 +1326,7 @@ function CanvasSection() {
               onChange={(value) => setCanvasSize(project.width, value)}
             />
           </div>
-          <p className="mt-2 text-[9px] leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
             Any size from 100 to 8000 px. Background fills the canvas automatically.
           </p>
         </div>
@@ -1503,7 +1501,7 @@ function TextProperties({
   return (
     <PropertySection icon={Type} label="Typography">
       <div className="space-y-2">
-        <label className="block text-[10px] text-muted-foreground" htmlFor="text-content">
+        <label className="block text-xs text-muted-foreground" htmlFor="text-content">
           Text
         </label>
         <textarea
@@ -1512,7 +1510,7 @@ function TextProperties({
           onChange={(event) => onUpdate({ text: event.target.value })}
           value={layer.text}
         />
-        <label className="block text-[10px] text-muted-foreground" htmlFor="font-family">
+        <label className="block text-xs text-muted-foreground" htmlFor="font-family">
           Font family
         </label>
         <select
@@ -1559,7 +1557,7 @@ function TextProperties({
             onChange={handleFontFileChange}
             type="file"
           />
-          <p className="text-[10px] leading-relaxed text-muted-foreground">
+          <p className="text-xs leading-relaxed text-muted-foreground">
             Variable WOFF2 fonts are recommended because one file can cover multiple weights.
           </p>
           <DocsLink href={opengraphDocs.fonts} variant="info">
@@ -1567,11 +1565,11 @@ function TextProperties({
           </DocsLink>
           {fontFile !== null ? (
             <div className="space-y-2 border-t border-border pt-2">
-              <p className="truncate text-[10px] font-medium" title={fontFile.name}>
+              <p className="truncate text-xs font-medium" title={fontFile.name}>
                 {fontFile.name}
               </p>
               <label
-                className="flex flex-col gap-1 text-[10px] text-muted-foreground"
+                className="flex flex-col gap-1 text-xs text-muted-foreground"
                 htmlFor="custom-font-family"
               >
                 <span>Family name</span>
@@ -1581,7 +1579,7 @@ function TextProperties({
                   value={fontFamily}
                 />
               </label>
-              <label className="flex items-start gap-2 text-[10px] text-muted-foreground">
+              <label className="flex items-start gap-2 text-xs text-muted-foreground">
                 <input
                   checked={fontVariable}
                   className="mt-0.5"
@@ -1596,7 +1594,7 @@ function TextProperties({
                 </span>
               </label>
               {!fontVariable ? (
-                <label className="flex flex-col gap-1 text-[10px] text-muted-foreground">
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                   Fixed weight
                   <select
                     className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground"
@@ -1611,7 +1609,7 @@ function TextProperties({
                   </select>
                 </label>
               ) : null}
-              <label className="flex flex-col gap-1 text-[10px] text-muted-foreground">
+              <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                 Style
                 <select
                   className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground"
@@ -1651,7 +1649,7 @@ function TextProperties({
             suffix="px"
             value={layer.fontSize}
           />
-          <label className="flex flex-col gap-1 text-[10px] leading-none">
+          <label className="flex flex-col gap-1 text-xs leading-none">
             <span className="font-medium text-muted-foreground">Weight</span>
             <select
               className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
@@ -1718,7 +1716,7 @@ function GeometryProperties({
   return (
     <PropertySection icon={Palette} label="Shape">
       <div className="space-y-2">
-        <label className="flex flex-col gap-1 text-[10px] text-muted-foreground">
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
           Type
           <select
             className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground"
@@ -1757,7 +1755,7 @@ function ImageProperties({
 }) {
   return (
     <PropertySection icon={ImageIcon} label="Image">
-      <label className="flex flex-col gap-1 text-[10px] text-muted-foreground">
+      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         Fit
         <select
           className="h-7 rounded-md border border-input bg-input/20 px-2 text-xs text-foreground"
@@ -1768,7 +1766,7 @@ function ImageProperties({
           <option value="cover">Cover</option>
         </select>
       </label>
-      <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
         Images are kept in this browser and included in project exports.
       </p>
     </PropertySection>
@@ -1793,7 +1791,7 @@ function NumberField({
   value: number;
 }) {
   return (
-    <label className="flex flex-col gap-1 text-[10px] leading-none">
+    <label className="flex flex-col gap-1 text-xs leading-none">
       <span className="font-medium text-muted-foreground">{label}</span>
       <span className="flex h-7 items-center gap-1 rounded-md border border-input bg-input/20 px-2">
         <input
@@ -1855,7 +1853,7 @@ function PropertySection({
 }) {
   return (
     <details open className="group/section border-b border-border py-4 first:pt-0 last:border-b-0">
-      <summary className="flex cursor-pointer list-none items-center gap-2 text-[11px] font-medium select-none marker:hidden [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-2 text-xs font-medium select-none marker:hidden [&::-webkit-details-marker]:hidden">
         <Icon className="size-3.5 text-primary" />
         {label}
         <ChevronDown className="ml-auto size-3.5 text-muted-foreground transition-transform group-open/section:rotate-180" />
