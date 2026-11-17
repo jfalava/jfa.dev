@@ -8,9 +8,11 @@
     "dev": "bun run --cwd ../../iac dev",
     "dev:app": "bun run --cwd ../../iac dev",
     "format": "vp fmt",
+    "i18n:check": "fbtee collect --src src --include-default-strings=false && fbtee translate --strict --source-strings source_strings.json --translations 'translations/*.json' --output-dir .i18n-check || (echo 'Untranslated strings: run `bun run i18n:prepare`, translate every \"status\": \"new\" entry in translations/*.json and remove its status.' >&2 && exit 1)",
+    "i18n:prepare": "fbtee collect --src src --include-default-strings=false && fbtee prepare-translations --source-strings source_strings.json --output-dir translations --locales es-ES ca-ES",
     "lint": "vp lint",
     "preview": "vp preview",
-    "test": "bun test src/app src/features",
+    "test": "bun run i18n:check && bun test src/app src/features",
     "test:workers": "vitest run --config vitest.workers.config.ts",
     "typecheck": "tsrs --noEmit",
     "typecheck:workers": "tsrs --noEmit -p tsrsonfig.workers.json"
@@ -28,6 +30,7 @@
     "class-variance-authority": "catalog:styling",
     "effect": "catalog:iac",
     "fastest-levenshtein": "catalog:backend",
+    "fbtee": "6.0.0",
     "fuse.js": "catalog:backend",
     "idb": "8.0.4",
     "lucide-react": "catalog:ui",
@@ -43,6 +46,7 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:cloudflare",
     "@cloudflare/workers-types": "catalog:types",
+    "@nkzw/fbtee-compiler": "6.0.0",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/react-dom": "catalog:types",

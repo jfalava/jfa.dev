@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@jfa.dev/common/ui";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
+import { fbs } from "fbtee";
 import { Trash2 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -43,14 +44,26 @@ function deviceColumnClassName(id: string): string | undefined {
 }
 
 function DeviceLabel({ isCurrent }: { isCurrent: boolean }) {
-  return <p className="text-sm font-medium">{isCurrent ? "This device" : "Other device"}</p>;
+  return (
+    <p className="text-sm font-medium">
+      {isCurrent ? (
+        <fbt desc="Devices table name for the device the user is using now">This device</fbt>
+      ) : (
+        <fbt desc="Devices table name for any device other than the one in use">Other device</fbt>
+      )}
+    </p>
+  );
 }
 
 function DeviceStatus({ isRevoked }: { isRevoked: boolean }) {
   return isRevoked ? (
-    <span className="text-sm font-medium text-destructive">Revoked</span>
+    <span className="text-sm font-medium text-destructive">
+      <fbt desc="Devices table status for a device whose access was revoked">Revoked</fbt>
+    </span>
   ) : (
-    <span className="text-sm font-medium text-primary">Active</span>
+    <span className="text-sm font-medium text-primary">
+      <fbt desc="Devices table status for a device that can still act as the user">Active</fbt>
+    </span>
   );
 }
 
@@ -82,10 +95,12 @@ function DeviceRowActions({
       return (
         <div className="flex shrink-0 justify-end gap-1.5">
           <Button onPress={() => onForget(deviceId)} size="sm" variant="destructive">
-            Confirm
+            <fbt desc="Devices table button that confirms deleting a revoked device from the list">
+              Confirm
+            </fbt>
           </Button>
           <Button onPress={onCancelForget} size="sm" variant="ghost">
-            Cancel
+            <fbt desc="Devices table button that cancels deleting a revoked device">Cancel</fbt>
           </Button>
         </div>
       );
@@ -99,7 +114,9 @@ function DeviceRowActions({
           variant="ghost"
         >
           <Trash2 aria-hidden="true" className="size-3.5" />
-          Delete
+          <fbt desc="Devices table button that starts deleting a revoked device from the list">
+            Delete
+          </fbt>
         </Button>
       </div>
     );
@@ -109,10 +126,10 @@ function DeviceRowActions({
     return (
       <div className="flex shrink-0 justify-end gap-1.5">
         <Button onPress={() => onRevoke(deviceId)} size="sm" variant="destructive">
-          Confirm
+          <fbt desc="Devices table button that confirms revoking a device's access">Confirm</fbt>
         </Button>
         <Button onPress={onCancelRevoke} size="sm" variant="ghost">
-          Cancel
+          <fbt desc="Devices table button that cancels revoking a device">Cancel</fbt>
         </Button>
       </div>
     );
@@ -121,7 +138,7 @@ function DeviceRowActions({
   return (
     <div className="flex justify-end">
       <Button onPress={() => onConfirmRevoke(deviceId)} size="sm" variant="ghost">
-        Revoke
+        <fbt desc="Devices table button that starts revoking a device's access">Revoke</fbt>
       </Button>
     </div>
   );
@@ -149,16 +166,22 @@ function createDevicesColumns({
   return devicesColumnHelper.columns([
     devicesColumnHelper.display({
       id: "info",
-      header: "Device",
+      header: fbs("Device", "Devices table column header for the device name"),
       cell: ({ row }) => (
         <div className="min-w-0">
           <DeviceLabel isCurrent={row.original.isCurrent} />
           <p className="mt-0.5 font-mono text-xs text-muted-foreground">
             {row.original.deviceId.slice(0, 16)}… ·{" "}
             {row.original.isRevoked ? (
-              <span className="text-destructive">Revoked</span>
+              <span className="text-destructive">
+                <fbt desc="Devices table status for a device whose access was revoked">Revoked</fbt>
+              </span>
             ) : (
-              <span className="text-primary">Active</span>
+              <span className="text-primary">
+                <fbt desc="Devices table status for a device that can still act as the user">
+                  Active
+                </fbt>
+              </span>
             )}
           </p>
         </div>
@@ -166,19 +189,22 @@ function createDevicesColumns({
     }),
     devicesColumnHelper.display({
       id: "device",
-      header: "Device",
+      header: fbs("Device", "Devices table column header for the device name"),
       cell: ({ row }) => <DeviceLabel isCurrent={row.original.isCurrent} />,
     }),
     devicesColumnHelper.display({
       id: "deviceId",
-      header: "Device ID",
+      header: fbs("Device ID", "Devices table column header for the device's identifier"),
       cell: ({ row }) => (
         <p className="font-mono text-xs break-all text-muted-foreground">{row.original.deviceId}</p>
       ),
     }),
     devicesColumnHelper.display({
       id: "status",
-      header: "Status",
+      header: fbs(
+        "Status",
+        "Devices table column header for whether a device is active or revoked",
+      ),
       cell: ({ row }) => <DeviceStatus isRevoked={row.original.isRevoked} />,
     }),
     devicesColumnHelper.display({

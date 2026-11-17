@@ -1,4 +1,5 @@
 import { Button } from "@jfa.dev/common/ui";
+import { fbs } from "fbtee";
 import { PackageCheck } from "lucide-react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 
@@ -42,25 +43,40 @@ export function DuplicateItemDialog({
     >
       <Modal className="w-full max-w-md outline-none">
         <Dialog
-          aria-label="Item already in inventory"
+          aria-label={fbs(
+            "Item already in inventory",
+            "Accessible label of the dialog asking whether to add an item that already seems to be in inventory",
+          )}
           className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
         >
           <div className="flex items-center gap-2 border-b border-border px-4 py-4">
             <PackageCheck aria-hidden="true" className="size-4 shrink-0 text-warning" />
-            <h2 className="text-lg font-semibold tracking-tight">Already in inventory?</h2>
+            <h2 className="text-lg font-semibold tracking-tight">
+              <fbt desc="Title of the dialog asking whether to add an item that already seems to be in inventory">
+                Already in inventory?
+              </fbt>
+            </h2>
           </div>
 
           <div className="space-y-5 p-4">
             <p className="text-sm leading-6 text-muted-foreground">
-              This looks like something you already have.{" "}
+              <fbt desc="Explanation in the dialog shown when a new item seems to already be in inventory">
+                This looks like something you already have.
+              </fbt>{" "}
               <DocsLink className="align-baseline" href={kewekeDocs.duplicateItemDialog}>
-                How the check works
+                <fbt desc="Link to the documentation about the inventory duplicate check">
+                  How the check works
+                </fbt>
               </DocsLink>
             </p>
 
             <div className="space-y-2 border border-border bg-muted/40 p-3 text-sm">
               <div className="flex gap-3">
-                <span className="w-20 shrink-0 text-muted-foreground">Adding</span>
+                <span className="w-20 shrink-0 text-muted-foreground">
+                  <fbt desc="Label for the item being added, in the dialog comparing it with an inventory item">
+                    Adding
+                  </fbt>
+                </span>
                 <span className="min-w-0 font-medium">
                   {draft.name.trim()}
                   <span className="ml-1 font-mono text-xs text-muted-foreground">
@@ -70,7 +86,11 @@ export function DuplicateItemDialog({
               </div>
               {existing ? (
                 <div className="flex gap-3">
-                  <span className="w-20 shrink-0 text-muted-foreground">Inventory</span>
+                  <span className="w-20 shrink-0 text-muted-foreground">
+                    <fbt desc="Label for the matching inventory item, in the dialog comparing it with the item being added">
+                      Inventory
+                    </fbt>
+                  </span>
                   <span className="min-w-0 font-medium">
                     {existing.name}
                     <span className="ml-1 font-mono text-xs text-muted-foreground">
@@ -82,15 +102,21 @@ export function DuplicateItemDialog({
             </div>
 
             <p className="text-sm leading-6 text-muted-foreground">
-              Add it anyway if this is a different product or you need more.
+              <fbt desc="Advice in the dialog shown when a new item seems to already be in inventory">
+                Add it anyway if this is a different product or you need more.
+              </fbt>
             </p>
 
             <div className="flex justify-end gap-2">
               <Button isDisabled={isAdding} onPress={() => onOpenChange(false)} variant="ghost">
-                Cancel
+                <fbt desc="Button that cancels adding an item that seems to already be in inventory">
+                  Cancel
+                </fbt>
               </Button>
               <Button isDisabled={isAdding} onPress={onAddAnyway}>
-                Add anyway
+                <fbt desc="Button that adds an item even though it seems to already be in inventory">
+                  Add anyway
+                </fbt>
               </Button>
             </div>
           </div>

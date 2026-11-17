@@ -21,24 +21,40 @@ export function UserSettingsPage() {
         <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
           <div className="flex flex-col gap-4 border-b page-gutters py-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div className="min-w-0 flex-1">
-              <h1 className="type-page-title">User settings</h1>
+              <h1 className="type-page-title">
+                <fbt desc="Page title of the user settings page">User settings</fbt>
+              </h1>
               <div className="mt-3">
                 <DocsLink href={kewekeDocs.users} variant="info">
-                  How identity works
+                  <fbt desc="Link from user settings to the docs page about user identity">
+                    How identity works
+                  </fbt>
                 </DocsLink>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="min-w-0 sm:text-right">
                 <p className="text-xs text-muted-foreground">
-                  {manager.identity?.remoteUsername
-                    ? "Remote user"
-                    : manager.identity?.username
-                      ? "Local user"
-                      : "Anonymous"}
+                  {manager.identity?.remoteUsername ? (
+                    <fbt desc="Account type label in the user settings header for a user stored on the server">
+                      Remote user
+                    </fbt>
+                  ) : manager.identity?.username ? (
+                    <fbt desc="Account type label in the user settings header for a user stored only in this browser">
+                      Local user
+                    </fbt>
+                  ) : (
+                    <fbt desc="Account type label in the user settings header when no username is set">
+                      Anonymous
+                    </fbt>
+                  )}
                 </p>
                 <p className="mt-0.5 font-serif text-base font-medium text-foreground sm:text-lg">
-                  {manager.identity?.username ?? "Anonymous"}
+                  {manager.identity?.username ?? (
+                    <fbt desc="Name shown in the user settings header when no username is set">
+                      Anonymous
+                    </fbt>
+                  )}
                 </p>
               </div>
               {manager.identity ? (

@@ -14,15 +14,25 @@ export function EmptyListsState({
 }) {
   return (
     <div className="flex flex-col items-start gap-4 page-gutters py-8">
-      <p className="text-sm text-muted-foreground">No lists yet. Create one when you need it.</p>
+      <p className="text-sm text-muted-foreground">
+        <fbt desc="Message on the lists page when the user has no shopping lists yet">
+          No lists yet. Create one when you need it.
+        </fbt>
+      </p>
       <Button isDisabled={isCreating} onPress={onCreate}>
-        {isCreating ? "Creating…" : "New list"}
+        {isCreating ? (
+          <fbt desc="Label of the new-list button while the list is being created">Creating…</fbt>
+        ) : (
+          <fbt desc="Button on the empty lists page that creates a new shopping list">New list</fbt>
+        )}
         {!isCreating ? (
           <HotkeyKbd className="hidden sm:inline-flex" hotkey={NEW_LIST_HOTKEY} />
         ) : null}
       </Button>
       <DocsLink href={kewekeDocs.createList} variant="info">
-        How lists work
+        <fbt desc="Link from the empty lists page to the docs about how lists work">
+          How lists work
+        </fbt>
       </DocsLink>
     </div>
   );

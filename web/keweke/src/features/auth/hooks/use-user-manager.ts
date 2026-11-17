@@ -11,6 +11,7 @@ import { type PasskeyProfile, type UserProfile, usernameSchema } from "@jfa.dev/
 import { useNavigate } from "@tanstack/react-router";
 import * as Result from "effect/Result";
 import * as Schema from "effect/Schema";
+import { fbs } from "fbtee";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 
 import { clearLocalData, clearLocalIdentityData, clearRemoteUserData } from "@/app/lib/local-data";
@@ -224,7 +225,13 @@ export function useUserManager({
       .catch(() => {
         if (!cancelled) {
           setPasskeys([]);
-          setError("passkeys", "Could not load passkeys right now.");
+          setError(
+            "passkeys",
+            fbs(
+              "Could not load passkeys right now.",
+              "Error in the user settings passkeys section when the list of passkeys fails to load",
+            ),
+          );
         }
       })
       .finally(() => {
@@ -244,7 +251,13 @@ export function useUserManager({
     const username = value.trim();
     const parsedUsername = Schema.decodeUnknownResult(usernameSchema)(username);
     if (Result.isFailure(parsedUsername)) {
-      setError("username", "Use a username between 1 and 48 characters.");
+      setError(
+        "username",
+        fbs(
+          "Use a username between 1 and 48 characters.",
+          "Validation error under the username field when saving an empty or too-long username",
+        ),
+      );
       return;
     }
 
@@ -273,16 +286,40 @@ export function useUserManager({
           setIdentity(confirmed);
           setProfile(result.profile);
           setValue(confirmed.username ?? "");
-          setMessage("username", "Username updated.");
+          setMessage(
+            "username",
+            fbs(
+              "Username updated.",
+              "Confirmation under the username field after the new username is saved and synced to the remote user",
+            ),
+          );
         } else {
-          setMessage("username", "Username saved.");
+          setMessage(
+            "username",
+            fbs(
+              "Username saved.",
+              "Confirmation under the username field after the username is saved in this browser",
+            ),
+          );
         }
       } else {
-        setMessage("username", "Username saved.");
+        setMessage(
+          "username",
+          fbs(
+            "Username saved.",
+            "Confirmation under the username field after the username is saved in this browser",
+          ),
+        );
       }
       onSaved?.();
     } catch {
-      setError("username", "Could not save this user right now.");
+      setError(
+        "username",
+        fbs(
+          "Could not save this user right now.",
+          "Error under the username field when saving the username fails",
+        ),
+      );
     } finally {
       setIsSaving(false);
     }
@@ -297,7 +334,13 @@ export function useUserManager({
     const username = value.trim();
     const parsedUsername = Schema.decodeUnknownResult(usernameSchema)(username);
     if (Result.isFailure(parsedUsername)) {
-      setError("account", "Enter a username between 1 and 48 characters.");
+      setError(
+        "account",
+        fbs(
+          "Enter a username between 1 and 48 characters.",
+          "Validation error in the remote account section when creating a remote user with an empty or too-long username",
+        ),
+      );
       return;
     }
 
@@ -325,11 +368,23 @@ export function useUserManager({
         data: { auth: { ...unsignedAuth, signature } },
       });
       if (result.status === "unauthorized") {
-        setError("account", "This browser could not create the remote user.");
+        setError(
+          "account",
+          fbs(
+            "This browser could not create the remote user.",
+            "Error in the remote account section when the server rejects this browser's request to create a remote user",
+          ),
+        );
         return;
       }
       if (result.status === "conflict") {
-        setError("account", "This identity is already linked to a different remote username.");
+        setError(
+          "account",
+          fbs(
+            "This identity is already linked to a different remote username.",
+            "Error in the remote account section when this browser's identity already has a remote user with another name",
+          ),
+        );
         return;
       }
       if (!("profile" in result)) {
@@ -343,12 +398,24 @@ export function useUserManager({
       setMessage(
         "account",
         result.status === "created"
-          ? "Remote user created."
-          : "Remote user already exists; this browser is connected.",
+          ? fbs(
+              "Remote user created.",
+              "Confirmation in the remote account section after a remote user is created",
+            )
+          : fbs(
+              "Remote user already exists; this browser is connected.",
+              "Confirmation in the remote account section when the remote user already existed and this browser is now linked to it",
+            ),
       );
       onSaved?.();
     } catch {
-      setError("account", "Could not create the remote user right now.");
+      setError(
+        "account",
+        fbs(
+          "Could not create the remote user right now.",
+          "Error in the remote account section when creating a remote user fails",
+        ),
+      );
     } finally {
       setIsCreatingRemoteUser(false);
     }
@@ -373,9 +440,21 @@ export function useUserManager({
       setIdentity(currentIdentity);
       setPairingCode(code);
       setPairingStatus(result);
-      setMessage("pairing", "Pairing code created below. Enter it on an approved device.");
+      setMessage(
+        "pairing",
+        fbs(
+          "Pairing code created below. Enter it on an approved device.",
+          "Message in the pairing section after a pairing code is generated for this browser",
+        ),
+      );
     } catch {
-      setError("pairing", "Could not create a pairing code.");
+      setError(
+        "pairing",
+        fbs(
+          "Could not create a pairing code.",
+          "Error in the pairing section when generating a pairing code fails",
+        ),
+      );
     } finally {
       setIsStartingPairing(false);
     }
@@ -391,21 +470,44 @@ export function useUserManager({
     try {
       const result = await registerLocalPasskey();
       if (result.status === "unauthorized") {
-        setError("passkeys", "This device is not allowed to add a passkey.");
+        setError(
+          "passkeys",
+          fbs(
+            "This device is not allowed to add a passkey.",
+            "Error in the passkeys section when the server refuses to register a passkey from this device",
+          ),
+        );
         return;
       }
       if (result.status !== "registered" && result.status !== "existing") {
-        setError("passkeys", "The passkey could not be added. Try again.");
+        setError(
+          "passkeys",
+          fbs(
+            "The passkey could not be added. Try again.",
+            "Error in the passkeys section when registering a new passkey fails",
+          ),
+        );
         return;
       }
 
       setPasskeys(await listLocalPasskeys());
       setMessage(
         "passkeys",
-        result.status === "registered" ? "Passkey added." : "That passkey is already registered.",
+        result.status === "registered"
+          ? fbs("Passkey added.", "Confirmation in the passkeys section after a passkey is added")
+          : fbs(
+              "That passkey is already registered.",
+              "Message in the passkeys section when the chosen passkey was already added to this user",
+            ),
       );
     } catch {
-      setError("passkeys", "Passkey creation was cancelled or failed. Try again.");
+      setError(
+        "passkeys",
+        fbs(
+          "Passkey creation was cancelled or failed. Try again.",
+          "Error in the passkeys section when the browser passkey prompt is cancelled or fails",
+        ),
+      );
     } finally {
       setIsRegisteringPasskey(false);
     }
@@ -428,10 +530,22 @@ export function useUserManager({
       setProfile(nextProfile);
       setValue(nextIdentity.username ?? "");
       await syncRemoteLists(nextIdentity);
-      setMessage("username", "This browser is connected.");
+      setMessage(
+        "username",
+        fbs(
+          "This browser is connected.",
+          "Confirmation after this browser is connected to an existing remote user by passkey or pairing code",
+        ),
+      );
       onSaved?.();
     } catch {
-      setError("passkey-adoption", "Passkey use was cancelled or failed. Try again.");
+      setError(
+        "passkey-adoption",
+        fbs(
+          "Passkey use was cancelled or failed. Try again.",
+          "Error when connecting this browser with a passkey is cancelled or fails",
+        ),
+      );
     } finally {
       setIsAdoptingPasskey(false);
     }
@@ -449,11 +563,23 @@ export function useUserManager({
       setIdentity(nextIdentity);
       setProfile(pairingStatus.profile);
       setValue(nextIdentity.username ?? "");
-      setMessage("username", "This browser is connected.");
+      setMessage(
+        "username",
+        fbs(
+          "This browser is connected.",
+          "Confirmation after this browser is connected to an existing remote user by passkey or pairing code",
+        ),
+      );
       setPairingCode("");
       onSaved?.();
     } catch {
-      setError("pairing", "This browser could not adopt that user.");
+      setError(
+        "pairing",
+        fbs(
+          "This browser could not adopt that user.",
+          "Error in the pairing section when this browser fails to take over the approved remote user",
+        ),
+      );
     } finally {
       setIsAdopting(false);
     }
@@ -467,10 +593,22 @@ export function useUserManager({
       const result = await getDevicePairingStatus({ data: approvalCode });
       setPairingStatus(result);
       if (result.status === "missing" || result.status === "expired") {
-        setError("approval", "That pairing code is no longer active.");
+        setError(
+          "approval",
+          fbs(
+            "That pairing code is no longer active.",
+            "Error in the approve-a-browser section when the entered pairing code is missing or expired",
+          ),
+        );
       }
     } catch {
-      setError("approval", "Use the ten-character pairing code exactly as shown.");
+      setError(
+        "approval",
+        fbs(
+          "Use the ten-character pairing code exactly as shown.",
+          "Error in the approve-a-browser section when the entered pairing code is malformed or cannot be looked up",
+        ),
+      );
     } finally {
       setIsFindingDevice(false);
     }
@@ -508,28 +646,58 @@ export function useUserManager({
       if (result.status === "approved") {
         setPairingStatus(result);
         setProfile(result.profile);
-        setMessage("approval", "The device was approved.");
+        setMessage(
+          "approval",
+          fbs(
+            "The device was approved.",
+            "Confirmation in the approve-a-browser section after another device is approved",
+          ),
+        );
       } else if (result.status === "unauthorized") {
         setError(
           "approval",
-          "This browser is not an accepted device for that user. Use a browser already connected to the user to approve it.",
+          fbs(
+            "This browser is not an accepted device for that user. Use a browser already connected to the user to approve it.",
+            "Error in the approve-a-browser section when this browser is not allowed to approve devices for the user",
+          ),
         );
       } else if (result.status === "expired") {
         setPairingStatus(result);
-        setError("approval", "That pairing code has expired. Create a new code and try again.");
+        setError(
+          "approval",
+          fbs(
+            "That pairing code has expired. Create a new code and try again.",
+            "Error in the approve-a-browser section when the pairing code expires before approval",
+          ),
+        );
       } else if (result.status === "missing") {
         setPairingStatus(result);
-        setError("approval", "That pairing code is no longer active.");
+        setError(
+          "approval",
+          fbs(
+            "That pairing code is no longer active.",
+            "Error in the approve-a-browser section when the entered pairing code is missing or expired",
+          ),
+        );
       } else {
         setPairingStatus(result);
         setError(
           "approval",
-          "The pairing code could not be approved. Check the code and try again.",
+          fbs(
+            "The pairing code could not be approved. Check the code and try again.",
+            "Error in the approve-a-browser section when the server cannot approve the pairing code",
+          ),
         );
       }
     } catch (error) {
       console.error("Keweke pairing approval request failed", error);
-      setError("approval", "The approval request failed. Check your connection and try again.");
+      setError(
+        "approval",
+        fbs(
+          "The approval request failed. Check your connection and try again.",
+          "Error in the approve-a-browser section when the approval request fails to reach the server",
+        ),
+      );
     } finally {
       setIsApproving(false);
     }
@@ -559,12 +727,30 @@ export function useUserManager({
       });
       if (result.status === "revoked") {
         setProfile(result.profile);
-        setMessage("devices", "The device was revoked.");
+        setMessage(
+          "devices",
+          fbs(
+            "The device was revoked.",
+            "Confirmation in the accepted devices section after a device's access is revoked",
+          ),
+        );
       } else {
-        setError("devices", "This device could not be revoked.");
+        setError(
+          "devices",
+          fbs(
+            "This device could not be revoked.",
+            "Error in the accepted devices section when revoking a device's access fails",
+          ),
+        );
       }
     } catch {
-      setError("devices", "This device could not be revoked.");
+      setError(
+        "devices",
+        fbs(
+          "This device could not be revoked.",
+          "Error in the accepted devices section when revoking a device's access fails",
+        ),
+      );
     }
   };
 
@@ -592,12 +778,30 @@ export function useUserManager({
       });
       if (result.status === "forgotten") {
         setProfile(result.profile);
-        setMessage("devices", "The device was removed.");
+        setMessage(
+          "devices",
+          fbs(
+            "The device was removed.",
+            "Confirmation in the accepted devices section after a revoked device is deleted from the list",
+          ),
+        );
       } else {
-        setError("devices", "This device could not be removed.");
+        setError(
+          "devices",
+          fbs(
+            "This device could not be removed.",
+            "Error in the accepted devices section when deleting a revoked device from the list fails",
+          ),
+        );
       }
     } catch {
-      setError("devices", "This device could not be removed.");
+      setError(
+        "devices",
+        fbs(
+          "This device could not be removed.",
+          "Error in the accepted devices section when deleting a revoked device from the list fails",
+        ),
+      );
     }
   };
 
@@ -613,11 +817,20 @@ export function useUserManager({
       setApprovalCode("");
       setPasskeys([]);
       setValue("");
-      setMessage("username", "Logged out.");
+      setMessage(
+        "username",
+        fbs("Logged out.", "Confirmation in user settings after logging out of this browser"),
+      );
     } catch {
       setIsLoggingOut(false);
       setIsConfirmingLogOut(false);
-      setError("logout", "Could not log out right now.");
+      setError(
+        "logout",
+        fbs(
+          "Could not log out right now.",
+          "Error in the session section when logging out of this browser fails",
+        ),
+      );
     }
   };
 
@@ -636,13 +849,25 @@ export function useUserManager({
     } catch {
       setIsClearingData(false);
       setIsConfirmingClearData(false);
-      setError("data", "Could not clear this browser's Keweke data.");
+      setError(
+        "data",
+        fbs(
+          "Could not clear this browser's Keweke data.",
+          "Error in the local data section when clearing all local Keweke data fails",
+        ),
+      );
     }
   };
 
   const deleteAccount = async (): Promise<void> => {
     if (!identity?.remoteUsername || deleteConfirmation !== identity.remoteUsername) {
-      setError("account", "Type the remote username exactly to confirm deletion.");
+      setError(
+        "account",
+        fbs(
+          "Type the remote username exactly to confirm deletion.",
+          "Error in the delete remote user section when the typed confirmation does not match the username",
+        ),
+      );
       return;
     }
 
@@ -661,11 +886,23 @@ export function useUserManager({
         data: { auth: { ...auth, signature } },
       });
       if (result.status === "unauthorized") {
-        setError("account", "This device is not allowed to delete that remote user.");
+        setError(
+          "account",
+          fbs(
+            "This device is not allowed to delete that remote user.",
+            "Error in the delete remote user section when the server refuses the deletion from this device",
+          ),
+        );
         return;
       }
       if (result.status === "failed") {
-        setError("account", "The remote user could not be fully deleted. Try again.");
+        setError(
+          "account",
+          fbs(
+            "The remote user could not be fully deleted. Try again.",
+            "Error in the delete remote user section when the server deletes only part of the user's data",
+          ),
+        );
         return;
       }
 
@@ -678,7 +915,13 @@ export function useUserManager({
         await navigate({ replace: true, to: "/" });
       }
     } catch {
-      setError("account", "Could not delete the remote user right now.");
+      setError(
+        "account",
+        fbs(
+          "Could not delete the remote user right now.",
+          "Error in the delete remote user section when the deletion request fails",
+        ),
+      );
     } finally {
       setIsDeletingAccount(false);
     }

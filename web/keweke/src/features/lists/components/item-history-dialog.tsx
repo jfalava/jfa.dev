@@ -9,14 +9,18 @@ import {
   TableRow,
 } from "@jfa.dev/common/ui";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
+import { fbs } from "fbtee";
 import { History, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Dialog, Modal, ModalOverlay } from "react-aria-components";
 import { toast } from "sonner";
 
+import { getLocale } from "@/app/i18n/runtime";
 import {
   buildHistoryTableRows,
   formatRelativeTime,
+  type HistoryField,
+  type HistoryStatus,
   type HistoryTableRow,
 } from "@/features/lists/lib/item-history";
 import { getItemHistory } from "@/features/lists/lib/list-repository";
@@ -25,44 +29,99 @@ const PAGE_SIZE = 50;
 const historyTableFeatures = tableFeatures({});
 const historyColumnHelper = createColumnHelper<typeof historyTableFeatures, HistoryTableRow>();
 
-const historyColumns = historyColumnHelper.columns([
-  historyColumnHelper.display({
-    id: "field",
-    header: "field",
-    cell: ({ row }) => (
-      <span className="type-label text-muted-foreground">{row.original.field}</span>
+function historyFieldLabel(field: HistoryField): string {
+  const labels = {
+    name: fbs("name", "Item history table: row for a change to the item name"),
+    qty: fbs("qty", "Item history table: row for a change to the item quantity"),
+    unit: fbs("unit", "Item history table: row for a change to the item unit (box, bag, kg)"),
+    each: fbs("each", "Item history table: row for a change to what one unit of the item contains"),
+    category: fbs("category", "Item history table: row for a change to the item category"),
+    item: fbs("item", "Item history table: row for the item being added or updated"),
+    status: fbs(
+      "status",
+      "Item history table: row for a change to the item status (open, done, removed)",
     ),
-  }),
-  historyColumnHelper.display({
-    id: "before",
-    header: "changed",
-    cell: ({ row }) => <HistoryValue tone="old" value={row.original.before} />,
-  }),
-  historyColumnHelper.display({
-    id: "after",
-    header: "new value",
-    cell: ({ row }) => <HistoryValue tone="new" value={row.original.after} />,
-  }),
-  historyColumnHelper.display({
-    id: "details",
-    header: "updated",
-    cell: ({ row }) => {
-      const appliedAt = new Date(row.original.appliedAt);
-      const absoluteTime = Number.isNaN(appliedAt.getTime())
-        ? row.original.appliedAt
-        : appliedAt.toLocaleString();
+  } satisfies Record<HistoryField, string>;
+  return labels[field];
+}
 
-      return (
-        <div className="min-w-28" title={absoluteTime}>
-          <p className="truncate font-serif text-xs font-medium">{row.original.actorName}</p>
-          <p className="mt-0.5 type-label whitespace-nowrap text-muted-foreground">
-            {formatRelativeTime(row.original.appliedAt)} · rev {row.original.revision}
-          </p>
-        </div>
-      );
-    },
-  }),
-]);
+function historyStatusLabel(status: HistoryStatus): string {
+  const labels = {
+    open: fbs("open", "Item history table: status of an item still to buy on the list"),
+    done: fbs("done", "Item history table: status of an item checked off into inventory"),
+    active: fbs("active", "Item history table: status of an item that is not removed"),
+    removed: fbs("removed", "Item history table: status of an item moved to deleted items"),
+    deleted: fbs("deleted", "Item history table: status of an item deleted forever"),
+    updated: fbs("updated", "Item history table: new value when an edit changed no tracked field"),
+  } satisfies Record<HistoryStatus, string>;
+  return labels[status];
+}
+
+function historyValueLabel(row: HistoryTableRow, value: string): string {
+  // SAFETY: buildHistoryTableRows only puts HistoryStatus codes or "—" in
+  // status-kind rows.
+  return row.valueKind === "status" && value !== "—"
+    ? historyStatusLabel(value as HistoryStatus)
+    : value;
+}
+
+function createHistoryColumns() {
+  const locale = getLocale();
+  const justNow = fbs("just now", "Item history table: time of a change made seconds ago");
+
+  return historyColumnHelper.columns([
+    historyColumnHelper.display({
+      id: "field",
+      header: fbs("field", "Item history table column header: which field changed"),
+      cell: ({ row }) => (
+        <span className="type-label text-muted-foreground">
+          {historyFieldLabel(row.original.field)}
+        </span>
+      ),
+    }),
+    historyColumnHelper.display({
+      id: "before",
+      header: fbs("changed", "Item history table column header: the value before the change"),
+      cell: ({ row }) => (
+        <HistoryValue tone="old" value={historyValueLabel(row.original, row.original.before)} />
+      ),
+    }),
+    historyColumnHelper.display({
+      id: "after",
+      header: fbs("new value", "Item history table column header: the value after the change"),
+      cell: ({ row }) => (
+        <HistoryValue tone="new" value={historyValueLabel(row.original, row.original.after)} />
+      ),
+    }),
+    historyColumnHelper.display({
+      id: "details",
+      header: fbs("updated", "Item history table column header: who made the change and when"),
+      cell: ({ row }) => {
+        const appliedAt = new Date(row.original.appliedAt);
+        const absoluteTime = Number.isNaN(appliedAt.getTime())
+          ? row.original.appliedAt
+          : appliedAt.toLocaleString(locale);
+
+        return (
+          <div className="min-w-28" title={absoluteTime}>
+            <p className="truncate font-serif text-xs font-medium">
+              {row.original.actorName ??
+                fbs("someone", "Item history table: author of a change with no recorded user")}
+            </p>
+            <p className="mt-0.5 type-label whitespace-nowrap text-muted-foreground">
+              <fbt desc="Item history table: when a change happened and its revision number, such as '5 minutes ago · rev 12'">
+                <fbt:param name="relativeTime">
+                  {formatRelativeTime(row.original.appliedAt, { justNow, locale })}
+                </fbt:param>{" "}
+                · rev <fbt:param name="revision">{row.original.revision}</fbt:param>
+              </fbt>
+            </p>
+          </div>
+        );
+      },
+    }),
+  ]);
+}
 
 interface ItemHistoryDialogProps {
   isOpen: boolean;
@@ -99,7 +158,12 @@ export function ItemHistoryDialog({
       })
       .catch(() => {
         if (!cancelled) {
-          toast.error("History is unavailable right now.");
+          toast.error(
+            fbs(
+              "History is unavailable right now.",
+              "Toast shown when an item's change history fails to load",
+            ),
+          );
         }
       })
       .finally(() => {
@@ -132,7 +196,12 @@ export function ItemHistoryDialog({
       });
       setNextCursor(page.nextCursor);
     } catch {
-      toast.error("Could not load older events.");
+      toast.error(
+        fbs(
+          "Could not load older events.",
+          "Toast shown when loading older entries of an item's change history fails",
+        ),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -147,7 +216,10 @@ export function ItemHistoryDialog({
     >
       <Modal className="w-full max-w-3xl outline-none">
         <Dialog
-          aria-label={`History for ${itemName}`}
+          aria-label={fbs(
+            `History for ${fbs.param("itemName", itemName)}`,
+            "Accessible label of the dialog showing an item's change history",
+          )}
           className="flex max-h-[85vh] flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
         >
           <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
@@ -158,16 +230,23 @@ export function ItemHistoryDialog({
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5">
                   <span aria-hidden="true" className="size-1.5 rounded-full bg-destructive" />
-                  Changed
+                  <fbt desc="Legend in the item history dialog for the red marker on old values">
+                    Changed
+                  </fbt>
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span aria-hidden="true" className="size-1.5 rounded-full bg-success" />
-                  New value
+                  <fbt desc="Legend in the item history dialog for the green marker on new values">
+                    New value
+                  </fbt>
                 </span>
               </div>
             </div>
             <Button
-              aria-label="Close history"
+              aria-label={fbs(
+                "Close history",
+                "Accessible label of the button that closes the item history dialog",
+              )}
               className="size-7 shrink-0 px-0"
               onPress={() => onOpenChange(false)}
               size="icon-sm"
@@ -182,11 +261,13 @@ export function ItemHistoryDialog({
           <div className="min-h-0 flex-1 overflow-auto">
             {isLoading && events.length === 0 ? (
               <p className="px-5 py-10 text-center text-sm text-muted-foreground">
-                Loading history…
+                <fbt desc="Shown while an item's change history is loading">Loading history…</fbt>
               </p>
             ) : events.length === 0 ? (
               <p className="px-5 py-10 text-center text-sm text-muted-foreground">
-                No recorded changes yet.
+                <fbt desc="Shown in the item history dialog when the item has no recorded changes">
+                  No recorded changes yet.
+                </fbt>
               </p>
             ) : (
               <HistoryTable events={events} />
@@ -204,11 +285,21 @@ export function ItemHistoryDialog({
                   variant="outline"
                 >
                   <History aria-hidden="true" className="size-3.5" />
-                  {isLoading ? "Loading" : "Load older changes"}
+                  {isLoading ? (
+                    <fbt desc="Button label in the item history dialog while older changes load">
+                      Loading
+                    </fbt>
+                  ) : (
+                    <fbt desc="Button in the item history dialog that loads older changes">
+                      Load older changes
+                    </fbt>
+                  )}
                 </Button>
               ) : (
                 <p className="text-center type-label text-muted-foreground">
-                  beginning of recorded history
+                  <fbt desc="Shown at the end of the item history dialog when there are no older changes">
+                    beginning of recorded history
+                  </fbt>
                 </p>
               )}
             </div>
@@ -221,10 +312,11 @@ export function ItemHistoryDialog({
 
 function HistoryTable({ events }: { events: readonly ListItemHistoryEvent[] }) {
   const rows = useMemo(() => buildHistoryTableRows(events), [events]);
+  const columns = useMemo(() => createHistoryColumns(), []);
   const table = useTable({
     features: historyTableFeatures,
     data: rows,
-    columns: historyColumns,
+    columns,
     getRowId: (row) => row.id,
   });
 

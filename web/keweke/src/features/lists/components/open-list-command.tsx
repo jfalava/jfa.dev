@@ -1,6 +1,7 @@
 import { Button, Input } from "@jfa.dev/common/ui";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useNavigate } from "@tanstack/react-router";
+import { fbs } from "fbtee";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -58,7 +59,12 @@ export function OpenListCommand() {
 
     const normalizedValue = value.trim().toLowerCase();
     if (!isListAddress(normalizedValue)) {
-      toast.error("Please enter a list ID or alias.");
+      toast.error(
+        fbs(
+          "Please enter a list ID or alias.",
+          "Toast shown when the text typed in the open-list search is not a valid list ID or alias",
+        ),
+      );
       return;
     }
 
@@ -100,13 +106,18 @@ export function OpenListCommand() {
       }}
     >
       <Button
-        aria-label="Open list"
+        aria-label={fbs(
+          "Open list",
+          "Accessible label of the header button that opens the list search",
+        )}
         size="lg"
         variant="ghost"
         className="gap-1.5 px-2 text-muted-foreground hover:text-foreground"
       >
         <Search className="size-4" />
-        <span className="hidden sm:block">Open list</span>
+        <span className="hidden sm:block">
+          <fbt desc="Header button that opens the list search">Open list</fbt>
+        </span>
         <HotkeyKbd className="hidden sm:inline-flex" hotkey={OPEN_LIST_HOTKEY} />
       </Button>
       <ModalOverlay
@@ -115,12 +126,15 @@ export function OpenListCommand() {
       >
         <Modal className="w-full max-w-lg outline-none">
           <Dialog
-            aria-label="Open a list"
+            aria-label={fbs("Open a list", "Accessible label of the list search dialog")}
             className="overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
           >
             <Autocomplete>
               <SearchField
-                aria-label="List ID or alias"
+                aria-label={fbs(
+                  "List ID or alias",
+                  "Accessible label of the search field in the open-list dialog",
+                )}
                 className="flex items-center gap-3 border-b border-border px-4"
                 onChange={(nextValue) => {
                   setValue(nextValue);
@@ -134,17 +148,32 @@ export function OpenListCommand() {
                   enterKeyHint="go"
                   ref={inputRef}
                   onKeyDown={handleKeyDown}
-                  placeholder="Search your lists"
+                  placeholder={fbs(
+                    "Search your lists",
+                    "Placeholder of the search field in the open-list dialog",
+                  )}
                 />
               </SearchField>
               <div className="space-y-1 border-b border-border px-4 py-3 text-sm text-muted-foreground">
-                <p>Search your saved lists by alias or title, or enter a shared list ID.</p>
                 <p>
-                  Example: <span className="font-mono text-xs">groceries-apple</span>
+                  <fbt desc="Help text in the open-list dialog explaining what can be searched">
+                    Search your saved lists by alias or title, or enter a shared list ID.
+                  </fbt>
+                </p>
+                <p>
+                  <fbt desc="Example list alias in the open-list dialog; the alias itself is not translated">
+                    Example:{" "}
+                    <fbt:param name="exampleAlias">
+                      <span className="font-mono text-xs">groceries-apple</span>
+                    </fbt:param>
+                  </fbt>
                 </p>
               </div>
               <Menu
-                aria-label="List actions"
+                aria-label={fbs(
+                  "List actions",
+                  "Accessible label of the suggestions menu in the open-list dialog",
+                )}
                 className="p-2 outline-none"
                 renderEmptyState={() => null}
               >
@@ -167,9 +196,16 @@ export function OpenListCommand() {
                     className="flex items-center justify-between rounded-md px-3 py-2 text-sm outline-none data-focused:bg-muted"
                     id="open-list"
                     onAction={() => void openList()}
-                    textValue="Open list"
+                    textValue={fbs(
+                      "Open list",
+                      "Menu item in the open-list dialog that opens the typed list ID or alias",
+                    )}
                   >
-                    <span>Open list</span>
+                    <span>
+                      <fbt desc="Menu item in the open-list dialog that opens the typed list ID or alias">
+                        Open list
+                      </fbt>
+                    </span>
                     <span className="text-xs text-muted-foreground">↵</span>
                   </MenuItem>
                 ) : null}

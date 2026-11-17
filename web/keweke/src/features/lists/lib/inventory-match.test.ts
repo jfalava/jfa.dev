@@ -4,7 +4,7 @@ import type { ListItem } from "@jfa.dev/common/lists";
 
 import {
   buildInventoryIndex,
-  inventoryMatchMessage,
+  inventoryMatchSummary,
   matchInventoryName,
   type InventoryMatchReason,
 } from "./inventory-match";
@@ -159,22 +159,24 @@ describe("matchInventoryName", () => {
   });
 });
 
-describe("inventoryMatchMessage", () => {
+describe("inventoryMatchSummary", () => {
   test("names the entry and its measure", () => {
     const item = inventoryItem("whole milk 2%", { quantity: 2, unit: "L" });
-    expect(inventoryMatchMessage(matchFor("milk", [item]))).toBe(
-      "Already in inventory: whole milk 2% (2 L)",
-    );
+    expect(inventoryMatchSummary(matchFor("milk", [item]))).toEqual({
+      itemName: "whole milk 2%",
+      measure: "2 L",
+    });
   });
 
   test("omits a zero quantity", () => {
     const item = inventoryItem("butter", { quantity: 0, unit: "EA" });
-    expect(inventoryMatchMessage(matchFor("butter", [item]))).toBe(
-      "Already in inventory: butter (EA)",
-    );
+    expect(inventoryMatchSummary(matchFor("butter", [item]))).toEqual({
+      itemName: "butter",
+      measure: "EA",
+    });
   });
 
-  test("is empty without a match", () => {
-    expect(inventoryMatchMessage({ status: "none" })).toBe("");
+  test("is undefined without a match", () => {
+    expect(inventoryMatchSummary({ status: "none" })).toBeUndefined();
   });
 });

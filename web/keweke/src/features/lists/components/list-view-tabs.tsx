@@ -1,9 +1,14 @@
+import { fbs } from "fbtee";
+
 import type { ListView } from "@/features/lists/lib/list-view";
 
-const tabs: readonly { id: ListView; label: string }[] = [
-  { id: "list", label: "List" },
-  { id: "inventory", label: "Inventory" },
-];
+const tabs: readonly { id: ListView }[] = [{ id: "list" }, { id: "inventory" }];
+
+function tabLabel(view: ListView): string {
+  return view === "list"
+    ? fbs("List", "List page tab showing the items still to buy")
+    : fbs("Inventory", "List page tab showing the checked-off items the user already has");
+}
 
 export const LIST_VIEW_PANEL_ID = "list-view-panel";
 
@@ -24,7 +29,14 @@ export function ListViewTabs({
 
   return (
     <div className="border-b page-gutters">
-      <div aria-label="List views" className="flex items-center gap-1" role="tablist">
+      <div
+        aria-label={fbs(
+          "List views",
+          "Accessible label of the List and Inventory tabs on a list page",
+        )}
+        className="flex items-center gap-1"
+        role="tablist"
+      >
         {tabs.map((tab, index) => {
           const isActive = tab.id === view;
           return (
@@ -49,7 +61,7 @@ export function ListViewTabs({
               tabIndex={isActive ? 0 : -1}
               type="button"
             >
-              {tab.label}
+              {tabLabel(tab.id)}
             </button>
           );
         })}

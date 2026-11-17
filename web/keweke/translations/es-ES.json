@@ -1,0 +1,6221 @@
+{
+  "fb-locale": "es-ES",
+  "translations": {
+    "5qvm4mwAGaO/B3j69WpOAg==": {
+      "description": "Heading on the page shown when a shopping list address does not exist",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Lista no encontrada",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8Eo94QDPi7hyLH4UW2w2FA==": {
+      "description": "Link from the missing-list page to start a new shopping list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Empezar una lista nueva",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "DLBW1HIkS4OE4RcXHbjJOQ==": {
+      "description": "Link-preview description of a shared shopping list that has no items",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aún no hay artículos — añade el primero a esta lista de la compra compartida.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+lotuAfQp5Yu629xTQgM+Q==": {
+      "description": "Link-preview description of a shared shopping list: its item count and how many are done",
+      "tokens": [
+        "itemCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} artículos · hechos: {doneCount}",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "/gi1TNbEJHlDVipDewMHoA==": {
+      "description": "Link-preview description of a shared shopping list: its item count and how many are done",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 artículo · hechos: {doneCount}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "eUWTvSDEIo9YvDJcc2U4kA==": {
+      "description": "Toast shown when an inventory item's quantity reaches zero and it moves back to the shopping list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha acabado {itemName} · ha vuelto a la lista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "M3Q67u9+ZZCo06lRR1gbRQ==": {
+      "description": "Message on the list page when loading the list failed",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido abrir esta lista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "L8Xmc71DLIStgJdOYPillg==": {
+      "description": "Toast shown when the open shopping list was deleted, before returning to the lists page",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta lista ya no existe.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "cqy130M35F13bbsN9yNnyA==": {
+      "description": "Toast shown when refreshing a shared list restores its live connection",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se han reconectado las actualizaciones en directo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "0fwObBMLHiuWP9k1FT/8fA==": {
+      "description": "Toast shown when refreshing a shared list fails to restore its live connection",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se han podido restablecer las actualizaciones en directo de esta lista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "oEELXQKkLpXtwZAT4Gxj2Q==": {
+      "description": "Toast shown when saving a change to the shopping list fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido guardar este cambio. Inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "UYXRYwFP2KzoOIg/8fWx3Q==": {
+      "description": "Error toast shown when a change cannot be saved because the shopping list was deleted",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta lista ya no existe.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "F29UFralK0RzPdbp1+txLQ==": {
+      "description": "Toast shown when the current user lacks permission to change a shared list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este usuario no tiene permiso para modificar la lista remota.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "XckVPB+3z4G5wFiGE8EJ+Q==": {
+      "description": "Toast shown when a change conflicts with an edit made on another device and the list is reloaded",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta lista ha cambiado en otro sitio. Se ha actualizado tu vista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "eaqmf6sNkDTcmvcr5Sr1WA==": {
+      "description": "Error in the publish-list dialog when the server rejects publishing",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido terminar de publicar esta lista. Inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "cNZ2iwp9hhzW6opYGXTjeQ==": {
+      "description": "Error in the publish-list dialog when a shared list with the same ID already exists",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ya existe una lista remota con este identificador.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "yU9VorU1w3MKwqDI9JFg+g==": {
+      "description": "Error in the publish-list dialog when the list's readable web address is taken",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esa dirección amigable ya está en uso. Elige otra.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "1CgrqGfd6/uC/+vvKprztQ==": {
+      "description": "Error in the publish-list dialog when the publish request fails, likely offline",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido publicar esta lista ahora mismo. Comprueba tu conexión e inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "vSUJilGgxQ+S9B788OAwEw==": {
+      "description": "Message in the user dialog asking the user to pick a username before publishing a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Elige un nombre para continuar.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "dcxQVd+qgfqeipzNXZVPAQ==": {
+      "description": "Toast shown when renaming a list cannot create a readable web address from the new title",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido crear esa dirección amigable. Prueba con algunas letras o números.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "IKsnUxmMkT9iRb0merHHEA==": {
+      "description": "Toast shown when renaming the shopping list fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido guardar el título de la lista ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "VuBpjdiTTqmAvk7kSyETAA==": {
+      "description": "Toast shown when saving edits to a shopping list item fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido guardar el artículo ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "p/Va6T/6qXOsZjuiSoqkfg==": {
+      "description": "Toast shown when a deleted item is restored from history back into the inventory of purchased items",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha restaurado {itemName} en el inventario.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6r+4P+6nHKnDcpmssY5SWw==": {
+      "description": "Toast shown when a deleted item is restored from history back onto the shopping list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha restaurado {itemName} en la lista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ZxP3Sbo7oSC26KZUPKuHwg==": {
+      "description": "Toast shown when an item is removed forever from the deleted-items history",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha eliminado {itemName} para siempre.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "2mnQpfYrQmDlrXKy8cMPkg==": {
+      "description": "Toast shown when restoring or permanently deleting an item from the deleted-items history fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido actualizar el historial de artículos eliminados ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "u6YrXSHhJ5NxoIKY4DrFiw==": {
+      "description": "Toast shown after a new item is added to the shopping list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha añadido {itemName} a la lista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "WNTDCAwgzA2PqpvA6LlCjQ==": {
+      "description": "Toast shown when an item is checked off as purchased and moves to the inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha comprado {itemName} · ahora está en el inventario.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "gg7ZvdzIalwDDZaQYwBagw==": {
+      "description": "Toast shown when a purchased item is unchecked and moves from the inventory back to the shopping list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha restaurado {itemName} en la lista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CD9v++mjJ1noPRsZ2ASoVQ==": {
+      "description": "Toast shown after an item is deleted from the shopping list or inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha eliminado {itemName}.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "evn/aldklkbWIuhFpl9UlA==": {
+      "description": "Placeholder shown while a shopping list is loading",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cargando lista…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "lKXULE3DNGZk29xxaBMg4g==": {
+      "description": "Heading on the list page when the list cannot be found or opened",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta lista no está aquí",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Z8gTYRtUfeI3YWWae2SJZA==": {
+      "description": "Message on the list page when the list is neither on this device nor on the server",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta lista no está disponible en el almacenamiento local ni en el remoto.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "O8kM1A1cMS7RVSvTtNEuPg==": {
+      "description": "Section heading for the inventory view, which holds purchased items",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Inventario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "HdDZvNMRKcuweIXEHh2H4Q==": {
+      "description": "Section heading for the shopping list view, which holds items still to buy",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pwR84kwyEjDOTebFoUx2jQ==": {
+      "description": "Count of purchased items under the inventory section heading",
+      "tokens": [
+        "itemCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} artículos comprados",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "4+Hq0s+3HnMdRWdU5lItBA==": {
+      "description": "Count of purchased items under the inventory section heading",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 artículo comprado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "7a0duXsfGTunlxHiMAxAnA==": {
+      "description": "Count of items still to buy under the shopping list section heading",
+      "tokens": [
+        "itemCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} artículos por comprar",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "NoNZ50juetJvZOvccNrVoQ==": {
+      "description": "Count of items still to buy under the shopping list section heading",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 artículo por comprar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "wATE8/ExxF8OhDXjwVrlTg==": {
+      "description": "Empty-table message when no items match the search filter",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No hay artículos que coincidan",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Z8XfcycJHpTeyCFuEwTnOA==": {
+      "description": "Empty-table message in the inventory view before anything was purchased",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aún no hay artículos comprados",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "4UeCOBI2Yk3cG+xNpZDDXQ==": {
+      "description": "Toast shown on the admin page when deleting a user or list fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido eliminar ese elemento remoto.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "OUkbGkK7wyi7fxIm0wntEg==": {
+      "description": "Accessible label of the admin button that confirms deleting a user or list; targetName is the username or list title",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Confirmar eliminación de {targetName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "9xEPQb/Wr3j12bDZk5lDsQ==": {
+      "description": "Admin button that confirms deleting a user or list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Sí",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Wotlah6VsUK85UjpUh2sLg==": {
+      "description": "Accessible label of the admin button that cancels deleting a user or list; targetName is the username or list title",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Conservar {targetName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "AmzKtL4LxJqrNExmnMnmYg==": {
+      "description": "Admin button that cancels deleting a user or list and keeps it",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Conservar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "T6N7JpZZ+yX6aDNQ8FLiQQ==": {
+      "description": "Accessible label of the admin button that starts deleting a user or list; targetName is the username or list title",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar {targetName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ihDreZUwIMi1Lnzi/OaK4g==": {
+      "description": "Admin table button that starts deleting a user or list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "29CjqYnNj1GZo59fLicOBw==": {
+      "description": "Admin users table column header for the username and user ID",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ADxSkgtyZpdCy6w+XjmKaA==": {
+      "description": "Compact admin users table summary: active devices, all devices, and sign-up date",
+      "tokens": [
+        "activeDeviceCount",
+        "deviceCount"
+      ],
+      "translations": [
+        {
+          "translation": "{activeDeviceCount} activos · {deviceCount} dispositivos · {createdDate}",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28,
+        28
+      ]
+    },
+    "GVldJF5H1Qi8j9QBbkmfNA==": {
+      "description": "Compact admin users table summary: active devices, all devices, and sign-up date",
+      "tokens": [
+        "activeDeviceCount"
+      ],
+      "translations": [
+        {
+          "translation": "{activeDeviceCount} activos · 1 dispositivo · {createdDate}",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "rpdKmdPkZf1lMyeq8ZmczQ==": {
+      "description": "Compact admin users table summary: active devices, all devices, and sign-up date",
+      "tokens": [
+        "deviceCount"
+      ],
+      "translations": [
+        {
+          "translation": "1 activo · {deviceCount} dispositivos · {createdDate}",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "wUe/51bmOMP4DHUuoQ//xQ==": {
+      "description": "Compact admin users table summary: active devices, all devices, and sign-up date",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 activo · 1 dispositivo · {createdDate}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "BTOSiI2VZnNKPvr9lHsqHw==": {
+      "description": "Admin users table column header for the user's device counts",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Dispositivos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Q5wBS/+rv51wYdlavh9avQ==": {
+      "description": "Admin users table cell: number of active devices and total devices",
+      "tokens": [
+        "activeDeviceCount",
+        "deviceCount"
+      ],
+      "translations": [
+        {
+          "translation": "{activeDeviceCount} activos · {deviceCount} en total",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28,
+        28
+      ]
+    },
+    "AcTLcCl86KhLrBSdMBl/kg==": {
+      "description": "Admin users table cell: number of active devices and total devices",
+      "tokens": [
+        "activeDeviceCount"
+      ],
+      "translations": [
+        {
+          "translation": "{activeDeviceCount} activos · 1 en total",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "rZq/OvM5xelGAtZkbtrRPw==": {
+      "description": "Admin users table cell: number of active devices and total devices",
+      "tokens": [
+        "deviceCount"
+      ],
+      "translations": [
+        {
+          "translation": "1 activo · {deviceCount} en total",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "bwilwiwI91s1KWBzzcP2oA==": {
+      "description": "Admin users table cell: number of active devices and total devices",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 activo · 1 en total",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "/zuTnqJxbGyNB5t3UsZQeQ==": {
+      "description": "Admin users table column header for the date the user signed up",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Creado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "SxQlqu+TqFoeG6oqtzInPw==": {
+      "description": "Admin users table column header for the delete button",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Acciones",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "nmJFKLxkGmV4zN91yp2Zqg==": {
+      "description": "Admin confirmation prompt before deleting a user together with all their lists",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿Eliminar + listas?",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "2qYOqpfyfwFkyUdUuBJ4Mg==": {
+      "description": "Admin lists table column header for the list title and ID",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "w8xEqiJeumLjxAg/Elesfg==": {
+      "description": "Compact admin lists table summary: item lines, purchased lines, revision number, and last update time",
+      "tokens": [
+        "itemCount",
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} líneas · {completedCount} hechas · rev {revision} · {updatedAt}",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28,
+        28
+      ]
+    },
+    "zb20l2dvwX3vUh8Aq4e+9Q==": {
+      "description": "Compact admin lists table summary: item lines, purchased lines, revision number, and last update time",
+      "tokens": [
+        "itemCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} líneas · 1 hecha · rev {revision} · {updatedAt}",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "gKsEi9yqJ9EY7Go7txrS4Q==": {
+      "description": "Compact admin lists table summary: item lines, purchased lines, revision number, and last update time",
+      "tokens": [
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "1 línea · {completedCount} hechas · rev {revision} · {updatedAt}",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "JyGYwN5WDtxmEBSWa+yibg==": {
+      "description": "Compact admin lists table summary: item lines, purchased lines, revision number, and last update time",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 línea · 1 hecha · rev {revision} · {updatedAt}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Y9CVGg7bcWu6VIumE7Zk9Q==": {
+      "description": "Admin lists table column header for item and purchased counts",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Progreso",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "p4C71jbVvbPwS0DgEg0lzg==": {
+      "description": "Admin lists table cell: number of item lines and how many are purchased",
+      "tokens": [
+        "itemCount",
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} líneas · {completedCount} hechas",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28,
+        28
+      ]
+    },
+    "fgwqYM48VE7FizjSbHv+1w==": {
+      "description": "Admin lists table cell: number of item lines and how many are purchased",
+      "tokens": [
+        "itemCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} líneas · 1 hecha",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "KknKTa8UBFlKKLyQhpGVFA==": {
+      "description": "Admin lists table cell: number of item lines and how many are purchased",
+      "tokens": [
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "1 línea · {completedCount} hechas",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "iZDgayrgNvOTaiKkzVu6Vw==": {
+      "description": "Admin lists table cell: number of item lines and how many are purchased",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 línea · 1 hecha",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "peIWrzcFK1fVrc5ciTT3pQ==": {
+      "description": "Admin lists table column header for the list's revision number",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Revisión",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "UD8FwxUdJwPqyjWGWSXuVQ==": {
+      "description": "Admin lists table column header for the last update time",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Actualizada",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "rq4hj2pqFT8C5gzTmY4GgA==": {
+      "description": "Accessible label of the admin link that opens a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Abrir {listTitle}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "kje1sUA5kPNgb3KsmPI3ng==": {
+      "description": "Admin lists table link that opens the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Abrir →",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "LjKFoXpv+IrXRodSKQBmJA==": {
+      "description": "Admin lists table column header for the delete button",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Acciones",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "t22yt2PVVJZKCuJxNahs7A==": {
+      "description": "Admin confirmation prompt before deleting a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿Eliminar?",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "iOT6VuyH5Cn6ZF4hPvyKjg==": {
+      "description": "Admin page summary of how many remote users and published lists exist",
+      "tokens": [
+        "userCount",
+        "listCount"
+      ],
+      "translations": [
+        {
+          "translation": "{userCount} usuarios · {listCount} listas",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28,
+        28
+      ]
+    },
+    "STkH44u2Nl7CC7sxDYJf9g==": {
+      "description": "Admin page summary of how many remote users and published lists exist",
+      "tokens": [
+        "userCount"
+      ],
+      "translations": [
+        {
+          "translation": "{userCount} usuarios · 1 lista",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "4pzs7Qdb60lFTKtWPT1xkQ==": {
+      "description": "Admin page summary of how many remote users and published lists exist",
+      "tokens": [
+        "listCount"
+      ],
+      "translations": [
+        {
+          "translation": "1 usuario · {listCount} listas",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "UIuldZD9l6ckMKBZl/Uj2w==": {
+      "description": "Admin page summary of how many remote users and published lists exist",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 usuario · 1 lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "F8Tx1FyowfsgpophjWM1IQ==": {
+      "description": "Heading of the admin page",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Administración",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "KzBXc/eFhQDdk/bMCntobg==": {
+      "description": "Admin page button that reloads the users and lists",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Actualizar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pN38W10EvZbrDIRivF3Pag==": {
+      "description": "Admin page error when the users and lists overview cannot be loaded",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido leer el directorio.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6hvartm9eRye2UErFzL4Zw==": {
+      "description": "Accessible name of the admin page users section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuarios",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "jJ/IWp1OMroEkZZILSIX4A==": {
+      "description": "Admin page heading for the users section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuarios",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "yX0UcDuTWch0aVE4H0nr9w==": {
+      "description": "Admin page count of registered remote users",
+      "tokens": [
+        "userCount"
+      ],
+      "translations": [
+        {
+          "translation": "{userCount} registrados",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "7CKosF+ktlnJaVn9bb+Itg==": {
+      "description": "Admin page count of registered remote users",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 registrado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6oaHhBP7N2Zn/gQA4M+cXw==": {
+      "description": "Admin page message when no remote users exist",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aún no hay usuarios remotos.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "M2SPH+j1to+xVvU6ZYAOUw==": {
+      "description": "Accessible name of the admin page lists section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Listas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "49Qmdijvfx4UXrrsRGB5NQ==": {
+      "description": "Admin page heading for the published lists section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Listas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "/6iriYUIY78VbcIDgcTTkg==": {
+      "description": "Admin page count of published remote lists",
+      "tokens": [
+        "listCount"
+      ],
+      "translations": [
+        {
+          "translation": "{listCount} publicadas",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "GEjM/sf0o6F8g90EeugO+w==": {
+      "description": "Admin page count of published remote lists",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 publicada",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "RjlFoZTCjnTbGfcuwS2UbA==": {
+      "description": "Admin page message when no published lists exist",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aún no hay listas remotas.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "v7MYov8qHd5qdw8mgh3eNg==": {
+      "description": "Toast shown when deleting a list stored only on this device fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido eliminar esa lista local.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "9qZPbgsgf8Q5M5m1dEW39A==": {
+      "description": "Toast shown when removing a shared list from the user's lists fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido quitar esa lista remota.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "r5LYT6+MwNbc7U6rkWnZCg==": {
+      "description": "Placeholder shown on the home page while the user's lists are loading",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cargando listas…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "qv1DIdh5430qTf9FPpbMqA==": {
+      "description": "Heading of the list page section with deleted items that can be restored",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Artículos eliminados",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "QXKhE2uMDbF0KD2u8m2Kiw==": {
+      "description": "Label before the date an item was deleted, in the deleted items section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "C0r7yv8e8llIAobVIkKVng==": {
+      "description": "Label before the name of the person who deleted an item, in the deleted items section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminado por",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "7LQfjccwBP9aG+QcBsE75w==": {
+      "description": "Accessible label of the button that permanently deletes an item from the deleted items section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar {itemName} para siempre",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "eHpfmB1HOv3tfplgwSX/Ag==": {
+      "description": "Button that permanently deletes an item from the deleted items section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar para siempre",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "HV/psKizqESyuOdFBtIYlA==": {
+      "description": "Button that cancels permanently deleting an item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5NL4+QScgDd/MKYV+sY+fw==": {
+      "description": "Accessible label of the button that opens a deleted item's change history",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ver historial de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "/PovYcBfMw7XZ83tVj4CzQ==": {
+      "description": "Button that opens a deleted item's change history",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Historial",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "GXxUdeCI6GUhBi5BJzvrlQ==": {
+      "description": "Accessible label of the button that restores a deleted item to the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Restaurar {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pYkCfIwKstMHLSQfQWGMNA==": {
+      "description": "Button that restores a deleted item to the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Restaurar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "zXgZfcosZB0n43VF2R/shA==": {
+      "description": "Lowercase label on the add item row of the shopping list table, next to its keyboard shortcut",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "3Lggt9pEWkbd9O9hsBlDzw==": {
+      "description": "Accessible label of the name field in the add item row",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Nombre del artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "w1qM84/PSWxSl9Tm/2Nbbw==": {
+      "description": "Lowercase example item name shown as the placeholder of the add item name field",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "palomitas de microondas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "PyRTUlZmpusxNYHb8SuDSg==": {
+      "description": "Accessible label of the quantity field in the add item row",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cantidad del artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ZWS5wVZLMnGk9GqochwV1g==": {
+      "description": "Accessible label of the unit field, such as box or bag, in the add item row",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Unidad del artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "sMYBQLnWfm/v69hSLCROrQ==": {
+      "description": "Lowercase example unit shown as the placeholder of the add item unit field",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "caja",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FhG1Ci5YMz2DiP8oeiDwGg==": {
+      "description": "Accessible label of the field for the amount in each unit, such as 250g, in the add item row",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cantidad por unidad del artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "KL3qkF3Rj30jwPWJZ/iEiw==": {
+      "description": "Lowercase example amount shown as the placeholder of the add item amount each field",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "3 bolsas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "3yjdX5NqvcQGzTFGFxs3jQ==": {
+      "description": "Accessible label of the category field in the add item row",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Categoría del artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "KSqRiTnIwXi3v1usXGWEJQ==": {
+      "description": "Lowercase label in the signed column of the add item row, meaning the item is not saved yet",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "borrador",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "jyYTQrru/ajGl0EuRPG3dQ==": {
+      "description": "Lowercase status in the add item row: a new item starts as still to be bought",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "pendiente",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pSLXQCeuHPrHiSfwaPa2Cg==": {
+      "description": "Accessible label of the button that adds the new item to the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadir artículo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "GykhBeEEidhPahdO9O5Ycw==": {
+      "description": "Accessible label of the dialog asking whether to add an item that already seems to be in inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Artículo ya en el inventario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "3xo0n9tYBEQ/lCoTEYIi5A==": {
+      "description": "Title of the dialog asking whether to add an item that already seems to be in inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿Ya está en el inventario?",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "u3YvKmY4lr72O7dPact5WQ==": {
+      "description": "Explanation in the dialog shown when a new item seems to already be in inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Parece que esto ya lo tienes.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "zXhQ4QdJsbeJO0c4yxw6WA==": {
+      "description": "Link to the documentation about the inventory duplicate check",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cómo funciona la comprobación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ODniTzbiobizl2KX+PXtVQ==": {
+      "description": "Label for the item being added, in the dialog comparing it with an inventory item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadiendo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "9Nc649rhfqPVWNnQ/GkYlg==": {
+      "description": "Label for the matching inventory item, in the dialog comparing it with the item being added",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Inventario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "9GyFWlWd/rUCOxEDWTz9gQ==": {
+      "description": "Advice in the dialog shown when a new item seems to already be in inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añádelo de todos modos si es otro producto o necesitas más.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "0qzEmg8aynp8g6xut6ddbQ==": {
+      "description": "Button that cancels adding an item that seems to already be in inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "IK7lSpA0/Xq3db9nVp+Bvw==": {
+      "description": "Button that adds an item even though it seems to already be in inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadir de todos modos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Zzn139BVqVFGbFApUgZZ7Q==": {
+      "description": "Message on the lists page when the user has no shopping lists yet",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aún no hay listas. Crea una cuando la necesites.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8CPstY6ZxikQp4vDCe7xNQ==": {
+      "description": "Label of the new-list button while the list is being created",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Creando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "TWcz7jIoYhA/HxuZ6tyWVA==": {
+      "description": "Button on the empty lists page that creates a new shopping list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Lista nueva",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "TPW82QjG4KMezi73+OEy0Q==": {
+      "description": "Link from the empty lists page to the docs about how lists work",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cómo funcionan las listas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "XRnlWAyVXKAkLRDUGe8yfg==": {
+      "description": "Validation error under the item name field when it is empty",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe un nombre",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "PrnO6qsAHXQs/oR8+zozDg==": {
+      "description": "Validation error under the item name field when it is too long",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "El nombre es demasiado largo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "A7q5NRbd0UhbcQCH5QzG4Q==": {
+      "description": "Validation error under the item quantity field when it is empty",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe una cantidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "cW3HmIPsoO0v30rmvtWirA==": {
+      "description": "Validation error under the item quantity field when the number is below 1 or above 100000",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe un número del 1 al 100000",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "DEfNrbIfDoTmPcvF3mWmCg==": {
+      "description": "Validation error under the item quantity field when it is not a whole number",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe un número entero del 1 al 100000",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Af5spmk7EJe/EmcVFghFlQ==": {
+      "description": "Validation error under the item unit field when it is empty",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe una unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "b/IPfwRCCuLmutdKk4ej5Q==": {
+      "description": "Validation error under the item unit field when it is too long",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "La unidad es demasiado larga",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "JcPhPzI822JIu76OnUjtoA==": {
+      "description": "Validation error under the item amount (price or size per unit) field when it is too long",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "La cantidad por unidad es demasiado larga",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "vt36pViL88XZPsPzEIq/iQ==": {
+      "description": "Validation error under the item amount (price or size per unit) field when it is not valid",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe una cantidad por unidad válida",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+ZXj92PmYTrJCQzYsv3UAQ==": {
+      "description": "Validation error under the item category field when it is empty",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe una categoría",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "BUBq7SSr+/5a+wk1J4kXpA==": {
+      "description": "Validation error under the item category field when it is too long",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "La categoría es demasiado larga",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CWdf84ZMDVY6X2GBR7fmPw==": {
+      "description": "Hint under the new-item name field when an item with a similar name is already in the inventory; itemMeasure is its quantity and unit, such as '2 L'",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ya en el inventario: {itemName} ({itemMeasure})",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pS8STYsSUXsy/diMQ45Q1Q==": {
+      "description": "Short label for the item name field, shown in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "artículo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "40cm3d7EScIZPV2Gp6c2vQ==": {
+      "description": "Short label for the item quantity field, shown in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "cant.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6Q2Fc8+W8yhGmZCnuhVwIQ==": {
+      "description": "Short label for the item unit field (box, bag, kg), shown in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "sxg7ZhQQuDBt86ITJTvFFw==": {
+      "description": "Short label for the field saying what one unit contains (3 bags per box), shown in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "por unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "q9Ih/SqpEPFvQQeWtd6syg==": {
+      "description": "Short label for the item category field, shown in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "categoría",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "wr+b4AqN66s2vypXfelfAQ==": {
+      "description": "Accessible label of the how-to-add-items help dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cómo añadir artículos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "f8JHaipxn8iIYWjmwGg+NA==": {
+      "description": "Title of the help dialog explaining how to add items to a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cómo añadir artículos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ytJBGR/G/7K4B0dex9RN8g==": {
+      "description": "Intro of the how-to-add-items help dialog, introducing the microwave popcorn example",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cada línea nueva es una cosa que compras. Por ejemplo, palomitas de microondas: compras una caja, y dentro de cada caja hay 3 bolsas.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "55OShr36Oz/J7iaj1CmBOA==": {
+      "description": "Title of the example item in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Palomitas de microondas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "94rTSO2Igj1h6E57iWcKpQ==": {
+      "description": "Example item name in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "palomitas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Bgtf+/6PxYwPVrcvt+XrDg==": {
+      "description": "Example item unit in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "caja",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "PpicH3pEzIT785tOJHhf5w==": {
+      "description": "Example of what one unit contains (one box holds 3 bags) in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "3 bolsas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "/nytyvl1LzSpsYdeTPZszw==": {
+      "description": "Example item category in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "aperitivos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "1IgDLRNsX0vgPPmM3S23XQ==": {
+      "description": "How the example item (1 box of microwave popcorn holding 3 bags) appears in the list, in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se muestra como {=1box ( 3 bags each)}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "GDcmfwNpKGkbFTA+Rel3lA==": {
+      "description": "In the phrase: \"Shows as {=1box ( 3 bags each)}\"",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "{=1}{=box} ( {=3 bags} {=each})",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Akvh8EY892RyME1ssopW2g==": {
+      "description": "In the phrase: \"Shows as {=1}{=box} ( {=3 bags} {=each})\"",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "xQA3p9RP2CXWNWOtp4+ngg==": {
+      "description": "In the phrase: \"Shows as {=1}{=box} ( {=3 bags} {=each})\"",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "caja",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "rQqSwbKwfWLMOnfukzcxgA==": {
+      "description": "In the phrase: \"Shows as {=1}{=box} ( {=3 bags} {=each})\"",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "3 bolsas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "TY8m5EmW+6RqvuIt22AvPA==": {
+      "description": "In the phrase: \"Shows as {=1}{=box} ( {=3 bags} {=each})\"",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "cada una",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "tR/oJaMBbB7I2y7xobtb8g==": {
+      "description": "Explains the item name field in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "lo que compras — obligatorio",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Mr7gIkiygjN/OHj/C9dDdg==": {
+      "description": "Example value for the item name field in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "p. ej., palomitas de microondas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "KyAxXIVjSOIyNRY3oHktXw==": {
+      "description": "Explains the item quantity field in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "cuántas unidades — por defecto, 1",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "LUlLeiQJqP3jra7pzd0Zng==": {
+      "description": "Example value for the item quantity field in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "p. ej., 2 cajas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "wyYNeso763Wt3Il2YfCkgQ==": {
+      "description": "Explains the item unit field in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "cómo se vende — obligatorio",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "k7diJIh2nAtokSCteTK8PA==": {
+      "description": "Example values for the item unit field in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "p. ej., caja, bolsa, bote, kg, paquete",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "1YRfWoAnw3dy/buRggRgmA==": {
+      "description": "Explains the field saying what one unit contains in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "lo que contiene una unidad — opcional",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "nyP1Qpk9WUJFxCqOfc/XbA==": {
+      "description": "Example value for the field saying what one unit contains, in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "p. ej., 3 bolsas por caja",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ae1pMpWPj/AeKxnpJuJ8FQ==": {
+      "description": "Explains the item category field in the how-to-add-items help; GENERAL is the default category name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "agrupa artículos parecidos — por defecto, GENERAL",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "YrmAk8IVm0q/+j5/hco8Ug==": {
+      "description": "Example value for the item category field in the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "p. ej., aperitivos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "4QA80SU59SpUXo2ZCOc75w==": {
+      "description": "Heading of the help section about the inventory duplicate check",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ya en el inventario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Z3KSah3DJHMClxVI38Th0Q==": {
+      "description": "Help text about the inventory duplicate check; 'Add anyway' is the button that adds the item regardless",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Mientras escribes, KEWEKE compara el nombre con los artículos que ya están en el Inventario de esta lista. Si parecen lo mismo, aparece una nota bajo el campo y, la primera vez que añades, te pide confirmación. No se bloquea nada: elige {=Add anyway} si es otro producto o simplemente necesitas más.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "VqAw99g3WBYZsfU7YvHK8Q==": {
+      "description": "In the phrase: \"As you type, KEWEKE checks the name against the items already in this list's Inventory. If they look like the same thing, a note appears under the field and the first add asks before committing. Nothing is blocked — pick {=Add anyway} if it's a different product or you just need more.\"",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadir de todos modos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ybVzyB0UUD5DST6oxH84EA==": {
+      "description": "Heading of the help section about the spreadsheet editing mode",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Hoja de cálculo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "iWnGtCgNNgJOig5pzY3YbQ==": {
+      "description": "Help text on how to open the spreadsheet editing mode; the parameter is a keyboard shortcut",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "En el ordenador, usa el botón de cuadrícula o {spreadsheetShortcut} para editar todas las filas con el teclado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "OBRi9KlqNSLWDLXqT97mAQ==": {
+      "description": "Help text on keyboard navigation in the spreadsheet editing mode; Tab, Enter and Escape are keyboard keys and the parameter is a keyboard shortcut",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "{=Tab} pasa de un campo a otro, las flechas se mueven entre celdas, Enter baja una fila y {removeRowShortcut} elimina la fila actual. Escape sale.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "lSySQVC2OPC7GoL0Qs/Axg==": {
+      "description": "In the phrase: \"{=Tab} moves across fields, arrows move between cells, Enter moves down, and {removeRowShortcut} removes the current row. Escape exits.\"",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Tab",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "0CX+7Od4S07SVjWd9PtPpQ==": {
+      "description": "Heading of the help section about keyboard shortcuts",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Atajos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "65jiCLFHiNkRshB9uJP9HQ==": {
+      "description": "Help text about list keyboard shortcuts; the parameters are keyboard keys",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "{searchShortcut} lleva a la búsqueda y {newItemShortcut} salta al nombre del artículo nuevo. Ambos funcionan en el modo lista y en el modo hoja de cálculo, y evitan atajos del navegador como nueva pestaña o nueva ventana.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ZT9PRZUYR/888WAHwSs9Nw==": {
+      "description": "Link in the how-to-add-items help to the documentation page about working with a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Trabajar con la lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6g/uw8hGf8C6gQNxjdCo+w==": {
+      "description": "Link in the how-to-add-items help to the documentation page about the inventory duplicate check",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Comprobación del inventario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "PszAFReEhSifqSfPPzFy+w==": {
+      "description": "Link in the how-to-add-items help to the documentation page about the spreadsheet editing mode",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Modo hoja de cálculo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "D3TCGFMU8wGQ7iFzppg6dQ==": {
+      "description": "Button that closes the how-to-add-items help dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cerrar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "LSpD6cDnkXQci/hXYd5UxA==": {
+      "description": "Item history table: row for a change to the item name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "nombre",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FcwOXlgUOi/6fK6OVs+oHg==": {
+      "description": "Item history table: row for a change to the item quantity",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "cant.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "BVkcU7MUgSSw28PACXlCYQ==": {
+      "description": "Item history table: row for a change to the item unit (box, bag, kg)",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fLM2tOUe2dWLqBzW+i1G0Q==": {
+      "description": "Item history table: row for a change to what one unit of the item contains",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "por unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "T+BHnHxDTCFjpvv0sQXyhQ==": {
+      "description": "Item history table: row for a change to the item category",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "categoría",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "hsXd2AMC6q2djAkLECrvVg==": {
+      "description": "Item history table: row for the item being added or updated",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "artículo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pzDSj4dFjwwSPngI7f2n5Q==": {
+      "description": "Item history table: row for a change to the item status (open, done, removed)",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "estado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5X048XXJ42XdHiTktfpOYQ==": {
+      "description": "Item history table: status of an item still to buy on the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "pendiente",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "UnDeC9LJFjNuFGONX3rWEA==": {
+      "description": "Item history table: status of an item checked off into inventory",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "hecho",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "K6RY7HzyGgLEwHlPaDu9JA==": {
+      "description": "Item history table: status of an item that is not removed",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "activo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "bMO55sAjKZZHkntXrQeOZw==": {
+      "description": "Item history table: status of an item moved to deleted items",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "eliminado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "JYnLQB9bzXv0RZACtf1yeA==": {
+      "description": "Item history table: status of an item deleted forever",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "borrado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "zbmlx2YKBEIWFEcQUBc4uw==": {
+      "description": "Item history table: new value when an edit changed no tracked field",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "actualizado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "gP02/4H0FF/N2CKhJ4ZjsQ==": {
+      "description": "Item history table: time of a change made seconds ago",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "ahora mismo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "O7uimG1n/tA7o4tfulyHzw==": {
+      "description": "Item history table column header: which field changed",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "campo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "MDtbcykTI0sXtlyiWVfjWA==": {
+      "description": "Item history table column header: the value before the change",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "anterior",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fJw3xnE7d5v8b/hscT1L0g==": {
+      "description": "Item history table column header: the value after the change",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "valor nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "OJm3kuYtn5LUaPHpStFTXw==": {
+      "description": "Item history table column header: who made the change and when",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "actualizado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "E0+E7O/SjqEgP2h+uDY4IQ==": {
+      "description": "Item history table: author of a change with no recorded user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "alguien",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "nAp7B3oB25lywoIEYVGq6A==": {
+      "description": "Item history table: when a change happened and its revision number, such as '5 minutes ago · rev 12'",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "{relativeTime} · rev {revision}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "TMXaexDZRJtxiqjWJh5/dw==": {
+      "description": "Toast shown when an item's change history fails to load",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "El historial no está disponible ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "d4/Ba/dlTX51qUhtDY7Miw==": {
+      "description": "Toast shown when loading older entries of an item's change history fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se han podido cargar los eventos anteriores.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "m+9sfc78Pe8+ZiyxL4OlyQ==": {
+      "description": "Accessible label of the dialog showing an item's change history",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Historial de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "yflKJ335rug+84XF/NWFQA==": {
+      "description": "Legend in the item history dialog for the red marker on old values",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Anterior",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8E9opHRDRsbm/JLuwFsY6A==": {
+      "description": "Legend in the item history dialog for the green marker on new values",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Valor nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "nIMKk44gFzz2S2wKcSYZHw==": {
+      "description": "Accessible label of the button that closes the item history dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cerrar historial",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "UQuxxVhbl8MX/Qhtcd18tw==": {
+      "description": "Shown while an item's change history is loading",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cargando historial…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "yHClQuczSoXc5W2ZbVjFcg==": {
+      "description": "Shown in the item history dialog when the item has no recorded changes",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aún no hay cambios registrados.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "eAgmPn/UJkyQ8RfahCWsLg==": {
+      "description": "Button label in the item history dialog while older changes load",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cargando",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "L7AqQCOhUT1GgRW1MXz4Mw==": {
+      "description": "Button in the item history dialog that loads older changes",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cargar cambios anteriores",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "cxyYZaHbW0TEM7fbpm2+QQ==": {
+      "description": "Shown at the end of the item history dialog when there are no older changes",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "inicio del historial registrado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Hk++7vs4ZC/4oMvuGmHJVw==": {
+      "description": "Accessible label of the button next to the list title that starts renaming the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editar título de la lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "WysHDltCoM58YLXOOGQCTA==": {
+      "description": "Label of the text field for renaming a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Título de la lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "rMO+yJRYzJ83ERUIgevdmg==": {
+      "description": "Button label while a new list title is being saved",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Guardando",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "SvGsgB6q5n4u0fRxOMt+Mg==": {
+      "description": "Button that saves a new list title",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Guardar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "G00tdm0j5/JmcPAracnm4A==": {
+      "description": "Button that cancels renaming a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Voc8O+rXBVV23W9nzKWp5A==": {
+      "description": "Label before a list's ID under the list title",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "ID",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "EBTU+C4eSy6lMBvz/gvUlg==": {
+      "description": "Label before a list's alias (a readable name used in its address) under the list title",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Alias",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "VshBkaHiTw2i4cUnAZ7fmw==": {
+      "description": "Accessible label of the button that switches from the list ID to its alias",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Mostrar alias",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5jz8pU3f660kZ13/MwaXgw==": {
+      "description": "Accessible label of the button that switches from the list alias to its ID",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Mostrar ID",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ax5vR2hUEqfU5rx4JzMadg==": {
+      "description": "Accessible label of the copy-link button after the list URL was copied",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "URL de la lista copiada",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ta99wwxMUaOlo+6fVhNGXQ==": {
+      "description": "Accessible label of the button that copies the list URL that uses its ID",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Copiar URL completa con el ID",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "GV3mS3hTwGTJfingk34djw==": {
+      "description": "Accessible label of the button that copies the list URL that uses its alias",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Copiar URL completa con el alias",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "gOc7K/Rf9tM2hayxn9fp6A==": {
+      "description": "Accessible label of the checkbox that moves a purchased shopping list item back to the open list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Restaurar {itemName} en la lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "e3n8xyM22bfxQCXitmY1hA==": {
+      "description": "Accessible label of the checkbox that marks a shopping list item as purchased",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Marcar {itemName} como comprado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "2RkDklPOsaxw4Ok38GekZw==": {
+      "description": "Screen reader alert shown when saving a shopping list item's purchased state fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido guardar {itemName}. Activa la casilla para reintentarlo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "X5w5pc+W2Ov/c9XEQ/h7sQ==": {
+      "description": "Fallback name for the current browser's user when they have not set a username",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Tu nombre",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "JL2Jf46yZZa16oBBWD59rA==": {
+      "description": "Lowercase label shown when no user is recorded as having added or edited a shopping list item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "sin firmar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "QXzTpM9s+qesIgWwaRJPUA==": {
+      "description": "Accessible label of the badge naming the user who last edited a shopping list item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "editado por {userName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "WCanXwGrcSqT7xy6Ed3D0w==": {
+      "description": "Accessible label of the badge naming the user who added a shopping list item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "añadido por {userName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "MpPWhP45gLpSEef5cb6eRg==": {
+      "description": "Tooltip on a shopping list item's signature badge naming the user who added the item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadido por {userName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CBKrNdn0p8Gb+/6btfEHDg==": {
+      "description": "Tooltip on a shopping list item's signature badge naming the user who last edited the item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editado por última vez por {userName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "T2/YmVnnKraOX9MrBevWkw==": {
+      "description": "Stands in for the item name in the quantity buttons of the add item form, as in 'Increase New item quantity'",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "lfXK2g4TJsedLcxeDTnpyQ==": {
+      "description": "Amount per unit after a shopping list item's quantity and unit, as in '2 bags (250g each)'",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "({amountEach} {=each)}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "MjVom4npocXZ6MlNH01wWQ==": {
+      "description": "In the phrase: \"({amountEach} {=each)}\"",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "por unidad)",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+NPHKp3aVoZBT2bmiCIktA==": {
+      "description": "Accessible label of the button that raises a shopping list item's quantity by one",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aumentar cantidad de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "M43kvd/MGIeo+w7s9Zqqiw==": {
+      "description": "Accessible label of the button that lowers a shopping list item's quantity by one",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Reducir cantidad de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "2opg5tqLpkbVcAR9a2OFew==": {
+      "description": "List page header: summary of a list stored only in this browser, with its open and done item counts",
+      "tokens": [
+        "openCount",
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "Local · {openCount} pendientes · {completedCount} hechos",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28,
+        28
+      ]
+    },
+    "w8XsmxEtLs8ZNYKrg3YDFg==": {
+      "description": "List page header: summary of a list stored only in this browser, with its open and done item counts",
+      "tokens": [
+        "openCount"
+      ],
+      "translations": [
+        {
+          "translation": "Local · {openCount} pendientes · 1 hecho",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "mPGtnX0eIiy6+/Jpp2GNZQ==": {
+      "description": "List page header: summary of a list stored only in this browser, with its open and done item counts",
+      "tokens": [
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "Local · 1 pendiente · {completedCount} hechos",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "n72oek1YjRunmhU5xsa7Jw==": {
+      "description": "List page header: summary of a list stored only in this browser, with its open and done item counts",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Local · 1 pendiente · 1 hecho",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Da4U1zfvd3DsLcKWb1Idhg==": {
+      "description": "List page header: summary of a list stored on the server, with its open and done item counts",
+      "tokens": [
+        "openCount",
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "Remota · {openCount} pendientes · {completedCount} hechos",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28,
+        28
+      ]
+    },
+    "pCWUeu9nwi42LOWfKsP0tA==": {
+      "description": "List page header: summary of a list stored on the server, with its open and done item counts",
+      "tokens": [
+        "openCount"
+      ],
+      "translations": [
+        {
+          "translation": "Remota · {openCount} pendientes · 1 hecho",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "MPYUbAzNQAwjJjAioEahvg==": {
+      "description": "List page header: summary of a list stored on the server, with its open and done item counts",
+      "tokens": [
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "Remota · 1 pendiente · {completedCount} hechos",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "zBLGOM+eljE3yXz6n/6rSQ==": {
+      "description": "List page header: summary of a list stored on the server, with its open and done item counts",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Remota · 1 pendiente · 1 hecho",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "lZgKgQYrE5T8cTNTcEMfig==": {
+      "description": "Accessible label of the item search field on a list page",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Buscar artículos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Cfgel8TZfAH15uVvuoFfPg==": {
+      "description": "Placeholder of the item search field on a list page",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Buscar artículos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "SE/kxG8h9KVdD7GEHgRfFg==": {
+      "description": "Accessible label of the button that reconnects a list's dropped live updates",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Reconectar actualizaciones en directo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "S24BXBqCxLqiihKRG6fHfQ==": {
+      "description": "Accessible label of the button that leaves the spreadsheet editing mode",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Salir del modo hoja de cálculo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "crMbdChR/Y7e23vlUOBTvA==": {
+      "description": "Accessible label of the button that opens the spreadsheet editing mode",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Entrar en el modo hoja de cálculo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "sZEMiHJsVzJF10C2lLJ+kg==": {
+      "description": "Button that leaves the spreadsheet editing mode",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Salir de la hoja de cálculo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "mKfQV8RnkipMitiRPytT7w==": {
+      "description": "Button that opens the spreadsheet editing mode",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Hoja de cálculo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "GCx6PIpgg7tWJF5VdrH/yA==": {
+      "description": "Accessible label of the list page button that opens the how-to-add-items help",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cómo añadir artículos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "xL05JDRNym4VnZNEq2lOrA==": {
+      "description": "List page tab showing the items still to buy",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "oMkUuw4Vg7C+jJTpe4IJOQ==": {
+      "description": "List page tab showing the checked-off items the user already has",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Inventario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "wxRpuuWOm9sC2fkaDEtupw==": {
+      "description": "Accessible label of the List and Inventory tabs on a list page",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Vistas de la lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "zqI4ZU2ppQxGiIQ1qRsX8A==": {
+      "description": "Column header for list titles in the saved lists table",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6F9NrHyvgI4cQfX+i6RUrA==": {
+      "description": "Label in the saved lists table for a list stored only in this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Local",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+EPBVPMtYU4/swDWVMUGVA==": {
+      "description": "Label in the saved lists table for a list stored on the server",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Remota",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "rikNS08/EB/5lpUygGTqWw==": {
+      "description": "Column header for item and done counts in the saved lists table",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Progreso",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "LjM1ZUT3h455hgBdajx8FQ==": {
+      "description": "Progress of a list in the saved lists table: how many items it has and how many are done",
+      "tokens": [
+        "itemCount",
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} artículos · {completedCount} hechos",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28,
+        28
+      ]
+    },
+    "P1dHuO7zFAHrpBCQxFdYKw==": {
+      "description": "Progress of a list in the saved lists table: how many items it has and how many are done",
+      "tokens": [
+        "itemCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} artículos · 1 hecho",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "YJ/kSIZNxucrg//cdXQ+sw==": {
+      "description": "Progress of a list in the saved lists table: how many items it has and how many are done",
+      "tokens": [
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "1 artículo · {completedCount} hechos",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "sh6v4gdRf7wpDa0ViYM/5Q==": {
+      "description": "Progress of a list in the saved lists table: how many items it has and how many are done",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 artículo · 1 hecho",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FSVqTBBJQH2qUnZcYf4CpA==": {
+      "description": "Prompt asking to confirm removing a shared list from this device only",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿Olvidar?",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+RkCdNwm/+PW3kl7Rjtg5w==": {
+      "description": "Prompt asking to confirm deleting a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿Eliminar?",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "gTxVZ+b2R70IDGyff+JyQQ==": {
+      "description": "Accessible label of the button that confirms removing a shared list from this device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Confirmar olvidar {listTitle}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5jrgmWbfknMCeoIR/d1G9g==": {
+      "description": "Accessible label of the button that confirms deleting a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Confirmar eliminar {listTitle}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "S6VT4d1r907wDMtfbV9qzw==": {
+      "description": "Button that confirms deleting or forgetting a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Sí",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "QvioxEWdR/1f2pNwkmjlxw==": {
+      "description": "Accessible label of the button that cancels deleting or forgetting a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Conservar {listTitle}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "tcJw2VzkFlcQgNZPr/wu/Q==": {
+      "description": "Button that cancels deleting or forgetting a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Conservar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "OraUoDaJ9KcrbrK9Yoxjyg==": {
+      "description": "Accessible label of the button that starts removing a shared list from this device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Olvidar {listTitle}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "AgB92Wyt1kxqi0VlfYv4JA==": {
+      "description": "Accessible label of the button that starts deleting a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar {listTitle}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "M6zjU7rkeLb5CKgiLYii5A==": {
+      "description": "Button that starts removing a shared list from this device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Olvidar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Ewt6YByVQrdV4oIfSpmufQ==": {
+      "description": "Button that starts deleting a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "3+eNY/mu+d3MjyN2MxmbFA==": {
+      "description": "Accessible label of the link that opens a list from the saved lists table",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Abrir {listTitle}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "S0dr1znWc9KNmmr3EarTIQ==": {
+      "description": "Link that opens a list from the saved lists table",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Abrir →",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8nyD6FZmcZXjb2HKwUYt1Q==": {
+      "description": "Accessible label for the number of items in a list on the mobile saved lists view",
+      "tokens": [
+        "itemCount"
+      ],
+      "translations": [
+        {
+          "translation": "{itemCount} artículos",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "Te/Ucmnm3BiChHs9GXwq0g==": {
+      "description": "Accessible label for the number of items in a list on the mobile saved lists view",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 artículo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "VEz1dfXzMfc1ttT+tG5U+Q==": {
+      "description": "Accessible label for the number of done items in a list on the mobile saved lists view",
+      "tokens": [
+        "completedCount"
+      ],
+      "translations": [
+        {
+          "translation": "{completedCount} hechos",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "SzhcqfxoB4k98fV2QNw2tw==": {
+      "description": "Accessible label for the number of done items in a list on the mobile saved lists view",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 hecho",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "tenjbbwXUVk+YOE+W1+TKw==": {
+      "description": "Heading of the page that lists all of the user's shopping lists",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Tus listas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "9nonej5ZMql50YjxS3Px/Q==": {
+      "description": "Number of shopping lists shown next to the lists page heading",
+      "tokens": [
+        "listCount"
+      ],
+      "translations": [
+        {
+          "translation": "{listCount} listas",
+          "variations": {}
+        }
+      ],
+      "types": [
+        28
+      ]
+    },
+    "0wZPjaTV8FgTeYB4xApNsg==": {
+      "description": "Number of shopping lists shown next to the lists page heading",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "1 lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6IiGIo5CYh6qzQk5dMM9GA==": {
+      "description": "Screen reader caption of the mobile shopping list table",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Artículos de la lista de la compra",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5bPtkx9Vppbj81WAksisnQ==": {
+      "description": "Lowercase label above the item name field in the mobile item form",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "artículo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "SWLXUOf4YxbtS6GSFj+kWg==": {
+      "description": "Accessible label of the field that edits a shopping list item's name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editar nombre de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ulr+r4KDJRXGNFYEwprCEQ==": {
+      "description": "Lowercase label above the quantity, unit and amount each fields in the mobile item form; qty is short for quantity",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "cant. · unidad · cantidad por unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "gExuF9XFbZ9xLbnS4q0gnA==": {
+      "description": "Accessible label of the field that edits a shopping list item's quantity",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editar cantidad de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "H4istz6JRZXTQTKKKy2kyQ==": {
+      "description": "Accessible label of the field that edits a shopping list item's unit, such as box or bag",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editar unidad de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "z8PZLdzjgCEQYVhHMPxvvg==": {
+      "description": "Placeholder of the unit field, such as box or bag, when editing an item on mobile",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "YKhpVUacX4sittTX9vTGfw==": {
+      "description": "Accessible label of the field that edits the amount in each unit of a shopping list item, such as 250g",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editar cantidad por unidad de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "KuQHNHI0x6JbGbS7ekA6wA==": {
+      "description": "Placeholder of the amount each field, such as 250g, when editing an item on mobile",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Por unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fVLMyKSaiJXIcZvv3AtN8g==": {
+      "description": "Lowercase label above the category field in the mobile item form",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "categoría",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "nT+TJm0QlkXZK6cB7zJnPg==": {
+      "description": "Accessible label of the field that edits a shopping list item's category",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editar categoría de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "hdg5eFttv8wQaZmDmK+XoA==": {
+      "description": "Accessible label of the save button while a shopping list item's edits are being saved",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Guardando",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "bA7fiaxi6Zxav+nMRafzGA==": {
+      "description": "Accessible label of the button that saves edits to a shopping list item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Guardar cambios en {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "X1TpTd3JLSwp2VGFdMeMgw==": {
+      "description": "Accessible label of the button that discards edits to a shopping list item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar edición de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "WkrtThjK8kQdZdsrkgFeJQ==": {
+      "description": "Accessible label of the floating mobile button that opens the add item form",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadir artículo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "UI6DF4LNvUZaDWps8v6mmw==": {
+      "description": "Title of the mobile dialog for adding an item to the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5ICP2IumsDPpE3cL5wiXaw==": {
+      "description": "Accessible label of the button that closes the mobile add item dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cerrar artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "TT3TPTWeLwPmbaIrkXzIjQ==": {
+      "description": "Accessible label of the item name field in the mobile add item dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Artículo nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "tDZEiQv/tAH6JKp4S30NCg==": {
+      "description": "Toggle in the mobile add item dialog that keeps the dialog open after adding an item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Seguir añadiendo artículos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CcWi425NF9Px54Huv6wqFg==": {
+      "description": "Submit button text in the mobile add item dialog while the item is being added",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadiendo…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "xWQBV/dWw1Qw+IBXBWagzg==": {
+      "description": "Submit button text in the mobile add item dialog that adds the item to the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadir artículo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "qOfKGmy7LDqiV6vGOFsj9Q==": {
+      "description": "Toast shown when the text typed in the open-list search is not a valid list ID or alias",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe un ID o alias de lista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "BXA3wZ20SGUvvhRUUtkz5w==": {
+      "description": "Accessible label of the header button that opens the list search",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Abrir lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "lvAV6QzAUqLk3mtvQeM1vg==": {
+      "description": "Header button that opens the list search",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Abrir lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "qKW/pqZf2CNIMNyEnmGr8g==": {
+      "description": "Accessible label of the list search dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Abrir una lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "y7J9Mzr9KUi8t1u/cRT+XQ==": {
+      "description": "Accessible label of the search field in the open-list dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "ID o alias de la lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "njPpG0S5OWg9CCoHOIGGBA==": {
+      "description": "Placeholder of the search field in the open-list dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Buscar en tus listas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5UMFWzy90w1hgkp8Sb4+Xg==": {
+      "description": "Help text in the open-list dialog explaining what can be searched",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Busca tus listas guardadas por alias o título, o escribe el ID de una lista compartida.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "H0Tw19hRQQnrCR7Rd2PmMQ==": {
+      "description": "Example list alias in the open-list dialog; the alias itself is not translated",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ejemplo: {exampleAlias}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "sVv94XU9GkXCzZGH4h611A==": {
+      "description": "Accessible label of the suggestions menu in the open-list dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Acciones de lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fl23O8x8m0kb+CwS+lngOw==": {
+      "description": "Menu item in the open-list dialog that opens the typed list ID or alias",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Abrir lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6fVD89T+rZr1RLvih8Q3ag==": {
+      "description": "Accessible label of the dialog that confirms publishing a local list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publicar lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "QKQKSOFiKHOJmwO+EUEyig==": {
+      "description": "Title of the dialog that confirms publishing a local list so others can open it",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿Publicar esta lista?",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "WsJ7veowDHxPsxtq6EipKQ==": {
+      "description": "Explanation in the publish-list dialog of who can open a published list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cualquiera con el ID o el alias puede abrirla.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+br0L6I2Z9cv14tUDq0Dwg==": {
+      "description": "Link from the publish-list dialog to the documentation about publishing",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publicar una lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "nOtbaqIoQ6ZbOzeo0z0HvQ==": {
+      "description": "Note in the publish-list dialog when publishing also creates the user's account",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta lista estará disponible en otros dispositivos y podrás editarla allí.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "R2gmt5F2YyKHbEOJWdPwJg==": {
+      "description": "Label before the list ID in the publish-list dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "ID",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "maeEbR3z41bJhT8uBV2O0w==": {
+      "description": "Label before the list alias (a readable name used in its address) in the publish-list dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Alias",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "kEX/iguCC0s95SL0j3Ylqw==": {
+      "description": "Button that closes the publish-list dialog without publishing",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "qedTuC2xrjSzlezV7Lo+qw==": {
+      "description": "Button label while a list is being published",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publicando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Z5x5EQTD4ICjZPiWjomppA==": {
+      "description": "Button that confirms publishing a local list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publicar lista",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "qaQ7BujZuCw5r14yRhPDHw==": {
+      "description": "Status of a shopping list item that has been bought",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Comprado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fqt1PEVvs/zwoloGUbfK0w==": {
+      "description": "Status of a shopping list item that still needs to be bought",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Pendiente",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "9wNtX1wCQPU4YTDfYLZw2w==": {
+      "description": "Shopping list table column header for the row number",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "N.º",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pq5qr8VMq1/CX5ftsGGkDQ==": {
+      "description": "Shopping list table column header for the item name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Artículo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "4BQVWu8ZKFal8iZ32COtfQ==": {
+      "description": "Shopping list table column header for the item quantity, abbreviated",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cant.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "0TdbFTKUL9F0xm7PTZDudQ==": {
+      "description": "Shopping list table column header for the item's unit, such as box or bag",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "XNTEjtpc8z1BZViqznm7mA==": {
+      "description": "Shopping list table column header for the amount in each unit, such as 250g",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cantidad por unidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Gh0XNAL5rCZEZFkNQgigRw==": {
+      "description": "Lowercase placeholder in the amount each field, which may be left empty",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "opcional",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "rOLljBw/xXCeaRp4EOogLg==": {
+      "description": "Shopping list table column header for the item category",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Categoría",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pAkoHojQF0/BNLStGVrh2g==": {
+      "description": "Shopping list table column header for the user who added or last edited the item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Firmado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "HQdog8e3MH/PQl6bMjGKPQ==": {
+      "description": "Shopping list table column header for whether the item is open or purchased",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Estado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "wg3WIWt+vUtU4wWfOHeARA==": {
+      "description": "Accessible label of the button that opens a shopping list item's change history",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ver historial de {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "60lIg1Jq4iM25zhEjDOacw==": {
+      "description": "Accessible label of the button that starts editing a shopping list item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editar {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "vTMv2TcwuiM5upE3g5EYoA==": {
+      "description": "Accessible label of the button that removes a shopping list item",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Quitar {itemName}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "kFwcjqnQTC4kN3dE6NlTWA==": {
+      "description": "Mobile shopping list column header for the purchased checkbox",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Hecho",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "bnxXdcTt2fMb3ohr+M5bBw==": {
+      "description": "Mobile shopping list column header for the item's history, quantity, edit and remove buttons",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Acciones",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "cWojAnsjy1h3PUixiefDMg==": {
+      "description": "Banner at the top of spreadsheet mode explaining when edits to the shopping list are saved",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Hoja de cálculo. Los cambios se guardan al salir de una fila.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "aG5zcVHQLrQElgO3DVKeXA==": {
+      "description": "Lowercase spreadsheet mode keyboard hint: Tab moves to the next cell",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "siguiente",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "nkiCrcRvMPzvs9u/+ONF4A==": {
+      "description": "Lowercase spreadsheet mode keyboard hint: the up and down arrow keys move between rows",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "filas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "VsyapNU4H0dOrgRBlrsyPQ==": {
+      "description": "Lowercase spreadsheet mode keyboard hint: Enter moves down one row",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "abajo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8LELbkFDeVBz6ttGT+RTwA==": {
+      "description": "Lowercase spreadsheet mode keyboard hint: the shortcut deletes the current row",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "eliminar fila",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "0wznurEBYj5HFhp+5tDr/g==": {
+      "description": "Lowercase spreadsheet mode keyboard hint: Escape leaves spreadsheet mode",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "salir",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "uw7OL7ye4LFJA3X6Y0IUcw==": {
+      "description": "Lowercase spreadsheet mode keyboard hint: the shortcut focuses the item search",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "buscar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "tfg/jD+RFTbIoXeFsm9xtQ==": {
+      "description": "Lowercase spreadsheet mode keyboard hint: the shortcut focuses the add item row",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "nuevo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "RvfC43TzuykA/OgLUwCRtw==": {
+      "description": "Screen reader caption of the spreadsheet mode table",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Editor de hoja de cálculo de los artículos de la lista de la compra",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "tgToVSP1lXdyJmnfT79IiQ==": {
+      "description": "Spreadsheet mode column header for the purchased checkbox",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Hecho",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Mh9DZesXPwNLHBox5SCsHA==": {
+      "description": "Spreadsheet mode column header for the item's history and remove buttons",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Acciones",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "IdU/KR/c/w7Aevp0s9MnqQ==": {
+      "description": "Error in the user settings passkeys section when the list of passkeys fails to load",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se han podido cargar las llaves de acceso ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "c925JmN3aU8GHL5R9PWxnQ==": {
+      "description": "Validation error under the username field when saving an empty or too-long username",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usa un nombre de usuario de entre 1 y 48 caracteres.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "jhi4tIktfhLi/REmr2U7Wg==": {
+      "description": "Confirmation under the username field after the new username is saved and synced to the remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Nombre de usuario actualizado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "p7IlIS4o41MVC/NDwAYXPg==": {
+      "description": "Confirmation under the username field after the username is saved in this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Nombre de usuario guardado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "w7BkbVcv18h+hQ+Fa+gdCw==": {
+      "description": "Error under the username field when saving the username fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido guardar este usuario ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ExAsgXAT7MbR9jASl+xA0A==": {
+      "description": "Validation error in the remote account section when creating a remote user with an empty or too-long username",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe un nombre de usuario de entre 1 y 48 caracteres.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8oCO/Z4s2rrw/JXLER5PKg==": {
+      "description": "Error in the remote account section when the server rejects this browser's request to create a remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este navegador no ha podido crear el usuario remoto.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fgNbkulutr7xzXm2fxq7Gw==": {
+      "description": "Error in the remote account section when this browser's identity already has a remote user with another name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta identidad ya está vinculada a otro nombre de usuario remoto.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "e3qEI7Sy3IOKjHlTExL/ig==": {
+      "description": "Confirmation in the remote account section after a remote user is created",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuario remoto creado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CnAFubMX7gsW3QhCNO5awA==": {
+      "description": "Confirmation in the remote account section when the remote user already existed and this browser is now linked to it",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "El usuario remoto ya existe; este navegador está conectado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fdLX1sXMDf4R7fxh+Op5xg==": {
+      "description": "Error in the remote account section when creating a remote user fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido crear el usuario remoto ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "lEmXNX2S+vGp98pIAGQTQQ==": {
+      "description": "Message in the pairing section after a pairing code is generated for this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Código de vinculación creado abajo. Escríbelo en un dispositivo aprobado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "yPsVbY2UIq6Bhf5RLyZknw==": {
+      "description": "Error in the pairing section when generating a pairing code fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido crear un código de vinculación.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "2ETxoQnr1AdR/Ns/rhjI2A==": {
+      "description": "Error in the passkeys section when the server refuses to register a passkey from this device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este dispositivo no tiene permiso para añadir una llave de acceso.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "t92UmfinfcbjbKKZP+FpPA==": {
+      "description": "Error in the passkeys section when registering a new passkey fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido añadir la llave de acceso. Inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "S3UwWy28KpkLooShjAGWGA==": {
+      "description": "Confirmation in the passkeys section after a passkey is added",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Llave de acceso añadida.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ZOnG6ex8B8tj5qsMir+0ow==": {
+      "description": "Message in the passkeys section when the chosen passkey was already added to this user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esa llave de acceso ya está registrada.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "LbiKBybskC6BpkzsIDXssg==": {
+      "description": "Error in the passkeys section when the browser passkey prompt is cancelled or fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha cancelado o ha fallado la creación de la llave de acceso. Inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "2dGOJ2MzHAXDErjrWtVGtw==": {
+      "description": "Confirmation after this browser is connected to an existing remote user by passkey or pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este navegador está conectado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "aSNoK1qfWyAM95N0fRlnvg==": {
+      "description": "Error when connecting this browser with a passkey is cancelled or fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha cancelado o ha fallado el uso de la llave de acceso. Inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "XP2KhMjxwP2/wKIdVeHkdw==": {
+      "description": "Error in the pairing section when this browser fails to take over the approved remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este navegador no ha podido adoptar ese usuario.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FXqZPhOVa7qHzi1xD6CfwA==": {
+      "description": "Error in the approve-a-browser section when the entered pairing code is missing or expired",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ese código de vinculación ya no está activo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "40ZTH3oFvsWuMTgKjjfrKQ==": {
+      "description": "Error in the approve-a-browser section when the entered pairing code is malformed or cannot be looked up",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usa el código de vinculación de diez caracteres tal como aparece.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "L6Uky3tp6dgarPmVRd6c9g==": {
+      "description": "Confirmation in the approve-a-browser section after another device is approved",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha aprobado el dispositivo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CZqjFn5gOvJ0mvqE94kH1Q==": {
+      "description": "Error in the approve-a-browser section when this browser is not allowed to approve devices for the user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este navegador no es un dispositivo aceptado para ese usuario. Usa un navegador que ya esté conectado al usuario para aprobarlo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "40DEAaC5aWUuwHMiorDBKw==": {
+      "description": "Error in the approve-a-browser section when the pairing code expires before approval",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ese código de vinculación ha caducado. Crea un código nuevo e inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "7MULtqW404jReMMAJC6nmw==": {
+      "description": "Error in the approve-a-browser section when the server cannot approve the pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido aprobar el código de vinculación. Comprueba el código e inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "LAJzJWi7xOfPX8XgiUymtw==": {
+      "description": "Error in the approve-a-browser section when the approval request fails to reach the server",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ha fallado la solicitud de aprobación. Comprueba tu conexión e inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ZawHsL5XUqocGfrTVbG2Ig==": {
+      "description": "Confirmation in the accepted devices section after a device's access is revoked",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha revocado el dispositivo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "YpIpLkSa/4oFWyEt1bL0kQ==": {
+      "description": "Error in the accepted devices section when revoking a device's access fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido revocar este dispositivo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "xuBeeOc0LJ/yueBj2Du9dw==": {
+      "description": "Confirmation in the accepted devices section after a revoked device is deleted from the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se ha quitado el dispositivo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "mL0IYlVo+sFVu+0IotSS2Q==": {
+      "description": "Error in the accepted devices section when deleting a revoked device from the list fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido quitar este dispositivo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FiRWWkIpfmBFD8xDA8V8wg==": {
+      "description": "Confirmation in user settings after logging out of this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Sesión cerrada.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "JpckHjDCvEzIYmHGlKhyxg==": {
+      "description": "Error in the session section when logging out of this browser fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido cerrar sesión ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "NhGVByDjThOj7+6nbpzLiA==": {
+      "description": "Error in the local data section when clearing all local Keweke data fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se han podido borrar los datos de Keweke de este navegador.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+7PjkGKBZh+IiUVr7BtiSw==": {
+      "description": "Error in the delete remote user section when the typed confirmation does not match the username",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe el nombre de usuario remoto exactamente para confirmar la eliminación.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "IgS+YpGZBrH40vKmmvVA7g==": {
+      "description": "Error in the delete remote user section when the server refuses the deletion from this device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este dispositivo no tiene permiso para eliminar ese usuario remoto.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "OP7zJXqEyVwtNaFXkXe89g==": {
+      "description": "Error in the delete remote user section when the server deletes only part of the user's data",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido eliminar por completo el usuario remoto. Inténtalo de nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CJV/jEHeap7TFv8HQoXYDw==": {
+      "description": "Error in the delete remote user section when the deletion request fails",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No se ha podido eliminar el usuario remoto ahora mismo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ihfTWKSxCwNzzdr+T7E0Rw==": {
+      "description": "Devices table name for the device the user is using now",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8flK9MZDjhnBp+wymafMzw==": {
+      "description": "Devices table name for any device other than the one in use",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Otro dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "1NDlvDoikZxXUUmbKjhRrg==": {
+      "description": "Devices table status for a device whose access was revoked",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Revocado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5SDN/yqOdSMO/yewauKMMw==": {
+      "description": "Devices table status for a device that can still act as the user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Activo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "JLNFk9RuUGjBjVCFxyOLig==": {
+      "description": "Devices table button that confirms deleting a revoked device from the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Confirmar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "7Fhc+nijdIsZhyW2dpLo4w==": {
+      "description": "Devices table button that cancels deleting a revoked device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "u25NOw71oheVF0WAg9FutQ==": {
+      "description": "Devices table button that starts deleting a revoked device from the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "X74hbabO5GYfHVwZ8FkRfQ==": {
+      "description": "Devices table button that confirms revoking a device's access",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Confirmar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "DTQRa9FsA76hC3xpL+9Qxg==": {
+      "description": "Devices table button that cancels revoking a device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "q3OFh+/rWOfBCqtMXElErQ==": {
+      "description": "Devices table button that starts revoking a device's access",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Revocar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "EoM62cJgpzfqMAxPmvJpKQ==": {
+      "description": "Devices table column header for the device name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "tzta6UvZRMKwSvQvLLcrDw==": {
+      "description": "Devices table column header for the device's identifier",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "ID del dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "txBnsQqpz/01RQgzsykNnw==": {
+      "description": "Devices table column header for whether a device is active or revoked",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Estado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "iQddTkDDXU2CzpIDQtkb7Q==": {
+      "description": "List banner heading while this browser's local storage and identity are being set up",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Preparando este navegador",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "VXwGyVYjFg5Jt6HMFb5i+A==": {
+      "description": "List banner heading on a shared list this browser can read but not edit",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Conecta este navegador para editar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "0VTMWTKX853OsGTwgo0rnA==": {
+      "description": "List banner heading on a new local list before the user has a name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Tu lista ya está preparada",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "M1DfepNMzBdxOLb6Hy/qnQ==": {
+      "description": "List banner text while this browser's local storage is being set up",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Preparando el almacenamiento local. Tu lista estará preparada en un momento.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "rDiNYp9uH0D1PCZ3F1+vEA==": {
+      "description": "List banner text on a shared list explaining that pairing a user allows editing",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta lista compartida se puede leer aquí. Vincula un usuario aprobado para añadir, editar o marcar artículos.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ZIeqnWPUOCbiAUDxWfXVCQ==": {
+      "description": "List banner text on a new local list suggesting to add a name and publish",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esta lista se guarda en este navegador. Añade un nombre para firmar tus cambios y publícala cuando quieras.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FSyjkJKPMb/15XG/0cbrsg==": {
+      "description": "List banner button that opens pairing to connect this browser to a user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Vincular este navegador",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "l7UN6VSn7wFZnw62vIsDcQ==": {
+      "description": "List banner button that opens the dialog to choose a username",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Elige un nombre",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Frw8eb9a7cO54fch1NMhlQ==": {
+      "description": "Column header in the passkeys table for the passkey's name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Llave de acceso",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CdsYImu2CKf+J15yVYdBSQ==": {
+      "description": "Name of a passkey in the passkeys table, numbered by position",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Llave de acceso {passkeyNumber}",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "dQHUKl2sEjcyN+SxPVv9zA==": {
+      "description": "Column header in the passkeys table for the date a passkey was added",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadida",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fqSfbUltWXpX6poCRrRuxA==": {
+      "description": "Column header in the passkeys table for whether a passkey syncs across devices",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Sincronización",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "H7ivaocID17HNCdU09yF8w==": {
+      "description": "Passkeys table status for a passkey that the password manager can sync to other devices",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Se puede sincronizar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5SYG6OuFeHvkhih9nG5ijQ==": {
+      "description": "Passkeys table status for a passkey stored only on one device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ligada al dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "fxQVzIAmVThDuiuXQ2JK/Q==": {
+      "description": "Column header in user settings for the setting name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ajuste",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6RKbRI1YCvdLNxHHDbYrqQ==": {
+      "description": "Column header in user settings for each setting's description and controls",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Detalles",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Jh2HZBvpno1NWwJh5oq9Fg==": {
+      "description": "Settings row label for the app language picker",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Idioma",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+sIJcH1spxnDHRpqR30kEA==": {
+      "description": "Settings row subheading for the app language picker",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Idioma de la aplicación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "EH0c/yU66N/BJDsXhTU9rQ==": {
+      "description": "Explains the app language picker in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Keweke usa el idioma de tu navegador hasta que elijas uno aquí. La elección se guarda en este navegador.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "NLPCQhl/CFMreYWVI0/8CQ==": {
+      "description": "Settings row label for logging out of this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Sesión",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "cMYBzQhaAmmXoMUG5rsEPA==": {
+      "description": "Settings row subheading for logging out of this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cerrar sesión",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "B7I3E8R3/VQKblajn4z3nA==": {
+      "description": "Explains logging out of this browser in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Desconecta esta identidad de usuario de este navegador. Las listas y los datos locales se conservan.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "QGMLyZwFGdiZimCO1NOSnQ==": {
+      "description": "Small uppercase confirmation question shown before logging out of this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿cerrar sesión en este navegador?",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "jSw0ph45hotvPcpFh3L1ig==": {
+      "description": "Log out confirmation button label while logging out",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cerrando sesión…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "7qvA3lFniqEdCY+TImsD4g==": {
+      "description": "Button that confirms logging out of this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Sí, cerrar sesión",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "KpcXklwJw3wC4C/I2QYJ4w==": {
+      "description": "Button that cancels logging out of this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "XOA1qjQunNmeCaUB48RTTg==": {
+      "description": "Button in user settings that asks to log out of this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cerrar sesión",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "WabyJ9OcnrRMEC3aWKKrjg==": {
+      "description": "Settings row label for deleting the remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cuenta remota",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pcZ2/aIv6eFd/mcx44spIQ==": {
+      "description": "Settings row subheading for deleting the remote user and the lists it created",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar usuario y listas creadas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "EZjFIVcN/Mtkmq2kL6XkUA==": {
+      "description": "Explains what deleting the remote user removes, naming the username",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Elimina para siempre a {username} y todas las listas remotas creadas por este usuario. Las listas que solo se han compartido con este usuario se conservan para sus propietarios.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "jMXVYdBxXjFgIoYiOsZ/NA==": {
+      "description": "Label above the input where the user types their username to confirm deleting the remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe {username} para confirmar la eliminación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "3Yt4xtccR28OScl6huaxBA==": {
+      "description": "Delete remote user confirmation button label while the deletion runs",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "v49zHHbFEKjYizhtPA7cNg==": {
+      "description": "Button that confirms permanently deleting the remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar usuario remoto",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "A6qAEJMQOU5dCDtco/vtPg==": {
+      "description": "Button that cancels deleting the remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "9xv3VlnLK2aUWyIs5fcXXw==": {
+      "description": "Button in user settings that starts deleting the remote user and asks for confirmation",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Eliminar usuario remoto",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "C3Msp+gwlhVkwEwdRkH2Bg==": {
+      "description": "Settings row label for clearing Keweke data from this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Datos locales",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "EUaGVLS0ivGUpQlVn7nySg==": {
+      "description": "Settings row subheading for clearing Keweke data from this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Limpiar este navegador",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "hfNiA2e4rgOCez1j9FVa6A==": {
+      "description": "Explains what clearing local data removes in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Elimina las listas locales, la identidad de este navegador y los datos de Keweke guardados en el navegador. Las listas remotas no se eliminan.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5gdZyFpKG3BzNww5W0jOgQ==": {
+      "description": "Small uppercase confirmation question shown before clearing all local Keweke data",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿borrar todos los datos locales?",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "EyDY2NBz1ycI0fHH4O7OGg==": {
+      "description": "Clear data confirmation button label while local data is being cleared",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Borrando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "nAi891I99ECXu0+fFbYxwg==": {
+      "description": "Button that confirms clearing all local Keweke data",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Sí, borrar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "OZa1Xy5Gjxhsu2bdc22MtQ==": {
+      "description": "Button that cancels clearing local data",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cancelar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Fdn+35EwNwtsyOUalIY2kw==": {
+      "description": "Button in user settings that starts clearing local data and asks for confirmation",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Borrar datos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5BonhJ7R/8eE27ZBLRM3Rg==": {
+      "description": "Divider word between alternative ways to set up a user in the identity dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "o",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "CDCCnC7o4h6zbQWiVl1lVQ==": {
+      "description": "Accessible name of the dialog where the user names or pairs this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Identidad del dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "cpW7krnOkRS9bKg6oIIuxw==": {
+      "description": "Identity dialog title when the user must set a name before publishing a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Antes de publicar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pFc3ofVBagG4MsQSEXeG8A==": {
+      "description": "Identity dialog title when the user sets up a user for this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Identifica este navegador",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "rTFMUJZqwnKvgMQCIgz0aA==": {
+      "description": "Identity dialog heading for the name field before publishing a list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Elige tu nombre",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "v7iKJZubkHm3757j3S71Xw==": {
+      "description": "Identity dialog heading for creating a user in this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Crea un usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "ETLNmXueyMD8YEfZaAtO+Q==": {
+      "description": "Identity dialog text explaining the chosen name is shown as the list publisher",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Este nombre aparecerá como autor de la publicación de esta lista. Puedes cambiarlo más adelante.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "76aHEDQNTJNVMt8CobNtyw==": {
+      "description": "Identity dialog text explaining why to create a user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publica listas desde este navegador.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "XlA9uXO2fCft/CrGfjgBrw==": {
+      "description": "Placeholder in the empty username input",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Tu nombre",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "JfpBtvmbq3EpeWYwt+hMcg==": {
+      "description": "Identity dialog name button label while the name is being saved",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Guardando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Ha+UQ3Uc1Kvhc6Xs7TTwAw==": {
+      "description": "Identity dialog button that saves the name and continues publishing the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Continuar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "C2QfDpYseu8Mic0cs38oTw==": {
+      "description": "Identity dialog button that creates a user with the entered name",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Crear",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "OJynHhxQ43ZTRmMiDUgViA==": {
+      "description": "Link from the identity dialog to the docs page about user names",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cómo funcionan los nombres",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "QQBoK++5bebwRARteGXnzQ==": {
+      "description": "Identity dialog heading for connecting this browser to a user from another device before publishing",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Conecta otro dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "MzdFJ8kREVyiA+5cS9j8Mw==": {
+      "description": "Identity dialog heading for connecting this browser to an existing user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Vincula un usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "DY7arS5kbrO5X2KjGumMkQ==": {
+      "description": "Identity dialog text before publishing, offering to connect this browser to an existing user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿Ya usas Keweke en otro dispositivo? Conecta este navegador con una llave de acceso o un código de vinculación.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "wiJwqgmjTSu+r5QPM28p2Q==": {
+      "description": "Identity dialog text explaining pairing reuses a user from another device",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usa un usuario que ya tengas en otro dispositivo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "qLOc2N+yV2gvkrwwA3uDYw==": {
+      "description": "Identity dialog text offering to connect this browser to a user from another browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¿Ya tienes un usuario en otro navegador? Conecta este con una llave de acceso o un código de vinculación.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "kUxtlJ8X+eg3bAJFB9cK8A==": {
+      "description": "Link from the identity dialog to the docs page about pairing browsers",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cómo funciona la vinculación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pTceUSpwuLpOe22mEMBVMg==": {
+      "description": "Pair with passkey button label while waiting for the browser passkey prompt",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esperando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "He4SaRRKoAUQyf74tihRVA==": {
+      "description": "Button that connects this browser to a remote user with a saved passkey",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Vincular con llave de acceso",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "5cfJsQWcwQAf0B5Y215mCw==": {
+      "description": "Show code button label in the identity dialog while the pairing code is being created",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Creando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "LTWkKtZ175ihy365z1oKvA==": {
+      "description": "Identity dialog button that generates a pairing code for this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Mostrar código",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "16ksMg7yUvwT+6wbGyRK9A==": {
+      "description": "Label above the generated pairing code in the identity dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Código de vinculación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "J+PiMsYDjSxyjIJMi+1Qgw==": {
+      "description": "Short pairing code status in the identity dialog while waiting for another device to approve it",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esperando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "JPCLGMPh2PR91xALWkrPGQ==": {
+      "description": "Short pairing code status in the identity dialog after another device approved it",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Listo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "smvA2AMp42ge7ZaFAwmxQA==": {
+      "description": "Short pairing code status in the identity dialog after the code expired",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Caducado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "hNIGjQQ0kXz1oHxtMdU3Jw==": {
+      "description": "Short pairing code status in the identity dialog when the server no longer knows the code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "No disponible.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "UEXJJIBEdyEYcN8p75HsPw==": {
+      "description": "Short pairing code status in the identity dialog while the first status check runs",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Comprobando estado…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "EV9+LbJNNV8PaqKpQ0n9+w==": {
+      "description": "Use this username button label while this browser connects to the approved user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Guardando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "cjovl7IorF6tP1f/7M71mw==": {
+      "description": "Identity dialog button that connects this browser to the approved user and continues publishing",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Continuar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8LRGdayGHRAv1CU1W9YgEg==": {
+      "description": "Button that connects this browser to the user that approved the pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usar este nombre de usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "v1LMCqp6Utt0GY73TFj7tg==": {
+      "description": "Accessible label of the button that opens the identity dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "LTcWGN9rrFHS/bf6bL5qCg==": {
+      "description": "Label of the button that opens the identity dialog",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "9FlDDOOBP6nR7e8dor94YA==": {
+      "description": "Settings row label for the username field",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Nombre de usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "YlXdPEDeFoCdfGhIg9LyTA==": {
+      "description": "Settings row subheading explaining the username is shown on lists",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Tu nombre visible en las listas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "q+V8Y2Xrxx0gtgLkZmJbbg==": {
+      "description": "Explains the username setting in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Define el nombre asociado a tus cambios y artículos de las listas. Los cambios se sincronizan con todas las listas compartidas.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "3GuWE2hfSMVipuTvj/3DFA==": {
+      "description": "Username save button label while the username is being saved",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Guardando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pC+Oxd+AQMib6UjFAo6G4Q==": {
+      "description": "Button that saves the username in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Guardar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Nl0oL6Aor+jz3YXStiFxVw==": {
+      "description": "Settings row label for creating a remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cuenta remota",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "+3j3YngLpGCY50UfnHeBhw==": {
+      "description": "Settings row subheading for creating a remote user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usa este usuario en varios navegadores",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Nen97ETuaQHcQdKZZfKFpw==": {
+      "description": "Explains what creating a remote user does in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Crea un usuario remoto con este nombre de usuario para poder vincular otros navegadores y publicar listas sin tener que crear antes una lista.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "BaLeR+W3/yqy1PFbUGbBiQ==": {
+      "description": "Create remote user button label while the remote user is being created",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Creando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Lpk+67y2daPmpOwE+nWh3Q==": {
+      "description": "Button that creates a remote user for this browser's identity",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Crear usuario remoto",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "VhKs/Td3DuWqAMEUtYkpTg==": {
+      "description": "Settings row label for connecting this browser with a saved passkey",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Vincular con una llave de acceso",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "pDpNmwBYA6y6iOIAUfrnOQ==": {
+      "description": "Settings row subheading for connecting this browser with a saved passkey",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Conecta este navegador sin código",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "1um/RWuTZF9lWAwRe+EONA==": {
+      "description": "Explains connecting this browser to an existing remote user with a passkey",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usa una llave de acceso guardada para conectar este navegador a tu usuario remoto.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "4r5fzrjjtKz36vNOCDAdBg==": {
+      "description": "Settings row label for generating a pairing code to connect this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Vincular un navegador",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "kaOPxmK14kfMz0+19WblYw==": {
+      "description": "Settings row subheading for generating a pairing code to connect this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Para usar en otro dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "WzDRbYsf2i0XZic2rUycHg==": {
+      "description": "Explains generating a pairing code in this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Genera un código de vinculación en este navegador y apruébalo desde un dispositivo ya aceptado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "dii2TEpbHf9lbCzME+8eTQ==": {
+      "description": "Label above the generated pairing code in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Código de vinculación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "JfpNNEjWnDM30vE7CuMR5w==": {
+      "description": "Pairing code status while waiting for another device to approve it",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esperando la aprobación en tu otro dispositivo…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "jmR3VIZ+3Qj8P8sdjXc0fw==": {
+      "description": "Pairing code status after another device approved it",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "¡Dispositivo aprobado! Ya puedes conectarte.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "W4bSsoY12IboO1EmBpqDhg==": {
+      "description": "Pairing code status after the code expired",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "El código de vinculación ha caducado. Crea uno nuevo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "abSlDORecFMA5piE60zihw==": {
+      "description": "Pairing code status when the server no longer knows the code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "El código de vinculación no está disponible o ha caducado.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "jAGnmKDKgBt7vnI0qdaKjg==": {
+      "description": "Pairing code status while the first status check is running",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Comprobando el estado de la vinculación…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "uqqEQfQQrovF0/CkAUzkCQ==": {
+      "description": "Show pairing code button label while the pairing code is being created",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Creando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "HmN57XYrl0wFpjhSeqP4tg==": {
+      "description": "Button that generates a pairing code for this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Mostrar código de vinculación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "URpC5EPKxcwWsgR38XiJ9w==": {
+      "description": "Settings row label for approving another device with its pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aprobar un navegador",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "b3dOmoHrfE5n0p3TM2vQPg==": {
+      "description": "Settings row subheading for approving another device with its pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadir otro dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "bvxQ2NYmHpAvMhxXuqurww==": {
+      "description": "Explains approving another device with its pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Escribe el código de vinculación de diez caracteres que aparece en el otro dispositivo para autorizarlo.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "PG5UEPRyZ09qeMa66jrX8g==": {
+      "description": "Accessible label for the input where the user types another device's pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Código de vinculación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "kmzqKXvojQXjmStTdunrrA==": {
+      "description": "Uppercase placeholder in the empty pairing code input of the approve-a-browser section",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "CÓDIGO",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "rqxosZNX1lNq5MfhPuukzg==": {
+      "description": "Notice after a valid pairing code is found and its device awaits approval",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Hay un dispositivo nuevo esperando aprobación.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "1VOWXPL3JnhLpa3xkeR3AQ==": {
+      "description": "Approve device button label while the approval is in progress",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aprobando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "s7NJhh6W2iuZPfvHSg1KhA==": {
+      "description": "Button that approves the device waiting with the entered pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aprobar dispositivo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "K8Z+lMjFLyVZtjmuR6uODw==": {
+      "description": "Find button label while looking up the entered pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Buscando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FN+L5EaKeEpIwA50DHrbgA==": {
+      "description": "Button that looks up the device for the entered pairing code",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Buscar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "W9YCw+s5VacYPjk9WFpfoQ==": {
+      "description": "Settings row label for the list of devices allowed to act as this user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Dispositivos aceptados",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "hkNoxEmNQFicf+ox0QJTiA==": {
+      "description": "Settings row subheading for the list of devices allowed to act as this user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Gestionar dispositivos",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "PUOWVqLwneaa602VuIz97w==": {
+      "description": "Explains the accepted devices list in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Todos los dispositivos activos que pueden firmar cambios y aprobar otros dispositivos para este usuario.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "PXWUaBccufp5YUXONNu41A==": {
+      "description": "Settings row label for managing the user's passkeys",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Llaves de acceso",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "6RD0Pf3r92PpzySIlbQm3Q==": {
+      "description": "Settings row subheading for managing the user's passkeys",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Inicia sesión sin códigos de vinculación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "Tf1K0Mt0s6Ws7mrh6TmZrw==": {
+      "description": "Explains passkeys in user settings",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añade llaves de acceso a este usuario. Cada llave de acceso puede adoptar al instante un navegador nuevo sin generar códigos de vinculación.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "llqJ2ts53Hcqvq11E4S1QA==": {
+      "description": "Notice in the passkeys section when the browser does not support passkeys",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Las llaves de acceso no están disponibles en este navegador.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "F63gYsGlvsuiod5O9oiLUg==": {
+      "description": "Small uppercase loading label in the passkeys section while the user's passkeys are fetched",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cargando llaves de acceso…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "DaJGW2UtvvekwqsLR7ODsg==": {
+      "description": "Empty state in the passkeys section when the user has no passkeys",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Aún no has añadido ninguna llave de acceso.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "KEPqxGAs21u54txRDFD+Dw==": {
+      "description": "Add passkey button label while waiting for the browser passkey prompt",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Esperando…",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "zEHgcNl/Lpi5DFLc8whCjw==": {
+      "description": "Button that registers a new passkey for this user",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Añadir llave de acceso",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "PLtEVfGefr1ixu6dkvagAA==": {
+      "description": "Page title of the user settings page",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ajustes de usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "n7CEFwPEzhHAteG1fs0D0g==": {
+      "description": "Link from user settings to the docs page about user identity",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cómo funciona la identidad",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "d5Sl44vNAa9lcMe0U9Ag1Q==": {
+      "description": "Account type label in the user settings header for a user stored on the server",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuario remoto",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FHl4RzUQEW5kJZcgFFMonA==": {
+      "description": "Account type label in the user settings header for a user stored only in this browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuario local",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "8SsyHJwnF8POLz36DO79tw==": {
+      "description": "Account type label in the user settings header when no username is set",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Anónimo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "FvnSrhk3sM0wfMnFHtte+A==": {
+      "description": "Name shown in the user settings header when no username is set",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Anónimo",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "WWBeQFm+YOHjPdL85B4uHg==": {
+      "description": "Accessible label of the site header navigation landmark",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Navegación general",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "dEOJLk0iW6usRjvhRXiobw==": {
+      "description": "Accessible label of the header link to the user settings page",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "uYjFsF3f3gAdUIh1gXvDyA==": {
+      "description": "Header link label that opens the user settings page",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Usuario",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "iBucS62SoffCLYw/kofkJw==": {
+      "description": "Accessible label of the header button that publishes a local list to the server",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publicar la lista como lista remota",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "z/8WlxMrH1bJmmM/SLAbEQ==": {
+      "description": "Header publish button label while the local list is being published",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publicando",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "irJyoqV4y1h1z4UmM3aNCA==": {
+      "description": "Header button label that publishes the local list to the server",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publicar",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "sHYcli91XBuOFIeKZrzmTQ==": {
+      "description": "Accessible label of the tooltip button that hides the tip suggesting to publish the list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Descartar consejo de publicación",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "N3KIg2NDXlhcHcNoYFudpQ==": {
+      "description": "Tooltip under the header publish button suggesting to publish the local list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publica para abrir esta lista en otros dispositivos.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "qNU67BmobYiFO6hwAIDpLQ==": {
+      "description": "Link in the publish tip to the docs page about publishing lists",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Publicar listas",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "uoEf3+wEa5QAQ/vJGPgEIw==": {
+      "description": "Accessible label of the header button that copies the shared list's link",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Copiar enlace para compartir",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "mG/+yan+DPqL1WxtIOkJEQ==": {
+      "description": "Header share button label right after the list link was copied",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Copiado",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "EynN/u7PKBMYxYEhPKAvew==": {
+      "description": "Header button label that copies the shared list's link",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Compartir",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "69Myts9ArL+Cwosq56KEtg==": {
+      "description": "Accessible label of the header button that creates a new list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Crear lista nueva",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "eXY91kXTqzCSSG7tdqNtkA==": {
+      "description": "Header button label that creates a new list",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Lista nueva",
+          "variations": {}
+        }
+      ],
+      "types": []
+    }
+  }
+}

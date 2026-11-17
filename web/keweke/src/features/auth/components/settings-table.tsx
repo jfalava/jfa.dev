@@ -5,7 +5,8 @@ import {
   tableFeatures,
   useTable,
 } from "@tanstack/react-table";
-import { type ReactNode } from "react";
+import { fbs } from "fbtee";
+import { type ReactNode, useMemo } from "react";
 
 export type SettingsSectionRow = {
   action?: ReactNode;
@@ -54,54 +55,61 @@ function joinClassNames(...classNames: Array<string | undefined>): string | unde
   return className || undefined;
 }
 
-const settingsColumns = settingsColumnHelper.columns([
-  settingsColumnHelper.display({
-    id: "setting",
-    header: "Setting",
-    cell: ({ row }) => (
-      <div className="space-y-1">
-        <p
-          className={
-            row.original.eyebrowTone === "destructive"
-              ? "text-sm font-medium text-destructive"
-              : "text-sm font-medium"
-          }
-        >
-          {row.original.eyebrow}
-        </p>
-        <p className="text-xs text-muted-foreground">{row.original.subheading}</p>
-      </div>
-    ),
-  }),
-  settingsColumnHelper.display({
-    id: "details",
-    header: "Details",
-    cell: ({ row }) => (
-      <div>
-        <p className="text-sm text-muted-foreground">{row.original.description}</p>
-        <div className="mt-3">{row.original.content}</div>
-        {row.original.action ? (
-          <div className="mt-3 sm:hidden [&_button]:w-full">{row.original.action}</div>
-        ) : null}
-      </div>
-    ),
-  }),
-  settingsColumnHelper.display({
-    id: "action",
-    header: "",
-    size: SETTINGS_ACTION_COLUMN_SIZE,
-    cell: ({ row }) =>
-      row.original.action ? (
-        <div className="w-full [&_button]:w-full">{row.original.action}</div>
-      ) : null,
-  }),
-]);
+function createSettingsColumns() {
+  return settingsColumnHelper.columns([
+    settingsColumnHelper.display({
+      id: "setting",
+      header: fbs("Setting", "Column header in user settings for the setting name"),
+      cell: ({ row }) => (
+        <div className="space-y-1">
+          <p
+            className={
+              row.original.eyebrowTone === "destructive"
+                ? "text-sm font-medium text-destructive"
+                : "text-sm font-medium"
+            }
+          >
+            {row.original.eyebrow}
+          </p>
+          <p className="text-xs text-muted-foreground">{row.original.subheading}</p>
+        </div>
+      ),
+    }),
+    settingsColumnHelper.display({
+      id: "details",
+      header: fbs(
+        "Details",
+        "Column header in user settings for each setting's description and controls",
+      ),
+      cell: ({ row }) => (
+        <div>
+          <p className="text-sm text-muted-foreground">{row.original.description}</p>
+          <div className="mt-3">{row.original.content}</div>
+          {row.original.action ? (
+            <div className="mt-3 sm:hidden [&_button]:w-full">{row.original.action}</div>
+          ) : null}
+        </div>
+      ),
+    }),
+    settingsColumnHelper.display({
+      id: "action",
+      header: "",
+      size: SETTINGS_ACTION_COLUMN_SIZE,
+      cell: ({ row }) =>
+        row.original.action ? (
+          <div className="w-full [&_button]:w-full">{row.original.action}</div>
+        ) : null,
+    }),
+  ]);
+}
 
 export function SettingsTable({ rows }: { rows: SettingsSectionRow[] }) {
+  // Headers are translated at render; changing the locale reloads the page.
+  const columns = useMemo(() => createSettingsColumns(), []);
   const table = useTable({
     features: settingsTableFeatures,
     data: rows,
-    columns: settingsColumns,
+    columns,
     getRowId: (row) => row.id,
   });
 

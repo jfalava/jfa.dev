@@ -1,4 +1,5 @@
 import { Button, Input, TableCell, Toggle } from "@jfa.dev/common/ui";
+import { fbs } from "fbtee";
 import { Plus, Save, X } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogTrigger, Modal, ModalOverlay } from "react-aria-components";
@@ -41,7 +42,11 @@ export function MobileShoppingTable({
   return (
     <div className="md:hidden">
       <table className="w-full border-collapse [&_td:first-child]:pl-4 sm:[&_td:first-child]:pl-6 lg:[&_td:first-child]:pl-8 [&_td:last-child]:pr-4 sm:[&_td:last-child]:pr-6 lg:[&_td:last-child]:pr-8 [&_th:first-child]:pl-4 sm:[&_th:first-child]:pl-6 lg:[&_th:first-child]:pl-8 [&_th:last-child]:pr-4 sm:[&_th:last-child]:pr-6 lg:[&_th:last-child]:pr-8">
-        <caption className="sr-only">Shopping list items</caption>
+        <caption className="sr-only">
+          <fbt desc="Screen reader caption of the mobile shopping list table">
+            Shopping list items
+          </fbt>
+        </caption>
         <thead className="sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -75,10 +80,17 @@ export function MobileShoppingTable({
                           className="flex min-w-0 flex-col gap-1"
                           htmlFor={`mobile-edit-name-${row.original.id}`}
                         >
-                          <span className="type-label text-muted-foreground">item</span>
+                          <span className="type-label text-muted-foreground">
+                            <fbt desc="Lowercase label above the item name field in the mobile item form">
+                              item
+                            </fbt>
+                          </span>
                           <Input
                             id={`mobile-edit-name-${row.original.id}`}
-                            aria-label={`Edit ${row.original.name} name`}
+                            aria-label={fbs(
+                              `Edit ${fbs.param("itemName", row.original.name)} name`,
+                              "Accessible label of the field that edits a shopping list item's name",
+                            )}
                             aria-describedby={
                               editErrors?.name
                                 ? `mobile-edit-name-error-${row.original.id}`
@@ -93,17 +105,22 @@ export function MobileShoppingTable({
                           {editErrors?.name ? (
                             <ItemFieldError
                               id={`mobile-edit-name-error-${row.original.id}`}
-                              message={editErrors.name}
+                              problem={editErrors.name}
                             />
                           ) : null}
                         </label>
                         <div className="flex min-w-0 flex-col gap-1">
                           <span className="type-label text-muted-foreground">
-                            qty · unit · amount each
+                            <fbt desc="Lowercase label above the quantity, unit and amount each fields in the mobile item form; qty is short for quantity">
+                              qty · unit · amount each
+                            </fbt>
                           </span>
                           <div className="flex min-w-0 items-center gap-1">
                             <Input
-                              aria-label={`Edit ${row.original.name} quantity`}
+                              aria-label={fbs(
+                                `Edit ${fbs.param("itemName", row.original.name)} quantity`,
+                                "Accessible label of the field that edits a shopping list item's quantity",
+                              )}
                               aria-describedby={
                                 editErrors?.quantity
                                   ? `mobile-edit-quantity-error-${row.original.id}`
@@ -126,7 +143,10 @@ export function MobileShoppingTable({
                               }
                             />
                             <Input
-                              aria-label={`Edit ${row.original.name} unit`}
+                              aria-label={fbs(
+                                `Edit ${fbs.param("itemName", row.original.name)} unit`,
+                                "Accessible label of the field that edits a shopping list item's unit, such as box or bag",
+                              )}
                               aria-describedby={
                                 editErrors?.unit
                                   ? `mobile-edit-unit-error-${row.original.id}`
@@ -136,11 +156,17 @@ export function MobileShoppingTable({
                               className="h-9 min-w-0 flex-1 font-serif text-base"
                               maxLength={32}
                               onChange={(event) => onEditDraftChange("unit", event.target.value)}
-                              placeholder="Unit"
+                              placeholder={fbs(
+                                "Unit",
+                                "Placeholder of the unit field, such as box or bag, when editing an item on mobile",
+                              )}
                               value={editDraft?.unit ?? row.original.unit}
                             />
                             <Input
-                              aria-label={`Edit ${row.original.name} amount each`}
+                              aria-label={fbs(
+                                `Edit ${fbs.param("itemName", row.original.name)} amount each`,
+                                "Accessible label of the field that edits the amount in each unit of a shopping list item, such as 250g",
+                              )}
                               aria-describedby={
                                 editErrors?.amount
                                   ? `mobile-edit-amount-error-${row.original.id}`
@@ -150,7 +176,10 @@ export function MobileShoppingTable({
                               className="h-9 min-w-0 flex-1 font-serif text-base"
                               maxLength={64}
                               onChange={(event) => onEditDraftChange("amount", event.target.value)}
-                              placeholder="Each"
+                              placeholder={fbs(
+                                "Each",
+                                "Placeholder of the amount each field, such as 250g, when editing an item on mobile",
+                              )}
                               value={editDraft?.amount ?? row.original.amount}
                             />
                           </div>
@@ -159,19 +188,19 @@ export function MobileShoppingTable({
                               {editErrors?.quantity ? (
                                 <ItemFieldError
                                   id={`mobile-edit-quantity-error-${row.original.id}`}
-                                  message={editErrors.quantity}
+                                  problem={editErrors.quantity}
                                 />
                               ) : null}
                               {editErrors?.unit ? (
                                 <ItemFieldError
                                   id={`mobile-edit-unit-error-${row.original.id}`}
-                                  message={editErrors.unit}
+                                  problem={editErrors.unit}
                                 />
                               ) : null}
                               {editErrors?.amount ? (
                                 <ItemFieldError
                                   id={`mobile-edit-amount-error-${row.original.id}`}
-                                  message={editErrors.amount}
+                                  problem={editErrors.amount}
                                 />
                               ) : null}
                             </div>
@@ -181,10 +210,17 @@ export function MobileShoppingTable({
                           className="flex min-w-0 flex-col gap-1"
                           htmlFor={`mobile-edit-category-${row.original.id}`}
                         >
-                          <span className="type-label text-muted-foreground">category</span>
+                          <span className="type-label text-muted-foreground">
+                            <fbt desc="Lowercase label above the category field in the mobile item form">
+                              category
+                            </fbt>
+                          </span>
                           <Input
                             id={`mobile-edit-category-${row.original.id}`}
-                            aria-label={`Edit ${row.original.name} category`}
+                            aria-label={fbs(
+                              `Edit ${fbs.param("itemName", row.original.name)} category`,
+                              "Accessible label of the field that edits a shopping list item's category",
+                            )}
                             aria-describedby={
                               editErrors?.category
                                 ? `mobile-edit-category-error-${row.original.id}`
@@ -199,14 +235,22 @@ export function MobileShoppingTable({
                           {editErrors?.category ? (
                             <ItemFieldError
                               id={`mobile-edit-category-error-${row.original.id}`}
-                              message={editErrors.category}
+                              problem={editErrors.category}
                             />
                           ) : null}
                         </label>
                         <div className="flex gap-2 pt-1">
                           <Button
                             aria-label={
-                              isSaving ? "Saving" : `Save changes to ${row.original.name}`
+                              isSaving
+                                ? fbs(
+                                    "Saving",
+                                    "Accessible label of the save button while a shopping list item's edits are being saved",
+                                  )
+                                : fbs(
+                                    `Save changes to ${fbs.param("itemName", row.original.name)}`,
+                                    "Accessible label of the button that saves edits to a shopping list item",
+                                  )
                             }
                             className="h-11 flex-1"
                             isDisabled={isSaving}
@@ -215,7 +259,10 @@ export function MobileShoppingTable({
                             <Save />
                           </Button>
                           <Button
-                            aria-label={`Cancel editing ${row.original.name}`}
+                            aria-label={fbs(
+                              `Cancel editing ${fbs.param("itemName", row.original.name)}`,
+                              "Accessible label of the button that discards edits to a shopping list item",
+                            )}
                             className="size-11"
                             isDisabled={isSaving}
                             onPress={onCancelEditing}
@@ -304,7 +351,10 @@ export function MobileNewItemDialog({
   return (
     <DialogTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
       <Button
-        aria-label="Add item"
+        aria-label={fbs(
+          "Add item",
+          "Accessible label of the floating mobile button that opens the add item form",
+        )}
         className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 size-14 rounded-full shadow-lg transition-transform active:scale-95 md:hidden"
       >
         <Plus aria-hidden="true" className="size-6" />
@@ -315,11 +365,22 @@ export function MobileNewItemDialog({
         isKeyboardDismissDisabled={isAdding}
       >
         <Modal className="relative flex max-h-full min-h-0 w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-background text-foreground shadow-xl outline-none">
-          <Dialog aria-label="New item" className="flex min-h-0 flex-auto flex-col outline-none">
+          <Dialog
+            aria-label={fbs(
+              "New item",
+              "Title of the mobile dialog for adding an item to the list",
+            )}
+            className="flex min-h-0 flex-auto flex-col outline-none"
+          >
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border py-1 pr-1 pl-4">
-              <span className="type-compact font-medium">New item</span>
+              <span className="type-compact font-medium">
+                <fbt desc="Title of the mobile dialog for adding an item to the list">New item</fbt>
+              </span>
               <Button
-                aria-label="Close new item"
+                aria-label={fbs(
+                  "Close new item",
+                  "Accessible label of the button that closes the mobile add item dialog",
+                )}
                 className="size-8 rounded-full p-0"
                 isDisabled={isAdding}
                 slot="close"
@@ -342,10 +403,17 @@ export function MobileNewItemDialog({
                   disabled={isAdding}
                 >
                   <label className="flex min-w-0 flex-col gap-1" htmlFor="new-item-mobile">
-                    <span className="type-label text-muted-foreground">item</span>
+                    <span className="type-label text-muted-foreground">
+                      <fbt desc="Lowercase label above the item name field in the mobile item form">
+                        item
+                      </fbt>
+                    </span>
                     <Input
                       id="new-item-mobile"
-                      aria-label="New item"
+                      aria-label={fbs(
+                        "New item",
+                        "Accessible label of the item name field in the mobile add item dialog",
+                      )}
                       aria-describedby={errors.name ? "new-item-mobile-name-error" : undefined}
                       aria-invalid={errors.name ? true : undefined}
                       autoComplete="off"
@@ -353,11 +421,14 @@ export function MobileNewItemDialog({
                       maxLength={200}
                       name="shopping-item"
                       onChange={(event) => onChange("name", event.target.value)}
-                      placeholder="microwave popcorn"
+                      placeholder={fbs(
+                        "microwave popcorn",
+                        "Lowercase example item name shown as the placeholder of the add item name field",
+                      )}
                       value={newItem.name}
                     />
                     {errors.name ? (
-                      <ItemFieldError id="new-item-mobile-name-error" message={errors.name} />
+                      <ItemFieldError id="new-item-mobile-name-error" problem={errors.name} />
                     ) : null}
                     <InventoryMatchNotice
                       id="new-item-mobile-inventory-match"
@@ -366,11 +437,16 @@ export function MobileNewItemDialog({
                   </label>
                   <div className="flex min-w-0 flex-col gap-1">
                     <span className="type-label text-muted-foreground">
-                      qty · unit · amount each
+                      <fbt desc="Lowercase label above the quantity, unit and amount each fields in the mobile item form; qty is short for quantity">
+                        qty · unit · amount each
+                      </fbt>
                     </span>
                     <div className="flex min-w-0 items-center gap-1">
                       <Input
-                        aria-label="New item quantity"
+                        aria-label={fbs(
+                          "New item quantity",
+                          "Accessible label of the quantity field in the add item row",
+                        )}
                         aria-describedby={
                           errors.quantity ? "new-item-mobile-quantity-error" : undefined
                         }
@@ -388,17 +464,26 @@ export function MobileNewItemDialog({
                         />
                       </span>
                       <Input
-                        aria-label="New item unit"
+                        aria-label={fbs(
+                          "New item unit",
+                          "Accessible label of the unit field, such as box or bag, in the add item row",
+                        )}
                         aria-describedby={errors.unit ? "new-item-mobile-unit-error" : undefined}
                         aria-invalid={errors.unit ? true : undefined}
                         className="h-9 min-w-0 flex-1 font-serif text-base"
                         maxLength={32}
                         onChange={(event) => onChange("unit", event.target.value)}
-                        placeholder="box"
+                        placeholder={fbs(
+                          "box",
+                          "Lowercase example unit shown as the placeholder of the add item unit field",
+                        )}
                         value={newItem.unit}
                       />
                       <Input
-                        aria-label="New item amount each"
+                        aria-label={fbs(
+                          "New item amount each",
+                          "Accessible label of the field for the amount in each unit, such as 250g, in the add item row",
+                        )}
                         aria-describedby={
                           errors.amount ? "new-item-mobile-amount-error" : undefined
                         }
@@ -406,7 +491,10 @@ export function MobileNewItemDialog({
                         className="h-9 min-w-0 flex-1 font-serif text-base"
                         maxLength={64}
                         onChange={(event) => onChange("amount", event.target.value)}
-                        placeholder="3 bags"
+                        placeholder={fbs(
+                          "3 bags",
+                          "Lowercase example amount shown as the placeholder of the add item amount each field",
+                        )}
                         value={newItem.amount}
                       />
                     </div>
@@ -415,26 +503,33 @@ export function MobileNewItemDialog({
                         {errors.quantity ? (
                           <ItemFieldError
                             id="new-item-mobile-quantity-error"
-                            message={errors.quantity}
+                            problem={errors.quantity}
                           />
                         ) : null}
                         {errors.unit ? (
-                          <ItemFieldError id="new-item-mobile-unit-error" message={errors.unit} />
+                          <ItemFieldError id="new-item-mobile-unit-error" problem={errors.unit} />
                         ) : null}
                         {errors.amount ? (
                           <ItemFieldError
                             id="new-item-mobile-amount-error"
-                            message={errors.amount}
+                            problem={errors.amount}
                           />
                         ) : null}
                       </div>
                     ) : null}
                   </div>
                   <label className="flex min-w-0 flex-col gap-1" htmlFor="new-category-mobile">
-                    <span className="type-label text-muted-foreground">category</span>
+                    <span className="type-label text-muted-foreground">
+                      <fbt desc="Lowercase label above the category field in the mobile item form">
+                        category
+                      </fbt>
+                    </span>
                     <Input
                       id="new-category-mobile"
-                      aria-label="New item category"
+                      aria-label={fbs(
+                        "New item category",
+                        "Accessible label of the category field in the add item row",
+                      )}
                       aria-describedby={
                         errors.category ? "new-item-mobile-category-error" : undefined
                       }
@@ -447,7 +542,7 @@ export function MobileNewItemDialog({
                     {errors.category ? (
                       <ItemFieldError
                         id="new-item-mobile-category-error"
-                        message={errors.category}
+                        problem={errors.category}
                       />
                     ) : null}
                   </label>
@@ -461,7 +556,9 @@ export function MobileNewItemDialog({
                   onChange={onKeepAddingChange}
                   variant="outline"
                 >
-                  Keep adding items
+                  <fbt desc="Toggle in the mobile add item dialog that keeps the dialog open after adding an item">
+                    Keep adding items
+                  </fbt>
                 </Toggle>
                 <Button
                   className="h-8 gap-1 px-2 text-xs active:scale-[0.98]"
@@ -469,7 +566,15 @@ export function MobileNewItemDialog({
                   type="submit"
                 >
                   <Plus aria-hidden="true" />
-                  {isAdding ? "Adding…" : "Add item"}
+                  {isAdding ? (
+                    <fbt desc="Submit button text in the mobile add item dialog while the item is being added">
+                      Adding…
+                    </fbt>
+                  ) : (
+                    <fbt desc="Submit button text in the mobile add item dialog that adds the item to the list">
+                      Add item
+                    </fbt>
+                  )}
                 </Button>
               </div>
             </form>

@@ -1,6 +1,7 @@
 import type { ListSummary } from "@jfa.dev/common/lists";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { fbs } from "fbtee";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -93,8 +94,14 @@ function EmptyState() {
     } catch {
       toast.error(
         list.backend === "local"
-          ? "Could not delete that local list."
-          : "Could not remove that remote list.",
+          ? fbs(
+              "Could not delete that local list.",
+              "Toast shown when deleting a list stored only on this device fails",
+            )
+          : fbs(
+              "Could not remove that remote list.",
+              "Toast shown when removing a shared list from the user's lists fails",
+            ),
       );
     } finally {
       setDeletingListId(undefined);
@@ -136,7 +143,11 @@ function EmptyState() {
           <ListsPageHeader listCount={lists.length} />
 
           {isLoading ? (
-            <p className="page-gutters py-10 text-sm text-muted-foreground">Loading lists…</p>
+            <p className="page-gutters py-10 text-sm text-muted-foreground">
+              <fbt desc="Placeholder shown on the home page while the user's lists are loading">
+                Loading lists…
+              </fbt>
+            </p>
           ) : lists.length > 0 ? (
             <>
               <ListsCatalog

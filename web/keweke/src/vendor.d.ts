@@ -1,3 +1,5 @@
+/// <reference types="fbtee/ReactTypes.d.ts" />
+
 /**
  * Type declarations for untyped runtime dependencies.
  */

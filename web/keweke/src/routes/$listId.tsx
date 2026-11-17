@@ -6,6 +6,7 @@ import {
 } from "@jfa.dev/common/lists";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import { fbs } from "fbtee";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { uuidv7 } from "uuidv7";
@@ -56,7 +57,7 @@ import {
   listLocalLists,
   subscribeToLocalLists,
 } from "@/features/lists/lib/local-list-store";
-import { listShareDescription, type ListShareMeta } from "@/features/lists/lib/share-meta";
+import type { ListShareMeta } from "@/features/lists/lib/share-meta";
 import { getListShareMeta, getRemoteList } from "@/features/lists/server/lists";
 import { useRemoteListLiveSession } from "@/features/sync/hooks/use-remote-list-live";
 
@@ -76,6 +77,20 @@ type ListSearch = {
 type ValidatedListSearch = {
   tab?: "inventory";
 };
+
+/** Page and link-preview description of a list, in the request's locale. */
+function listShareDescription(meta: ListShareMeta): string {
+  if (meta.itemCount === 0) {
+    return fbs(
+      "No items yet — add your first item to this shared shopping list.",
+      "Link-preview description of a shared shopping list that has no items",
+    );
+  }
+  return fbs(
+    `${fbs.plural("item", meta.itemCount, { many: "items", name: "itemCount", showCount: "yes" })} · ${fbs.param("doneCount", meta.completedCount)} done`,
+    "Link-preview description of a shared shopping list: its item count and how many are done",
+  );
+}
 
 export const Route = createFileRoute("/$listId")({
   validateSearch: (search: ListSearch): ValidatedListSearch =>
@@ -119,9 +134,12 @@ function announceMovedToList(before: ListItem | undefined, committed: ListSnapsh
   const after = committed?.items.find((item) => item.id === before?.id);
   if (before?.checked && after && !after.checked) {
     toast.success(
-      <>
-        <QuotedItemName name={before.name} /> ran out · moved to the list.
-      </>,
+      <fbt desc="Toast shown when an inventory item's quantity reaches zero and it moves back to the shopping list">
+        <fbt:param name="itemName">
+          <QuotedItemName name={before.name} />
+        </fbt:param>{" "}
+        ran out · moved to the list.
+      </fbt>,
     );
   }
 }
@@ -214,11 +232,13 @@ function ListPage() {
       }
       return;
     }
-    const spreadsheetElement = document.querySelector<HTMLInputElement>(
-      `[data-spreadsheet-row-id="${NEW_SPREADSHEET_ROW_ID}"][data-spreadsheet-field="name"]`,
-    );
+    const spreadsheetSelector = `[data-spreadsheet-row-id="${NEW_SPREADSHEET_ROW_ID}"][data-spreadsheet-field="name"]`;
+    const spreadsheetElement = document.querySelector<HTMLInputElement>(spreadsheetSelector);
+    // Matched by id and data attributes rather than the translated aria-label.
     const candidates = Array.from(
-      document.querySelectorAll<HTMLInputElement>('input[aria-label="New item name"]'),
+      document.querySelectorAll<HTMLInputElement>(
+        `input#new-item-desktop, input${spreadsheetSelector}`,
+      ),
     );
     const visibleCandidates = candidates.filter(
       (element) => element.offsetParent !== null && !element.disabled,
@@ -270,7 +290,12 @@ function ListPage() {
       .catch(() => {
         if (!cancelled) {
           setLoadedList(undefined);
-          setUnavailableReason("This list could not be opened.");
+          setUnavailableReason(
+            fbs(
+              "This list could not be opened.",
+              "Message on the list page when loading the list failed",
+            ),
+          );
           setLoadedRequestId(listId);
         }
       });
@@ -354,7 +379,12 @@ function ListPage() {
         });
       },
       onDeleted: () => {
-        toast.info("This list no longer exists.");
+        toast.info(
+          fbs(
+            "This list no longer exists.",
+            "Toast shown when the open shopping list was deleted, before returning to the lists page",
+          ),
+        );
         void navigate({ to: "/" });
       },
     },
@@ -370,7 +400,12 @@ function ListPage() {
     try {
       const outcome = await refreshLiveSession();
       if (outcome === "reconnected") {
-        toast.success("Live updates reconnected.");
+        toast.success(
+          fbs(
+            "Live updates reconnected.",
+            "Toast shown when refreshing a shared list restores its live connection",
+          ),
+        );
         return;
       }
 
@@ -384,11 +419,21 @@ function ListPage() {
       }
       if (!listStillExists) {
         await deleteLocalList(remoteListId);
-        toast.info("This list no longer exists.");
+        toast.info(
+          fbs(
+            "This list no longer exists.",
+            "Toast shown when the open shopping list was deleted, before returning to the lists page",
+          ),
+        );
         await navigate({ to: "/" });
         return;
       }
-      toast.error("Could not restore live updates for this list.");
+      toast.error(
+        fbs(
+          "Could not restore live updates for this list.",
+          "Toast shown when refreshing a shared list fails to restore its live connection",
+        ),
+      );
       await navigate({ to: "/" });
     } finally {
       setIsRefreshing(false);
@@ -425,16 +470,31 @@ function ListPage() {
           setUserDialogMessage(undefined);
           setIsUserDialogOpen(true);
         } else {
-          toast.error("Could not save this change. Please try again.");
+          toast.error(
+            fbs(
+              "Could not save this change. Please try again.",
+              "Toast shown when saving a change to the shopping list fails",
+            ),
+          );
         }
         return null;
       }
       if (result.status === "missing") {
-        toast.error("This list no longer exists.");
+        toast.error(
+          fbs(
+            "This list no longer exists.",
+            "Error toast shown when a change cannot be saved because the shopping list was deleted",
+          ),
+        );
         return null;
       }
       if (result.status === "unauthorized") {
-        toast.error("This user is not allowed to change the remote list.");
+        toast.error(
+          fbs(
+            "This user is not allowed to change the remote list.",
+            "Toast shown when the current user lacks permission to change a shared list",
+          ),
+        );
         return null;
       }
 
@@ -446,7 +506,12 @@ function ListPage() {
           : current,
       );
       if (result.status === "conflict") {
-        toast.error("This list changed elsewhere. Your view was refreshed.");
+        toast.error(
+          fbs(
+            "This list changed elsewhere. Your view was refreshed.",
+            "Toast shown when a change conflicts with an edit made on another device and the list is reloaded",
+          ),
+        );
         return null;
       }
       return result.snapshot;
@@ -464,15 +529,30 @@ function ListPage() {
     try {
       const result = await migrateList(loadedList.snapshot);
       if (result.status === "unauthorized") {
-        setPublishError("Could not finish publishing this list. Try again.");
+        setPublishError(
+          fbs(
+            "Could not finish publishing this list. Try again.",
+            "Error in the publish-list dialog when the server rejects publishing",
+          ),
+        );
         return;
       }
       if (result.status === "conflict") {
-        setPublishError("A remote list already exists for this identifier.");
+        setPublishError(
+          fbs(
+            "A remote list already exists for this identifier.",
+            "Error in the publish-list dialog when a shared list with the same ID already exists",
+          ),
+        );
         return;
       }
       if (result.status === "alias-conflict") {
-        setPublishError("That friendly address is already in use. Choose another one.");
+        setPublishError(
+          fbs(
+            "That friendly address is already in use. Choose another one.",
+            "Error in the publish-list dialog when the list's readable web address is taken",
+          ),
+        );
         return;
       }
 
@@ -480,7 +560,10 @@ function ListPage() {
       setIsPublishConfirmOpen(false);
     } catch {
       setPublishError(
-        "Could not publish this list right now. Check your connection and try again.",
+        fbs(
+          "Could not publish this list right now. Check your connection and try again.",
+          "Error in the publish-list dialog when the publish request fails, likely offline",
+        ),
       );
     } finally {
       setIsMigrating(false);
@@ -490,7 +573,12 @@ function ListPage() {
   const requestMigration = useCallback((): void => {
     if (!identity?.username) {
       setUserDialogPurpose("publish");
-      setUserDialogMessage("Choose a name to continue.");
+      setUserDialogMessage(
+        fbs(
+          "Choose a name to continue.",
+          "Message in the user dialog asking the user to pick a username before publishing a list",
+        ),
+      );
       setIsUserDialogOpen(true);
       return;
     }
@@ -558,13 +646,23 @@ function ListPage() {
               });
             }
           } catch {
-            toast.error("Could not create that friendly address. Try a few letters or numbers.");
+            toast.error(
+              fbs(
+                "Could not create that friendly address. Try a few letters or numbers.",
+                "Toast shown when renaming a list cannot create a readable web address from the new title",
+              ),
+            );
           }
         }
 
         return true;
       } catch {
-        toast.error("Could not save the list title right now.");
+        toast.error(
+          fbs(
+            "Could not save the list title right now.",
+            "Toast shown when renaming the shopping list fails",
+          ),
+        );
         return false;
       } finally {
         setIsRenaming(false);
@@ -594,7 +692,12 @@ function ListPage() {
         announceMovedToList(item, committed);
         return committed !== null;
       } catch {
-        toast.error("Could not save the item right now.");
+        toast.error(
+          fbs(
+            "Could not save the item right now.",
+            "Toast shown when saving edits to a shopping list item fails",
+          ),
+        );
         return false;
       }
     },
@@ -620,21 +723,40 @@ function ListPage() {
         if (committed && item) {
           if (command.type === "restore-item") {
             toast.success(
-              <>
-                <QuotedItemName name={item.name} /> restored to{" "}
-                {item.checked ? "inventory" : "the list"}.
-              </>,
+              item.checked ? (
+                <fbt desc="Toast shown when a deleted item is restored from history back into the inventory of purchased items">
+                  <fbt:param name="itemName">
+                    <QuotedItemName name={item.name} />
+                  </fbt:param>{" "}
+                  restored to inventory.
+                </fbt>
+              ) : (
+                <fbt desc="Toast shown when a deleted item is restored from history back onto the shopping list">
+                  <fbt:param name="itemName">
+                    <QuotedItemName name={item.name} />
+                  </fbt:param>{" "}
+                  restored to the list.
+                </fbt>
+              ),
             );
           } else if (command.type === "purge-deleted-item") {
             toast.success(
-              <>
-                <QuotedItemName name={item.name} /> permanently deleted.
-              </>,
+              <fbt desc="Toast shown when an item is removed forever from the deleted-items history">
+                <fbt:param name="itemName">
+                  <QuotedItemName name={item.name} />
+                </fbt:param>{" "}
+                permanently deleted.
+              </fbt>,
             );
           }
         }
       } catch {
-        toast.error("Could not update deleted-item history right now.");
+        toast.error(
+          fbs(
+            "Could not update deleted-item history right now.",
+            "Toast shown when restoring or permanently deleting an item from the deleted-items history fails",
+          ),
+        );
       } finally {
         setBusyArchiveId(undefined);
       }
@@ -678,9 +800,12 @@ function ListPage() {
         }
       }
       toast.success(
-        <>
-          <QuotedItemName name={name} /> added to the list.
-        </>,
+        <fbt desc="Toast shown after a new item is added to the shopping list">
+          <fbt:param name="itemName">
+            <QuotedItemName name={name} />
+          </fbt:param>{" "}
+          added to the list.
+        </fbt>,
       );
       return true;
     },
@@ -737,10 +862,21 @@ function ListPage() {
       const committed = await commit({ type: "set-item-checked", itemId: id, checked });
       if (committed && item) {
         toast.success(
-          <>
-            <QuotedItemName name={item.name} />{" "}
-            {checked ? "purchased · moved to inventory." : "restored to the list."}
-          </>,
+          checked ? (
+            <fbt desc="Toast shown when an item is checked off as purchased and moves to the inventory">
+              <fbt:param name="itemName">
+                <QuotedItemName name={item.name} />
+              </fbt:param>{" "}
+              purchased · moved to inventory.
+            </fbt>
+          ) : (
+            <fbt desc="Toast shown when a purchased item is unchecked and moves from the inventory back to the shopping list">
+              <fbt:param name="itemName">
+                <QuotedItemName name={item.name} />
+              </fbt:param>{" "}
+              restored to the list.
+            </fbt>
+          ),
         );
       }
       return committed !== null;
@@ -772,9 +908,12 @@ function ListPage() {
       void commit({ type: "remove-item", itemId: id }).then((committed) => {
         if (committed && item) {
           toast.success(
-            <>
-              <QuotedItemName name={item.name} /> deleted.
-            </>,
+            <fbt desc="Toast shown after an item is deleted from the shopping list or inventory">
+              <fbt:param name="itemName">
+                <QuotedItemName name={item.name} />
+              </fbt:param>{" "}
+              deleted.
+            </fbt>,
           );
         }
         return undefined;
@@ -814,7 +953,9 @@ function ListPage() {
         <KewekeHeader listId={listId} />
         <div className="app-frame flex min-h-0 flex-1 flex-col bg-background">
           <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain page-gutters py-6">
-            <p className="text-sm text-muted-foreground">Loading list…</p>
+            <p className="text-sm text-muted-foreground">
+              <fbt desc="Placeholder shown while a shopping list is loading">Loading list…</fbt>
+            </p>
           </main>
         </div>
       </div>
@@ -828,10 +969,17 @@ function ListPage() {
         <div className="app-frame flex min-h-0 flex-1 flex-col bg-background">
           <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain page-gutters py-6">
             <section className="max-w-prose">
-              <h1 className="type-page-title">This list isn&apos;t here</h1>
+              <h1 className="type-page-title">
+                <fbt desc="Heading on the list page when the list cannot be found or opened">
+                  This list isn&apos;t here
+                </fbt>
+              </h1>
               <p className="mt-4 text-sm text-muted-foreground">
                 {currentUnavailableReason ??
-                  "This list is not available in local or remote storage."}
+                  fbs(
+                    "This list is not available in local or remote storage.",
+                    "Message on the list page when the list is neither on this device nor on the server",
+                  )}
               </p>
             </section>
           </main>
@@ -934,19 +1082,56 @@ function ListPage() {
             tabIndex={-1}
           >
             <div className="border-b page-gutters py-5">
-              <h2 className="type-section-title">{view === "inventory" ? "Inventory" : "List"}</h2>
+              <h2 className="type-section-title">
+                {view === "inventory" ? (
+                  <fbt desc="Section heading for the inventory view, which holds purchased items">
+                    Inventory
+                  </fbt>
+                ) : (
+                  <fbt desc="Section heading for the shopping list view, which holds items still to buy">
+                    List
+                  </fbt>
+                )}
+              </h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                {view === "inventory"
-                  ? `${viewItems.length} purchased ${viewItems.length === 1 ? "item" : "items"}`
-                  : `${viewItems.length} ${viewItems.length === 1 ? "item" : "items"} to buy`}
+                {view === "inventory" ? (
+                  <fbt desc="Count of purchased items under the inventory section heading">
+                    <fbt:plural
+                      count={viewItems.length}
+                      many="purchased items"
+                      name="itemCount"
+                      showCount="yes"
+                    >
+                      purchased item
+                    </fbt:plural>
+                  </fbt>
+                ) : (
+                  <fbt desc="Count of items still to buy under the shopping list section heading">
+                    <fbt:plural
+                      count={viewItems.length}
+                      many="items"
+                      name="itemCount"
+                      showCount="yes"
+                    >
+                      item
+                    </fbt:plural>{" "}
+                    to buy
+                  </fbt>
+                )}
               </p>
             </div>
             <ShoppingTable
               emptyMessage={
                 filter.trim()
-                  ? "No matching items"
+                  ? fbs(
+                      "No matching items",
+                      "Empty-table message when no items match the search filter",
+                    )
                   : view === "inventory"
-                    ? "No purchased items yet"
+                    ? fbs(
+                        "No purchased items yet",
+                        "Empty-table message in the inventory view before anything was purchased",
+                      )
                     : undefined
               }
               identity={identity}

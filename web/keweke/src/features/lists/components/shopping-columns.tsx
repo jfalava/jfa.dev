@@ -2,6 +2,7 @@ import type { ListItem } from "@jfa.dev/common/lists";
 import { Button, Input } from "@jfa.dev/common/ui";
 import NumberFlow from "@number-flow/react";
 import { createColumnHelper, tableFeatures, type ReactTable } from "@tanstack/react-table";
+import { fbs } from "fbtee";
 import { Check, History, Pencil, Trash2, X } from "lucide-react";
 
 import type { LocalIdentity } from "@/features/auth/lib/local-identity";
@@ -48,14 +49,16 @@ function getShoppingTableMeta(table: { options: { meta?: ShoppingTableMeta } }):
 }
 
 function itemStatus(item: ListItem): string {
-  return item.checked ? "Purchased" : "Open";
+  return item.checked
+    ? fbs("Purchased", "Status of a shopping list item that has been bought")
+    : fbs("Open", "Status of a shopping list item that still needs to be bought");
 }
 
 export function createShoppingColumns() {
   return shoppingColumnHelper.columns([
     shoppingColumnHelper.display({
       id: "line",
-      header: "No.",
+      header: fbs("No.", "Shopping list table column header for the row number"),
       cell: ({ row }) => (
         <span className="font-mono text-xs text-muted-foreground tabular-nums">
           {row.index + 1}
@@ -72,7 +75,7 @@ export function createShoppingColumns() {
     }),
     shoppingColumnHelper.accessor("name", {
       id: "item",
-      header: "Item",
+      header: fbs("Item", "Shopping list table column header for the item name"),
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -80,7 +83,10 @@ export function createShoppingColumns() {
           return (
             <>
               <Input
-                aria-label={`Edit ${row.original.name} name`}
+                aria-label={fbs(
+                  `Edit ${fbs.param("itemName", row.original.name)} name`,
+                  "Accessible label of the field that edits a shopping list item's name",
+                )}
                 aria-describedby={
                   editErrors?.name ? `desktop-edit-name-error-${row.original.id}` : undefined
                 }
@@ -93,7 +99,7 @@ export function createShoppingColumns() {
               {editErrors?.name ? (
                 <ItemFieldError
                   id={`desktop-edit-name-error-${row.original.id}`}
-                  message={editErrors.name}
+                  problem={editErrors.name}
                 />
               ) : null}
             </>
@@ -110,7 +116,7 @@ export function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("quantity", {
-      header: "Qty",
+      header: fbs("Qty", "Shopping list table column header for the item quantity, abbreviated"),
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onAdjustQuantity, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -125,7 +131,10 @@ export function createShoppingColumns() {
             <>
               <span className="flex items-center justify-between gap-0.5">
                 <Input
-                  aria-label={`Edit ${row.original.name} quantity`}
+                  aria-label={fbs(
+                    `Edit ${fbs.param("itemName", row.original.name)} quantity`,
+                    "Accessible label of the field that edits a shopping list item's quantity",
+                  )}
                   aria-describedby={
                     editErrors?.quantity
                       ? `desktop-edit-quantity-error-${row.original.id}`
@@ -150,7 +159,7 @@ export function createShoppingColumns() {
               {editErrors?.quantity ? (
                 <ItemFieldError
                   id={`desktop-edit-quantity-error-${row.original.id}`}
-                  message={editErrors.quantity}
+                  problem={editErrors.quantity}
                 />
               ) : null}
             </>
@@ -176,7 +185,10 @@ export function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("unit", {
-      header: "Unit",
+      header: fbs(
+        "Unit",
+        "Shopping list table column header for the item's unit, such as box or bag",
+      ),
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -184,7 +196,10 @@ export function createShoppingColumns() {
           return (
             <>
               <Input
-                aria-label={`Edit ${row.original.name} unit`}
+                aria-label={fbs(
+                  `Edit ${fbs.param("itemName", row.original.name)} unit`,
+                  "Accessible label of the field that edits a shopping list item's unit, such as box or bag",
+                )}
                 aria-describedby={
                   editErrors?.unit ? `desktop-edit-unit-error-${row.original.id}` : undefined
                 }
@@ -197,7 +212,7 @@ export function createShoppingColumns() {
               {editErrors?.unit ? (
                 <ItemFieldError
                   id={`desktop-edit-unit-error-${row.original.id}`}
-                  message={editErrors.unit}
+                  problem={editErrors.unit}
                 />
               ) : null}
             </>
@@ -208,7 +223,10 @@ export function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("amount", {
-      header: "Amount each",
+      header: fbs(
+        "Amount each",
+        "Shopping list table column header for the amount in each unit, such as 250g",
+      ),
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -216,7 +234,10 @@ export function createShoppingColumns() {
           return (
             <>
               <Input
-                aria-label={`Edit ${row.original.name} amount each`}
+                aria-label={fbs(
+                  `Edit ${fbs.param("itemName", row.original.name)} amount each`,
+                  "Accessible label of the field that edits the amount in each unit of a shopping list item, such as 250g",
+                )}
                 aria-describedby={
                   editErrors?.amount ? `desktop-edit-amount-error-${row.original.id}` : undefined
                 }
@@ -224,13 +245,16 @@ export function createShoppingColumns() {
                 className="w-28 font-serif md:text-xs"
                 maxLength={64}
                 onChange={(event) => onEditDraftChange("amount", event.target.value)}
-                placeholder="optional"
+                placeholder={fbs(
+                  "optional",
+                  "Lowercase placeholder in the amount each field, which may be left empty",
+                )}
                 value={editDraft?.amount ?? getValue()}
               />
               {editErrors?.amount ? (
                 <ItemFieldError
                   id={`desktop-edit-amount-error-${row.original.id}`}
-                  message={editErrors.amount}
+                  problem={editErrors.amount}
                 />
               ) : null}
             </>
@@ -241,7 +265,7 @@ export function createShoppingColumns() {
       },
     }),
     shoppingColumnHelper.accessor("category", {
-      header: "Category",
+      header: fbs("Category", "Shopping list table column header for the item category"),
       cell: ({ getValue, row, table }) => {
         const { editDraft, editErrors, editingItemId, onEditDraftChange } =
           getShoppingTableMeta(table);
@@ -249,7 +273,10 @@ export function createShoppingColumns() {
           return (
             <>
               <Input
-                aria-label={`Edit ${row.original.name} category`}
+                aria-label={fbs(
+                  `Edit ${fbs.param("itemName", row.original.name)} category`,
+                  "Accessible label of the field that edits a shopping list item's category",
+                )}
                 aria-describedby={
                   editErrors?.category
                     ? `desktop-edit-category-error-${row.original.id}`
@@ -264,7 +291,7 @@ export function createShoppingColumns() {
               {editErrors?.category ? (
                 <ItemFieldError
                   id={`desktop-edit-category-error-${row.original.id}`}
-                  message={editErrors.category}
+                  problem={editErrors.category}
                 />
               ) : null}
             </>
@@ -276,7 +303,10 @@ export function createShoppingColumns() {
     }),
     shoppingColumnHelper.display({
       id: "signed",
-      header: "Signed",
+      header: fbs(
+        "Signed",
+        "Shopping list table column header for the user who added or last edited the item",
+      ),
       cell: ({ row, table }) => {
         const { identity } = getShoppingTableMeta(table);
         return <SignedItemBadge identity={identity} item={row.original} />;
@@ -284,7 +314,10 @@ export function createShoppingColumns() {
     }),
     shoppingColumnHelper.display({
       id: "status",
-      header: "Status",
+      header: fbs(
+        "Status",
+        "Shopping list table column header for whether the item is open or purchased",
+      ),
       cell: ({ row }) => (
         <span
           className={
@@ -311,7 +344,10 @@ export function createShoppingColumns() {
         return editingItemId === row.original.id ? (
           <div className="flex items-center gap-1">
             <Button
-              aria-label={`Save changes to ${row.original.name}`}
+              aria-label={fbs(
+                `Save changes to ${fbs.param("itemName", row.original.name)}`,
+                "Accessible label of the button that saves edits to a shopping list item",
+              )}
               isDisabled={isSaving}
               onPress={onSaveEditing}
               size="icon-sm"
@@ -319,7 +355,10 @@ export function createShoppingColumns() {
               <Check />
             </Button>
             <Button
-              aria-label={`Cancel editing ${row.original.name}`}
+              aria-label={fbs(
+                `Cancel editing ${fbs.param("itemName", row.original.name)}`,
+                "Accessible label of the button that discards edits to a shopping list item",
+              )}
               isDisabled={isSaving}
               onPress={onCancelEditing}
               size="icon-sm"
@@ -332,7 +371,10 @@ export function createShoppingColumns() {
           <div className="flex items-center gap-1">
             {onShowHistory ? (
               <Button
-                aria-label={`Show history for ${row.original.name}`}
+                aria-label={fbs(
+                  `Show history for ${fbs.param("itemName", row.original.name)}`,
+                  "Accessible label of the button that opens a shopping list item's change history",
+                )}
                 className="size-7 px-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
                 onPress={() => onShowHistory(row.original)}
                 variant="ghost"
@@ -341,7 +383,10 @@ export function createShoppingColumns() {
               </Button>
             ) : null}
             <Button
-              aria-label={`Edit ${row.original.name}`}
+              aria-label={fbs(
+                `Edit ${fbs.param("itemName", row.original.name)}`,
+                "Accessible label of the button that starts editing a shopping list item",
+              )}
               className="size-7 px-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
               isDisabled={isSaving}
               onPress={() => onStartEditing(row.original)}
@@ -350,7 +395,10 @@ export function createShoppingColumns() {
               <Pencil className="size-3.5" />
             </Button>
             <Button
-              aria-label={`Remove ${row.original.name}`}
+              aria-label={fbs(
+                `Remove ${fbs.param("itemName", row.original.name)}`,
+                "Accessible label of the button that removes a shopping list item",
+              )}
               className="size-7 px-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
               isDisabled={isSaving}
               onPress={() => onRemove(row.original.id)}
@@ -368,7 +416,8 @@ export function createShoppingColumns() {
 // Keep this cell component stable so another row's save cannot reset pending feedback.
 const mobileCompletionColumn = shoppingColumnHelper.display({
   id: "done",
-  header: "Done",
+  // A function so the label is translated at render, not when this module loads.
+  header: () => fbs("Done", "Mobile shopping list column header for the purchased checkbox"),
   cell: ({ row, table }) => (
     <ItemCompletionCheckbox
       className="size-11 shrink-0 justify-center rounded-md"
@@ -397,7 +446,7 @@ export function createMobileShoppingColumns({
     mobileCompletionColumn,
     shoppingColumnHelper.display({
       id: "item",
-      header: "Item",
+      header: fbs("Item", "Shopping list table column header for the item name"),
       cell: ({ row }) => (
         <div className="min-w-0 py-1">
           <p
@@ -424,12 +473,18 @@ export function createMobileShoppingColumns({
     }),
     shoppingColumnHelper.display({
       id: "actions",
-      header: "Actions",
+      header: fbs(
+        "Actions",
+        "Mobile shopping list column header for the item's history, quantity, edit and remove buttons",
+      ),
       cell: ({ row }) => (
         <div className="flex shrink-0 flex-wrap items-center gap-0.5">
           {onShowHistory ? (
             <Button
-              aria-label={`Show history for ${row.original.name}`}
+              aria-label={fbs(
+                `Show history for ${fbs.param("itemName", row.original.name)}`,
+                "Accessible label of the button that opens a shopping list item's change history",
+              )}
               className="size-11 p-0"
               onPress={() => onShowHistory(row.original)}
               variant="ghost"
@@ -446,7 +501,10 @@ export function createMobileShoppingColumns({
             size="icon"
           />
           <Button
-            aria-label={`Edit ${row.original.name}`}
+            aria-label={fbs(
+              `Edit ${fbs.param("itemName", row.original.name)}`,
+              "Accessible label of the button that starts editing a shopping list item",
+            )}
             className="size-11 p-0"
             isDisabled={isSaving}
             onPress={() => onStartEditing(row.original)}
@@ -455,7 +513,10 @@ export function createMobileShoppingColumns({
             <Pencil className="size-4" />
           </Button>
           <Button
-            aria-label={`Remove ${row.original.name}`}
+            aria-label={fbs(
+              `Remove ${fbs.param("itemName", row.original.name)}`,
+              "Accessible label of the button that removes a shopping list item",
+            )}
             className="size-11 p-0"
             isDisabled={isSaving}
             onPress={() => onRemove(row.original.id)}

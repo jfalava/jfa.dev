@@ -1,5 +1,6 @@
 import type { ListCommand, ListItemHistoryEvent } from "@jfa.dev/common/lists";
 
+/** Field codes shown in the history table; the dialog translates them. */
 const CHANGE_FIELD_LABELS = {
   amount: "each",
   category: "category",
@@ -12,16 +13,26 @@ const HISTORY_EDITABLE_FIELDS = ["name", "quantity", "unit", "amount", "category
 
 type HistoryEditableField = (typeof HISTORY_EDITABLE_FIELDS)[number];
 type HistoryValue = string | number | undefined;
-type HistoryState = Partial<Record<HistoryEditableField | "checked", HistoryValue>>;
+type HistoryState = Partial<Record<HistoryEditableField, HistoryValue>> & {
+  checked?: HistoryStatus;
+};
+
+export type HistoryField = (typeof CHANGE_FIELD_LABELS)[HistoryEditableField] | "item" | "status";
+
+/** Lifecycle codes in `status` rows and the `updated` marker; the dialog translates them. */
+export type HistoryStatus = "open" | "done" | "active" | "removed" | "deleted" | "updated";
 
 export type HistoryTableRow = {
-  actorName: string;
+  /** `null` when the event has no recorded actor. */
+  actorName: string | null;
   appliedAt: string;
   after: string;
   before: string;
-  field: string;
+  field: HistoryField;
   id: string;
   revision: number;
+  /** `status` when `before` and `after` are `HistoryStatus` codes (or "—"), not item data. */
+  valueKind: "status" | "text";
 };
 
 /** Human-readable description of what a mutation did to an item. */
@@ -66,11 +77,12 @@ export function buildHistoryTableRows(events: readonly ListItemHistoryEvent[]): 
 
   for (const event of chronologicalEvents) {
     const rows: HistoryTableRow[] = [];
-    const actorName = event.actor?.username ?? "someone";
+    const actorName = event.actor?.username ?? null;
     const createRow = (
-      field: string,
+      field: HistoryField,
       before: HistoryValue,
       after: HistoryValue,
+      valueKind: HistoryTableRow["valueKind"] = "text",
     ): HistoryTableRow => ({
       actorName,
       appliedAt: event.appliedAt,
@@ -79,7 +91,10 @@ export function buildHistoryTableRows(events: readonly ListItemHistoryEvent[]): 
       field,
       id: `${event.id}:${field}:${rows.length}`,
       revision: event.revision,
+      valueKind,
     });
+    const createStatusRow = (before: HistoryStatus | undefined, after: HistoryStatus) =>
+      createRow("status", before, after, "status");
 
     switch (event.command.type) {
       case "add-item":
@@ -100,28 +115,28 @@ export function buildHistoryTableRows(events: readonly ListItemHistoryEvent[]): 
         }
         // Emptying an inventory item moves it back to the list.
         if (state.checked === "done" && event.command.changes.quantity === 0) {
-          rows.push(createRow("status", "done", "open"));
+          rows.push(createStatusRow("done", "open"));
           state.checked = "open";
         }
         if (rows.length === 0) {
-          rows.push(createRow("item", undefined, "updated"));
+          rows.push(createRow("item", undefined, "updated", "status"));
         }
         break;
       case "set-item-checked":
         {
           const nextStatus = event.command.checked ? "done" : "open";
-          rows.push(createRow("status", state.checked, nextStatus));
+          rows.push(createStatusRow(state.checked, nextStatus));
           state.checked = nextStatus;
         }
         break;
       case "remove-item":
-        rows.push(createRow("status", "active", "removed"));
+        rows.push(createStatusRow("active", "removed"));
         break;
       case "restore-item":
-        rows.push(createRow("status", "removed", "active"));
+        rows.push(createStatusRow("removed", "active"));
         break;
       case "purge-deleted-item":
-        rows.push(createRow("status", "removed", "deleted"));
+        rows.push(createStatusRow("removed", "deleted"));
         break;
       case "rename-list":
         break;
@@ -140,16 +155,23 @@ function formatHistoryValue(value: HistoryValue): string {
   return String(value);
 }
 
-/** Compact relative time for history rows; falls back to the ISO date. */
-export function formatRelativeTime(iso: string, nowMs = Date.now()): string {
+/**
+ * Compact relative time for history rows in `locale`; falls back to the ISO
+ * date. Times under 45 seconds old return the caller's `justNow` label.
+ */
+export function formatRelativeTime(
+  iso: string,
+  labels: { justNow: string; locale: string },
+  nowMs = Date.now(),
+): string {
   const elapsedSeconds = Math.round((nowMs - Date.parse(iso)) / 1000);
   if (!Number.isFinite(elapsedSeconds)) {
     return iso;
   }
 
-  const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const formatter = new Intl.RelativeTimeFormat(labels.locale, { numeric: "auto" });
   if (elapsedSeconds < 45) {
-    return "just now";
+    return labels.justNow;
   }
   const elapsedMinutes = Math.round(elapsedSeconds / 60);
   if (elapsedMinutes < 60) {

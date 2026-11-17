@@ -1,4 +1,5 @@
 import { Button, Input } from "@jfa.dev/common/ui";
+import { fbs } from "fbtee";
 import { UserRound } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogTrigger, Modal, ModalOverlay } from "react-aria-components";
@@ -10,7 +11,6 @@ import {
   type DialogFeedback,
   type FeedbackSection,
 } from "@/features/auth/hooks/use-user-manager";
-import { LOCAL_IDENTITY_PLACEHOLDER } from "@/features/auth/lib/local-identity";
 
 function OrDivider({ size = "default" }: { size?: "default" | "small" }) {
   return (
@@ -23,7 +23,9 @@ function OrDivider({ size = "default" }: { size?: "default" | "small" }) {
             : "absolute left-1/2 -translate-x-1/2 bg-popover px-2 text-xs text-muted-foreground"
         }
       >
-        or
+        <fbt desc="Divider word between alternative ways to set up a user in the identity dialog">
+          or
+        </fbt>
       </span>
     </div>
   );
@@ -113,12 +115,23 @@ export function UserDialog({
   const dialogContent = (
     <Modal className="flex w-full max-w-lg flex-col outline-none max-sm:max-h-[calc(100vh-5.5rem)]">
       <Dialog
-        aria-label="Device identity"
+        aria-label={fbs(
+          "Device identity",
+          "Accessible name of the dialog where the user names or pairs this browser",
+        )}
         className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl outline-none"
       >
         <div className="shrink-0 border-b border-border px-4 py-4">
           <h2 className="text-lg font-semibold tracking-tight">
-            {isPublishFlow ? "Before you publish" : "Identify this browser"}
+            {isPublishFlow ? (
+              <fbt desc="Identity dialog title when the user must set a name before publishing a list">
+                Before you publish
+              </fbt>
+            ) : (
+              <fbt desc="Identity dialog title when the user sets up a user for this browser">
+                Identify this browser
+              </fbt>
+            )}
           </h2>
         </div>
 
@@ -126,12 +139,26 @@ export function UserDialog({
           <section className="space-y-3" aria-labelledby="create-user-heading">
             <div className="space-y-1">
               <h3 className="text-sm font-medium" id="create-user-heading">
-                {isPublishFlow ? "Choose your name" : "Create a user"}
+                {isPublishFlow ? (
+                  <fbt desc="Identity dialog heading for the name field before publishing a list">
+                    Choose your name
+                  </fbt>
+                ) : (
+                  <fbt desc="Identity dialog heading for creating a user in this browser">
+                    Create a user
+                  </fbt>
+                )}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {isPublishFlow
-                  ? "This name will appear as the publisher of this list. You can change it later."
-                  : "Publish lists from this browser."}
+                {isPublishFlow ? (
+                  <fbt desc="Identity dialog text explaining the chosen name is shown as the list publisher">
+                    This name will appear as the publisher of this list. You can change it later.
+                  </fbt>
+                ) : (
+                  <fbt desc="Identity dialog text explaining why to create a user">
+                    Publish lists from this browser.
+                  </fbt>
+                )}
               </p>
             </div>
             <form className="space-y-3" onSubmit={(event) => void save(event)}>
@@ -147,7 +174,7 @@ export function UserDialog({
                       setValue(event.target.value);
                       resetFeedback();
                     }}
-                    placeholder={LOCAL_IDENTITY_PLACEHOLDER}
+                    placeholder={fbs("Your name", "Placeholder in the empty username input")}
                     value={value}
                   />
                 </div>
@@ -157,14 +184,28 @@ export function UserDialog({
                   size="lg"
                   type="submit"
                 >
-                  {isSaving ? "Saving…" : isPublishFlow ? "Continue" : "Create"}
+                  {isSaving ? (
+                    <fbt desc="Identity dialog name button label while the name is being saved">
+                      Saving…
+                    </fbt>
+                  ) : isPublishFlow ? (
+                    <fbt desc="Identity dialog button that saves the name and continues publishing the list">
+                      Continue
+                    </fbt>
+                  ) : (
+                    <fbt desc="Identity dialog button that creates a user with the entered name">
+                      Create
+                    </fbt>
+                  )}
                 </Button>
               </div>
               <FeedbackMessage feedback={feedback} section="username" />
             </form>
             <p className="flex">
               <DocsLink href={kewekeDocs.createUser} variant="info">
-                How names work
+                <fbt desc="Link from the identity dialog to the docs page about user names">
+                  How names work
+                </fbt>
               </DocsLink>
             </p>
           </section>
@@ -174,23 +215,42 @@ export function UserDialog({
               <OrDivider />
               <div className="space-y-1">
                 <h3 className="text-sm font-medium" id="pair-user-heading">
-                  {isPublishFlow ? "Connect another device" : "Pair a user"}
+                  {isPublishFlow ? (
+                    <fbt desc="Identity dialog heading for connecting this browser to a user from another device before publishing">
+                      Connect another device
+                    </fbt>
+                  ) : (
+                    <fbt desc="Identity dialog heading for connecting this browser to an existing user">
+                      Pair a user
+                    </fbt>
+                  )}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {isPublishFlow
-                    ? "Already set up Keweke on another device? Connect this browser with a passkey or pairing code."
-                    : "Use an existing user from another device."}
+                  {isPublishFlow ? (
+                    <fbt desc="Identity dialog text before publishing, offering to connect this browser to an existing user">
+                      Already set up Keweke on another device? Connect this browser with a passkey
+                      or pairing code.
+                    </fbt>
+                  ) : (
+                    <fbt desc="Identity dialog text explaining pairing reuses a user from another device">
+                      Use an existing user from another device.
+                    </fbt>
+                  )}
                 </p>
               </div>
               {!isPublishFlow ? (
                 <p className="text-sm text-muted-foreground">
-                  Already have a user on another browser? Connect this one with a passkey or a
-                  pairing code.
+                  <fbt desc="Identity dialog text offering to connect this browser to a user from another browser">
+                    Already have a user on another browser? Connect this one with a passkey or a
+                    pairing code.
+                  </fbt>
                 </p>
               ) : null}
               <p className="flex">
                 <DocsLink href={kewekeDocs.identity} variant="info">
-                  How pairing works
+                  <fbt desc="Link from the identity dialog to the docs page about pairing browsers">
+                    How pairing works
+                  </fbt>
                 </DocsLink>
               </p>
               <div className="flex flex-col items-stretch gap-3">
@@ -200,7 +260,15 @@ export function UserDialog({
                     onPress={() => void adoptWithPasskey()}
                     size="lg"
                   >
-                    {isAdoptingPasskey ? "Waiting…" : "Pair with passkey"}
+                    {isAdoptingPasskey ? (
+                      <fbt desc="Pair with passkey button label while waiting for the browser passkey prompt">
+                        Waiting…
+                      </fbt>
+                    ) : (
+                      <fbt desc="Button that connects this browser to a remote user with a saved passkey">
+                        Pair with passkey
+                      </fbt>
+                    )}
                   </Button>
                 ) : null}
                 {passkeyAvailable ? <OrDivider size="small" /> : null}
@@ -210,27 +278,51 @@ export function UserDialog({
                   onPress={() => void startPairing()}
                   size="lg"
                 >
-                  {isStartingPairing ? "Creating…" : "Show code"}
+                  {isStartingPairing ? (
+                    <fbt desc="Show code button label in the identity dialog while the pairing code is being created">
+                      Creating…
+                    </fbt>
+                  ) : (
+                    <fbt desc="Identity dialog button that generates a pairing code for this browser">
+                      Show code
+                    </fbt>
+                  )}
                 </Button>
               </div>
               <FeedbackMessage feedback={feedback} section="passkey-adoption" />
               <FeedbackMessage feedback={feedback} section="pairing" />
               {pairingCode ? (
                 <div className="border border-border bg-muted/40 p-3">
-                  <p className="text-xs text-muted-foreground">Pairing code</p>
+                  <p className="text-xs text-muted-foreground">
+                    <fbt desc="Label above the generated pairing code in the identity dialog">
+                      Pairing code
+                    </fbt>
+                  </p>
                   <p className="mt-1 font-mono text-xl tracking-[0.18em] break-all text-primary">
                     {pairingCode}
                   </p>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {pairingStatus?.status === "pending"
-                      ? "Waiting…"
-                      : pairingStatus?.status === "approved"
-                        ? "Ready."
-                        : pairingStatus?.status === "expired"
-                          ? "Expired."
-                          : pairingStatus?.status === "missing"
-                            ? "Unavailable."
-                            : "Checking status…"}
+                    {pairingStatus?.status === "pending" ? (
+                      <fbt desc="Short pairing code status in the identity dialog while waiting for another device to approve it">
+                        Waiting…
+                      </fbt>
+                    ) : pairingStatus?.status === "approved" ? (
+                      <fbt desc="Short pairing code status in the identity dialog after another device approved it">
+                        Ready.
+                      </fbt>
+                    ) : pairingStatus?.status === "expired" ? (
+                      <fbt desc="Short pairing code status in the identity dialog after the code expired">
+                        Expired.
+                      </fbt>
+                    ) : pairingStatus?.status === "missing" ? (
+                      <fbt desc="Short pairing code status in the identity dialog when the server no longer knows the code">
+                        Unavailable.
+                      </fbt>
+                    ) : (
+                      <fbt desc="Short pairing code status in the identity dialog while the first status check runs">
+                        Checking status…
+                      </fbt>
+                    )}
                   </p>
                   {pairingStatus?.status === "approved" ? (
                     <Button
@@ -239,7 +331,19 @@ export function UserDialog({
                       onPress={() => void adopt()}
                       size="sm"
                     >
-                      {isAdopting ? "Saving…" : isPublishFlow ? "Continue" : "Use this username"}
+                      {isAdopting ? (
+                        <fbt desc="Use this username button label while this browser connects to the approved user">
+                          Saving…
+                        </fbt>
+                      ) : isPublishFlow ? (
+                        <fbt desc="Identity dialog button that connects this browser to the approved user and continues publishing">
+                          Continue
+                        </fbt>
+                      ) : (
+                        <fbt desc="Button that connects this browser to the user that approved the pairing code">
+                          Use this username
+                        </fbt>
+                      )}
                     </Button>
                   ) : null}
                 </div>
@@ -255,13 +359,15 @@ export function UserDialog({
     return (
       <DialogTrigger isOpen={isDialogOpen} onOpenChange={setDialogOpen}>
         <Button
-          aria-label="User"
+          aria-label={fbs("User", "Accessible label of the button that opens the identity dialog")}
           className="inline-flex w-7 sm:w-auto sm:gap-1 sm:px-2"
           size="icon"
           variant="outline"
         >
           <UserRound aria-hidden="true" className="size-3.5" />
-          <span className="hidden sm:inline">User</span>
+          <span className="hidden sm:inline">
+            <fbt desc="Label of the button that opens the identity dialog">User</fbt>
+          </span>
         </Button>
         <ModalOverlay
           className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-6 pb-6 sm:pt-16 sm:pb-6"

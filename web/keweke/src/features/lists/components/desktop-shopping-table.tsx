@@ -1,4 +1,5 @@
 import { Button, Input, TableCell } from "@jfa.dev/common/ui";
+import { fbs } from "fbtee";
 import { Plus } from "lucide-react";
 import type { KeyboardEvent } from "react";
 
@@ -32,29 +33,41 @@ export function DesktopNewItemRow({
       </TableCell>
       <TableCell className="px-3 py-3">
         <span className="inline-flex items-center gap-1.5 type-label text-muted-foreground">
-          new <HotkeyKbd className="hidden sm:inline-flex" hotkey="N" />
+          <fbt desc="Lowercase label on the add item row of the shopping list table, next to its keyboard shortcut">
+            new
+          </fbt>{" "}
+          <HotkeyKbd className="hidden sm:inline-flex" hotkey="N" />
         </span>
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
           id="new-item-desktop"
-          aria-label="New item name"
+          aria-label={fbs(
+            "New item name",
+            "Accessible label of the name field in the add item row",
+          )}
           aria-describedby={errors.name ? "new-item-name-error" : undefined}
           aria-invalid={errors.name ? true : undefined}
           className="h-9 min-w-32 font-serif text-base sm:text-xs"
           maxLength={200}
           onChange={(event) => onChange("name", event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="microwave popcorn"
+          placeholder={fbs(
+            "microwave popcorn",
+            "Lowercase example item name shown as the placeholder of the add item name field",
+          )}
           value={newItem.name}
         />
-        {errors.name ? <ItemFieldError id="new-item-name-error" message={errors.name} /> : null}
+        {errors.name ? <ItemFieldError id="new-item-name-error" problem={errors.name} /> : null}
         <InventoryMatchNotice id="new-item-desktop-inventory-match" match={inventoryMatch} />
       </TableCell>
       <TableCell className="px-3 py-3">
         <span className="flex items-center justify-between gap-0.5">
           <Input
-            aria-label="New item quantity"
+            aria-label={fbs(
+              "New item quantity",
+              "Accessible label of the quantity field in the add item row",
+            )}
             aria-describedby={errors.quantity ? "new-item-quantity-error" : undefined}
             aria-invalid={errors.quantity ? true : undefined}
             className="h-9 w-16 text-right font-mono text-base sm:text-xs"
@@ -67,42 +80,57 @@ export function DesktopNewItemRow({
           <NewQuantityStepper newItem={newItem} onAdjust={(q) => onChange("quantity", String(q))} />
         </span>
         {errors.quantity ? (
-          <ItemFieldError id="new-item-quantity-error" message={errors.quantity} />
+          <ItemFieldError id="new-item-quantity-error" problem={errors.quantity} />
         ) : null}
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
-          aria-label="New item unit"
+          aria-label={fbs(
+            "New item unit",
+            "Accessible label of the unit field, such as box or bag, in the add item row",
+          )}
           aria-describedby={errors.unit ? "new-item-unit-error" : undefined}
           aria-invalid={errors.unit ? true : undefined}
           className="h-9 w-20 font-serif text-base sm:text-xs"
           maxLength={32}
           onChange={(event) => onChange("unit", event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="box"
+          placeholder={fbs(
+            "box",
+            "Lowercase example unit shown as the placeholder of the add item unit field",
+          )}
           value={newItem.unit}
         />
-        {errors.unit ? <ItemFieldError id="new-item-unit-error" message={errors.unit} /> : null}
+        {errors.unit ? <ItemFieldError id="new-item-unit-error" problem={errors.unit} /> : null}
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
-          aria-label="New item amount each"
+          aria-label={fbs(
+            "New item amount each",
+            "Accessible label of the field for the amount in each unit, such as 250g, in the add item row",
+          )}
           aria-describedby={errors.amount ? "new-item-amount-error" : undefined}
           aria-invalid={errors.amount ? true : undefined}
           className="h-9 w-28 font-serif text-base sm:text-xs"
           maxLength={64}
           onChange={(event) => onChange("amount", event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="3 bags"
+          placeholder={fbs(
+            "3 bags",
+            "Lowercase example amount shown as the placeholder of the add item amount each field",
+          )}
           value={newItem.amount}
         />
         {errors.amount ? (
-          <ItemFieldError id="new-item-amount-error" message={errors.amount} />
+          <ItemFieldError id="new-item-amount-error" problem={errors.amount} />
         ) : null}
       </TableCell>
       <TableCell className="px-3 py-3">
         <Input
-          aria-label="New item category"
+          aria-label={fbs(
+            "New item category",
+            "Accessible label of the category field in the add item row",
+          )}
           aria-describedby={errors.category ? "new-item-category-error" : undefined}
           aria-invalid={errors.category ? true : undefined}
           className="h-9 w-28 font-serif md:text-xs"
@@ -112,17 +140,32 @@ export function DesktopNewItemRow({
           value={newItem.category}
         />
         {errors.category ? (
-          <ItemFieldError id="new-item-category-error" message={errors.category} />
+          <ItemFieldError id="new-item-category-error" problem={errors.category} />
         ) : null}
       </TableCell>
       <TableCell className="px-3 py-3">
-        <span className="type-label text-muted-foreground">draft</span>
+        <span className="type-label text-muted-foreground">
+          <fbt desc="Lowercase label in the signed column of the add item row, meaning the item is not saved yet">
+            draft
+          </fbt>
+        </span>
       </TableCell>
       <TableCell className="px-3 py-3">
-        <span className="type-label text-primary">open</span>
+        <span className="type-label text-primary">
+          <fbt desc="Lowercase status in the add item row: a new item starts as still to be bought">
+            open
+          </fbt>
+        </span>
       </TableCell>
       <TableCell className="px-3 py-3">
-        <Button aria-label="Add item" onPress={onAdd} size="icon-sm">
+        <Button
+          aria-label={fbs(
+            "Add item",
+            "Accessible label of the button that adds the new item to the list",
+          )}
+          onPress={onAdd}
+          size="icon-sm"
+        >
           <Plus />
         </Button>
       </TableCell>

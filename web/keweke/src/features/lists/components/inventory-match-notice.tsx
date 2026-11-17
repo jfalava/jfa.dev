@@ -1,6 +1,7 @@
 import { TriangleAlert } from "lucide-react";
 
-import { inventoryMatchMessage, type InventoryMatch } from "@/features/lists/lib/inventory-match";
+import { inventoryMatchMessage } from "@/features/lists/components/item-draft-messages";
+import type { InventoryMatch } from "@/features/lists/lib/inventory-match";
 
 /**
  * Advisory shown under the new-item name input when the draft appears to name

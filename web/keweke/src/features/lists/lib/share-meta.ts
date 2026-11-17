@@ -14,11 +14,3 @@ export function listShareMetaFromSnapshot(snapshot: ListSnapshot): ListShareMeta
     completedCount,
   };
 }
-
-export function listShareDescription(meta: ListShareMeta): string {
-  if (meta.itemCount === 0) {
-    return "No items yet — add your first item to this shared shopping list.";
-  }
-  const items = meta.itemCount === 1 ? "1 item" : `${meta.itemCount} items`;
-  return `${items} · ${meta.completedCount} done`;
-}

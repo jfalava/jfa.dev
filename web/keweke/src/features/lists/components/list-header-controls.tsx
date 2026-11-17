@@ -1,4 +1,5 @@
 import { Button, Input } from "@jfa.dev/common/ui";
+import { fbs } from "fbtee";
 import { ArrowLeftRight, Check, Copy, Pencil } from "lucide-react";
 import { useState } from "react";
 
@@ -21,7 +22,10 @@ export function ListTitleEditor({
       <div className="mt-1 flex items-center gap-1">
         <h1 className="type-page-title font-serif">{title}</h1>
         <Button
-          aria-label="Edit list title"
+          aria-label={fbs(
+            "Edit list title",
+            "Accessible label of the button next to the list title that starts renaming the list",
+          )}
           onPress={() => {
             setValue(title);
             setIsEditing(true);
@@ -54,11 +58,11 @@ export function ListTitleEditor({
       }}
     >
       <label className="sr-only" htmlFor="list-title">
-        List title
+        <fbt desc="Label of the text field for renaming a list">List title</fbt>
       </label>
       <Input
         id="list-title"
-        aria-label="List title"
+        aria-label={fbs("List title", "Label of the text field for renaming a list")}
         className="h-auto min-h-14 min-w-0 flex-1 py-1 type-page-title font-serif sm:min-h-20 sm:min-w-64"
         disabled={isSaving}
         maxLength={160}
@@ -67,7 +71,11 @@ export function ListTitleEditor({
       />
       <div className="flex min-h-14 flex-col items-stretch justify-between gap-1.5 sm:min-h-20">
         <Button isDisabled={isSaving} size="lg" type="submit">
-          {isSaving ? "Saving" : "Save"}
+          {isSaving ? (
+            <fbt desc="Button label while a new list title is being saved">Saving</fbt>
+          ) : (
+            <fbt desc="Button that saves a new list title">Save</fbt>
+          )}
         </Button>
         <Button
           isDisabled={isSaving}
@@ -76,7 +84,7 @@ export function ListTitleEditor({
           type="button"
           variant="outline"
         >
-          Cancel
+          <fbt desc="Button that cancels renaming a list">Cancel</fbt>
         </Button>
       </div>
     </form>
@@ -88,7 +96,13 @@ export function ListAlias({ alias, listId }: { alias: string | null; listId: str
   const [isCopied, setIsCopied] = useState(false);
 
   const identifier = showListId || alias === null ? listId : alias;
-  const label = showListId || alias === null ? "ID" : "Alias";
+  const isShowingId = showListId || alias === null;
+  const label = isShowingId
+    ? fbs("ID", "Label before a list's ID under the list title")
+    : fbs(
+        "Alias",
+        "Label before a list's alias (a readable name used in its address) under the list title",
+      );
 
   const copyUrl = async (): Promise<void> => {
     try {
@@ -105,7 +119,17 @@ export function ListAlias({ alias, listId }: { alias: string | null; listId: str
     <div className="mt-2 flex max-w-full min-w-0 items-center gap-1 overflow-hidden font-mono type-compact tracking-[0.08em] uppercase">
       {alias ? (
         <Button
-          aria-label={`Show ${showListId ? "Alias" : "ID"}`}
+          aria-label={
+            showListId
+              ? fbs(
+                  "Show Alias",
+                  "Accessible label of the button that switches from the list ID to its alias",
+                )
+              : fbs(
+                  "Show ID",
+                  "Accessible label of the button that switches from the list alias to its ID",
+                )
+          }
           className="h-7 gap-1 px-1 text-xs tracking-[0.08em] text-muted-foreground uppercase"
           onPress={() => {
             setShowListId((current) => !current);
@@ -127,7 +151,22 @@ export function ListAlias({ alias, listId }: { alias: string | null; listId: str
         {identifier}
       </span>
       <Button
-        aria-label={isCopied ? "Copied list URL" : `Copy full ${label} URL`}
+        aria-label={
+          isCopied
+            ? fbs(
+                "Copied list URL",
+                "Accessible label of the copy-link button after the list URL was copied",
+              )
+            : isShowingId
+              ? fbs(
+                  "Copy full ID URL",
+                  "Accessible label of the button that copies the list URL that uses its ID",
+                )
+              : fbs(
+                  "Copy full Alias URL",
+                  "Accessible label of the button that copies the list URL that uses its alias",
+                )
+        }
         className="relative -top-0.5 size-7 shrink-0 p-0 text-primary"
         onPress={() => void copyUrl()}
         size="icon"

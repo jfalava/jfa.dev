@@ -3,6 +3,7 @@ import type { UserManager } from "@/features/auth/hooks/use-user-manager";
 import type { SettingsSectionRow } from "./settings-table";
 import {
   createAccountDeletionSection,
+  createLanguageSection,
   createLocalDataSection,
   createLogoutSection,
 } from "./user-account-sections";
@@ -50,6 +51,7 @@ export function createUserSettingsRows(manager: UserManager): SettingsSectionRow
     sections.push(createAccountDeletionSection(manager));
   }
 
+  sections.push(createLanguageSection());
   sections.push(createLocalDataSection(manager));
   return sections;
 }

@@ -1,5 +1,6 @@
 import type { DeletedListItem, ListItem } from "@jfa.dev/common/lists";
 import { Button } from "@jfa.dev/common/ui";
+import { fbs } from "fbtee";
 import { History, RotateCcw, Trash2 } from "lucide-react";
 import { useState } from "react";
 
@@ -36,7 +37,11 @@ export function DeletedItemsHistory({
   return (
     <section className="border-t page-gutters py-6">
       <div className="border-b border-border pb-3">
-        <h2 className="type-section-title">Deleted items</h2>
+        <h2 className="type-section-title">
+          <fbt desc="Heading of the list page section with deleted items that can be restored">
+            Deleted items
+          </fbt>
+        </h2>
       </div>
       <div className="divide-y divide-border">
         {historyItems.map((item) => {
@@ -53,12 +58,20 @@ export function DeletedItemsHistory({
                   <span aria-hidden="true">·</span>
                   <span className="font-serif">{item.category}</span>
                   <span aria-hidden="true">·</span>
-                  <span className="uppercase">Deleted</span>
+                  <span className="uppercase">
+                    <fbt desc="Label before the date an item was deleted, in the deleted items section">
+                      Deleted
+                    </fbt>
+                  </span>
                   <span>{item.deletedAt.slice(0, 10)}</span>
                   {item.deletedBy ? (
                     <>
                       <span aria-hidden="true">·</span>
-                      <span className="uppercase">Deleted by</span>
+                      <span className="uppercase">
+                        <fbt desc="Label before the name of the person who deleted an item, in the deleted items section">
+                          Deleted by
+                        </fbt>
+                      </span>
                       <span className="font-serif">
                         {identityDisplayName(item.deletedBy, identity)}
                       </span>
@@ -69,7 +82,10 @@ export function DeletedItemsHistory({
               {confirmingArchiveId === item.archiveId ? (
                 <div className="flex items-center gap-1.5">
                   <Button
-                    aria-label={`Delete ${item.name} forever`}
+                    aria-label={fbs(
+                      `Delete ${fbs.param("itemName", item.name)} forever`,
+                      "Accessible label of the button that permanently deletes an item from the deleted items section",
+                    )}
                     isDisabled={isBusy}
                     onPress={() => {
                       setConfirmingArchiveId(undefined);
@@ -78,7 +94,9 @@ export function DeletedItemsHistory({
                     size="sm"
                     variant="destructive"
                   >
-                    Delete forever
+                    <fbt desc="Button that permanently deletes an item from the deleted items section">
+                      Delete forever
+                    </fbt>
                   </Button>
                   <Button
                     isDisabled={isBusy}
@@ -86,42 +104,53 @@ export function DeletedItemsHistory({
                     size="sm"
                     variant="ghost"
                   >
-                    Cancel
+                    <fbt desc="Button that cancels permanently deleting an item">Cancel</fbt>
                   </Button>
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
                   {onShowHistory ? (
                     <Button
-                      aria-label={`Show history for ${item.name}`}
+                      aria-label={fbs(
+                        `Show history for ${fbs.param("itemName", item.name)}`,
+                        "Accessible label of the button that opens a deleted item's change history",
+                      )}
                       isDisabled={isBusy}
                       onPress={() => onShowHistory(item)}
                       size="sm"
                       variant="ghost"
                     >
                       <History />
-                      History
+                      <fbt desc="Button that opens a deleted item's change history">History</fbt>
                     </Button>
                   ) : null}
                   <Button
-                    aria-label={`Restore ${item.name}`}
+                    aria-label={fbs(
+                      `Restore ${fbs.param("itemName", item.name)}`,
+                      "Accessible label of the button that restores a deleted item to the list",
+                    )}
                     isDisabled={isBusy}
                     onPress={() => onRestore(item.archiveId)}
                     size="sm"
                     variant="outline"
                   >
                     <RotateCcw />
-                    Restore
+                    <fbt desc="Button that restores a deleted item to the list">Restore</fbt>
                   </Button>
                   <Button
-                    aria-label={`Delete ${item.name} forever`}
+                    aria-label={fbs(
+                      `Delete ${fbs.param("itemName", item.name)} forever`,
+                      "Accessible label of the button that permanently deletes an item from the deleted items section",
+                    )}
                     isDisabled={isBusy}
                     onPress={() => setConfirmingArchiveId(item.archiveId)}
                     size="sm"
                     variant="destructive"
                   >
                     <Trash2 />
-                    Delete forever
+                    <fbt desc="Button that permanently deletes an item from the deleted items section">
+                      Delete forever
+                    </fbt>
                   </Button>
                 </div>
               )}

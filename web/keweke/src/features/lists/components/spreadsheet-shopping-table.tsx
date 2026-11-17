@@ -1,6 +1,7 @@
 import type { ListItem } from "@jfa.dev/common/lists";
 import { Button, Input, Kbd, KbdGroup, TableCell } from "@jfa.dev/common/ui";
 import { useHotkey, useHotkeys } from "@tanstack/react-hotkeys";
+import { fbs } from "fbtee";
 import { History, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent } from "react";
 
@@ -10,6 +11,7 @@ import {
   hasItemDraftErrors,
   validateItemDraft,
   type ItemDraftErrors,
+  type ItemDraftProblem,
 } from "@/features/lists/lib/item-draft";
 
 import { InventoryMatchNotice } from "./inventory-match-notice";
@@ -380,38 +382,66 @@ export function SpreadsheetShoppingTable({
   return (
     <div aria-hidden={!isActive} className={isActive ? "w-full" : "hidden"} ref={gridRef}>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-muted/40 page-gutters py-2">
-        <p className="text-sm text-foreground">Spreadsheet. Edits save when you leave a row.</p>
+        <p className="text-sm text-foreground">
+          <fbt desc="Banner at the top of spreadsheet mode explaining when edits to the shopping list are saved">
+            Spreadsheet. Edits save when you leave a row.
+          </fbt>
+        </p>
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
-            <HotkeyKbd hotkey="Tab" /> next
+            <HotkeyKbd hotkey="Tab" />{" "}
+            <fbt desc="Lowercase spreadsheet mode keyboard hint: Tab moves to the next cell">
+              next
+            </fbt>
           </span>
           <span className="inline-flex items-center gap-1">
             <KbdGroup>
               <Kbd>↑</Kbd>
               <Kbd>↓</Kbd>
             </KbdGroup>{" "}
-            rows
+            <fbt desc="Lowercase spreadsheet mode keyboard hint: the up and down arrow keys move between rows">
+              rows
+            </fbt>
           </span>
           <span className="inline-flex items-center gap-1">
-            <Kbd>↵</Kbd> down
+            <Kbd>↵</Kbd>{" "}
+            <fbt desc="Lowercase spreadsheet mode keyboard hint: Enter moves down one row">
+              down
+            </fbt>
           </span>
           <span className="inline-flex items-center gap-1">
-            <HotkeyKbd hotkey="Mod+Backspace" /> delete row
+            <HotkeyKbd hotkey="Mod+Backspace" />{" "}
+            <fbt desc="Lowercase spreadsheet mode keyboard hint: the shortcut deletes the current row">
+              delete row
+            </fbt>
           </span>
           <span className="inline-flex items-center gap-1">
-            <HotkeyKbd hotkey="Escape" /> exit
+            <HotkeyKbd hotkey="Escape" />{" "}
+            <fbt desc="Lowercase spreadsheet mode keyboard hint: Escape leaves spreadsheet mode">
+              exit
+            </fbt>
           </span>
           <span className="inline-flex items-center gap-1">
-            <HotkeyKbd hotkey="F" /> search
+            <HotkeyKbd hotkey="F" />{" "}
+            <fbt desc="Lowercase spreadsheet mode keyboard hint: the shortcut focuses the item search">
+              search
+            </fbt>
           </span>
           <span className="inline-flex items-center gap-1">
-            <HotkeyKbd hotkey="N" /> new
+            <HotkeyKbd hotkey="N" />{" "}
+            <fbt desc="Lowercase spreadsheet mode keyboard hint: the shortcut focuses the add item row">
+              new
+            </fbt>
           </span>
         </p>
       </div>
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-210 border-collapse [&_td:first-child]:pl-4 sm:[&_td:first-child]:pl-6 lg:[&_td:first-child]:pl-8 [&_td:last-child]:pr-4 sm:[&_td:last-child]:pr-6 lg:[&_td:last-child]:pr-8 [&_th:first-child]:pl-4 sm:[&_th:first-child]:pl-6 lg:[&_th:first-child]:pl-8 [&_th:last-child]:pr-4 sm:[&_th:last-child]:pr-6 lg:[&_th:last-child]:pr-8">
-          <caption className="sr-only">Spreadsheet editor for shopping list items</caption>
+          <caption className="sr-only">
+            <fbt desc="Screen reader caption of the spreadsheet mode table">
+              Spreadsheet editor for shopping list items
+            </fbt>
+          </caption>
           <colgroup>
             <col className="w-16" />
             <col className="w-12" />
@@ -424,17 +454,51 @@ export function SpreadsheetShoppingTable({
           </colgroup>
           <thead className="sticky top-0 z-10">
             <tr className="border-b">
-              {["No.", "Done", "Item", "Qty", "Unit", "Amount each", "Category", "Actions"].map(
-                (heading) => (
-                  <th
-                    className="h-10 bg-muted/50 px-3 text-left align-middle text-xs font-medium text-muted-foreground first:pl-4"
-                    key={heading}
-                    scope="col"
-                  >
-                    {heading}
-                  </th>
-                ),
-              )}
+              {[
+                ["line", fbs("No.", "Shopping list table column header for the row number")],
+                ["done", fbs("Done", "Spreadsheet mode column header for the purchased checkbox")],
+                ["item", fbs("Item", "Shopping list table column header for the item name")],
+                [
+                  "quantity",
+                  fbs(
+                    "Qty",
+                    "Shopping list table column header for the item quantity, abbreviated",
+                  ),
+                ],
+                [
+                  "unit",
+                  fbs(
+                    "Unit",
+                    "Shopping list table column header for the item's unit, such as box or bag",
+                  ),
+                ],
+                [
+                  "amount",
+                  fbs(
+                    "Amount each",
+                    "Shopping list table column header for the amount in each unit, such as 250g",
+                  ),
+                ],
+                [
+                  "category",
+                  fbs("Category", "Shopping list table column header for the item category"),
+                ],
+                [
+                  "actions",
+                  fbs(
+                    "Actions",
+                    "Spreadsheet mode column header for the item's history and remove buttons",
+                  ),
+                ],
+              ].map(([column, heading]) => (
+                <th
+                  className="h-10 bg-muted/50 px-3 text-left align-middle text-xs font-medium text-muted-foreground first:pl-4"
+                  key={column}
+                  scope="col"
+                >
+                  {heading}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -519,7 +583,10 @@ function SpreadsheetItemRow({
           error={errors?.name}
           field="name"
           inputClassName="min-w-44 font-serif"
-          label={`Edit ${item.name} name`}
+          label={fbs(
+            `Edit ${fbs.param("itemName", item.name)} name`,
+            "Accessible label of the field that edits a shopping list item's name",
+          )}
           rowId={item.id}
           value={draft.name}
           onChange={onChange}
@@ -531,7 +598,10 @@ function SpreadsheetItemRow({
           field="quantity"
           inputClassName="w-16 text-right font-mono"
           inputMode="numeric"
-          label={`Edit ${item.name} quantity`}
+          label={fbs(
+            `Edit ${fbs.param("itemName", item.name)} quantity`,
+            "Accessible label of the field that edits a shopping list item's quantity",
+          )}
           maxLength={6}
           rowId={item.id}
           value={draft.quantity}
@@ -543,7 +613,10 @@ function SpreadsheetItemRow({
           error={errors?.unit}
           field="unit"
           inputClassName="w-20 font-serif text-xs"
-          label={`Edit ${item.name} unit`}
+          label={fbs(
+            `Edit ${fbs.param("itemName", item.name)} unit`,
+            "Accessible label of the field that edits a shopping list item's unit, such as box or bag",
+          )}
           maxLength={32}
           rowId={item.id}
           value={draft.unit}
@@ -555,7 +628,10 @@ function SpreadsheetItemRow({
           error={errors?.amount}
           field="amount"
           inputClassName="w-32 font-serif text-xs"
-          label={`Edit ${item.name} amount each`}
+          label={fbs(
+            `Edit ${fbs.param("itemName", item.name)} amount each`,
+            "Accessible label of the field that edits the amount in each unit of a shopping list item, such as 250g",
+          )}
           maxLength={64}
           rowId={item.id}
           value={draft.amount}
@@ -567,7 +643,10 @@ function SpreadsheetItemRow({
           error={errors?.category}
           field="category"
           inputClassName="w-32 font-serif text-xs"
-          label={`Edit ${item.name} category`}
+          label={fbs(
+            `Edit ${fbs.param("itemName", item.name)} category`,
+            "Accessible label of the field that edits a shopping list item's category",
+          )}
           maxLength={64}
           rowId={item.id}
           value={draft.category}
@@ -578,7 +657,10 @@ function SpreadsheetItemRow({
         <div className="flex items-center gap-1">
           {onShowHistory ? (
             <Button
-              aria-label={`Show history for ${item.name}`}
+              aria-label={fbs(
+                `Show history for ${fbs.param("itemName", item.name)}`,
+                "Accessible label of the button that opens a shopping list item's change history",
+              )}
               className="size-7 px-0"
               onPress={() => onShowHistory(item)}
               variant="ghost"
@@ -587,7 +669,10 @@ function SpreadsheetItemRow({
             </Button>
           ) : null}
           <Button
-            aria-label={`Remove ${item.name}`}
+            aria-label={fbs(
+              `Remove ${fbs.param("itemName", item.name)}`,
+              "Accessible label of the button that removes a shopping list item",
+            )}
             className="size-7 px-0"
             onPress={() => onRemove(item.id)}
             variant="ghost"
@@ -622,7 +707,10 @@ function SpreadsheetNewItemRow({
       </TableCell>
       <TableCell className="px-3 py-3">
         <span className="inline-flex items-center gap-1.5 type-label text-muted-foreground">
-          new <HotkeyKbd hotkey="N" />
+          <fbt desc="Lowercase label on the add item row of the shopping list table, next to its keyboard shortcut">
+            new
+          </fbt>{" "}
+          <HotkeyKbd hotkey="N" />
         </span>
       </TableCell>
       <TableCell className="px-2 py-3">
@@ -630,7 +718,7 @@ function SpreadsheetNewItemRow({
           error={errors.name}
           field="name"
           inputClassName="min-w-44 font-serif"
-          label="New item name"
+          label={fbs("New item name", "Accessible label of the name field in the add item row")}
           rowId={NEW_SPREADSHEET_ROW_ID}
           value={newItem.name}
           onChange={onChange}
@@ -643,7 +731,10 @@ function SpreadsheetNewItemRow({
           field="quantity"
           inputClassName="w-16 text-right font-mono"
           inputMode="numeric"
-          label="New item quantity"
+          label={fbs(
+            "New item quantity",
+            "Accessible label of the quantity field in the add item row",
+          )}
           maxLength={6}
           rowId={NEW_SPREADSHEET_ROW_ID}
           value={newItem.quantity}
@@ -655,7 +746,10 @@ function SpreadsheetNewItemRow({
           error={errors.unit}
           field="unit"
           inputClassName="w-20 font-serif text-xs"
-          label="New item unit"
+          label={fbs(
+            "New item unit",
+            "Accessible label of the unit field, such as box or bag, in the add item row",
+          )}
           maxLength={32}
           rowId={NEW_SPREADSHEET_ROW_ID}
           value={newItem.unit}
@@ -667,7 +761,10 @@ function SpreadsheetNewItemRow({
           error={errors.amount}
           field="amount"
           inputClassName="w-32 font-serif text-xs"
-          label="New item amount each"
+          label={fbs(
+            "New item amount each",
+            "Accessible label of the field for the amount in each unit, such as 250g, in the add item row",
+          )}
           maxLength={64}
           rowId={NEW_SPREADSHEET_ROW_ID}
           value={newItem.amount}
@@ -679,7 +776,10 @@ function SpreadsheetNewItemRow({
           error={errors.category}
           field="category"
           inputClassName="w-32 font-serif text-xs"
-          label="New item category"
+          label={fbs(
+            "New item category",
+            "Accessible label of the category field in the add item row",
+          )}
           maxLength={64}
           rowId={NEW_SPREADSHEET_ROW_ID}
           value={newItem.category}
@@ -687,7 +787,15 @@ function SpreadsheetNewItemRow({
         />
       </TableCell>
       <TableCell className="px-2 py-3">
-        <Button aria-label="Add item" isDisabled={isAdding} onPress={onAdd} size="icon-sm">
+        <Button
+          aria-label={fbs(
+            "Add item",
+            "Accessible label of the button that adds the new item to the list",
+          )}
+          isDisabled={isAdding}
+          onPress={onAdd}
+          size="icon-sm"
+        >
           +
         </Button>
       </TableCell>
@@ -706,7 +814,7 @@ function SpreadsheetInput({
   value,
   onChange,
 }: {
-  error?: string;
+  error?: ItemDraftProblem;
   field: SpreadsheetField;
   inputClassName: string;
   inputMode?: "numeric";
@@ -732,7 +840,7 @@ function SpreadsheetInput({
         onChange={(event) => onChange(field, event.target.value)}
         value={value}
       />
-      {error ? <ItemFieldError id={errorId} message={error} /> : null}
+      {error ? <ItemFieldError id={errorId} problem={error} /> : null}
     </>
   );
 }

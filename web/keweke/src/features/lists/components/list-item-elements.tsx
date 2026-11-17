@@ -3,11 +3,14 @@ import type { ListItem } from "@jfa.dev/common/lists";
 import { Button, Checkbox } from "@jfa.dev/common/ui";
 import NumberFlow from "@number-flow/react";
 import { Blobatar } from "blobatar/react";
+import { fbs } from "fbtee";
 import { ChevronDown, ChevronUp, Pencil, Plus } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { userAvatarSeed } from "@/features/auth/lib/blobatar";
-import { LOCAL_IDENTITY_PLACEHOLDER, type LocalIdentity } from "@/features/auth/lib/local-identity";
+import type { LocalIdentity } from "@/features/auth/lib/local-identity";
+import { itemDraftProblemMessage } from "@/features/lists/components/item-draft-messages";
+import type { ItemDraftProblem } from "@/features/lists/lib/item-draft";
 
 import type { ItemEditDraft, NewItemDraft } from "./list-item-types";
 
@@ -68,7 +71,15 @@ export function ItemCompletionCheckbox({
     <Checkbox
       aria-describedby={failed ? errorId : undefined}
       aria-label={
-        item.checked ? `Restore ${item.name} to the list` : `Mark ${item.name} as purchased`
+        item.checked
+          ? fbs(
+              `Restore ${fbs.param("itemName", item.name)} to the list`,
+              "Accessible label of the checkbox that moves a purchased shopping list item back to the open list",
+            )
+          : fbs(
+              `Mark ${fbs.param("itemName", item.name)} as purchased`,
+              "Accessible label of the checkbox that marks a shopping list item as purchased",
+            )
       }
       className={className}
       isInvalid={failed}
@@ -77,7 +88,10 @@ export function ItemCompletionCheckbox({
     >
       {failed ? (
         <span className="sr-only" id={errorId} role="alert">
-          Could not save {item.name}. Activate the checkbox to retry.
+          <fbt desc="Screen reader alert shown when saving a shopping list item's purchased state fails">
+            Could not save <fbt:param name="itemName">{item.name}</fbt:param>. Activate the checkbox
+            to retry.
+          </fbt>
         </span>
       ) : null}
     </Checkbox>
@@ -102,7 +116,13 @@ export function identityDisplayName(actor: ListIdentity, currentIdentity?: Local
     }
   }
 
-  return actor.username ?? LOCAL_IDENTITY_PLACEHOLDER;
+  return (
+    actor.username ??
+    fbs(
+      "Your name",
+      "Fallback name for the current browser's user when they have not set a username",
+    )
+  );
 }
 
 export function SignedItemBadge({
@@ -117,22 +137,42 @@ export function SignedItemBadge({
     (item.createdBy !== null && item.updatedBy !== null && item.createdBy.id !== item.updatedBy.id);
   const actor = (wasEdited ? item.updatedBy : item.createdBy) ?? item.updatedBy ?? item.createdBy;
   if (!actor) {
-    return <span className="type-label text-muted-foreground">unsigned</span>;
+    return (
+      <span className="type-label text-muted-foreground">
+        <fbt desc="Lowercase label shown when no user is recorded as having added or edited a shopping list item">
+          unsigned
+        </fbt>
+      </span>
+    );
   }
 
-  const action = wasEdited ? "edited by" : "added by";
   const actorName = identityDisplayName(actor, identity);
+  const label = wasEdited
+    ? fbs(
+        `edited by ${fbs.param("userName", actorName)}`,
+        "Accessible label of the badge naming the user who last edited a shopping list item",
+      )
+    : fbs(
+        `added by ${fbs.param("userName", actorName)}`,
+        "Accessible label of the badge naming the user who added a shopping list item",
+      );
   const createdBy = item.createdBy
-    ? `Added by ${identityDisplayName(item.createdBy, identity)}`
+    ? fbs(
+        `Added by ${fbs.param("userName", identityDisplayName(item.createdBy, identity))}`,
+        "Tooltip on a shopping list item's signature badge naming the user who added the item",
+      )
     : undefined;
   const updatedBy = item.updatedBy
-    ? `Last edited by ${identityDisplayName(item.updatedBy, identity)}`
+    ? fbs(
+        `Last edited by ${fbs.param("userName", identityDisplayName(item.updatedBy, identity))}`,
+        "Tooltip on a shopping list item's signature badge naming the user who last edited the item",
+      )
     : undefined;
   const title = [createdBy, wasEdited ? updatedBy : undefined].filter(Boolean).join(" · ");
 
   return (
     <span
-      aria-label={`${action} ${actorName}`}
+      aria-label={label}
       className="inline-flex max-w-full items-center gap-1 truncate text-xs tracking-[0.06em] text-muted-foreground"
       title={title}
     >
@@ -191,7 +231,10 @@ export function NewQuantityStepper({
     <QuantityStepper
       buttonClassName="size-6 p-0"
       isDisabled={!isValid}
-      itemName="New item"
+      itemName={fbs(
+        "New item",
+        "Stands in for the item name in the quantity buttons of the add item form, as in 'Increase New item quantity'",
+      )}
       onAdjust={onAdjust}
       quantity={isValid ? quantity : 1}
       size="icon-sm"
@@ -206,19 +249,23 @@ export function ItemMeasure({ item }: { item: Pick<ListItem, "quantity" | "unit"
       <span className="font-serif">{item.unit}</span>
       {item.amount ? (
         <>
-          {" ("}
-          <span className="font-serif">{item.amount}</span>
-          <span className="font-mono"> each)</span>
+          {" "}
+          <fbt desc="Amount per unit after a shopping list item's quantity and unit, as in '2 bags (250g each)'">
+            (<fbt:param name="amountEach">
+              <span className="font-serif">{item.amount}</span>
+            </fbt:param>{" "}
+            <span className="font-mono">each)</span>
+          </fbt>
         </>
       ) : null}
     </>
   );
 }
 
-export function ItemFieldError({ id, message }: { id?: string; message: string }) {
+export function ItemFieldError({ id, problem }: { id?: string; problem: ItemDraftProblem }) {
   return (
     <span className="mt-1 block type-label leading-tight text-destructive" id={id}>
-      {message}
+      {itemDraftProblemMessage(problem)}
     </span>
   );
 }
@@ -243,7 +290,10 @@ export function QuantityStepper({
   return (
     <span className="flex flex-col">
       <Button
-        aria-label={`Increase ${itemName} quantity`}
+        aria-label={fbs(
+          `Increase ${fbs.param("itemName", itemName)} quantity`,
+          "Accessible label of the button that raises a shopping list item's quantity by one",
+        )}
         className={buttonClassName}
         isDisabled={isDisabled || quantity >= 100_000}
         onPress={() => onAdjust(quantity + 1)}
@@ -253,7 +303,10 @@ export function QuantityStepper({
         <ChevronUp />
       </Button>
       <Button
-        aria-label={`Decrease ${itemName} quantity`}
+        aria-label={fbs(
+          `Decrease ${fbs.param("itemName", itemName)} quantity`,
+          "Accessible label of the button that lowers a shopping list item's quantity by one",
+        )}
         className={buttonClassName}
         isDisabled={isDisabled || quantity <= minimumQuantity}
         onPress={() => onAdjust(quantity - 1)}

@@ -29,24 +29,50 @@ export function ListIdentityCallout({
           </div>
           <div className="min-w-0">
             <h2 className="text-sm font-semibold" id="list-identity-callout-heading">
-              {isLoading
-                ? "Preparing this browser"
-                : isRemote
-                  ? "Connect this browser to edit"
-                  : "Your list is ready"}
+              {isLoading ? (
+                <fbt desc="List banner heading while this browser's local storage and identity are being set up">
+                  Preparing this browser
+                </fbt>
+              ) : isRemote ? (
+                <fbt desc="List banner heading on a shared list this browser can read but not edit">
+                  Connect this browser to edit
+                </fbt>
+              ) : (
+                <fbt desc="List banner heading on a new local list before the user has a name">
+                  Your list is ready
+                </fbt>
+              )}
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-5 text-muted-foreground">
-              {isLoading
-                ? "Setting up local storage. Your list will be ready in a moment."
-                : isRemote
-                  ? "This shared list is readable here. Pair an approved user to add, edit, or check items."
-                  : "This list is saved in this browser. Add a name to label your edits and publish it when you are ready."}
+              {isLoading ? (
+                <fbt desc="List banner text while this browser's local storage is being set up">
+                  Setting up local storage. Your list will be ready in a moment.
+                </fbt>
+              ) : isRemote ? (
+                <fbt desc="List banner text on a shared list explaining that pairing a user allows editing">
+                  This shared list is readable here. Pair an approved user to add, edit, or check
+                  items.
+                </fbt>
+              ) : (
+                <fbt desc="List banner text on a new local list suggesting to add a name and publish">
+                  This list is saved in this browser. Add a name to label your edits and publish it
+                  when you are ready.
+                </fbt>
+              )}
             </p>
           </div>
         </div>
         {onAction ? (
           <Button className="shrink-0 self-start sm:self-auto" onPress={onAction} size="sm">
-            {isRemote ? "Pair this browser" : "Choose a name"}
+            {isRemote ? (
+              <fbt desc="List banner button that opens pairing to connect this browser to a user">
+                Pair this browser
+              </fbt>
+            ) : (
+              <fbt desc="List banner button that opens the dialog to choose a username">
+                Choose a name
+              </fbt>
+            )}
           </Button>
         ) : null}
       </div>

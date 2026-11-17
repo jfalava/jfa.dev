@@ -10,6 +10,7 @@ import {
 } from "@jfa.dev/common/ui";
 import { Link } from "@tanstack/react-router";
 import { createColumnHelper, tableFeatures, useTable } from "@tanstack/react-table";
+import { fbs } from "fbtee";
 import { ChevronRight, Cloud, House, List, ListChecks, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -73,7 +74,7 @@ function createListsColumns({
     }),
     listsColumnHelper.display({
       id: "list",
-      header: "List",
+      header: fbs("List", "Column header for list titles in the saved lists table"),
       cell: ({ row }) => {
         const list = row.original;
         return (
@@ -86,7 +87,15 @@ function createListsColumns({
               {list.title}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {list.backend === "local" ? "Local" : "Remote"}
+              {list.backend === "local" ? (
+                <fbt desc="Label in the saved lists table for a list stored only in this browser">
+                  Local
+                </fbt>
+              ) : (
+                <fbt desc="Label in the saved lists table for a list stored on the server">
+                  Remote
+                </fbt>
+              )}
               {list.alias ? ` · ${list.alias}` : ""}
             </p>
           </Link>
@@ -95,10 +104,28 @@ function createListsColumns({
     }),
     listsColumnHelper.display({
       id: "progress",
-      header: "Progress",
+      header: fbs("Progress", "Column header for item and done counts in the saved lists table"),
       cell: ({ row }) => (
         <span className="text-sm text-muted-foreground tabular-nums">
-          {row.original.itemCount} items · {row.original.completedCount} done
+          <fbt desc="Progress of a list in the saved lists table: how many items it has and how many are done">
+            <fbt:plural
+              count={row.original.itemCount}
+              many="items"
+              name="itemCount"
+              showCount="yes"
+            >
+              item
+            </fbt:plural>{" "}
+            ·{" "}
+            <fbt:plural
+              count={row.original.completedCount}
+              many="done"
+              name="completedCount"
+              showCount="yes"
+            >
+              done
+            </fbt:plural>
+          </fbt>
         </span>
       ),
     }),
@@ -114,46 +141,86 @@ function createListsColumns({
               confirmingListId === list.id ? (
                 <>
                   <span className="text-xs text-destructive">
-                    {isForgetOnly ? "Forget?" : "Delete?"}
+                    {isForgetOnly ? (
+                      <fbt desc="Prompt asking to confirm removing a shared list from this device only">
+                        Forget?
+                      </fbt>
+                    ) : (
+                      <fbt desc="Prompt asking to confirm deleting a list">Delete?</fbt>
+                    )}
                   </span>
                   <Button
-                    aria-label={`${isForgetOnly ? "Confirm forget" : "Confirm delete"} ${list.title}`}
+                    aria-label={
+                      isForgetOnly
+                        ? fbs(
+                            `Confirm forget ${fbs.param("listTitle", list.title)}`,
+                            "Accessible label of the button that confirms removing a shared list from this device",
+                          )
+                        : fbs(
+                            `Confirm delete ${fbs.param("listTitle", list.title)}`,
+                            "Accessible label of the button that confirms deleting a list",
+                          )
+                    }
                     isDisabled={deletingListId === list.id}
                     onPress={() => onRemove(list)}
                     size="sm"
                     variant="destructive"
                   >
-                    Yes
+                    <fbt desc="Button that confirms deleting or forgetting a list">Yes</fbt>
                   </Button>
                   <Button
-                    aria-label={`Keep ${list.title}`}
+                    aria-label={fbs(
+                      `Keep ${fbs.param("listTitle", list.title)}`,
+                      "Accessible label of the button that cancels deleting or forgetting a list",
+                    )}
                     isDisabled={deletingListId === list.id}
                     onPress={onCancelDelete}
                     size="sm"
                     variant="ghost"
                   >
-                    Keep
+                    <fbt desc="Button that cancels deleting or forgetting a list">Keep</fbt>
                   </Button>
                 </>
               ) : (
                 <Button
-                  aria-label={`${isForgetOnly ? "Forget" : "Delete"} ${list.title}`}
+                  aria-label={
+                    isForgetOnly
+                      ? fbs(
+                          `Forget ${fbs.param("listTitle", list.title)}`,
+                          "Accessible label of the button that starts removing a shared list from this device",
+                        )
+                      : fbs(
+                          `Delete ${fbs.param("listTitle", list.title)}`,
+                          "Accessible label of the button that starts deleting a list",
+                        )
+                  }
                   onPress={() => onConfirmDelete(list.id)}
                   size="sm"
                   variant="ghost"
                 >
                   <Trash2 className="size-3.5" />
-                  <span className="hidden sm:inline">{isForgetOnly ? "Forget" : "Delete"}</span>
+                  <span className="hidden sm:inline">
+                    {isForgetOnly ? (
+                      <fbt desc="Button that starts removing a shared list from this device">
+                        Forget
+                      </fbt>
+                    ) : (
+                      <fbt desc="Button that starts deleting a list">Delete</fbt>
+                    )}
+                  </span>
                 </Button>
               )
             ) : null}
             <Link
-              aria-label={`Open ${list.title}`}
+              aria-label={fbs(
+                `Open ${fbs.param("listTitle", list.title)}`,
+                "Accessible label of the link that opens a list from the saved lists table",
+              )}
               className="font-mono text-xs tracking-[0.08em] text-muted-foreground transition-colors hover:text-primary"
               params={{ listId: list.alias ?? list.id }}
               to="/$listId"
             >
-              Open →
+              <fbt desc="Link that opens a list from the saved lists table">Open →</fbt>
             </Link>
           </div>
         );
@@ -253,14 +320,32 @@ function MobileListsList({
                   </p>
                   <p className="mt-0.5 flex items-center gap-x-3 text-xs text-muted-foreground tabular-nums">
                     <span
-                      aria-label={`${list.itemCount} items`}
+                      aria-label={fbs(
+                        [
+                          fbs.plural("item", list.itemCount, {
+                            many: "items",
+                            name: "itemCount",
+                            showCount: "yes",
+                          }),
+                        ],
+                        "Accessible label for the number of items in a list on the mobile saved lists view",
+                      )}
                       className="inline-flex items-center gap-1"
                     >
                       <List aria-hidden="true" className="size-3.5" />
                       {list.itemCount}
                     </span>
                     <span
-                      aria-label={`${list.completedCount} done`}
+                      aria-label={fbs(
+                        [
+                          fbs.plural("done", list.completedCount, {
+                            many: "done",
+                            name: "completedCount",
+                            showCount: "yes",
+                          }),
+                        ],
+                        "Accessible label for the number of done items in a list on the mobile saved lists view",
+                      )}
                       className="inline-flex items-center gap-1"
                     >
                       <ListChecks aria-hidden="true" className="size-3.5" />
@@ -276,30 +361,59 @@ function MobileListsList({
               {isConfirming ? (
                 <div className="flex shrink-0 items-center gap-1.5">
                   <span className="text-xs text-destructive">
-                    {isForgetOnly ? "Forget?" : "Delete?"}
+                    {isForgetOnly ? (
+                      <fbt desc="Prompt asking to confirm removing a shared list from this device only">
+                        Forget?
+                      </fbt>
+                    ) : (
+                      <fbt desc="Prompt asking to confirm deleting a list">Delete?</fbt>
+                    )}
                   </span>
                   <Button
-                    aria-label={`${isForgetOnly ? "Confirm forget" : "Confirm delete"} ${list.title}`}
+                    aria-label={
+                      isForgetOnly
+                        ? fbs(
+                            `Confirm forget ${fbs.param("listTitle", list.title)}`,
+                            "Accessible label of the button that confirms removing a shared list from this device",
+                          )
+                        : fbs(
+                            `Confirm delete ${fbs.param("listTitle", list.title)}`,
+                            "Accessible label of the button that confirms deleting a list",
+                          )
+                    }
                     isDisabled={isDeleting}
                     onPress={() => onRemove(list)}
                     size="sm"
                     variant="destructive"
                   >
-                    Yes
+                    <fbt desc="Button that confirms deleting or forgetting a list">Yes</fbt>
                   </Button>
                   <Button
-                    aria-label={`Keep ${list.title}`}
+                    aria-label={fbs(
+                      `Keep ${fbs.param("listTitle", list.title)}`,
+                      "Accessible label of the button that cancels deleting or forgetting a list",
+                    )}
                     isDisabled={isDeleting}
                     onPress={onCancelDelete}
                     size="sm"
                     variant="ghost"
                   >
-                    Keep
+                    <fbt desc="Button that cancels deleting or forgetting a list">Keep</fbt>
                   </Button>
                 </div>
               ) : (
                 <Button
-                  aria-label={`${isForgetOnly ? "Forget" : "Delete"} ${list.title}`}
+                  aria-label={
+                    isForgetOnly
+                      ? fbs(
+                          `Forget ${fbs.param("listTitle", list.title)}`,
+                          "Accessible label of the button that starts removing a shared list from this device",
+                        )
+                      : fbs(
+                          `Delete ${fbs.param("listTitle", list.title)}`,
+                          "Accessible label of the button that starts deleting a list",
+                        )
+                  }
                   onPress={() => onConfirmDelete(list.id)}
                   size="icon"
                   variant="ghost"

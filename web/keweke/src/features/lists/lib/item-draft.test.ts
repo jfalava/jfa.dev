@@ -18,37 +18,37 @@ describe("validateItemDraft", () => {
 
   test("rejects a missing, blank, or whitespace-only name", () => {
     for (const name of ["", "   "]) {
-      expect(validateItemDraft({ ...VALID_DRAFT, name })).toEqual({ name: "Enter a name" });
+      expect(validateItemDraft({ ...VALID_DRAFT, name })).toEqual({ name: "name-required" });
     }
   });
 
   test("rejects an over-long name", () => {
     expect(validateItemDraft({ ...VALID_DRAFT, name: "x".repeat(201) })).toEqual({
-      name: "Name is too long",
+      name: "name-too-long",
     });
   });
 
   test("rejects missing and non-whole quantities", () => {
     expect(validateItemDraft({ ...VALID_DRAFT, quantity: "" })).toEqual({
-      quantity: "Enter a quantity",
+      quantity: "quantity-required",
     });
     expect(validateItemDraft({ ...VALID_DRAFT, quantity: "   " })).toEqual({
-      quantity: "Enter a quantity",
+      quantity: "quantity-required",
     });
     expect(validateItemDraft({ ...VALID_DRAFT, quantity: "1.5" })).toEqual({
-      quantity: "Enter a whole number from 1 to 100000",
+      quantity: "quantity-not-whole",
     });
     expect(validateItemDraft({ ...VALID_DRAFT, quantity: "many" })).toEqual({
-      quantity: "Enter a whole number from 1 to 100000",
+      quantity: "quantity-not-whole",
     });
   });
 
   test("rejects quantities outside the 1..100000 range", () => {
     expect(validateItemDraft({ ...VALID_DRAFT, quantity: "0" })).toEqual({
-      quantity: "Enter a number from 1 to 100000",
+      quantity: "quantity-out-of-range",
     });
     expect(validateItemDraft({ ...VALID_DRAFT, quantity: "100001" })).toEqual({
-      quantity: "Enter a number from 1 to 100000",
+      quantity: "quantity-out-of-range",
     });
     expect(validateItemDraft({ ...VALID_DRAFT, quantity: "100000" })).toEqual({});
   });
@@ -61,34 +61,34 @@ describe("validateItemDraft", () => {
 
   test("rejects a missing or whitespace-only unit", () => {
     for (const unit of ["", "   "]) {
-      expect(validateItemDraft({ ...VALID_DRAFT, unit })).toEqual({ unit: "Enter a unit" });
+      expect(validateItemDraft({ ...VALID_DRAFT, unit })).toEqual({ unit: "unit-required" });
     }
   });
 
   test("rejects an over-long unit", () => {
     expect(validateItemDraft({ ...VALID_DRAFT, unit: "u".repeat(33) })).toEqual({
-      unit: "Unit is too long",
+      unit: "unit-too-long",
     });
   });
 
   test("accepts an empty amount but rejects an over-long one", () => {
     expect(validateItemDraft({ ...VALID_DRAFT, amount: "" })).toEqual({});
     expect(validateItemDraft({ ...VALID_DRAFT, amount: "a".repeat(65) })).toEqual({
-      amount: "Amount is too long",
+      amount: "amount-too-long",
     });
   });
 
   test("rejects a missing or whitespace-only category", () => {
     for (const category of ["", "   "]) {
       expect(validateItemDraft({ ...VALID_DRAFT, category })).toEqual({
-        category: "Enter a category",
+        category: "category-required",
       });
     }
   });
 
   test("rejects an over-long category", () => {
     expect(validateItemDraft({ ...VALID_DRAFT, category: "c".repeat(65) })).toEqual({
-      category: "Category is too long",
+      category: "category-too-long",
     });
   });
 
@@ -102,11 +102,11 @@ describe("validateItemDraft", () => {
         category: "",
       }),
     ).toEqual({
-      name: "Enter a name",
-      quantity: "Enter a whole number from 1 to 100000",
-      unit: "Enter a unit",
-      amount: "Amount is too long",
-      category: "Enter a category",
+      name: "name-required",
+      quantity: "quantity-not-whole",
+      unit: "unit-required",
+      amount: "amount-too-long",
+      category: "category-required",
     });
     expect(
       hasItemDraftErrors(

@@ -397,13 +397,24 @@ export function matchInventoryName(name: string, index: InventoryIndex): Invento
   return best;
 }
 
-/** Message naming the inventory entry a candidate appears to duplicate. */
-export function inventoryMatchMessage(match: InventoryMatch): string {
+/** The inventory entry a candidate appears to duplicate, for the notice copy. */
+export interface InventoryMatchSummary {
+  itemName: string;
+  /** Quantity and unit, or just the unit when the quantity is zero. */
+  measure: string;
+}
+
+/**
+ * Names the inventory entry a candidate appears to duplicate, or `undefined`
+ * without a match. `inventoryMatchMessage` in
+ * `features/lists/components/item-draft-messages` turns it into copy.
+ */
+export function inventoryMatchSummary(match: InventoryMatch): InventoryMatchSummary | undefined {
   const item = match.item;
   if (!item) {
-    return "";
+    return undefined;
   }
 
   const measure = item.quantity > 0 ? `${item.quantity} ${item.unit}` : item.unit;
-  return `Already in inventory: ${item.name} (${measure})`;
+  return { itemName: item.name, measure };
 }

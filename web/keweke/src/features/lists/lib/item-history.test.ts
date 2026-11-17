@@ -46,17 +46,24 @@ describe("describeHistoryEvent", () => {
 
 describe("formatRelativeTime", () => {
   const NOW = Date.parse("2026-08-17T12:00:00.000Z");
+  const LABELS = { justNow: "just now", locale: "en-US" };
 
   it("formats recent times relative to now", () => {
-    expect(formatRelativeTime("2026-08-17T11:59:50.000Z", NOW)).toBe("just now");
-    expect(formatRelativeTime("2026-08-17T11:30:00.000Z", NOW)).toBe("30 minutes ago");
-    expect(formatRelativeTime("2026-08-17T07:00:00.000Z", NOW)).toBe("5 hours ago");
-    expect(formatRelativeTime("2026-08-15T12:00:00.000Z", NOW)).toBe("2 days ago");
+    expect(formatRelativeTime("2026-08-17T11:59:50.000Z", LABELS, NOW)).toBe("just now");
+    expect(formatRelativeTime("2026-08-17T11:30:00.000Z", LABELS, NOW)).toBe("30 minutes ago");
+    expect(formatRelativeTime("2026-08-17T07:00:00.000Z", LABELS, NOW)).toBe("5 hours ago");
+    expect(formatRelativeTime("2026-08-15T12:00:00.000Z", LABELS, NOW)).toBe("2 days ago");
+  });
+
+  it("formats in the given locale", () => {
+    const spanish = { justNow: "ahora mismo", locale: "es-ES" };
+    expect(formatRelativeTime("2026-08-17T11:59:50.000Z", spanish, NOW)).toBe("ahora mismo");
+    expect(formatRelativeTime("2026-08-17T11:30:00.000Z", spanish, NOW)).toBe("hace 30 minutos");
   });
 
   it("falls back to the date beyond two weeks and for invalid input", () => {
-    expect(formatRelativeTime("2026-07-01T12:00:00.000Z", NOW)).toBe("2026-07-01");
-    expect(formatRelativeTime("not-a-date", NOW)).toBe("not-a-date");
+    expect(formatRelativeTime("2026-07-01T12:00:00.000Z", LABELS, NOW)).toBe("2026-07-01");
+    expect(formatRelativeTime("not-a-date", LABELS, NOW)).toBe("not-a-date");
   });
 });
 
@@ -147,12 +154,20 @@ describe("buildHistoryTableRows", () => {
       },
     ]);
 
-    expect(rows.map(({ field, before, after }) => ({ field, before, after }))).toEqual([
-      { field: "status", before: "done", after: "open" },
-      { field: "status", before: "removed", after: "active" },
-      { field: "status", before: "active", after: "removed" },
-      { field: "status", before: "open", after: "done" },
-      { field: "item", before: "—", after: "Milk" },
+    expect(
+      rows.map(({ actorName, field, before, after, valueKind }) => ({
+        actorName,
+        field,
+        before,
+        after,
+        valueKind,
+      })),
+    ).toEqual([
+      { actorName: null, field: "status", before: "done", after: "open", valueKind: "status" },
+      { actorName: null, field: "status", before: "removed", after: "active", valueKind: "status" },
+      { actorName: null, field: "status", before: "active", after: "removed", valueKind: "status" },
+      { actorName: null, field: "status", before: "open", after: "done", valueKind: "status" },
+      { actorName: null, field: "item", before: "—", after: "Milk", valueKind: "text" },
     ]);
   });
 });
