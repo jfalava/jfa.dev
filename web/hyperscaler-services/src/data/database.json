@@ -10,8 +10,7 @@
     "gcpUrl": "https://cloud.google.com/sql",
     "oracle": "Base Database Service",
     "oracleUrl": "https://www.oracle.com/database/",
-    "cloudflare": "D1",
-    "cloudflareUrl": "https://developers.cloudflare.com/d1/",
+    "cloudflare": "—",
     "description": "Managed relational database service"
   },
   {
@@ -53,8 +52,7 @@
     "gcpUrl": "https://cloud.google.com/alloydb",
     "oracle": "Autonomous Database",
     "oracleUrl": "https://www.oracle.com/autonomous-database/",
-    "cloudflare": "D1",
-    "cloudflareUrl": "https://developers.cloudflare.com/d1/",
+    "cloudflare": "—",
     "description": "Auto-scales compute based on demand"
   },
   {
@@ -68,8 +66,7 @@
     "gcpUrl": "https://cloud.google.com/firestore",
     "oracle": "NoSQL Database",
     "oracleUrl": "https://www.oracle.com/database/nosql/",
-    "cloudflare": "Workers KV",
-    "cloudflareUrl": "https://developers.cloudflare.com/kv/",
+    "cloudflare": "—",
     "description": "Managed NoSQL data store"
   },
   {
@@ -111,8 +108,7 @@
     "gcpUrl": "https://cloud.google.com/memorystore",
     "oracle": "OCI Cache",
     "oracleUrl": "https://www.oracle.com/cloud/cache/",
-    "cloudflare": "Workers KV",
-    "cloudflareUrl": "https://developers.cloudflare.com/kv/",
+    "cloudflare": "—",
     "description": "In-memory caching service"
   },
   {
@@ -142,5 +138,80 @@
     "cloudflare": "Hyperdrive",
     "cloudflareUrl": "https://developers.cloudflare.com/hyperdrive/",
     "description": "Database connection proxy and pooling"
+  },
+  {
+    "category": "database",
+    "categoryName": "Database",
+    "aws": "Aurora",
+    "awsUrl": "https://aws.amazon.com/rds/aurora/",
+    "azure": "Database for PostgreSQL",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/postgresql/",
+    "gcp": "AlloyDB",
+    "gcpUrl": "https://cloud.google.com/alloydb",
+    "oracle": "MySQL Database Service",
+    "oracleUrl": "https://www.oracle.com/mysql/",
+    "cloudflare": "—",
+    "description": "Managed MySQL- and PostgreSQL-compatible relational clusters with cloud-native storage"
+  },
+  {
+    "category": "database",
+    "categoryName": "Database",
+    "aws": "Aurora DSQL",
+    "awsUrl": "https://aws.amazon.com/rds/aurora/dsql/",
+    "azure": "—",
+    "gcp": "Cloud Spanner",
+    "gcpUrl": "https://cloud.google.com/spanner",
+    "oracle": "Globally Distributed Database",
+    "oracleUrl": "https://www.oracle.com/database/distributed-database/",
+    "cloudflare": "—",
+    "description": "Globally distributed relational database with strong consistency and horizontal scaling"
+  },
+  {
+    "category": "database",
+    "categoryName": "Database",
+    "aws": "—",
+    "azure": "—",
+    "gcp": "Bigtable",
+    "gcpUrl": "https://cloud.google.com/bigtable",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Wide-column NoSQL database for high-throughput, low-latency key-value workloads"
+  },
+  {
+    "category": "database",
+    "categoryName": "Database",
+    "aws": "Keyspaces",
+    "awsUrl": "https://aws.amazon.com/keyspaces/",
+    "azure": "Cosmos DB (Cassandra API)",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cosmos-db/",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Serverless managed Apache Cassandra-compatible wide-column database"
+  },
+  {
+    "category": "database",
+    "categoryName": "Database",
+    "aws": "Timestream",
+    "awsUrl": "https://aws.amazon.com/timestream/",
+    "azure": "Azure Data Explorer",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/data-explorer/",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Managed time-series database for telemetry and IoT data"
+  },
+  {
+    "category": "database",
+    "categoryName": "Database",
+    "aws": "HealthLake",
+    "awsUrl": "https://aws.amazon.com/healthlake/",
+    "azure": "Azure Health Data Services",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/health-data-services/",
+    "gcp": "Cloud Healthcare API",
+    "gcpUrl": "https://cloud.google.com/healthcare-api",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Stores and queries healthcare data in the FHIR standard format"
   }
 ]

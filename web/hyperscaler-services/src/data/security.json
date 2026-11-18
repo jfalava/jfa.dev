@@ -128,8 +128,9 @@
     "gcpUrl": "https://cloud.google.com/secret-manager",
     "oracle": "Vault (Secrets)",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Tasks/managingvaults.htm",
-    "cloudflare": "—",
-    "description": "Secrets management service"
+    "cloudflare": "Secrets Store",
+    "description": "Secrets management service",
+    "cloudflareUrl": "https://developers.cloudflare.com/secrets-store/"
   },
   {
     "category": "security",
@@ -245,5 +246,45 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/vulnerability-scanning/home.htm",
     "cloudflare": "—",
     "description": "Automated vulnerability scanning"
+  },
+  {
+    "category": "security",
+    "categoryName": "Security & Identity",
+    "aws": "CloudHSM",
+    "awsUrl": "https://aws.amazon.com/cloudhsm/",
+    "azure": "Dedicated HSM",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/cloud-hsm/",
+    "gcp": "Cloud HSM",
+    "gcpUrl": "https://docs.cloud.google.com/kms/docs/hsm",
+    "oracle": "Dedicated KMS",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Tasks/dedicated_kms.htm",
+    "cloudflare": "—",
+    "description": "Hardware security modules for generating and storing cryptographic keys"
+  },
+  {
+    "category": "security",
+    "categoryName": "Security & Identity",
+    "aws": "—",
+    "azure": "Microsoft Sentinel",
+    "azureUrl": "https://www.microsoft.com/en-us/security/business/siem-and-xdr/microsoft-sentinel-siem",
+    "gcp": "Google Security Operations",
+    "gcpUrl": "https://cloud.google.com/security/products/security-operations",
+    "oracle": "Logging Analytics",
+    "cloudflare": "—",
+    "description": "Cloud-native SIEM for collecting security logs, detecting threats and responding to incidents",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/log-analytics/doc/logging-analytics1.html"
+  },
+  {
+    "category": "security",
+    "categoryName": "Security & Identity",
+    "aws": "Firewall Manager",
+    "awsUrl": "https://aws.amazon.com/firewall-manager/",
+    "azure": "Azure Firewall Manager",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/firewall-manager/overview",
+    "gcp": "Hierarchical firewall policies",
+    "gcpUrl": "https://docs.cloud.google.com/firewall/docs/firewall-policies",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Central management of firewall and network security policies across accounts, subscriptions or organizations"
   }
 ]

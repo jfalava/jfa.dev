@@ -72,5 +72,43 @@
     "cloudflare": "Workers Analytics / Speed Brain",
     "cloudflareUrl": "https://developers.cloudflare.com/workers/observability/",
     "description": "Synthetic monitoring and uptime checks"
+  },
+  {
+    "category": "monitoring",
+    "categoryName": "Monitoring",
+    "aws": "Managed Service for Prometheus",
+    "awsUrl": "https://aws.amazon.com/prometheus/",
+    "azure": "Azure Monitor managed service for Prometheus",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/azure-monitor/metrics/prometheus-metrics-overview",
+    "gcp": "Managed Service for Prometheus",
+    "gcpUrl": "https://docs.cloud.google.com/stackdriver/docs/managed-prometheus",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Managed Prometheus-compatible metrics collection and query service"
+  },
+  {
+    "category": "monitoring",
+    "categoryName": "Monitoring",
+    "aws": "Managed Grafana",
+    "awsUrl": "https://aws.amazon.com/grafana/",
+    "azure": "Azure Managed Grafana",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/managed-grafana/",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Managed Grafana dashboards for visualizing metrics, logs and traces"
+  },
+  {
+    "category": "monitoring",
+    "categoryName": "Monitoring",
+    "aws": "Health Dashboard",
+    "awsUrl": "https://aws.amazon.com/health/",
+    "azure": "Azure Service Health",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/service-health/overview",
+    "gcp": "Service Health",
+    "gcpUrl": "https://cloud.google.com/service-health",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Shows the status of cloud services and alerts about outages that affect your resources"
   }
 ]

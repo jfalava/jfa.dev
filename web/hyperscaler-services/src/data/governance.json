@@ -26,5 +26,19 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/cloud-guard/home.htm",
     "cloudflare": "—",
     "description": "Resource compliance and configuration auditing"
+  },
+  {
+    "category": "governance",
+    "categoryName": "Governance",
+    "aws": "Trusted Advisor",
+    "awsUrl": "https://aws.amazon.com/premiumsupport/technology/trusted-advisor/",
+    "azure": "Azure Advisor",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/advisor/advisor-overview",
+    "gcp": "Recommender",
+    "gcpUrl": "https://docs.cloud.google.com/recommender/docs/whatis-activeassist",
+    "oracle": "Cloud Advisor",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/CloudAdvisor/home.htm",
+    "cloudflare": "—",
+    "description": "Checks accounts against best practices for cost, security, performance and service limits"
   }
 ]

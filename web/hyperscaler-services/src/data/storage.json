@@ -123,8 +123,9 @@
     "gcpUrl": "https://cloud.google.com/storage/docs/storage-classes#nearline",
     "oracle": "Infrequent Access",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Object/Concepts/objectstorageoverview.htm",
-    "cloudflare": "—",
-    "description": "Lower-cost tier for infrequent data"
+    "cloudflare": "R2 Infrequent Access",
+    "description": "Lower-cost tier for infrequent data",
+    "cloudflareUrl": "https://developers.cloudflare.com/r2/buckets/storage-classes/"
   },
   {
     "category": "storage",
@@ -165,8 +166,9 @@
     "gcpUrl": "https://cloud.google.com/storage-transfer-service",
     "oracle": "Data Transfer",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/DataTransfer/Concepts/overview.htm",
-    "cloudflare": "—",
-    "description": "Data synchronization service"
+    "cloudflare": "Super Slurper",
+    "description": "Data synchronization service",
+    "cloudflareUrl": "https://developers.cloudflare.com/r2/data-migration/super-slurper/"
   },
   {
     "category": "storage",
@@ -194,5 +196,19 @@
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/storage-gateway/home.htm",
     "cloudflare": "—",
     "description": "Hybrid storage gateway and cache"
+  },
+  {
+    "category": "storage",
+    "categoryName": "Storage",
+    "aws": "Elastic Disaster Recovery",
+    "awsUrl": "https://aws.amazon.com/disaster-recovery/",
+    "azure": "Site Recovery",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/site-recovery/",
+    "gcp": "Backup and DR Service",
+    "gcpUrl": "https://cloud.google.com/backup-disaster-recovery",
+    "oracle": "Full Stack Disaster Recovery",
+    "oracleUrl": "https://www.oracle.com/cloud/full-stack-disaster-recovery/",
+    "cloudflare": "—",
+    "description": "Replicates servers or systems to a secondary region and orchestrates failover"
   }
 ]

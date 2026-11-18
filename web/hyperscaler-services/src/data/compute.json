@@ -52,8 +52,7 @@
     "gcpUrl": "https://cloud.google.com/compute/docs/instance-groups",
     "oracle": "Autoscaling",
     "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/autoscalinginstancepools.htm",
-    "cloudflare": "Workers (auto-scale)",
-    "cloudflareUrl": "https://developers.cloudflare.com/workers/",
+    "cloudflare": "—",
     "description": "Automatic scaling of compute resources"
   },
   {
@@ -94,8 +93,7 @@
     "gcp": "App Engine",
     "gcpUrl": "https://cloud.google.com/appengine",
     "oracle": "—",
-    "cloudflare": "Pages",
-    "cloudflareUrl": "https://developers.cloudflare.com/pages/",
+    "cloudflare": "—",
     "description": "Platform as a Service for web apps"
   },
   {
@@ -195,5 +193,69 @@
     "oracleUrl": "https://www.oracle.com/cloud/roving-edge/",
     "cloudflare": "—",
     "description": "On-premises hybrid cloud extension"
+  },
+  {
+    "category": "compute",
+    "categoryName": "Compute",
+    "aws": "Lightsail",
+    "awsUrl": "https://aws.amazon.com/lightsail/",
+    "azure": "Virtual Machines",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/virtual-machines/",
+    "gcp": "Compute Engine",
+    "gcpUrl": "https://cloud.google.com/compute",
+    "oracle": "OCI Compute",
+    "oracleUrl": "https://www.oracle.com/cloud/compute/",
+    "cloudflare": "—",
+    "description": "Fixed-price virtual private servers with bundled compute, storage and transfer"
+  },
+  {
+    "category": "compute",
+    "categoryName": "Compute",
+    "aws": "Amplify",
+    "awsUrl": "https://aws.amazon.com/amplify/",
+    "azure": "Static Web Apps",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/app-service/static",
+    "gcp": "Firebase Hosting",
+    "gcpUrl": "https://firebase.google.com/products/hosting",
+    "oracle": "—",
+    "cloudflare": "Pages",
+    "cloudflareUrl": "https://developers.cloudflare.com/pages/",
+    "description": "Git-connected build and hosting for web frontends and full-stack apps"
+  },
+  {
+    "category": "compute",
+    "categoryName": "Compute",
+    "aws": "WorkSpaces",
+    "awsUrl": "https://aws.amazon.com/workspaces/",
+    "azure": "Azure Virtual Desktop",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/virtual-desktop/",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Managed cloud desktops delivered to users as desktop-as-a-service"
+  },
+  {
+    "category": "compute",
+    "categoryName": "Compute",
+    "aws": "EC2 Image Builder",
+    "awsUrl": "https://aws.amazon.com/image-builder/",
+    "azure": "Azure Image Builder",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/virtual-machines/image-builder-overview",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Automates building, customizing and patching of virtual machine images"
+  },
+  {
+    "category": "compute",
+    "categoryName": "Compute",
+    "aws": "Braket",
+    "awsUrl": "https://aws.amazon.com/braket/",
+    "azure": "Azure Quantum",
+    "azureUrl": "https://azure.microsoft.com/en-us/solutions/quantum-computing/",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Cloud access to quantum processors and simulators"
   }
 ]

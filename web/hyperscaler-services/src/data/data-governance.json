@@ -10,8 +10,9 @@
     "gcpUrl": "https://cloud.google.com/dataplex",
     "oracle": "Data Catalog",
     "oracleUrl": "https://www.oracle.com/big-data/data-catalog/",
-    "cloudflare": "—",
-    "description": "Unified data governance solution"
+    "cloudflare": "R2 Data Catalog",
+    "description": "Unified data governance solution",
+    "cloudflareUrl": "https://developers.cloudflare.com/basin-catalog/"
   },
   {
     "category": "data-governance",
@@ -40,5 +41,19 @@
     "oracleUrl": "https://www.oracle.com/security/database-security/data-safe/",
     "cloudflare": "—",
     "description": "Sensitive data discovery and classification"
+  },
+  {
+    "category": "data-governance",
+    "categoryName": "Data Governance",
+    "aws": "DataZone",
+    "awsUrl": "https://aws.amazon.com/datazone/",
+    "azure": "Microsoft Purview",
+    "azureUrl": "https://learn.microsoft.com/en-us/purview/purview",
+    "gcp": "Dataplex",
+    "gcpUrl": "https://cloud.google.com/dataplex",
+    "oracle": "Data Catalog",
+    "oracleUrl": "https://www.oracle.com/big-data/data-catalog/",
+    "cloudflare": "—",
+    "description": "Data catalog and portal for discovering, sharing and governing data across teams"
   }
 ]

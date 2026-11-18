@@ -11,5 +11,29 @@
     "oracleUrl": "https://www.oracle.com/cloud/cloud-native/iot-platform/",
     "cloudflare": "—",
     "description": "IoT device connectivity and data ingestion"
+  },
+  {
+    "category": "iot",
+    "categoryName": "IoT",
+    "aws": "IoT Greengrass",
+    "awsUrl": "https://aws.amazon.com/greengrass/",
+    "azure": "IoT Edge",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/iot-edge/",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Runs cloud-defined functions and messaging on local devices at the edge"
+  },
+  {
+    "category": "iot",
+    "categoryName": "IoT",
+    "aws": "IoT TwinMaker",
+    "awsUrl": "https://aws.amazon.com/iot-twinmaker/",
+    "azure": "Azure Digital Twins",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/digital-twins/",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Builds digital twins that combine 3D models and data from IoT systems"
   }
 ]

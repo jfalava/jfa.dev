@@ -68,5 +68,33 @@
     "oracleUrl": "https://www.oracle.com/cloud/events/",
     "cloudflare": "—",
     "description": "Point-to-point event integration"
+  },
+  {
+    "category": "data-integration",
+    "categoryName": "Data Integration",
+    "aws": "Data Exchange",
+    "awsUrl": "https://aws.amazon.com/data-exchange/",
+    "azure": "Azure Data Share",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/data-share/",
+    "gcp": "Analytics Hub",
+    "gcpUrl": "https://docs.cloud.google.com/bigquery/docs/analytics-hub-introduction",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Publishes and subscribes to data sets shared between accounts and organizations"
+  },
+  {
+    "category": "data-integration",
+    "categoryName": "Data Integration",
+    "aws": "Data Firehose",
+    "awsUrl": "https://aws.amazon.com/kinesis/data-firehose/",
+    "azure": "Event Hubs Capture",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-capture-overview",
+    "gcp": "Pub/Sub export subscriptions",
+    "oracle": "Connector Hub",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/connector-hub/overview.htm",
+    "cloudflare": "Pipelines",
+    "cloudflareUrl": "https://developers.cloudflare.com/basin-pipelines/",
+    "description": "Loads streaming data into storage such as data lakes without managing consumers",
+    "gcpUrl": "https://docs.cloud.google.com/pubsub/docs/cloudstorage"
   }
 ]

@@ -55,5 +55,19 @@
     "oracleUrl": "https://docs.oracle.com/en/database/oracle/oracle-database/19/adque/",
     "cloudflare": "—",
     "description": "JMS 2.0 API compatible messaging"
+  },
+  {
+    "category": "messaging",
+    "categoryName": "Messaging",
+    "aws": "EventBridge Scheduler",
+    "awsUrl": "https://aws.amazon.com/eventbridge/scheduler/",
+    "azure": "Logic Apps (recurrence trigger)",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/logic-apps/",
+    "gcp": "Cloud Scheduler",
+    "gcpUrl": "https://cloud.google.com/scheduler",
+    "oracle": "—",
+    "cloudflare": "Cron Triggers",
+    "cloudflareUrl": "https://developers.cloudflare.com/workers/configuration/cron-triggers/",
+    "description": "Invokes a target on a cron or rate schedule without running a scheduler server"
   }
 ]

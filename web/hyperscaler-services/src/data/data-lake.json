@@ -22,8 +22,10 @@
     "azureUrl": "https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/on-demand-workspace-overview",
     "gcp": "BigQuery",
     "gcpUrl": "https://cloud.google.com/bigquery",
-    "oracle": "—",
-    "cloudflare": "—",
-    "description": "Serverless query engine"
+    "oracle": "Autonomous Database (external tables)",
+    "cloudflare": "R2 SQL",
+    "description": "Serverless query engine",
+    "oracleUrl": "https://docs.oracle.com/en/database/oracle/oracle-database/21/sutil/oracle-bigdata-access-driver.html",
+    "cloudflareUrl": "https://developers.cloudflare.com/basin-sql/"
   }
 ]

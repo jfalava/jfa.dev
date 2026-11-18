@@ -136,6 +136,7 @@ export async function importServices(): Promise<ServiceMapping[]> {
     monitoring,
     networking,
     security,
+    similarServices,
     storage,
   ] = await Promise.all([
     import("./account-management.json"),
@@ -160,6 +161,7 @@ export async function importServices(): Promise<ServiceMapping[]> {
     import("./monitoring.json"),
     import("./networking.json"),
     import("./security.json"),
+    import("./similar.json"),
     import("./storage.json"),
   ]);
 
@@ -186,6 +188,7 @@ export async function importServices(): Promise<ServiceMapping[]> {
     ...monitoring.default,
     ...networking.default,
     ...security.default,
+    ...similarServices.default,
     ...storage.default,
   ];
 

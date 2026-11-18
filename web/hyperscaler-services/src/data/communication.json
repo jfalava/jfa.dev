@@ -24,5 +24,44 @@
     "oracle": "—",
     "cloudflare": "—",
     "description": "SMS and voice messaging APIs"
+  },
+  {
+    "category": "communication",
+    "categoryName": "Communication",
+    "aws": "Connect",
+    "awsUrl": "https://aws.amazon.com/connect/",
+    "azure": "Dynamics 365 Contact Center",
+    "azureUrl": "https://www.microsoft.com/en-us/dynamics-365/products/contact-center",
+    "gcp": "Contact Center AI Platform",
+    "gcpUrl": "https://cloud.google.com/contact-center/ccai-platform",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Cloud contact center for voice, chat and email customer service"
+  },
+  {
+    "category": "communication",
+    "categoryName": "Communication",
+    "aws": "WorkMail",
+    "awsUrl": "https://aws.amazon.com/workmail/",
+    "azure": "Exchange Online",
+    "azureUrl": "https://www.microsoft.com/en-us/microsoft-365/exchange/email",
+    "gcp": "Gmail",
+    "gcpUrl": "https://workspace.google.com/products/gmail/",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Business email and calendar hosting"
+  },
+  {
+    "category": "communication",
+    "categoryName": "Communication",
+    "aws": "Chime",
+    "awsUrl": "https://aws.amazon.com/chime/getting-started/",
+    "azure": "Microsoft Teams",
+    "azureUrl": "https://www.microsoft.com/en-us/microsoft-teams/group-chat-software",
+    "gcp": "Google Meet",
+    "gcpUrl": "https://workspace.google.com/products/meet/",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Online meetings, video calls and team chat"
   }
 ]

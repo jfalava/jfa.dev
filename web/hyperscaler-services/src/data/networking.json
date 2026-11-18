@@ -402,5 +402,71 @@
     "cloudflare": "Cloudflare Service Discovery",
     "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/private-net/cloudflared/",
     "description": "Service registry and discovery"
+  },
+  {
+    "category": "networking",
+    "categoryName": "Networking",
+    "aws": "CloudFront",
+    "awsUrl": "https://aws.amazon.com/cloudfront/",
+    "azure": "Front Door",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/frontdoor/",
+    "gcp": "Cloud CDN",
+    "gcpUrl": "https://cloud.google.com/cdn",
+    "oracle": "CDN",
+    "cloudflare": "CDN",
+    "cloudflareUrl": "https://developers.cloudflare.com/cache/",
+    "description": "Global HTTP entry point that routes requests to origins with CDN caching and a web application firewall",
+    "oracleUrl": "https://docs.oracle.com/en-us/iaas/Content/TrafficManagement/Concepts/overview.htm"
+  },
+  {
+    "category": "networking",
+    "categoryName": "Networking",
+    "aws": "Route 53 Resolver",
+    "awsUrl": "https://aws.amazon.com/route53/resolver/",
+    "azure": "DNS Private Resolver",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/dns/dns-private-resolver-overview",
+    "gcp": "Cloud DNS (forwarding zones)",
+    "gcpUrl": "https://cloud.google.com/dns",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Resolves DNS queries between VPCs, virtual networks and on-premises networks"
+  },
+  {
+    "category": "networking",
+    "categoryName": "Networking",
+    "aws": "—",
+    "azure": "API Management",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/api-management/",
+    "gcp": "Apigee",
+    "gcpUrl": "https://cloud.google.com/apigee",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Full-lifecycle API management with proxies, policies, analytics and developer portals"
+  },
+  {
+    "category": "networking",
+    "categoryName": "Networking",
+    "aws": "Gateway Load Balancer",
+    "awsUrl": "https://aws.amazon.com/elasticloadbalancing/gateway-load-balancer/",
+    "azure": "Gateway Load Balancer",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/load-balancer/gateway-overview",
+    "gcp": "—",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Deploys and scales third-party virtual appliances, such as firewalls, inline on network traffic"
+  },
+  {
+    "category": "networking",
+    "categoryName": "Networking",
+    "aws": "Verified Access",
+    "awsUrl": "https://aws.amazon.com/verified-access/",
+    "azure": "Microsoft Entra Private Access",
+    "azureUrl": "https://learn.microsoft.com/en-us/entra/global-secure-access/concept-private-access",
+    "gcp": "BeyondCorp Enterprise",
+    "gcpUrl": "https://cloud.google.com/beyondcorp",
+    "oracle": "—",
+    "cloudflare": "Access",
+    "cloudflareUrl": "https://developers.cloudflare.com/cloudflare-one/access-controls/policies/",
+    "description": "Zero-trust access to private applications based on user identity and device posture"
   }
 ]

@@ -23,7 +23,21 @@
     "gcp": "Storage Transfer Service",
     "gcpUrl": "https://cloud.google.com/storage-transfer-service",
     "oracle": "—",
+    "cloudflare": "Super Slurper",
+    "description": "Offline and online bulk data transfer",
+    "cloudflareUrl": "https://developers.cloudflare.com/r2/data-migration/super-slurper/"
+  },
+  {
+    "category": "data-migration",
+    "categoryName": "Data Migration",
+    "aws": "Application Migration Service",
+    "awsUrl": "https://aws.amazon.com/application-migration-service/",
+    "azure": "Azure Migrate",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/migrate/migrate-services-overview",
+    "gcp": "Migrate to Virtual Machines",
+    "gcpUrl": "https://cloud.google.com/products/cloud-migration/virtual-machines",
+    "oracle": "—",
     "cloudflare": "—",
-    "description": "Offline and online bulk data transfer"
+    "description": "Lift-and-shift migration of servers to the cloud by replicating them"
   }
 ]

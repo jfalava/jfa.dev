@@ -24,7 +24,8 @@
     "gcpUrl": "https://cloud.google.com/biglake",
     "oracle": "Autonomous Database (external tables)",
     "oracleUrl": "https://docs.oracle.com/en/database/oracle/oracle-database/21/sutil/oracle-bigdata-access-driver.html",
-    "cloudflare": "—",
-    "description": "Query external data without movement"
+    "cloudflare": "R2 SQL",
+    "description": "Query external data without movement",
+    "cloudflareUrl": "https://developers.cloudflare.com/basin-sql/"
   }
 ]

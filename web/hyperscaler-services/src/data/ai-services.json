@@ -120,9 +120,49 @@
     "awsUrl": "https://aws.amazon.com/rekognition/content-moderation/",
     "azure": "Azure AI Content Safety",
     "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-content-safety",
-    "gcp": "—",
+    "gcp": "Vision AI SafeSearch",
     "oracle": "—",
     "cloudflare": "—",
-    "description": "Detect and moderate harmful content"
+    "description": "Detect and moderate harmful content",
+    "gcpUrl": "https://docs.cloud.google.com/vision/docs/detecting-safe-search"
+  },
+  {
+    "category": "ai-services",
+    "categoryName": "AI Services",
+    "aws": "Comprehend Medical",
+    "awsUrl": "https://aws.amazon.com/comprehend/medical/",
+    "azure": "Text Analytics for health",
+    "azureUrl": "https://learn.microsoft.com/en-us/azure/ai-services/language-service/text-analytics-for-health/overview",
+    "gcp": "Healthcare Natural Language API",
+    "gcpUrl": "https://docs.cloud.google.com/healthcare-api/docs/concepts/nlp",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Extracts medical entities, such as conditions and medications, from clinical text"
+  },
+  {
+    "category": "ai-services",
+    "categoryName": "AI Services",
+    "aws": "Kendra",
+    "awsUrl": "https://aws.amazon.com/kendra/",
+    "azure": "Azure AI Search",
+    "azureUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-search",
+    "gcp": "Vertex AI Search",
+    "gcpUrl": "https://cloud.google.com/generative-ai-app-builder/docs/enterprise-search-introduction",
+    "oracle": "—",
+    "cloudflare": "AI Search",
+    "description": "Enterprise search across documents and data sources with natural-language queries",
+    "cloudflareUrl": "https://developers.cloudflare.com/ai-search/"
+  },
+  {
+    "category": "ai-services",
+    "categoryName": "AI Services",
+    "aws": "Personalize",
+    "awsUrl": "https://aws.amazon.com/personalize/",
+    "azure": "—",
+    "gcp": "Recommendations AI",
+    "gcpUrl": "https://cloud.google.com/use-cases/recommendations",
+    "oracle": "—",
+    "cloudflare": "—",
+    "description": "Builds real-time product and content recommendations from user behavior data"
   }
 ]
