@@ -6216,6 +6216,50 @@
         }
       ],
       "types": []
+    },
+    "qBeKJlWu502V+14Qcf8Ddg==": {
+      "description": "Tongue-in-cheek title of the small notice explaining that the app only uses its own cookies",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "El banner de cookies obligatorio por ley",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "h4SPlYQyWVdU8pixwXXSlQ==": {
+      "description": "Accessible label of the button that closes the cookie notice for good",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Cerrar el aviso de cookies",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "tYvENtpeR9gJ7PwUvPkaQw==": {
+      "description": "Cookie notice body: the app has no third-party cookies and only stores what it needs in the browser",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Keweke no usa cookies de terceros, anuncios ni seguimiento. Solo guarda en este navegador lo que necesita: tus listas, tu identidad y tus preferencias de tema e idioma.",
+          "variations": {}
+        }
+      ],
+      "types": []
+    },
+    "C2FHv3VqYwo6Q986tnbXAQ==": {
+      "description": "Joke closing the cookie notice: nothing is shared, and the EU institutions in Brussels would approve",
+      "tokens": [],
+      "translations": [
+        {
+          "translation": "Ningún dato sale hacia terceros. (Bruselas estaría orgullosa.)",
+          "variations": {}
+        }
+      ],
+      "types": []
     }
   }
 }
